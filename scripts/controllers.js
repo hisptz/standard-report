@@ -89,17 +89,14 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
     });
     $scope.dataElements = [];
     $scope.toTrustedHTML = function( html ){
-        console.log("Here");
         var inputRegEx = /<input (.*?)>/g;
         var match = null;
         $scope.dataElements = [];
         while(true){
             match = inputRegEx.exec(html);
             if(match != null){
-                console.log("Input:",JSON.stringify(match));
                 var idRegEx = /id="(.*?)-(.*?)-val/g;
                 var idMacth = idRegEx.exec(match[0]);
-                console.log("IDs:",JSON.stringify(idMacth));
                 if(idMacth != null){
                     html = html.replace(match[0],"<label>{{dataElements[" + idMacth[1]+"." + idMacth[2]+ "]}}</label>");
                     $scope.dataElements.push(idMacth[1]+"." + idMacth[2]);
@@ -119,19 +116,9 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
             $scope.data.dataSetForm = results.data;
             /**/
             $timeout(function(){
-                var elms = document.getElementById("report").getElementsByTagName("input");
-                var dataElements = [];
-                for (var i = 0; i < elms.length; i++) {
-                    console.log(elms[i]);
-                    var ids = elms[i].id.split("-");
-                    var newlabel = document.createElement("Label");
-                    newlabel.innerHTML = "{{dataElements[" + ids[0]+"." + ids[1]+ "]}}" ;
-                    elms[i].parentElement.appendChild(newlabel);
-                    elms[i].parentElement.removeChild(elms[i]);
-                    $compile(newlabel)($scope);
-                    dataElements.push(ids[0] + "." + ids[1]);
-                }
-                $compile(newlabel)($scope);
+                var reportElement = document.getElementById("report");
+                console.log(reportElement.children);
+                $compile(reportElement.children)($scope);
                 $http.get(DHIS2URL +"api/analytics.json?dimension=dx:"+$scope.dataElements.join(";")+"&dimension=pe:" +$scope.data.period+"&filter=ou:" + $scope.data.selectedOrgUnit.id + "&displayProperty=NAME")
                     .then(function(analyticsResults) {
                         analyticsResults.data.rows.forEach(function(row){
