@@ -15,3 +15,11 @@ table
     table-layout: fixed;
     margin-bottom: 10px;
 }
+#mainPage {
+    margin: 65px 10px 10px 270px;
+}
+
+.page {
+    font-size: 9pt;
+    margin: 65px 10px 10px 270px;
+}

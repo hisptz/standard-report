@@ -14,15 +14,17 @@ var app = angular.module('app',
                      'd2Services',
                      'd2Controllers',
                      'pascalprecht.translate',
-                     'd2HeaderBar'])
+                     'd2HeaderBar'
+                    ])
               
-.value('DHIS2URL', '/dhis2/')
-
-.config(function($translateProvider,$routeProvider) {
+.value('DHIS2URL', '../../../');
+app.config(function($translateProvider,$routeProvider) {
 	
 	$routeProvider.when('/', {
-        templateUrl: 'views/home.html',
-        controller: 'MainController'
+        templateUrl: 'views/home.html'
+    }).when('/standardReport', {
+        controller: 'ReportController',
+        templateUrl: 'views/standardReport.html'
     }).otherwise({
         redirectTo : '/'
     });

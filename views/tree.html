@@ -1,0 +1,25 @@
+<style>
+    .selected{
+        color: #428bca;
+        font-weight: bold;
+    }
+</style>
+<script type="text/ng-template" id="dataTree">
+    <span ng-if="data[children] || data[children].length > 0" ng-class="{'glyphicon-plus':!data.expanded,'glyphicon-minus':data.expanded}"
+          class="icon expand-icon glyphicon"
+          ng-click="data.expanded = !data.expanded;$event.stopPropagation()"
+    ></span><span ng-class="{'selected':data.selected}">{{ data.name }}</span>
+    <ul class="list-group" ng-if="(data[children] || data[children].length > 0) && data.expanded">
+        <li class="list-group-item node-treeview1 node-selected" ng-repeat="data in data[children]" ng-click="select(data,$event)" ng-include="'dataTree'">
+        </li>
+    </ul>
+</script>
+<div>
+    <ul class="list-group">
+        <li class="list-group-item"
+            ng-repeat="data in treeModal"
+            ng-include="'dataTree'"
+            ng-click="select(data,$event)"
+        ></li>
+    </ul>
+</div>
