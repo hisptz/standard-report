@@ -100,6 +100,15 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
                 if(idMacth != null){
                     html = html.replace(match[0],"<label>{{dataElements[" + idMacth[1]+"." + idMacth[2]+ "]}}</label>");
                     $scope.dataElements.push(idMacth[1]+"." + idMacth[2]);
+                }else{
+                    idRegEx = /id="indicator(.*?)"/g;
+                    idMacth = idRegEx.exec(match[0]);
+                    if(idMacth != null){
+                        console.log("Match:",JSON.stringify(match));
+                        console.log("Id Match:",JSON.stringify(idMacth));
+                        html = html.replace(match[0],"<label>{{dataElements[" + idMacth[1] + "]}}</label>");
+                        //$scope.dataElements.push(idMacth[1]);
+                    }
                 }
 
 
@@ -119,13 +128,17 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
                 var reportElement = document.getElementById("report");
                 console.log(reportElement.children);
                 $compile(reportElement.children)($scope);
-                $http.get(DHIS2URL +"api/analytics.json?dimension=dx:"+$scope.dataElements.join(";")+"&dimension=pe:" +$scope.data.period+"&filter=ou:" + $scope.data.selectedOrgUnit.id + "&displayProperty=NAME")
-                    .then(function(analyticsResults) {
-                        analyticsResults.data.rows.forEach(function(row){
-                            $scope.dataElements[row[0]] = row[2];
-                        });
+                var common = 10;
+                for(var i = 0;i < Math.ceil($scope.dataElements.length / common); i++){
+                    $http.get(DHIS2URL +"api/analytics.json?dimension=dx:"+$scope.dataElements.slice(i * 10,i * 10 + common).join(";")+"&dimension=pe:" +$scope.data.period+"&filter=ou:" + $scope.data.selectedOrgUnit.id + "&displayProperty=NAME")
+                        .then(function(analyticsResults) {
+                            analyticsResults.data.rows.forEach(function(row){
+                                $scope.dataElements[row[0]] = row[2];
+                            });
 
-                });
+                        });
+                }
+
             }, 1000);
 
         });
