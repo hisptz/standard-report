@@ -81,7 +81,7 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
     })
     $http.get(DHIS2URL +"api/dataSets.json?fields=id,name,periodType").then(function(results){
         $scope.data.dataSets = results.data.dataSets;
-        $http.get(DHIS2URL +"api/organisationUnits.json?filter=level:eq:1&fields=id,name,")//children[id,name,children[id,name,children[id,name,children[id,name,children]]]]")
+        $http.get(DHIS2URL +"api/organisationUnits.json?filter=level:eq:1&fields=id,name,children[id,name,children[id,name,children[id,name,children[id,name,children]]]]")
             .then(function(results){
             $scope.data.organisationUnits = results.data.organisationUnits;
 
@@ -164,9 +164,10 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
             }
             $q.all(promises).then(function(){
                 $scope.trustedHtml = trustedHtml;
+                $scope.loadingReport = false;
                 $timeout(function(){
+
                     deffered.resolve();
-                    $scope.loadingReport = false;
                 },1000);
             });
         });
