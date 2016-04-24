@@ -100,20 +100,20 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
                 var idMacth = idRegEx.exec(match[0]);
 
                 if(idMacth != null){
-                    html = html.replace(match[0],"<label>{{dataElementsData[" + idMacth[1]+"." + idMacth[2]+ "]}}</label>");
+                    html = html.replace(match[0],"<label>{{dataElementsData['" + idMacth[1]+"." + idMacth[2]+ "']}}</label>");
                     $scope.dataElements.push(idMacth[1]+"." + idMacth[2]);
                 }else{
                     idRegEx = /id="indicator(.*?)"/g;
                     idMacth = idRegEx.exec(match[0]);
                     if(idMacth != null){
-                        html = html.replace(match[0],"<label>{{dataElementsData[" + idMacth[1] + "]}}</label>");
+                        html = html.replace(match[0],"<label> {{dataElementsData['" + idMacth[1] + "']}}</label>");
                         $scope.dataElements.push(idMacth[1]);
                     }else{
 
                         idRegEx = /dataelementid="(.*?)"/g;
                         idMacth = idRegEx.exec(match[0]);
                         if(idMacth != null){
-                            html = html.replace(match[0],"<label>{{dataElementsData[" + idMacth[1] + "]}}</label>");
+                            html = html.replace(match[0],"<label>{{dataElementsData['" + idMacth[1] + "']}}</label>");
                             $scope.dataElements.push(idMacth[1]);
                         }else{
                             console.log(match);
@@ -131,7 +131,9 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
         return $sce.trustAsHtml( html );
 
     }
-
+    $scope.removeTrustedHtml = function(){
+        $scope.trustedHtml = false;
+    }
     $scope.generateDataSetReport = function(){
         $scope.getReport().then(function(){
             var reportElement = document.getElementById("report");
@@ -139,7 +141,9 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
         });
     }
     $scope.trustedHtml = undefined;
+    $scope.loadingReport = false;
     $scope.getReport = function(){
+        $scope.loadingReport = true;
         $scope.trustedHtml = undefined;
         var deffered = $q.defer();
         var promises = [];
@@ -159,10 +163,10 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
                     }));
             }
             $q.all(promises).then(function(){
-                console.log($scope.dataElementsData);
                 $scope.trustedHtml = trustedHtml;
                 $timeout(function(){
                     deffered.resolve();
+                    $scope.loadingReport = false;
                 },1000);
             });
         });
