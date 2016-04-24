@@ -87,7 +87,7 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
 
         });
     });
-    $scope.dataElements = [];
+    $scope.dataElements = {};
     $scope.toTrustedHTML = function( html ){
         var inputRegEx = /<input (.*?)>/g;
         var match = null;
@@ -104,8 +104,6 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
                     idRegEx = /id="indicator(.*?)"/g;
                     idMacth = idRegEx.exec(match[0]);
                     if(idMacth != null){
-                        console.log("Match:",JSON.stringify(match));
-                        console.log("Id Match:",JSON.stringify(idMacth));
                         html = html.replace(match[0],"<label>{{dataElements[" + idMacth[1] + "]}}</label>");
                         //$scope.dataElements.push(idMacth[1]);
                     }
