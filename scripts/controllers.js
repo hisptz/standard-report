@@ -87,7 +87,7 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
 
         });
     });
-    $scope.dataElements = {};
+    $scope.dataElements = [];
     $scope.toTrustedHTML = function( html ){
         var inputRegEx = /<input (.*?)>/g;
         var match = null;
@@ -98,13 +98,13 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
                 var idRegEx = /id="(.*?)-(.*?)-val/g;
                 var idMacth = idRegEx.exec(match[0]);
                 if(idMacth != null){
-                    html = html.replace(match[0],"<label>{{dataElements[" + idMacth[1]+"." + idMacth[2]+ "]}}</label>");
+                    html = html.replace(match[0],"<label>{{dataElementsData[" + idMacth[1]+"." + idMacth[2]+ "]}}</label>");
                     $scope.dataElements.push(idMacth[1]+"." + idMacth[2]);
                 }else{
                     idRegEx = /id="indicator(.*?)"/g;
                     idMacth = idRegEx.exec(match[0]);
                     if(idMacth != null){
-                        html = html.replace(match[0],"<label>{{dataElements[" + idMacth[1] + "]}}</label>");
+                        html = html.replace(match[0],"<label>{{dataElementsData[" + idMacth[1] + "]}}</label>");
                         //$scope.dataElements.push(idMacth[1]);
                     }
                 }
@@ -118,20 +118,21 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
         return $sce.trustAsHtml( html );
 
     }
+
     $scope.generateDataSetReport = function(){
+        $scope.dataElementsData = {};
         $http.get(DHIS2URL +"api/dataSets/"+$scope.data.dataSet.id+".json").then(function(results){
             $scope.data.dataSetForm = results.data;
             /**/
             $timeout(function(){
                 var reportElement = document.getElementById("report");
-                console.log(reportElement.children);
                 $compile(reportElement.children)($scope);
                 var common = 10;
                 for(var i = 0;i < Math.ceil($scope.dataElements.length / common); i++){
                     $http.get(DHIS2URL +"api/analytics.json?dimension=dx:"+$scope.dataElements.slice(i * 10,i * 10 + common).join(";")+"&dimension=pe:" +$scope.data.period+"&filter=ou:" + $scope.data.selectedOrgUnit.id + "&displayProperty=NAME")
                         .then(function(analyticsResults) {
                             analyticsResults.data.rows.forEach(function(row){
-                                $scope.dataElements[row[0]] = row[2];
+                                $scope.dataElementsData[row[0]] = row[2];
                             });
 
                         });
