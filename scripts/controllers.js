@@ -140,6 +140,10 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
             $compile(reportElement.children)($scope);
         });
     }
+    function reflect(promise){
+        return promise.then(function(v){ return {v:v, status: "resolved" }},
+            function(e){ return {e:e, status: "rejected" }});
+    }
     $scope.trustedHtml = undefined;
     $scope.loadingReport = false;
     $scope.getReport = function(){
@@ -154,13 +158,15 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
 
             var common = 50;
             for(var i = 0;i < Math.ceil($scope.dataElements.length / common); i++) {
-                promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.dataElements.slice(i * 10, i * 10 + common).join(";") + "&dimension=pe:" + $scope.data.period + "&filter=ou:" + $scope.data.selectedOrgUnit.id + "&displayProperty=NAME")
+                promises.push(reflect($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.dataElements.slice(i * 10, i * 10 + common).join(";") + "&dimension=pe:" + $scope.data.period + "&filter=ou:" + $scope.data.selectedOrgUnit.id + "&displayProperty=NAME")
                     .then(function (analyticsResults) {
-                        analyticsResults.data.rows.forEach(function (row) {
-                            $scope.dataElementsData[row[0]] = row[2];
-                        });
-
-                    }));
+                        if(analyticsResults.status == "resolved"){
+                            analyticsResults = analyticsResults.v;
+                            analyticsResults.data.rows.forEach(function (row) {
+                                $scope.dataElementsData[row[0]] = row[2];
+                            });
+                        }
+                    })));
             }
             $q.all(promises).then(function(){
                 $scope.trustedHtml = trustedHtml;
