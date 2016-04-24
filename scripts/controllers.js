@@ -92,6 +92,7 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
         var inputRegEx = /<input (.*?)>/g;
         var match = null;
         $scope.dataElements = [];
+        var newHtml = html;
         while(true){
             match = inputRegEx.exec(html);
             if(match != null){
@@ -100,20 +101,20 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
                 var idMacth = idRegEx.exec(match[0]);
 
                 if(idMacth != null){
-                    html = html.replace(match[0],"<label>{{dataElementsData['" + idMacth[1]+"." + idMacth[2]+ "']}}</label>");
+                    newHtml = newHtml.replace(match[0],"<label>{{dataElementsData['" + idMacth[1]+"." + idMacth[2]+ "']}}</label>");
                     $scope.dataElements.push(idMacth[1]+"." + idMacth[2]);
                 }else{
                     idRegEx = /id="indicator(.*?)"/g;
                     idMacth = idRegEx.exec(match[0]);
                     if(idMacth != null){
-                        html = html.replace(match[0],"<label> {{dataElementsData['" + idMacth[1] + "']}}</label>");
+                        newHtml = newHtml.replace(match[0],"<label> {{dataElementsData['" + idMacth[1] + "']}}</label>");
                         $scope.dataElements.push(idMacth[1]);
                     }else{
 
                         idRegEx = /dataelementid="(.*?)"/g;
                         idMacth = idRegEx.exec(match[0]);
                         if(idMacth != null){
-                            html = html.replace(match[0],"<label>{{dataElementsData['" + idMacth[1] + "']}}</label>");
+                            newHtml = newHtml.replace(match[0],"<label>{{dataElementsData['" + idMacth[1] + "']}}</label>");
                             $scope.dataElements.push(idMacth[1]);
                         }else{
                             console.log(match);
@@ -128,7 +129,7 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
             }
         }
 
-        return $sce.trustAsHtml( html );
+        return $sce.trustAsHtml(newHtml);
 
     }
     $scope.removeTrustedHtml = function(){
