@@ -1,7 +1,7 @@
 {
     "version": "0.1",
-    "name": "dhis2 app seed",
-    "description": "DHIS 2 App Seed",
+    "name": "Reports App",
+    "description": "Report App",
     "launch_path": "index.html",
     "icons": {
         "16": "/img/icon.png",
@@ -9,13 +9,13 @@
         "128": "/img/icon.png"
     },
     "developer": {
-        "name": "Vincent P. Minde",
+        "name": "HISPTZ",
         "url": ""
     },
     "default_locale": "en",
     "activities": {
         "dhis": {
-            "href": "/dhis2"
+            "href": "/dhis"
         }
     }
 }
