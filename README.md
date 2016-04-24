@@ -1,1 +1,1 @@
-# dhis2-app-seed
+# Standard Report App
