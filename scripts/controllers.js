@@ -95,8 +95,10 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
         while(true){
             match = inputRegEx.exec(html);
             if(match != null){
-                var idRegEx = /id="(.*?)-(.*?)-val/g;
+                var idRegEx = /id="(.*?)-(.*?)-val"/g;
+
                 var idMacth = idRegEx.exec(match[0]);
+
                 if(idMacth != null){
                     html = html.replace(match[0],"<label>{{dataElementsData[" + idMacth[1]+"." + idMacth[2]+ "]}}</label>");
                     $scope.dataElements.push(idMacth[1]+"." + idMacth[2]);
@@ -105,7 +107,18 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
                     idMacth = idRegEx.exec(match[0]);
                     if(idMacth != null){
                         html = html.replace(match[0],"<label>{{dataElementsData[" + idMacth[1] + "]}}</label>");
-                        //$scope.dataElements.push(idMacth[1]);
+                        $scope.dataElements.push(idMacth[1]);
+                    }else{
+
+                        idRegEx = /dataelementid="(.*?)"/g;
+                        idMacth = idRegEx.exec(match[0]);
+                        if(idMacth != null){
+                            html = html.replace(match[0],"<label>{{dataElementsData[" + idMacth[1] + "]}}</label>");
+                            $scope.dataElements.push(idMacth[1]);
+                        }else{
+                            console.log(match);
+                            console.log(idMacth);
+                        }
                     }
                 }
 
@@ -135,7 +148,7 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
             $scope.data.dataSetForm = results.data;
             var trustedHtml = $scope.renderHtml(results.data.dataEntryForm.htmlCode);
 
-            var common = 10;
+            var common = 50;
             for(var i = 0;i < Math.ceil($scope.dataElements.length / common); i++) {
                 promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.dataElements.slice(i * 10, i * 10 + common).join(";") + "&dimension=pe:" + $scope.data.period + "&filter=ou:" + $scope.data.selectedOrgUnit.id + "&displayProperty=NAME")
                     .then(function (analyticsResults) {
