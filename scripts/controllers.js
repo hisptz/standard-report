@@ -88,7 +88,7 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
         });
     });
     $scope.dataElements = [];
-    $scope.renderHtml = function( html ){
+    $scope.renderHtml = function( html,dataElements){
         var inputRegEx = /<input (.*?)>/g;
         var match = null;
         $scope.dataElements = [];
@@ -101,8 +101,16 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
                 var idMacth = idRegEx.exec(match[0]);
 
                 if(idMacth != null){
-                    newHtml = newHtml.replace(match[0],"<label>{{dataElementsData['" + idMacth[1]+"." + idMacth[2]+ "']}}</label>");
-                    $scope.dataElements.push(idMacth[1]+"." + idMacth[2]);
+                    var isValidAggregate = true;
+                    dataElements.forEach(function(dataElement){
+                        if(dataElement.id == idMacth[1] && (dataElement.valueType == "DATE" || dataElement.valueType == "TEXT")){
+                            isValidAggregate = false;
+                        }
+                    });
+                    if(isValidAggregate){
+                        newHtml = newHtml.replace(match[0],"<label>{{dataElementsData['" + idMacth[1] +"." + idMacth[2]+ "']}}</label>");
+                        $scope.dataElements.push(idMacth[1]+"." + idMacth[2]);
+                    }
                 }else{
                     idRegEx = /id="indicator(.*?)"/g;
                     idMacth = idRegEx.exec(match[0]);
@@ -153,9 +161,9 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
         var deffered = $q.defer();
         var promises = [];
         $scope.dataElementsData = {};
-        $http.get(DHIS2URL +"api/dataSets/"+$scope.data.dataSet.id+".json").then(function(results){
+        $http.get(DHIS2URL +"api/dataSets/"+$scope.data.dataSet.id+".json?fields=:all,dataElements[id,valueType]").then(function(results){
             $scope.data.dataSetForm = results.data;
-            var trustedHtml = $scope.renderHtml(results.data.dataEntryForm.htmlCode);
+            var trustedHtml = $scope.renderHtml(results.data.dataEntryForm.htmlCode,results.data.dataElements);
 
             var common = 50;
             for(var i = 0;i < Math.ceil($scope.dataElements.length / common); i++) {
