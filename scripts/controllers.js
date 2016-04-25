@@ -48,8 +48,15 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
                     }
                 }
             },
-            "Financial-July": {
-                name: "Financial-July", value: "FinancialJuly"
+            "FinancialJuly": {
+                name: "Financial-July", value: "FinancialJuly", list: [],
+                populateList: function () {
+                    var date = new Date();
+                    this.list = [];
+                    for (var i = date.getFullYear() - 5; i < date.getFullYear() + 5; i++) {
+                        this.list.push({name: "July " + i + " - June " + (i + 1),value: i + "July"});
+                    }
+                }
             }
         }
     };
@@ -148,11 +155,7 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
             var reportElement = document.getElementById("report");
             $compile(reportElement.children)($scope);
         });
-    }
-    function reflect(promise){
-        return promise.then(function(v){ return {v:v, status: "resolved" }},
-            function(e){ return {e:e, status: "rejected" }});
-    }
+    };
     $scope.trustedHtml = undefined;
     $scope.loadingReport = false;
     $scope.getReport = function(){
@@ -161,21 +164,18 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
         var deffered = $q.defer();
         var promises = [];
         $scope.dataElementsData = {};
-        $http.get(DHIS2URL +"api/dataSets/"+$scope.data.dataSet.id+".json?fields=:all,dataElements[id,valueType]").then(function(results){
+        $http.get(DHIS2URL +"api/dataSets/"+$scope.data.dataSet.id+".json?fields=:all,dataEntryForm[htmlCode],dataElements[id,valueType]").then(function(results){
             $scope.data.dataSetForm = results.data;
             var trustedHtml = $scope.renderHtml(results.data.dataEntryForm.htmlCode,results.data.dataElements);
 
             var common = 50;
             for(var i = 0;i < Math.ceil($scope.dataElements.length / common); i++) {
-                promises.push(reflect($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.dataElements.slice(i * 10, i * 10 + common).join(";") + "&dimension=pe:" + $scope.data.period + "&filter=ou:" + $scope.data.selectedOrgUnit.id + "&displayProperty=NAME")
+                promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.dataElements.slice(i * 10, i * 10 + common).join(";") + "&dimension=pe:" + $scope.data.period + "&filter=ou:" + $scope.data.selectedOrgUnit.id + "&displayProperty=NAME")
                     .then(function (analyticsResults) {
-                        if(analyticsResults.status == "resolved"){
-                            analyticsResults = analyticsResults.v;
-                            analyticsResults.data.rows.forEach(function (row) {
-                                $scope.dataElementsData[row[0]] = row[2];
-                            });
-                        }
-                    })));
+                        analyticsResults.data.rows.forEach(function (row) {
+                            $scope.dataElementsData[row[0]] = row[2];
+                        });
+                    }));
             }
             $q.all(promises).then(function(){
                 $scope.trustedHtml = trustedHtml;
