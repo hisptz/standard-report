@@ -3,7 +3,7 @@
 'use strict';
 /* Controllers */
 var appControllers = angular.module('appControllers', []);
-appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sce,$timeout,$compile,$q) {
+appControllers.controller('StandardReportController', function($scope,DHIS2URL,$http,$sce,$timeout,$location) {
 
     $scope.data ={
         //selectedOrgUnit:{},
@@ -85,15 +85,68 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
             $scope.data.periodTypes[value.periodType].populateList();
 
         }
-    })
+    });
+    $scope.sortOrganisationUnits = function(orgUnit){
+        if(orgUnit.children){
+            orgUnit.children.sort(function(child1,child2){
+                return  orgUnitFunction(child1).localeCompare(orgUnitFunction(child2));
+            });
+            orgUnit.children.forEach(function(child){
+                $scope.sortOrganisationUnits(child);
+            })
+        }
+    };
     $http.get(DHIS2URL +"api/dataSets.json?fields=id,name,periodType").then(function(results){
         $scope.data.dataSets = results.data.dataSets;
         $http.get(DHIS2URL +"api/organisationUnits.json?filter=level:eq:1&fields=id,name,children[id,name,children[id,name,children[id,name,children[id,name,children]]]]")
             .then(function(results){
             $scope.data.organisationUnits = results.data.organisationUnits;
-
+                $scope.sortOrganisationUnits($scope.data.organisationUnits[0]);
         });
     });
+    $scope.removeTrustedHtml = function(){
+        $scope.trustedHtml = false;
+    }
+    $scope.generateDataSetReport = function(){
+        $location.path("/report/" + $scope.data.dataSet.id +"/" + $scope.data.selectedOrgUnit.id +"/"+$scope.data.period);
+
+    };
+}).controller("ReportController",function($scope,$http,$routeParams,$sce,$q,DHIS2URL,$timeout,$compile){
+    $scope.data ={
+
+    }
+    $scope.trustedHtml = undefined;
+    $scope.loadingReport = false;
+    $scope.getReport = function(){
+        $scope.loadingReport = true;
+        $scope.trustedHtml = undefined;
+        var deffered = $q.defer();
+        var promises = [];
+        $scope.dataElementsData = {};
+        $http.get(DHIS2URL +"api/dataSets/"+$routeParams.dataSet+".json?fields=:all,dataEntryForm[htmlCode],dataElements[id,valueType]").then(function(results){
+            $scope.data.dataSetForm = results.data;
+            var trustedHtml = $scope.renderHtml(results.data.dataEntryForm.htmlCode,results.data.dataElements);
+
+            var common = 50;
+            for(var i = 0;i < Math.ceil($scope.dataElements.length / common); i++) {
+                promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.dataElements.slice(i * 10, i * 10 + common).join(";") + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit + "&displayProperty=NAME")
+                    .then(function (analyticsResults) {
+                        analyticsResults.data.rows.forEach(function (row) {
+                            $scope.dataElementsData[row[0]] = row[2];
+                        });
+                    }));
+            }
+            $q.all(promises).then(function(){
+                $scope.trustedHtml = trustedHtml;
+                $scope.loadingReport = false;
+                $timeout(function(){
+
+                    deffered.resolve();
+                },1000);
+            });
+        });
+        return deffered.promise;
+    }
     $scope.dataElements = [];
     $scope.renderHtml = function( html,dataElements){
         var inputRegEx = /<input (.*?)>/g;
@@ -143,49 +196,10 @@ appControllers.controller('ReportController', function($scope,DHIS2URL,$http,$sc
                 break;
             }
         }
-
         return $sce.trustAsHtml(newHtml);
-
     }
-    $scope.removeTrustedHtml = function(){
-        $scope.trustedHtml = false;
-    }
-    $scope.generateDataSetReport = function(){
-        $scope.getReport().then(function(){
-            var reportElement = document.getElementById("report");
-            $compile(reportElement.children)($scope);
-        });
-    };
-    $scope.trustedHtml = undefined;
-    $scope.loadingReport = false;
-    $scope.getReport = function(){
-        $scope.loadingReport = true;
-        $scope.trustedHtml = undefined;
-        var deffered = $q.defer();
-        var promises = [];
-        $scope.dataElementsData = {};
-        $http.get(DHIS2URL +"api/dataSets/"+$scope.data.dataSet.id+".json?fields=:all,dataEntryForm[htmlCode],dataElements[id,valueType]").then(function(results){
-            $scope.data.dataSetForm = results.data;
-            var trustedHtml = $scope.renderHtml(results.data.dataEntryForm.htmlCode,results.data.dataElements);
-
-            var common = 50;
-            for(var i = 0;i < Math.ceil($scope.dataElements.length / common); i++) {
-                promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.dataElements.slice(i * 10, i * 10 + common).join(";") + "&dimension=pe:" + $scope.data.period + "&filter=ou:" + $scope.data.selectedOrgUnit.id + "&displayProperty=NAME")
-                    .then(function (analyticsResults) {
-                        analyticsResults.data.rows.forEach(function (row) {
-                            $scope.dataElementsData[row[0]] = row[2];
-                        });
-                    }));
-            }
-            $q.all(promises).then(function(){
-                $scope.trustedHtml = trustedHtml;
-                $scope.loadingReport = false;
-                $timeout(function(){
-
-                    deffered.resolve();
-                },1000);
-            });
-        });
-        return deffered.promise;
-    }
+    $scope.getReport().then(function(){
+        var reportElement = document.getElementById("report");
+        $compile(reportElement.children)($scope);
+    });
 });

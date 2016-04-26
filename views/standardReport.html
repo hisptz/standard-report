@@ -57,11 +57,6 @@
 
     <h3 id="dataSetReportHeader">Standard Report <a href="javascript:getHelpContent('dataset_reports')" title="Help"><i class="fa fa-question-circle"></i></a>
     </h3>
-
-    <div id="control" style="margin-top: 0px;">
-        <input type="button" id="dataButton" value="Re-define Parameters" style="width:140px" ng-click="removeTrustedHtml()" ng-if="trustedHtml">
-        <input type="button" class="downloadButton" value="Print" onclick="window.print()" style="width:140px; display:none;">
-    </div>
     <div ng-if="!trustedHtml && !loadingReport" id="criteria" class="inputCriteria" style="width: 360px; margin-top: 0px;">
 
         <!-- Data set -->
@@ -69,6 +64,7 @@
         <div class="inputSection" style="margin-top: 0px;">
             <label>Report</label><br>
             <select ng-options="dataSet as dataSet.name for dataSet in data.dataSets" style="width:330px" ng-model="data.dataSet">
+                <option value="">[ Select Data Set ] </option>
                 <!--<option value="">[ Select ]</option>
 
                 <option ng-repeat="dataSet in data.dataSets">
@@ -123,46 +119,4 @@
         </div>
 
     </div>
-    <div>
-        <div ng-if="loadingReport" class="loader" style="margin-top: 0px;"><img src="../../../images/ajax-loader-bar.gif"></div>
-        <div id="report" ng-if="trustedHtml && !loadingReport" ng-bind-html="trustedHtml">
 
-        </div>
-    </div>
-    <style type="text/css">
-
-        div#loaderDiv
-        {
-            color: #1c425c;
-            font-size: 14px;
-            border: 1px solid #9aaab5;
-            margin-bottom: 15px;
-            width: 500px;
-            height: 230px;
-            text-align: center;
-            display: none;
-            border-radius: 3px;
-        }
-
-    </style>
-
-    <div id="loaderDiv" style="margin-top: 0px;">
-
-        <br><br><br>
-
-        <img src="../../../dhis-web-commons/javascripts/ajax-loader-circle.gif">
-
-        <br><br><br>
-
-        <p>Please wait while the system is processing...</p>
-
-    </div><div id="currentSelection1" style="margin-top: 0px;"></div>
-    <div id="content" style="margin-top: 0px;"></div>
-
-    <div id="rightBar" style="margin-top: 0px;">
-          <span id="hideRightBar"><a href="javascript:hideHelpContent()" title="Close">
-              <img id="hideRightBarImg" src="../../../dhis-web-commons/javascripts/hide.png" alt="Close"></a>
-          </span>
-        <div id="rightBarContents" style="margin-top: 0px;"></div>
-
-    </div>

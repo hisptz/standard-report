@@ -23,8 +23,11 @@ app.config(function($translateProvider,$routeProvider) {
 	$routeProvider.when('/', {
         templateUrl: 'views/home.html'
     }).when('/standardReport', {
-        controller: 'ReportController',
+        controller: 'StandardReportController',
         templateUrl: 'views/standardReport.html'
+    }).when('/report/:dataSet/:orgUnit/:period', {
+        controller: 'ReportController',
+        templateUrl: 'views/report.html'
     }).otherwise({
         redirectTo : '/'
     });

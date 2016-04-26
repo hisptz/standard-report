@@ -1,7 +1,9 @@
 'use strict';
 
 /* Directives */
-
+function orgUnitFunction(child){
+    return child.name;
+}
 var appDirectives = angular.module('appDirectives', []);
 appDirectives.directive("cTree",function(){
     return {
