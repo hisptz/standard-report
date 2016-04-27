@@ -14,12 +14,18 @@ var app = angular.module('app',
                      'd2Services',
                      'd2Controllers',
                      'pascalprecht.translate',
-                     'd2HeaderBar'
+                     'd2HeaderBar','FileManagerApp'
                     ])
               
 .value('DHIS2URL', '../../../');
-app.config(function($translateProvider,$routeProvider) {
-	
+app.config(function($translateProvider,$routeProvider,fileManagerConfigProvider) {
+    var defaults = fileManagerConfigProvider.$get();
+    fileManagerConfigProvider.set({
+        appName: 'angular-filemanager',
+        allowedActions: angular.extend(defaults.allowedActions, {
+            remove: true
+        })
+    });
 	$routeProvider.when('/', {
         templateUrl: 'views/home.html'
     }).when('/standardReport', {
@@ -28,6 +34,8 @@ app.config(function($translateProvider,$routeProvider) {
     }).when('/report/:dataSet/:orgUnit/:period', {
         controller: 'ReportController',
         templateUrl: 'views/report.html'
+    }).when('/archive', {
+        templateUrl: 'views/archive.html'
     }).otherwise({
         redirectTo : '/'
     });
