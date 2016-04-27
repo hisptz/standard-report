@@ -111,7 +111,7 @@ appControllers.controller('StandardReportController', function($scope,DHIS2URL,$
         $location.path("/report/" + $scope.data.dataSet.id +"/" + $scope.data.selectedOrgUnit.id +"/"+$scope.data.period);
 
     };
-}).controller("ReportController",function($scope,$http,$routeParams,$sce,$q,DHIS2URL,$timeout,$compile){
+}).controller("ReportController",function($scope,$http,$routeParams,$sce,$q,DHIS2URL,$timeout,$compile,$location){
     $scope.data ={
 
     }
@@ -146,6 +146,9 @@ appControllers.controller('StandardReportController', function($scope,DHIS2URL,$
             });
         });
         return deffered.promise;
+    }
+    $scope.back = function(){
+        $location.path("/standardReport");
     }
     $scope.dataElements = [];
     $scope.renderHtml = function( html,dataElements){
