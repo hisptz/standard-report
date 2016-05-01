@@ -21,7 +21,7 @@ var app = angular.module('app',
 app.config(function($translateProvider,$routeProvider,fileManagerConfigProvider) {
     var defaults = fileManagerConfigProvider.$get();
     fileManagerConfigProvider.set({
-        appName: 'angular-filemanager',
+        appName: 'Report Archive Manager',
         allowedActions: angular.extend(defaults.allowedActions, {
             remove: true
         })
@@ -34,6 +34,12 @@ app.config(function($translateProvider,$routeProvider,fileManagerConfigProvider)
     }).when('/report/:dataSet/:orgUnit/:period', {
         controller: 'ReportController',
         templateUrl: 'views/report.html'
+    }).when('/report/:dataSet/:orgUnit/:period/preview', {
+        controller: 'ReportController',
+        templateUrl: 'views/report.html'
+    }).when('/reportRequest/:dataSet/:orgUnit/:period', {
+        controller: 'ReportRequestController',
+        templateUrl: 'views/reportRequest.html'
     }).when('/archive', {
         templateUrl: 'views/archive.html'
     }).otherwise({

@@ -1,122 +1,139 @@
 <!--mainPage--> <!-- Do not set style attr -->
-                        <span id="showLeftBars" class="pull-left hidden-sm hidden-xs">
+
+<span id="showLeftBars" class="pull-left hidden-sm hidden-xs">
                         <p>
-                        </p><div id="min" style="margin-top: 0px;"><a href="http://ards.go.tz/dhis-web-reporting/showDataSetReportForm.action#" onclick="javascript:minSide()" title="hide menu"><img src="../../../images/hide_menu.png" width="16" height="16"></a></div>
-                        <div id="max" style="display: none; margin-top: 0px;"><a href="http://ards.go.tz/dhis-web-reporting/showDataSetReportForm.action#" onclick="javascript:maxSide()" title="show menu"><img src="../../../images/extend_menu.png" width="16" height="16"></a></div>
+                        </p><div id="min" style="margin-top: 0px;"><a
+        href="http://ards.go.tz/dhis-web-reporting/showDataSetReportForm.action#" onclick="javascript:minSide()"
+        title="hide menu"><img src="../../../images/hide_menu.png" width="16" height="16"></a></div>
+                        <div id="max" style="display: none; margin-top: 0px;"><a
+                                href="http://ards.go.tz/dhis-web-reporting/showDataSetReportForm.action#"
+                                onclick="javascript:maxSide()" title="show menu"><img
+                                src="../../../images/extend_menu.png" width="16" height="16"></a></div>
                             <p></p>
 
                         </span>
-    <script type="text/javascript">
-        /*jQuery(document).ready(function() {
+<script type="text/javascript">
+    /*jQuery(document).ready(function() {
 
-            selectionTreeSelection.setMultipleSelectionAllowed( false );
-            selectionTree.clearSelectedOrganisationUnits();
-            selectionTree.buildSelectionTree();
-
-
-            // logging user activities
-            monitorLoadedReport();
-        });
-
-        var i18n_select_data_set = 'Please select a form';
-        var i18n_select_period = 'Please select a period';
-        var i18n_select_organisation_unit = 'Please select an administrative unit';
-        var i18n_generating_report = 'Generating report';
-        var i18n_share_your_interpretation = 'Share your comments';
-        var i18n_interpretation_was_shared = 'Comments was shared';
-        var i18n_select_option_view_all = 'Select option \/ View all';
-
-        $(document).ready(function(){
-            $("option:contains(Entry)").remove();
-            $("option:contains(Estimates)").remove();
-            $("option[value=Monthly]");
-            $("option[value=Quarterly]");
-            $("option[value=FinancialJuly]");
-            $("option[value=Daily]").remove();
-            $("option[value=Weekly]").remove();
-            $("option[value=BiMonthly]").remove();
-            $("option[value=SixMonthly]").remove();
-            $("option[value=SixMonthlyApril]").remove();
-            $("option[value=Yearly]").remove();
-            $("option[value=FinancialApril]").remove();
-            $("option[value=FinancialOct]").remove();
-        });*/
-
-    </script>
-
-    <style type="text/css">
-        div#control {
-            margin-bottom: 15px;
-        }
-
-        div.inputSection {
-            padding-top: 7px;
-            padding-bottom: 5px;
-        }
-    </style>
-
-    <h3 id="dataSetReportHeader">Standard Report <a href="javascript:getHelpContent('dataset_reports')" title="Help"><i class="fa fa-question-circle"></i></a>
-    </h3>
-    <div ng-if="!trustedHtml && !loadingReport" id="criteria" class="inputCriteria" style="width: 360px; margin-top: 0px;">
-
-        <!-- Data set -->
-
-        <div class="inputSection" style="margin-top: 0px;">
-            <label>Report</label><br>
-            <select ng-options="dataSet as dataSet.name for dataSet in data.dataSets" style="width:330px" ng-model="data.dataSet">
-                <option value="">[ Select Data Set ] </option>
-                <!--<option value="">[ Select ]</option>
-
-                <option ng-repeat="dataSet in data.dataSets">
-                    {{dataSet.name}}
-                </option>-->
-            </select>
-        </div>
-
-        <div id="dimensionsDiv" style="display: none; margin-top: 0px;"></div>
-
-        <!-- Period -->
-
-        <div class="inputSection" style="margin-top: 0px;">
-            <label>Report Period</label><br>
-
-            {{data.periodTypes[data.dataSet.periodType].name}} - {{data.period}}
-            <input type="button" style="width:75px" value="Prev year" ng-click="displayPreviousPeriods()">
-            <input type="button" style="width:75px" value="Next year" ng-click="displayNextPeriods()"><br>
-
-            <select                ng-model="data.period" style="width:330px"> <!--  ng-options="item.name as item.value for item in data.periodTypes[data.dataSet.periodType].list"-->
-                <option value="">[ Select Period ] </option>
-                <option ng-repeat="periodType in data.periodTypes[data.dataSet.periodType].list"  ng-value="periodType.value">
-                    {{periodType.name}}
-                </option>
-            </select>
-        </div>
-
-        <!-- Organisation unit -->
-
-        <div class="inputSection" style="margin-top: 0px;">
-            <label>Use data for selected unit only</label>
-            <input type="checkbox" id="selectedUnitOnly" name="selectedUnitOnly" value="true">
-        </div>
-
-        <div class="inputSection" style="margin-top: 0px;">
-            <label>Report Adminstrative Units</label><br>
-            <div style="width: 328px; height: 200px; overflow: auto; border: 1px solid rgb(204, 204, 204); margin-bottom: 8px; margin-top: 0px; background-image: url(&quot;../images/ajax-loader-circle.gif&quot;); background-repeat: no-repeat;">
-                <div ng-if="!data.organisationUnits" class="loader" style="margin-top: 0px;"><img src="../../../images/ajax-loader-bar.gif"></div>
-                <c-tree ng-if="data.organisationUnits" tree-modal='data.organisationUnits' ng-model="data.selectedOrgUnit" config="{}"></c-tree>
-            </div>
-        </div>
-
-        <!-- Org unit group sets -->
-
-        <div id="advancedOptions" style="display: none; margin-top: 0px;">
-        </div>
+     selectionTreeSelection.setMultipleSelectionAllowed( false );
+     selectionTree.clearSelectedOrganisationUnits();
+     selectionTree.buildSelectionTree();
 
 
-        <div class="inputSection" style="margin-top: 0px;">
-            <input type="button" ng-disabled="!data.dataSet || !data.selectedOrgUnit.name || data.period == ''" value="Get report" style="width:120px" ng-click="generateDataSetReport()" html-link="">
-            <input type="button" value="Cancel" style="width:120px" onclick="dhis2.dsr.hideCriteria()">
-        </div>
+     // logging user activities
+     monitorLoadedReport();
+     });
 
+     var i18n_select_data_set = 'Please select a form';
+     var i18n_select_period = 'Please select a period';
+     var i18n_select_organisation_unit = 'Please select an administrative unit';
+     var i18n_generating_report = 'Generating report';
+     var i18n_share_your_interpretation = 'Share your comments';
+     var i18n_interpretation_was_shared = 'Comments was shared';
+     var i18n_select_option_view_all = 'Select option \/ View all';
+
+     $(document).ready(function(){
+     $("option:contains(Entry)").remove();
+     $("option:contains(Estimates)").remove();
+     $("option[value=Monthly]");
+     $("option[value=Quarterly]");
+     $("option[value=FinancialJuly]");
+     $("option[value=Daily]").remove();
+     $("option[value=Weekly]").remove();
+     $("option[value=BiMonthly]").remove();
+     $("option[value=SixMonthly]").remove();
+     $("option[value=SixMonthlyApril]").remove();
+     $("option[value=Yearly]").remove();
+     $("option[value=FinancialApril]").remove();
+     $("option[value=FinancialOct]").remove();
+     });*/
+
+</script>
+
+<style type="text/css">
+    div#control {
+        margin-bottom: 15px;
+    }
+
+    div.inputSection {
+        padding-top: 7px;
+        padding-bottom: 5px;
+    }
+</style>
+
+<h3 id="dataSetReportHeader">Standard Report <a href="javascript:getHelpContent('dataset_reports')" title="Help"><i
+        class="fa fa-question-circle"></i></a>
+</h3>
+<div  ng-if="loadTracker" class="loader" style="margin-top: 0px;">
+    <img
+            src="../../../images/ajax-loader-bar.gif"> {{loadTracker}}
+</div>
+<div ng-if="!loadTracker" id="criteria" class="inputCriteria" style="width: 360px; margin-top: 0px;">
+
+    <!-- Data set -->
+
+    <div class="inputSection" style="margin-top: 0px;">
+        <label>Report</label><br>
+        <select ng-options="dataSet as dataSet.name for dataSet in data.dataSets" style="width:330px"
+                ng-model="data.dataSet">
+            <option value="">[ Select Data Set ]</option>
+            <!--<option value="">[ Select ]</option>
+
+            <option ng-repeat="dataSet in data.dataSets">
+                {{dataSet.name}}
+            </option>-->
+        </select>
     </div>
+
+    <div id="dimensionsDiv" style="display: none; margin-top: 0px;"></div>
+
+    <!-- Period -->
+
+    <div class="inputSection" style="margin-top: 0px;">
+        <label>Report Period</label><br>
+
+        {{data.periodTypes[data.dataSet.periodType].name}} - {{data.period}}
+        <input type="button" style="width:75px" value="Prev year" ng-click="displayPreviousPeriods()">
+        <input type="button" style="width:75px" value="Next year" ng-click="displayNextPeriods()"><br>
+
+        <select ng-model="data.period" style="width:330px">
+            <!--  ng-options="item.name as item.value for item in data.periodTypes[data.dataSet.periodType].list"-->
+            <option value="">[ Select Period ]</option>
+            <option ng-repeat="periodType in data.periodTypes[data.dataSet.periodType].list"
+                    ng-value="periodType.value">
+                {{periodType.name}}
+            </option>
+        </select>
+    </div>
+
+    <!-- Organisation unit -->
+
+    <div class="inputSection" style="margin-top: 0px;">
+        <label>Use data for selected unit only</label>
+        <input type="checkbox" id="selectedUnitOnly" name="selectedUnitOnly" value="true">
+    </div>
+
+    <div class="inputSection" style="margin-top: 0px;">
+        <label>Report Adminstrative Units</label><br>
+        <div style="width: 328px; height: 200px; overflow: auto; border: 1px solid rgb(204, 204, 204); margin-bottom: 8px; margin-top: 0px; background-image: url(&quot;../images/ajax-loader-circle.gif&quot;); background-repeat: no-repeat;">
+            <div ng-if="!data.organisationUnits" class="loader" style="margin-top: 0px;"><img
+                    src="../../../images/ajax-loader-bar.gif"></div>
+            <c-tree ng-if="data.organisationUnits" tree-modal='data.organisationUnits' ng-model="data.selectedOrgUnit"
+                    config="{}"></c-tree>
+        </div>
+    </div>
+
+    <!-- Org unit group sets -->
+
+    <div id="advancedOptions" style="display: none; margin-top: 0px;">
+    </div>
+
+
+    <div class="inputSection" style="margin-top: 0px;">
+        <input type="button" ng-disabled="!data.dataSet || !data.selectedOrgUnit.name || data.period == ''" value="Get Report" style="width:120px" ng-click="generateDataSetReport()">
+        <input type="button"
+               value="Cancel" style="width:120px" ng-click="createDataSetReport()" html-link="">
+    </div>
+
+</div>
 

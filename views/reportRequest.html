@@ -1,10 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<style>
+    .red{
+        background-color:lightcoral;
+    }
+    .green{
+        background-color: darkseagreen;
+    }
+</style>
+<div class="col-sm-6">
+    <div ng-if="loadingArchive" class="loader" style="margin-top: 0px;">
+        <img
+                src="../../../images/ajax-loader-bar.gif"> Checking Archive..
+    </div>
+    <div  class="row" ng-if="!data.archive">
+        <div>
+            <div ng-if="!completeDataSetRegistrations" class="loader" style="margin-top: 0px;">
+                <img
+                        src="../../../images/ajax-loader-bar.gif"> Showing Ward Completenes..
+            </div>
+            <div class="col-sm-12">
+                <input type="button" value="Preview" class="btn btn-success" ng-click="generateDataSetReport()">
+                <input type="button" class="btn btn-success"
+                       value="Create report" style="width:120px" ng-click="createDataSetReport()" html-link="">
+            </div>
+            <div class="col-sm-12">
+                <br />
+                <h4>Form Completion Status</h4>
+            <table class="table" ng-if="completeDataSetRegistrations">
+                <tr><th>Organisation Unit</th><th>Status</th></tr>
+                <tr ng-repeat="orgUnit in data.organisationUnit.children">
+                    <td>{{orgUnit.name}}</td><td ng-class="{red:getOrgUnitStatus(orgUnit.id)=='Incomplete',green:getOrgUnitStatus(orgUnit.id)=='Complete'}">{{getOrgUnitStatus(orgUnit.id)}}</td>
+                </tr>
+            </table>
+            </div>
+        </div>
 
-</body>
-</html>
+
+    </div>
+    <div ng-if="data.archive">
+        <div ng-if="data.archive.executed == 'true'">
+            <input type="button" value="View Report" class="btn btn-success" ng-click="generateDataSetReport()"
+                   html-link="">
+            <input type="button" value="Download PDF" class="btn btn-success">
+        </div>
+        <div ng-if="data.archive.executed == 'false'">
+            The report is still being processed. <input type="button" value="Preview" class="btn btn-success" ng-click="generateDataSetReport()">
+        </div>
+    </div>
+</div>
