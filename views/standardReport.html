@@ -64,7 +64,7 @@
 <h3 id="dataSetReportHeader">Standard Report <a href="javascript:getHelpContent('dataset_reports')" title="Help"><i
         class="fa fa-question-circle"></i></a>
 </h3>
-<div  ng-if="loadTracker" class="loader" style="margin-top: 0px;">
+<div ng-if="loadTracker" class="loader" style="margin-top: 0px;">
     <img
             src="../../../images/ajax-loader-bar.gif"> {{loadTracker}}
 </div>
@@ -92,11 +92,8 @@
     <div class="inputSection" style="margin-top: 0px;">
         <label>Report Period</label><br>
 
-        {{data.periodTypes[data.dataSet.periodType].name}} - {{data.period}}
-        <input type="button" style="width:75px" value="Prev year" ng-click="displayPreviousPeriods()">
-        <input type="button" style="width:75px" value="Next year" ng-click="displayNextPeriods()"><br>
 
-        <select ng-model="data.period" style="width:330px">
+        <select ng-model="data.period" style="width:185px">
             <!--  ng-options="item.name as item.value for item in data.periodTypes[data.dataSet.periodType].list"-->
             <option value="">[ Select Period ]</option>
             <option ng-repeat="periodType in data.periodTypes[data.dataSet.periodType].list"
@@ -104,6 +101,8 @@
                 {{periodType.name}}
             </option>
         </select>
+        <input type="button" style="width:70px" value="Prev year" ng-click="displayPreviousPeriods()">
+        <input type="button" style="width:70px" value="Next year" ng-click="displayNextPeriods()"><br>
     </div>
 
     <!-- Organisation unit -->
@@ -130,10 +129,21 @@
 
 
     <div class="inputSection" style="margin-top: 0px;">
-        <input type="button" ng-disabled="!data.dataSet || !data.selectedOrgUnit.name || data.period == ''" value="Get Report" style="width:120px" ng-click="generateDataSetReport()">
-        <input type="button"
-               value="Cancel" style="width:120px" ng-click="createDataSetReport()" html-link="">
+        <input class="btn btn-success" type="button" ng-disabled="!data.dataSet || !data.selectedOrgUnit.name || data.period == ''"
+               value="Get Report" style="width:120px" ng-click="generateDataSetReport()">
+        <input class="btn btn-danger" type="button"
+               value="Cancel" style="width:120px" ng-click="cancel()" html-link="">
     </div>
 
 </div>
-
+<!--<form>
+    <div class="row">
+        <div class="col-sm-6 form-group">
+            <label for="reportid">Report</label>
+            <select ng-options="dataSet as dataSet.name for dataSet in data.dataSets"  class="form-control"
+                    ng-model="data.dataSet">
+                <option value="">[ Select Data Set ]</option>
+            </select>
+        </div>
+    </div>
+</form>-->

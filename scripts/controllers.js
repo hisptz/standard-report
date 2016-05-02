@@ -71,6 +71,9 @@ var appControllers = angular.module('appControllers', [])
                 }
             }
         };
+        $scope.cancel = function(){
+
+        }
         $scope.currentDate = new Date();
         $scope.displayPreviousPeriods = function () {
             $scope.currentDate = new Date($scope.currentDate.getFullYear() - 1, $scope.currentDate.getMonth(), $scope.currentDate.getDate());
@@ -127,6 +130,7 @@ var appControllers = angular.module('appControllers', [])
         })
     })
     .controller("ReportRequestController", function ($scope, $routeParams, $http, DHIS2URL, ReportService, $location) {
+
         $scope.data = {};
         $scope.generateDataSetReport = function () {
             $location.path("/report/" + $routeParams.dataSet + "/" + $routeParams.orgUnit + "/" + $routeParams.period);
@@ -150,6 +154,7 @@ var appControllers = angular.module('appControllers', [])
 
             });
         };
+        $scope.completeDataSetRegistrationsLoading = false;
         $scope.watchParameters = function () {
             $scope.loadingArchive = true;
             $scope.data.archive = undefined;
@@ -157,7 +162,6 @@ var appControllers = angular.module('appControllers', [])
             $http.get(DHIS2URL + "api/events.json?program=UZjKG3b3nwV").then(function (results) {
 
                 results.data.events.some(function (event) {
-                    console.log(event);
                     var object = {};
                     event.dataValues.forEach(function (dataValue) {
                         if (dataValue.dataElement == "YqpwEfWfLES") {
@@ -178,9 +182,10 @@ var appControllers = angular.module('appControllers', [])
                 });
                 $scope.loadingArchive = false;
                 if (!$scope.data.archive) {
+                    $scope.completeDataSetRegistrationsLoading = true;
                     var periodDate = ReportService.getPeriodDate($routeParams.period);
                     $http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + $routeParams.dataSet + "&orgUnit=" + $routeParams.orgUnit + "&startDate=" + periodDate.startDate + "&endDate=" + periodDate.endDate + "&children=true").then(function (results) {
-                        results.data = {
+                        /*results.data = {
                             completeDataSetRegistrations: [
                                 {
                                     dataSet: {
@@ -318,22 +323,26 @@ var appControllers = angular.module('appControllers', [])
                                     }
                                 }
                             ]
-                        };
+                        };*/
                         $scope.completeDataSetRegistrations = results.data.completeDataSetRegistrations;
+                        $scope.completeDataSetRegistrationsLoading = false;
 
                     });
                 }
             });
 
-        }
-        $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,children[id,name]")
-            .then(function (results) {
-                $scope.data.organisationUnit = results.data;
-                ReportService.sortOrganisationUnits($scope.data.organisationUnit);
-                $scope.watchParameters();
-                $scope.loadTracker = undefined;
-            });
-
+        };
+        $scope.user = {};
+        $http.get(DHIS2URL + "api/me.json?fields=:all,organisationUnits[level]").then(function (results) {
+            $scope.user = results.data;
+            $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,children[id,name]")
+                .then(function (results) {
+                    $scope.data.organisationUnit = results.data;
+                    ReportService.sortOrganisationUnits($scope.data.organisationUnit);
+                    $scope.watchParameters();
+                    $scope.loadTracker = undefined;
+                });
+        })
     })
     .controller("ReportController", function ($scope, $http, $routeParams, $sce, $q, DHIS2URL, $timeout, $compile, $location, ReportService) {
         $scope.data = {}
@@ -368,7 +377,7 @@ var appControllers = angular.module('appControllers', [])
                     for (var i = 0; i < Math.ceil($scope.nonAggregatedDataElements.length / common); i++) {
                         promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.nonAggregatedDataElements.slice(i * 10, i * 10 + common).join(";") + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit + ";"+children.join(";")+"&displayProperty=NAME")
                             .then(function (analyticsResults) {
-                                console.log(analyticsResults);
+                                //console.log(analyticsResults);
                                 analyticsResults.data.rows.forEach(function (row) {
                                     $scope.dataElementsData[row[0]] = row[2];
                                 });
@@ -396,7 +405,7 @@ var appControllers = angular.module('appControllers', [])
             var match = null;
             var newHtml = html;
             while ((match = inputRegEx.exec(html)) !== null) {
-                var idRegEx = /id="(.*?)-(.*?)-val"/;
+                //var idRegEx = /id="(.*?)-(.*?)-val"/;
 
                 var idMacth = null;
 
