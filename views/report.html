@@ -9,9 +9,11 @@
            value="Create Report" style="width:120px" ng-click="createDataSetReport()" html-link="">
     <input type="button" class="btn btn-success" value="Print" onclick="window.print()" style="width:140px; display:none;">
 </div>
+<br />
 <div>
-    <div ng-if="loadingReport" class="loader" style="margin-top: 0px;"><img src="../../../images/ajax-loader-bar.gif"></div>
-
+    <progressbar ng-if="loadingReport" class="progress-striped active" animate="true" max="100" value="progressValue" type="success">
+        <i>{{loadingStatus}}</i>
+    </progressbar>
     <div ng-class="{'hideReport':loadingReport}" id="report" ng-if="trustedHtml" ng-bind-html="trustedHtml">
 
     </div>

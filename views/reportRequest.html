@@ -8,21 +8,21 @@
     }
 </style>
 <div class="col-sm-6">
-    <div ng-if="loadingArchive" class="loader" style="margin-top: 0px;">
+    <div  ng-if="reportStatus == ''" class="loader" style="margin-top: 0px;">
         <img
                 src="../../../images/ajax-loader-bar.gif"> Checking Archive..
     </div>
-    <div class="row" ng-if="!data.archive">
+    <div class="row" ng-if="reportStatus == 'Starting'">
         <div>
-            <div ng-if="!completeDataSetRegistrations && completeDataSetRegistrationsLoading" class="loader" style="margin-top: 0px;">
-                <img
-                        src="../../../images/ajax-loader-bar.gif"> Showing Ward Completenes..
-            </div>
             <div class="col-sm-12">
                 <input type="button" class="btn btn-success"  ng-disabled="user.organisationUnits[0].level > 3"
                        value="Create report" style="width:120px" ng-click="createDataSetReport()" html-link="">
                 <input type="button" value="Preview" class="btn btn-primary" ng-click="generateDataSetReport()">
 
+            </div>
+            <div ng-if="!completeDataSetRegistrations && completeDataSetRegistrationsLoading" class="loader" style="margin-top: 0px;">
+                <img
+                        src="../../../images/ajax-loader-bar.gif"> Showing Ward Completenes..
             </div>
             <div class="col-sm-12" ng-if="completeDataSetRegistrations">
                 <br/>
@@ -61,15 +61,14 @@
 
 
     </div>
-    <div ng-if="data.archive">
-        <div ng-if="data.archive.executed == 'true'">
-            <input type="button" value="View Report" class="btn btn-success" ng-click="generateDataSetReport()"
+    <div ng-if="reportStatus == 'Executed'">
+        <input type="button" value="View Report" class="btn btn-success" ng-click="generateDataSetReport()"
                    html-link="">
-            <input type="button" value="Download PDF" class="btn btn-success">
-        </div>
-        <div ng-if="data.archive.executed == 'false'">
-            The report is still being processed. <input type="button" value="Preview" class="btn btn-success"
-                                                        ng-click="generateDataSetReport()">
-        </div>
+        <input type="button" value="Download PDF" class="btn btn-success">
+        <input type="button" value="Undo Report Creation" class="btn btn-danger" ng-click="undoDataSetReport()">
+    </div>
+    <div  ng-if="reportStatus == 'Not Executed'">
+        The report is being processed. <br /><br /><input type="button" value="Preview" class="btn btn-success"
+                                              ng-click="generateDataSetReport()">
     </div>
 </div>

@@ -35,45 +35,25 @@ var appServices = angular.module('appServices', ['ngResource'])
                     returnDate.startDate = period.substr(0, 4) + "-" + period.substr(5) + "-01";
                     returnDate.endDate = period.substr(0, 4) + "-" + period.substr(5) + "-31";
                 }
-                console.log(returnDate);
                 return returnDate;
             },
             createDataSetReport: function (data) {
                 var deffered = $q.defer();
-                $http.get(DHIS2URL + "api/me.json")
+                $http.post(DHIS2URL + "api/dataStore/notExecuted/" + data.orgUnit + "_" + data.dataSet + "_" + data.period,{})
                     .then(function (results) {
-
-                        var event = {
-                            "program": archiveProgram.id,
-                            "orgUnit": data.orgUnit,
-                            "eventDate": new Date(),
-                            "status": "COMPLETED",
-                            "storedBy": results.data.displayName,
-                            "dataValues": []
-                        };
-                        console.log(archiveProgram);
-                        archiveProgram.programStages[0].programStageDataElements.forEach(function (dataElement) {
-                            dataElement = dataElement.dataElement;
-                            console.log(dataElement);
-                            if (dataElement.name == "Data Set") {
-                                event.dataValues.push({"dataElement": dataElement.id, "value": data.dataSet})
-                            } else if (dataElement.name == "Organisation Unit") {
-                                event.dataValues.push({
-                                    "dataElement": dataElement.id,
-                                    "value": data.orgUnit
-                                })
-                            } else if (dataElement.name == "Period") {
-                                event.dataValues.push({"dataElement": dataElement.id, "value": data.period})
-                            } else if (dataElement.name == "Executed") {
-                                event.dataValues.push({"dataElement": dataElement.id, "value": "false"})
-                            }
+                        console.log(results);
+                        deffered.resolve();
+                    });
+                return deffered.promise;
+            },
+            undoDataSetReport:function(data){
+                var deffered = $q.defer();
+                var that = this;
+                $http.delete(DHIS2URL + "api/dataStore/executed/" + data.orgUnit + "_" + data.dataSet + "_" + data.period)
+                    .then(function (results) {
+                        that.createDataSetReport(data).then(function(){
+                            deffered.resolve();
                         });
-                        console.log(event);
-                        $http.post(DHIS2URL + "api/events", event)
-                            .then(function (results) {
-                                deffered.resolve();
-                                $location.path("/report/" + data.dataSet + "/" + data.orgUnit + "/" + data.period);
-                            });
                     });
                 return deffered.promise;
             }

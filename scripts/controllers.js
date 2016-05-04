@@ -151,182 +151,192 @@ var appControllers = angular.module('appControllers', [])
                 period: $routeParams.period,
                 dataSet: $routeParams.dataSet
             }).then(function () {
-
+                $scope.reportStatus = "Not Executed";
+            });
+        };
+        $scope.undoDataSetReport = function () {
+            ReportService.undoDataSetReport({
+                orgUnit: $routeParams.orgUnit,
+                period: $routeParams.period,
+                dataSet: $routeParams.dataSet
+            }).then(function () {
+                $scope.generateDataSetReport();
             });
         };
         $scope.completeDataSetRegistrationsLoading = false;
+        $scope.reportStatus = "";
         $scope.watchParameters = function () {
             $scope.loadingArchive = true;
             $scope.data.archive = undefined;
             $scope.completeDataSetRegistrations = undefined;
-            $http.get(DHIS2URL + "api/events.json?program=UZjKG3b3nwV").then(function (results) {
+            //Check if the report is in the not executed namespace
+            $http.get(DHIS2URL + "api/dataStore/notExecuted/" + $routeParams.orgUnit + "_" + $routeParams.dataSet + "_" + $routeParams.period).then(function (results) {
 
-                results.data.events.some(function (event) {
-                    var object = {};
-                    event.dataValues.forEach(function (dataValue) {
-                        if (dataValue.dataElement == "YqpwEfWfLES") {
-                            object.executed = dataValue.value;
-                        } else if (dataValue.dataElement == "ryFbRNTXaPv") {
-                            object.orgUnit = dataValue.value;
-                        } else if (dataValue.dataElement == "nEjiPZBouTt") {
-                            object.dataSet = dataValue.value;
-                        } else if (dataValue.dataElement == "anCz0r9geaE") {
-                            object.period = dataValue.value;
+                $scope.reportStatus = "Not Executed";
+            },function(error){
+                if(error.data.httpStatusCode == 404){
+                    //Check if the report is in the executed namespace
+                    $http.get(DHIS2URL + "api/dataStore/executed/" + $routeParams.orgUnit + "_" + $routeParams.dataSet + "_" + $routeParams.period).then(function (results) {
+
+                        $scope.reportStatus = "Executed";
+                    },function(error){
+                        if(error.data.httpStatusCode == 404){
+                            $scope.reportStatus = "Starting";
+                            $scope.loadingArchive = false;
+                            if (!$scope.data.archive) {
+                                $scope.completeDataSetRegistrationsLoading = true;
+                                var periodDate = ReportService.getPeriodDate($routeParams.period);
+                                $http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + $routeParams.dataSet + "&orgUnit=" + $routeParams.orgUnit + "&startDate=" + periodDate.startDate + "&endDate=" + periodDate.endDate + "&children=true").then(function (results) {
+                                    /*results.data = {
+                                     completeDataSetRegistrations: [
+                                     {
+                                     dataSet: {
+                                     name: "Lars: Mod2",
+                                     created: "2016-01-15T14:29:22.282+0000",
+                                     lastUpdated: "2016-04-21T13:01:55.611+0000",
+                                     externalAccess: false,
+                                     publicAccess: "rw------",
+                                     user: {
+                                     name: "John Francis Mukulu",
+                                     created: "2013-04-17T03:14:31.327+0000",
+                                     lastUpdated: "2016-02-23T11:53:02.937+0000",
+                                     externalAccess: false,
+                                     displayName: "John Francis Mukulu",
+                                     id: "I9adYOw0VBL"
+                                     },
+                                     displayName: "Lars: Mod2",
+                                     id: "KXIWDEtpS8F"
+                                     },
+                                     period: {
+                                     code: "2015Q2",
+                                     name: "2015Q2",
+                                     externalAccess: false,
+                                     displayName: "2015Q2",
+                                     id: "2015Q2"
+                                     },
+                                     attributeOptionCombo: {
+                                     name: "default",
+                                     created: "2012-01-15T04:01:25.683+0000",
+                                     lastUpdated: "2015-07-19T17:20:04.363+0000",
+                                     externalAccess: false,
+                                     displayName: "default",
+                                     id: "uGIJ6IdkP7Q"
+                                     },
+                                     date: "2016-04-20T12:14:12.022+0000",
+                                     storedBy: "Training",
+                                     organisationUnit: {
+                                     code: "100642-8",
+                                     name: "Buzuruga Health Center",
+                                     created: "2012-03-02T08:00:19.035+0000",
+                                     lastUpdated: "2016-03-04T16:06:19.355+0000",
+                                     externalAccess: false,
+                                     displayName: "Buzuruga Health Center",
+                                     id: "wardId99184"
+                                     }
+                                     },
+                                     {
+                                     dataSet: {
+                                     name: "Lars: Mod2",
+                                     created: "2016-01-15T14:29:22.282+0000",
+                                     lastUpdated: "2016-04-21T13:01:55.611+0000",
+                                     externalAccess: false,
+                                     publicAccess: "rw------",
+                                     user: {
+                                     name: "John Francis Mukulu",
+                                     created: "2013-04-17T03:14:31.327+0000",
+                                     lastUpdated: "2016-02-23T11:53:02.937+0000",
+                                     externalAccess: false,
+                                     displayName: "John Francis Mukulu",
+                                     id: "I9adYOw0VBL"
+                                     },
+                                     displayName: "Lars: Mod2",
+                                     id: "wardId99189"
+                                     },
+                                     period: {
+                                     code: "2015Q4",
+                                     name: "2015Q4",
+                                     externalAccess: false,
+                                     displayName: "2015Q4",
+                                     id: "2015Q4"
+                                     },
+                                     attributeOptionCombo: {
+                                     name: "default",
+                                     created: "2012-01-15T04:01:25.683+0000",
+                                     lastUpdated: "2015-07-19T17:20:04.363+0000",
+                                     externalAccess: false,
+                                     displayName: "default",
+                                     id: "uGIJ6IdkP7Q"
+                                     },
+                                     date: "2016-04-28T10:15:38.105+0000",
+                                     storedBy: "Training",
+                                     organisationUnit: {
+                                     code: "103662-3",
+                                     name: "Luhanga Dispensary",
+                                     created: "2012-03-02T08:00:19.047+0000",
+                                     lastUpdated: "2016-03-04T16:03:14.570+0000",
+                                     externalAccess: false,
+                                     displayName: "Luhanga Dispensary",
+                                     id: "wardId99195"
+                                     }
+                                     },
+                                     {
+                                     dataSet: {
+                                     name: "Lars: Mod2",
+                                     created: "2016-01-15T14:29:22.282+0000",
+                                     lastUpdated: "2016-04-21T13:01:55.611+0000",
+                                     externalAccess: false,
+                                     publicAccess: "rw------",
+                                     user: {
+                                     name: "John Francis Mukulu",
+                                     created: "2013-04-17T03:14:31.327+0000",
+                                     lastUpdated: "2016-02-23T11:53:02.937+0000",
+                                     externalAccess: false,
+                                     displayName: "John Francis Mukulu",
+                                     id: "I9adYOw0VBL"
+                                     },
+                                     displayName: "Lars: Mod2",
+                                     id: "KXIWDEtpS8F"
+                                     },
+                                     period: {
+                                     code: "2015Q4",
+                                     name: "2015Q4",
+                                     externalAccess: false,
+                                     displayName: "2015Q4",
+                                     id: "2015Q4"
+                                     },
+                                     attributeOptionCombo: {
+                                     name: "default",
+                                     created: "2012-01-15T04:01:25.683+0000",
+                                     lastUpdated: "2015-07-19T17:20:04.363+0000",
+                                     externalAccess: false,
+                                     displayName: "default",
+                                     id: "uGIJ6IdkP7Q"
+                                     },
+                                     date: "2016-04-28T18:16:15.228+0000",
+                                     storedBy: "Training",
+                                     organisationUnit: {
+                                     code: "107276-8",
+                                     name: "Sangabuye Health Center",
+                                     created: "2012-03-02T08:00:19.049+0000",
+                                     lastUpdated: "2016-03-04T15:47:21.395+0000",
+                                     externalAccess: false,
+                                     displayName: "Sangabuye Health Center",
+                                     id: "wardId99190"
+                                     }
+                                     }
+                                     ]
+                                     };*/
+                                    if(results.data.completeDataSetRegistrations){
+                                        $scope.completeDataSetRegistrations = results.data.completeDataSetRegistrations;
+                                    }else{
+                                        $scope.completeDataSetRegistrations = [];
+                                    }
+
+                                    $scope.completeDataSetRegistrationsLoading = false;
+
+                                });
+                            }
                         }
-                    })
-                    if (object.orgUnit == $routeParams.orgUnit && object.dataSet == $routeParams.dataSet && object.period == $routeParams.period) {
-                        $scope.data.archive = object;
-                        return true;
-                    }
-                    return false;
-                });
-                $scope.loadingArchive = false;
-                if (!$scope.data.archive) {
-                    $scope.completeDataSetRegistrationsLoading = true;
-                    var periodDate = ReportService.getPeriodDate($routeParams.period);
-                    $http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + $routeParams.dataSet + "&orgUnit=" + $routeParams.orgUnit + "&startDate=" + periodDate.startDate + "&endDate=" + periodDate.endDate + "&children=true").then(function (results) {
-                        /*results.data = {
-                            completeDataSetRegistrations: [
-                                {
-                                    dataSet: {
-                                        name: "Lars: Mod2",
-                                        created: "2016-01-15T14:29:22.282+0000",
-                                        lastUpdated: "2016-04-21T13:01:55.611+0000",
-                                        externalAccess: false,
-                                        publicAccess: "rw------",
-                                        user: {
-                                            name: "John Francis Mukulu",
-                                            created: "2013-04-17T03:14:31.327+0000",
-                                            lastUpdated: "2016-02-23T11:53:02.937+0000",
-                                            externalAccess: false,
-                                            displayName: "John Francis Mukulu",
-                                            id: "I9adYOw0VBL"
-                                        },
-                                        displayName: "Lars: Mod2",
-                                        id: "KXIWDEtpS8F"
-                                    },
-                                    period: {
-                                        code: "2015Q2",
-                                        name: "2015Q2",
-                                        externalAccess: false,
-                                        displayName: "2015Q2",
-                                        id: "2015Q2"
-                                    },
-                                    attributeOptionCombo: {
-                                        name: "default",
-                                        created: "2012-01-15T04:01:25.683+0000",
-                                        lastUpdated: "2015-07-19T17:20:04.363+0000",
-                                        externalAccess: false,
-                                        displayName: "default",
-                                        id: "uGIJ6IdkP7Q"
-                                    },
-                                    date: "2016-04-20T12:14:12.022+0000",
-                                    storedBy: "Training",
-                                    organisationUnit: {
-                                        code: "100642-8",
-                                        name: "Buzuruga Health Center",
-                                        created: "2012-03-02T08:00:19.035+0000",
-                                        lastUpdated: "2016-03-04T16:06:19.355+0000",
-                                        externalAccess: false,
-                                        displayName: "Buzuruga Health Center",
-                                        id: "wardId99184"
-                                    }
-                                },
-                                {
-                                    dataSet: {
-                                        name: "Lars: Mod2",
-                                        created: "2016-01-15T14:29:22.282+0000",
-                                        lastUpdated: "2016-04-21T13:01:55.611+0000",
-                                        externalAccess: false,
-                                        publicAccess: "rw------",
-                                        user: {
-                                            name: "John Francis Mukulu",
-                                            created: "2013-04-17T03:14:31.327+0000",
-                                            lastUpdated: "2016-02-23T11:53:02.937+0000",
-                                            externalAccess: false,
-                                            displayName: "John Francis Mukulu",
-                                            id: "I9adYOw0VBL"
-                                        },
-                                        displayName: "Lars: Mod2",
-                                        id: "wardId99189"
-                                    },
-                                    period: {
-                                        code: "2015Q4",
-                                        name: "2015Q4",
-                                        externalAccess: false,
-                                        displayName: "2015Q4",
-                                        id: "2015Q4"
-                                    },
-                                    attributeOptionCombo: {
-                                        name: "default",
-                                        created: "2012-01-15T04:01:25.683+0000",
-                                        lastUpdated: "2015-07-19T17:20:04.363+0000",
-                                        externalAccess: false,
-                                        displayName: "default",
-                                        id: "uGIJ6IdkP7Q"
-                                    },
-                                    date: "2016-04-28T10:15:38.105+0000",
-                                    storedBy: "Training",
-                                    organisationUnit: {
-                                        code: "103662-3",
-                                        name: "Luhanga Dispensary",
-                                        created: "2012-03-02T08:00:19.047+0000",
-                                        lastUpdated: "2016-03-04T16:03:14.570+0000",
-                                        externalAccess: false,
-                                        displayName: "Luhanga Dispensary",
-                                        id: "wardId99195"
-                                    }
-                                },
-                                {
-                                    dataSet: {
-                                        name: "Lars: Mod2",
-                                        created: "2016-01-15T14:29:22.282+0000",
-                                        lastUpdated: "2016-04-21T13:01:55.611+0000",
-                                        externalAccess: false,
-                                        publicAccess: "rw------",
-                                        user: {
-                                            name: "John Francis Mukulu",
-                                            created: "2013-04-17T03:14:31.327+0000",
-                                            lastUpdated: "2016-02-23T11:53:02.937+0000",
-                                            externalAccess: false,
-                                            displayName: "John Francis Mukulu",
-                                            id: "I9adYOw0VBL"
-                                        },
-                                        displayName: "Lars: Mod2",
-                                        id: "KXIWDEtpS8F"
-                                    },
-                                    period: {
-                                        code: "2015Q4",
-                                        name: "2015Q4",
-                                        externalAccess: false,
-                                        displayName: "2015Q4",
-                                        id: "2015Q4"
-                                    },
-                                    attributeOptionCombo: {
-                                        name: "default",
-                                        created: "2012-01-15T04:01:25.683+0000",
-                                        lastUpdated: "2015-07-19T17:20:04.363+0000",
-                                        externalAccess: false,
-                                        displayName: "default",
-                                        id: "uGIJ6IdkP7Q"
-                                    },
-                                    date: "2016-04-28T18:16:15.228+0000",
-                                    storedBy: "Training",
-                                    organisationUnit: {
-                                        code: "107276-8",
-                                        name: "Sangabuye Health Center",
-                                        created: "2012-03-02T08:00:19.049+0000",
-                                        lastUpdated: "2016-03-04T15:47:21.395+0000",
-                                        externalAccess: false,
-                                        displayName: "Sangabuye Health Center",
-                                        id: "wardId99190"
-                                    }
-                                }
-                            ]
-                        };*/
-                        $scope.completeDataSetRegistrations = results.data.completeDataSetRegistrations;
-                        $scope.completeDataSetRegistrationsLoading = false;
-
                     });
                 }
             });
@@ -349,45 +359,92 @@ var appControllers = angular.module('appControllers', [])
         $scope.trustedHtml = undefined;
         $scope.loadingReport = false;
         $scope.preview = $routeParams.preview;
+
+        $scope.progressValue = 0;
+        $scope.loadingStatus = "Loading";
         $scope.getReport = function () {
             $scope.loadingReport = true;
             $scope.trustedHtml = undefined;
             var deffered = $q.defer();
             var promises = [];
             $scope.dataElementsData = {};
+            $scope.loadingStatus = "Loading Organisation Units";
             $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=:all").then(function (results) {
                 var organisationUnit = results.data;
                 var children = [];
                 organisationUnit.children.forEach(function(child){
                     children.push(child.id);
                 });
+                $scope.progressValue = 10;
+                $scope.loadingStatus = "Loading Data Set";
                 $http.get(DHIS2URL + "api/dataSets/" + $routeParams.dataSet + ".json?fields=:all,dataEntryForm[htmlCode],dataElements[id,valueType]").then(function (results) {
                     $scope.data.dataSetForm = results.data;
                     var trustedHtml = $scope.renderHtml(results.data.dataEntryForm.htmlCode, results.data.dataElements);
 
+                    $scope.loadingStatus = "Loading Data";
                     var common = 50;
+                    $scope.progressValue = 20;
+                    var progressFactor = 60 / (($scope.dataElements.length + $scope.nonAggregatedDataElements.length)/common);
                     for (var i = 0; i < Math.ceil($scope.dataElements.length / common); i++) {
-                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.dataElements.slice(i * 10, i * 10 + common).join(";") + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit + "&displayProperty=NAME")
+                        promises.push($http.get(DHIS2URL + "api/analytics.json?ag&dimension=dx:" + $scope.dataElements.slice(i * 10, i * 10 + common).join(";") + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit + "&displayProperty=NAME")
                             .then(function (analyticsResults) {
                                 analyticsResults.data.rows.forEach(function (row) {
                                     $scope.dataElementsData[row[0]] = row[2];
                                 });
                             }));
+                        $scope.progressValue = $scope.progressValue + progressFactor;
                     }
                     for (var i = 0; i < Math.ceil($scope.nonAggregatedDataElements.length / common); i++) {
-                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.nonAggregatedDataElements.slice(i * 10, i * 10 + common).join(";") + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit + ";"+children.join(";")+"&displayProperty=NAME")
+                        promises.push($http.get(DHIS2URL + "api/analytics.json?nag&dimension=dx:" + $scope.nonAggregatedDataElements.slice(i * 10, i * 10 + common).join(";") + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit + ";"+children.join(";")+"&displayProperty=NAME")
                             .then(function (analyticsResults) {
                                 //console.log(analyticsResults);
                                 analyticsResults.data.rows.forEach(function (row) {
                                     $scope.dataElementsData[row[0]] = row[2];
                                 });
+                                $scope.progressValue = $scope.progressValue + progressFactor;
+                            },function(error){
+                                console.log(error);
+                            }));
+                    }
+                    for (var i = 0; i < Math.ceil($scope.nonAggregatedDataElementsDate.length / common); i++) {
+                        promises.push($http.get(DHIS2URL + "api/analytics.json?nag&dimension=dx:" + $scope.nonAggregatedDataElementsDate.slice(i * 10, i * 10 + common).join(";") + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit + ";"+children.join(";")+"&displayProperty=NAME")
+                            .then(function (analyticsResults) {
+                                //console.log(analyticsResults);
+                                analyticsResults.data.rows.forEach(function (row) {
+                                    $scope.dataElementsData[row[0]] = row[2];
+                                });
+
+                            },function(error){
+                                //console.log(error);
                             }));
                     }
                     $q.all(promises).then(function () {
                         $scope.trustedHtml = trustedHtml;
                         //$scope.loadingReport = false;
-                        $timeout(function () {
-                            deffered.resolve();
+                        promises = [];
+
+                        var programIds = [];
+                        for(var programId in $scope.autogrowingPrograms){
+                            programIds.push(programId);
+                            promises.push($scope.fetchEventAnalytics(programId));
+                        }
+                        promises.push($http.get(DHIS2URL + "api/programs.json?fields=id,programStages[programStageDataElements[sortOrder,dataElement[:all]]]&filter=id:in:[" + programIds + "]")
+                            .then(function (results) {
+                                results.data.programs.forEach(function(program){
+                                    program.programStages[0].programStageDataElements.forEach(function(programStageDataElement){
+                                        var dataElement = programStageDataElement.dataElement;
+                                        dataElement.sortOrder = programStageDataElement.sortOrder;
+                                        $scope.autogrowingPrograms[program.id].dataElementsDetails.push(dataElement);
+                                    })
+                                });
+                            },function(error){
+                                console.log(error);
+                            }));
+                        $q.all(promises).then(function () {
+                            //$scope.loadingReport = false;
+                            $timeout(function () {
+                                deffered.resolve();
+                            });
                         });
                     });
                 });
@@ -395,15 +452,36 @@ var appControllers = angular.module('appControllers', [])
 
             return deffered.promise;
         }
+        var periodDate = ReportService.getPeriodDate($routeParams.period);
+        $scope.fetchEventAnalytics = function(programId){
+            $http.get(DHIS2URL + "api/analytics/events/query/"+programId+"?startDate="+periodDate.startDate+"&endDate="+periodDate.endDate+"&dimension=ou:"+$routeParams.orgUnit+"&dimension=" + $scope.autogrowingPrograms[programId].dataElements.join("&dimension="))
+                .then(function (analyticsResults) {
+                    //console.log(analyticsResults);
+                    analyticsResults.data.rows.forEach(function (row) {
+                        //$scope.dataElementsData[row[0]] = row[2];
+                        var object = {};
+                        analyticsResults.data.headers.forEach(function(header,index){
+                            object[header.column] = row[index];
+                        });
+                        $scope.autogrowingPrograms[programId].data.push(object);
+                    });
+
+                },function(error){
+                    console.log(error);
+                })
+        }
         $scope.back = function () {
             $location.path("/standardReport");
         }
         $scope.dataElements = [];
         $scope.nonAggregatedDataElements = [];
+        $scope.nonAggregatedDataElementsDate = [];
+        $scope.autogrowingPrograms = {};
         function performRender(html, dataElements) {
             var inputRegEx = /<input (.*?)>/g;
             var match = null;
             var newHtml = html;
+            //Render inputs
             while ((match = inputRegEx.exec(html)) !== null) {
                 //var idRegEx = /id="(.*?)-(.*?)-val"/;
 
@@ -411,16 +489,25 @@ var appControllers = angular.module('appControllers', [])
 
                 if ((idMacth = /id="(.*?)-(.*?)-val"/.exec(match[0])) !== null) {
                     var isValidAggregate = true;
+                    var isDate = false;
                     dataElements.forEach(function (dataElement) {
                         if (dataElement.id == idMacth[1] && (dataElement.valueType == "DATE" || dataElement.valueType == "TEXT")) {
                             isValidAggregate = false;
+                            if(dataElement.valueType == "DATE"){
+                                isDate = true;
+                            }
                         }
                     });
                     if (isValidAggregate) {
+
                         newHtml = newHtml.replace(match[0], "<label>{{dataElementsData['" + idMacth[1] + "." + idMacth[2] + "']}}</label>");
                         $scope.dataElements.push(idMacth[1] + "." + idMacth[2]);
                     } else {
-                        $scope.nonAggregatedDataElements.push(idMacth[1] + "." + idMacth[2]);
+                        if(isDate){
+                            $scope.nonAggregatedDataElementsDate.push(idMacth[1] + "." + idMacth[2]);
+                        }else{
+                            $scope.nonAggregatedDataElements.push(idMacth[1] + "." + idMacth[2]);
+                        }
                         newHtml = newHtml.replace(match[0], "<label id='" + idMacth[1] + "'>{{dataElementsData['" + idMacth[1] + "." + idMacth[2] + "']}}</label>");
                     }
                 } else if ((idMacth = /id="indicator(.*?)"/.exec(match[0])) !== null) {
@@ -430,9 +517,32 @@ var appControllers = angular.module('appControllers', [])
                     newHtml = newHtml.replace(match[0], "<label>{{dataElementsData['" + idMacth[1] + "']}}</label>");
                     $scope.dataElements.push(idMacth[1]);
                 } else {
-                    console.log(match);
+                    //console.log(match);
                 }
-            }
+            };
+            //Render autogrowing
+            var autogrowingRegEx = /<autogrowing(.*?)autogrowing>/g;
+            match = null;
+            //Render inputs
+            while ((match = autogrowingRegEx.exec(html)) !== null) {
+                var autogrowingMacth = null;
+
+                if ((autogrowingMacth = /config="(.*?)"/.exec(match[0])) !== null) {
+                    var config = eval('(' + autogrowingMacth[1] + ')');
+                    if($scope.autogrowingPrograms[config.programId]){
+                        $scope.autogrowingPrograms[config.programId].dataElements = $scope.autogrowingPrograms[config.programId].dataElements.concat(config.dataElements);
+                    }else{
+                        $scope.autogrowingPrograms[config.programId] = {
+                            dataElements:config.dataElements,
+                            dataElementsDetails:[],
+                            data:[]
+                        }
+                    }
+                    console.log(autogrowingMacth[0],"<autogrowing "+autogrowingMacth[0]+" config='autogrowingPrograms[" + config.programId + "]'></autogrowing>");
+                    newHtml = newHtml.replace(match[0], "<autogrowing  config='autogrowingPrograms[\"" + config.programId + "\"]'></autogrowing>");
+                }
+            };
+            console.log($scope.autogrowingPrograms);
             return newHtml;
         }
 
@@ -446,7 +556,7 @@ var appControllers = angular.module('appControllers', [])
             var reportElement = document.getElementById("report");
             $compile(reportElement.children)($scope);
             $timeout(function () {
-
+                $scope.progressValue = 100;
                 $scope.loadingReport = false;
             });
         });

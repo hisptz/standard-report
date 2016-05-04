@@ -3,7 +3,7 @@
 /* App Module */
 
 var app = angular.module('app',
-                    ['ui.bootstrap', 
+                    ['ui.bootstrap',
                      'ngRoute', 
                      'ngCookies', 
                      'ngSanitize',
