@@ -1,4 +1,5 @@
-<tr ng-repeat="dataElement in data.dataElements">
-    <td >{{dataElement.name}}</td>
-    <td >Data</td>
+<tbody>
+<tr>
+    <td ng-repeat="dataElement in data.dataElements">{{dataElement.event[dataElement.name]}}</td>
 </tr>
+</tbody>

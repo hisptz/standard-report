@@ -18,7 +18,7 @@
     <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/jquery.plugin.min.js"></script>
 
     <script type="text/javascript" src="../../../dhis-web-commons/bootstrap/js/bootstrap.min.js"></script>
-    <link type="text/css" rel="stylesheet"  href="../../../dhis-web-commons/bootstrap/css/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="../../../dhis-web-commons/bootstrap/css/bootstrap.min.css">
 
     <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular.js"></script>
     <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular-resource.js"></script>
@@ -29,11 +29,15 @@
     <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/ui-bootstrap.js"></script>
     <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.util.js"></script>
     <script type="text/javascript" src="../../../dhis-web-commons/javascripts/commons.js"></script>
+    <script type="text/javascript" src="../../../main.js"></script>
 
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/plugins/angularLocalStorage.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/plugins/angular-translate.min.js"></script>
+    <script type="text/javascript"
+            src="../../../dhis-web-commons/javascripts/angular/plugins/angularLocalStorage.js"></script>
+    <script type="text/javascript"
+            src="../../../dhis-web-commons/javascripts/angular/plugins/angular-translate.min.js"></script>
     <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.angular.services.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.angular.controllers.js"></script>
+    <script type="text/javascript"
+            src="../../../dhis-web-commons/javascripts/dhis2/dhis2.angular.controllers.js"></script>
     <script src="assets/js/ng-file-upload/ng-file-upload.min.js"></script>
     <script type="text/javascript" src="assets/js/filemanager/angular-filemanager.min.js"></script>
 
@@ -56,23 +60,39 @@
 
 </head>
 <style>
-    #leftBar,#headerMessage{
-        margin-top:50px
+    #mainPages {
+        margin-top: 150px
     }
-    .menuLink,.dropdown-toggle,.navbar-brand{
-        color:white !important;
+
+    #leftBar {
+        z-index: 100;
+        margin-top: 11px;
+    }
+    #showLeftBar{
+
+        margin-top: 110px;
+    }
+
+    .menuLink, .dropdown-toggle, .navbar-brand {
+        color: white !important;
     }
 </style>
 <body>
 <d2-header-bar style="display:none"></d2-header-bar>
 <div ng-include="'views/header.html'"></div>
-<div id="leftBar">
+<span id="showLeftBar" ng-style="showStyle">
+        <a href="javascript:dhis2.leftBar.showAnimated()" title="Show menu">
+            <i class="fa fa-arrow-right leftBarIcon"></i></a>
+      </span>
+<div id="leftBar" ng-style="leftBarStyle">
     <div id="hideLeftBar">
         <a href="../../../dhis-web-reporting/index.action" title="Show main menu" id="showMainMenuLink">
             <i class="fa fa-home leftBarIcon"></i></a>
-        <a href="javascript:dhis2.leftBar.hideAnimated()" title="Hide menu" id="hideMainMenuLink">
+        <a href="javascript:dhis2.leftBar.hideAnimated()" ng-click="myStyle={'margin-left': '50px'};showStyle={'display': 'block'}" title="Hide menu"
+           id="hideMainMenuLink">
             <i class="fa fa-arrow-left leftBarIcon"></i></a>
-        <a href="javascript:dhis2.leftBar.extendAnimated()" title="Extend menu" id="extendMainMenuLink">
+        <a href="javascript:dhis2.leftBar.extendAnimated()" ng-click="myStyle['margin-left']='270px';showStyle={'display': 'none'}"
+           title="Extend menu" id="extendMainMenuLink">
             <i class="fa fa-arrow-right leftBarIcon"></i></a>
     </div>
 
@@ -81,26 +101,24 @@
         <h2>Report&nbsp;</h2>
         <ul>
             <li><a href="#/standardReport">Standard Report&nbsp;</a></li>
-            <li><a href="../../../dhis-web-reporting/showDataSetReportForm.action">Data Set Report&nbsp;</a></li>
-            <li><a href="../../../dhis-web-reporting/displayViewDataCompletenessForm.action">Reporting Rate Summary&nbsp;</a></li>
+            <li><a href="../../../dhis-web-reporting/showDataSetReportForm.action">Custom Report&nbsp;</a></li>
+            <li><a href="../../../dhis-web-reporting/displayViewDataCompletenessForm.action">Submission Status&nbsp;</a>
+            </li>
             <li><a href="../../../dhis-web-reporting/displayViewDocumentForm.action">Resource&nbsp;</a></li>
-            <li><a href="../../../dhis-web-reporting/displayOrgUnitDistribution.action">Organisation Unit Report&nbsp;</a></li>
             <li><a href="../../../dhis-web-reporting/showDataApprovalForm.action">Data Approval&nbsp;</a></li>
-            <li><a href="../../../dhis-web-reporting/displayManageTableForm.action">Report Table&nbsp;</a></li>
-            <li><a href="#/archive">Archive</a></li>
         </ul>
 
         <h2>Analytics&nbsp;</h2>
         <ul>
-            <li><a href="../../../dhis-web-reporting/displayDataMartForm.action">Analytics&nbsp;</a></li>
+            <li><a href="../../../dhis-web-reporting/displayDataMartForm.action">Aggregation&nbsp;</a></li>
         </ul>
     </div>
 </div>
 
 <div id="headerMessage" class="bold"></div>
 
-<div style="padding-left:10px;padding-top:60px;margin-top:40px">
-    <div class="page" id="mainPages" ng-view></div>
+<div class="page" id="mainPages" ng-style="myStyle">
+    <div ng-view></div>
 </div>
 
 <script type="text/javascript">

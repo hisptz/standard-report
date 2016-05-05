@@ -82,11 +82,18 @@ var appDirectives = angular.module('appDirectives', [])
                 $scope.data = {
                     dataElements:[]
                 }
-                //console.log($scope.config);
+                console.log($scope.config);
                 $scope.config.dataElements.forEach(function(dataElementId){
                     $scope.config.dataElementsDetails.forEach(function(dataElement){
                         if(dataElement.id == dataElementId){
-                            $scope.data.dataElements.push(dataElement);
+                            dataElement.event = {};
+
+                            $scope.config.data.forEach(function(eventData){
+                                if(eventData[dataElement.name]){
+                                    dataElement.event = eventData;
+                                    $scope.data.dataElements.push(dataElement);
+                                }
+                            })
                         }
                     });
                 });

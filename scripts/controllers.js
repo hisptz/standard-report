@@ -354,7 +354,7 @@ var appControllers = angular.module('appControllers', [])
                 });
         })
     })
-    .controller("ReportController", function ($scope, $http, $routeParams, $sce, $q, DHIS2URL, $timeout, $compile, $location, ReportService) {
+    .controller("ReportController", function ($scope, $http, $routeParams, $sce, $q, DHIS2URL, $timeout, $compile, $location, ReportService,$window) {
         $scope.data = {}
         $scope.trustedHtml = undefined;
         $scope.loadingReport = false;
@@ -428,23 +428,28 @@ var appControllers = angular.module('appControllers', [])
                             programIds.push(programId);
                             promises.push($scope.fetchEventAnalytics(programId));
                         }
-                        promises.push($http.get(DHIS2URL + "api/programs.json?fields=id,programStages[programStageDataElements[sortOrder,dataElement[:all]]]&filter=id:in:[" + programIds + "]")
-                            .then(function (results) {
-                                results.data.programs.forEach(function(program){
-                                    program.programStages[0].programStageDataElements.forEach(function(programStageDataElement){
-                                        var dataElement = programStageDataElement.dataElement;
-                                        dataElement.sortOrder = programStageDataElement.sortOrder;
-                                        $scope.autogrowingPrograms[program.id].dataElementsDetails.push(dataElement);
-                                    })
-                                });
-                            },function(error){
-                                console.log(error);
-                            }));
                         $q.all(promises).then(function () {
+                            $http.get(DHIS2URL + "api/programs.json?fields=id,programStages[programStageDataElements[sortOrder,dataElement[:all]]]&filter=id:in:[" + programIds + "]")
+                                .then(function (results) {
+                                    results.data.programs.forEach(function(program){
+                                        program.programStages[0].programStageDataElements.forEach(function(programStageDataElement){
+                                            var dataElement = programStageDataElement.dataElement;
+                                            dataElement.sortOrder = programStageDataElement.sortOrder;
+                                            $scope.autogrowingPrograms[program.id].dataElementsDetails.push(dataElement);
+                                            if(program.id == "Do2HI9tvLGC"){
+                                                console.log($scope.autogrowingPrograms[program.id]);
+                                            }
+                                            //console.log($scope.autogrowingPrograms[program.id]);
+                                        })
+                                    });
+                                    $timeout(function () {
+                                        deffered.resolve();
+                                    });
+                                },function(error){
+                                    console.log(error);
+                                })
                             //$scope.loadingReport = false;
-                            $timeout(function () {
-                                deffered.resolve();
-                            });
+
                         });
                     });
                 });
@@ -456,9 +461,7 @@ var appControllers = angular.module('appControllers', [])
         $scope.fetchEventAnalytics = function(programId){
             $http.get(DHIS2URL + "api/analytics/events/query/"+programId+"?startDate="+periodDate.startDate+"&endDate="+periodDate.endDate+"&dimension=ou:"+$routeParams.orgUnit+"&dimension=" + $scope.autogrowingPrograms[programId].dataElements.join("&dimension="))
                 .then(function (analyticsResults) {
-                    //console.log(analyticsResults);
                     analyticsResults.data.rows.forEach(function (row) {
-                        //$scope.dataElementsData[row[0]] = row[2];
                         var object = {};
                         analyticsResults.data.headers.forEach(function(header,index){
                             object[header.column] = row[index];
@@ -521,12 +524,11 @@ var appControllers = angular.module('appControllers', [])
                 }
             };
             //Render autogrowing
-            var autogrowingRegEx = /<autogrowing(.*?)autogrowing>/g;
+            var autogrowingRegEx = /<tbody autogrowing(.*?)>/g;
             match = null;
             //Render inputs
             while ((match = autogrowingRegEx.exec(html)) !== null) {
                 var autogrowingMacth = null;
-
                 if ((autogrowingMacth = /config="(.*?)"/.exec(match[0])) !== null) {
                     var config = eval('(' + autogrowingMacth[1] + ')');
                     if($scope.autogrowingPrograms[config.programId]){
@@ -538,8 +540,8 @@ var appControllers = angular.module('appControllers', [])
                             data:[]
                         }
                     }
-                    console.log(autogrowingMacth[0],"<autogrowing "+autogrowingMacth[0]+" config='autogrowingPrograms[" + config.programId + "]'></autogrowing>");
-                    newHtml = newHtml.replace(match[0], "<autogrowing  config='autogrowingPrograms[\"" + config.programId + "\"]'></autogrowing>");
+                    //console.log(autogrowingMacth[0],"<autogrowing "+autogrowingMacth[0]+" config='autogrowingPrograms[" + config.programId + "]'></autogrowing>");
+                    newHtml = newHtml.replace(match[0], "<tbody autogrowing config='autogrowingPrograms[\"" + config.programId + "\"]'></tbody>");
                 }
             };
             console.log($scope.autogrowingPrograms);
@@ -558,6 +560,7 @@ var appControllers = angular.module('appControllers', [])
             $timeout(function () {
                 $scope.progressValue = 100;
                 $scope.loadingReport = false;
+                $window.document.title = "Report Loaded";
             });
         });
         $scope.createDataSetReport = function () {
