@@ -73,7 +73,7 @@ var appControllers = angular.module('appControllers', [])
         };
         $scope.cancel = function(){
 
-        }
+        };
         $scope.currentDate = new Date();
         $scope.displayPreviousPeriods = function () {
             $scope.currentDate = new Date($scope.currentDate.getFullYear() - 1, $scope.currentDate.getMonth(), $scope.currentDate.getDate());
@@ -129,9 +129,13 @@ var appControllers = angular.module('appControllers', [])
             $scope.user = results.data;
         })
     })
-    .controller("ReportRequestController", function ($scope, $routeParams, $http, DHIS2URL, ReportService, $location) {
+    .controller("ReportRequestController", function ($scope, $routeParams, $http, DHIS2URL, ReportService, $location,$sce) {
 
         $scope.data = {};
+        $scope.load = function(url){
+            $location.path(url);
+        };
+
         $scope.generateDataSetReport = function () {
             $location.path("/report/" + $routeParams.dataSet + "/" + $routeParams.orgUnit + "/" + $routeParams.period);
 
@@ -165,20 +169,24 @@ var appControllers = angular.module('appControllers', [])
         };
         $scope.completeDataSetRegistrationsLoading = false;
         $scope.reportStatus = "";
+        //$scope.file = undefinde;
         $scope.watchParameters = function () {
             $scope.loadingArchive = true;
             $scope.data.archive = undefined;
             $scope.completeDataSetRegistrations = undefined;
             //Check if the report is in the not executed namespace
-            $http.get(DHIS2URL + "api/dataStore/notExecuted/" + $routeParams.orgUnit + "_" + $routeParams.dataSet + "_" + $routeParams.period).then(function (results) {
+            $http.get(DHIS2URL + "api/dataStore/notExecuted/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
 
                 $scope.reportStatus = "Not Executed";
             },function(error){
                 if(error.data.httpStatusCode == 404){
                     //Check if the report is in the executed namespace
-                    $http.get(DHIS2URL + "api/dataStore/executed/" + $routeParams.orgUnit + "_" + $routeParams.dataSet + "_" + $routeParams.period).then(function (results) {
+                    $http.get(DHIS2URL + "api/dataStore/executed/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
 
                         $scope.reportStatus = "Executed";
+                        $http.get('../archive/' + $routeParams.dataSet + '_' + $routeParams.orgUnit + '_' +$routeParams.period + '.html').then(function(result){
+                            $scope.file = $sce.trustAsHtml(result.data);
+                        })
                     },function(error){
                         if(error.data.httpStatusCode == 404){
                             $scope.reportStatus = "Starting";
@@ -355,6 +363,9 @@ var appControllers = angular.module('appControllers', [])
         })
     })
     .controller("ReportController", function ($scope, $http, $routeParams, $sce, $q, DHIS2URL, $timeout, $compile, $location, ReportService,$window) {
+        $scope.load = function(url){
+            $location.path(url);
+        }
         $scope.data = {}
         $scope.trustedHtml = undefined;
         $scope.loadingReport = false;

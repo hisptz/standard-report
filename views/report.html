@@ -4,10 +4,9 @@
     }
 </style>
 <div ng-if="progressValue == 100" id="control" style="margin-top: 0px;">
-    <input type="button" class="btn btn-success" id="dataButton" value="Change Data Criteria" style="width:140px" ng-click="back()" ng-if="trustedHtml">
-    <input type="button" ng-if="preview"
-           value="Create Report" style="width:120px" ng-click="createDataSetReport()" html-link="">
-    <input type="button" class="btn btn-success" value="Print" onclick="window.print()" style="width:140px; display:none;">
+    <input type="button" id="dataButton" value="Change Data Criteria" style="width:140px" ng-click="back()" ng-if="trustedHtml">
+    <input type="button" ng-if="preview" value="Create Report" style="width:120px" ng-click="createDataSetReport()" html-link="">
+    <input type="button" value="Cancel" ng-click="load('/standardReport')">
 </div>
 <br />
 <div>

@@ -1,17 +1,6 @@
 <!--mainPage--> <!-- Do not set style attr -->
 
-<span id="showLeftBars" class="pull-left hidden-sm hidden-xs">
-                        <p>
-                        </p><div id="min" style="margin-top: 0px;"><a
-        href="http://ards.go.tz/dhis-web-reporting/showDataSetReportForm.action#" onclick="javascript:minSide()"
-        title="hide menu"><img src="../../../images/hide_menu.png" width="16" height="16"></a></div>
-                        <div id="max" style="display: none; margin-top: 0px;"><a
-                                href="http://ards.go.tz/dhis-web-reporting/showDataSetReportForm.action#"
-                                onclick="javascript:maxSide()" title="show menu"><img
-                                src="../../../images/extend_menu.png" width="16" height="16"></a></div>
-                            <p></p>
 
-                        </span>
 <script type="text/javascript">
     /*jQuery(document).ready(function() {
 
@@ -129,9 +118,10 @@
 
 
     <div class="inputSection" style="margin-top: 0px;">
-        <input class="btn btn-success" type="button" ng-disabled="!data.dataSet || !data.selectedOrgUnit.name || data.period == ''"
+        <input type="button"
+               ng-disabled="!data.dataSet || !data.selectedOrgUnit.name || data.period == ''"
                value="Get Report" style="width:120px" ng-click="generateDataSetReport()">
-        <input class="btn btn-danger" type="button"
+        <input type="button"
                value="Cancel" style="width:120px" ng-click="cancel()" html-link="">
     </div>
 

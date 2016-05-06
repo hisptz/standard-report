@@ -39,19 +39,19 @@ var appServices = angular.module('appServices', ['ngResource'])
             },
             createDataSetReport: function (data) {
                 var deffered = $q.defer();
-                $http.post(DHIS2URL + "api/dataStore/notExecuted/" + data.orgUnit + "_" + data.dataSet + "_" + data.period,{})
+                $http.post(DHIS2URL + "api/dataStore/notExecuted/" + data.dataSet + "_" + data.orgUnit + "_" + data.period, {})
                     .then(function (results) {
                         console.log(results);
                         deffered.resolve();
                     });
                 return deffered.promise;
             },
-            undoDataSetReport:function(data){
+            undoDataSetReport: function (data) {
                 var deffered = $q.defer();
                 var that = this;
-                $http.delete(DHIS2URL + "api/dataStore/executed/" + data.orgUnit + "_" + data.dataSet + "_" + data.period)
+                $http.delete(DHIS2URL + "api/dataStore/executed/" + data.dataSet + "_" + data.orgUnit + "_" + data.period)
                     .then(function (results) {
-                        that.createDataSetReport(data).then(function(){
+                        that.createDataSetReport(data).then(function () {
                             deffered.resolve();
                         });
                     });

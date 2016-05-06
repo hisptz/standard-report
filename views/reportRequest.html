@@ -15,10 +15,10 @@
     <div class="row" ng-if="reportStatus == 'Starting'">
         <div>
             <div class="col-sm-12">
-                <input type="button" class="btn btn-success"  ng-disabled="user.organisationUnits[0].level > 3"
+                <input type="button"  ng-disabled="user.organisationUnits[0].level > 3"
                        value="Create report" style="width:120px" ng-click="createDataSetReport()" html-link="">
-                <input type="button" value="Preview" class="btn btn-primary" ng-click="generateDataSetReport()">
-
+                <input type="button" value="Preview" ng-click="generateDataSetReport()">
+                <input type="button" value="Cancel" ng-click="load('/standardReport')">
             </div>
             <div ng-if="!completeDataSetRegistrations && completeDataSetRegistrationsLoading" class="loader" style="margin-top: 0px;">
                 <img
@@ -62,13 +62,15 @@
 
     </div>
     <div ng-if="reportStatus == 'Executed'">
-        <input type="button" value="View Report" class="btn btn-success" ng-click="generateDataSetReport()"
+        <input type="button" value="View Report" ng-click="generateDataSetReport()"
                    html-link="">
-        <input type="button" value="Download PDF" class="btn btn-success">
-        <input type="button" value="Undo Report Creation" class="btn btn-danger" ng-click="undoDataSetReport()">
+        <input type="button" value="Download PDF">
+        <input type="button" value="Undo Report Creation" ng-click="undoDataSetReport()">
+        <div ng-bind-html="file"></div>
     </div>
     <div  ng-if="reportStatus == 'Not Executed'">
-        The report is being processed. <br /><br /><input type="button" value="Preview" class="btn btn-success"
-                                              ng-click="generateDataSetReport()">
+        The report is being processed. <br /><br />
+        <input type="button" value="Preview" ng-click="generateDataSetReport()">
+        <input type="button" value="Cancel" ng-click="load('/standardReport')">
     </div>
 </div>

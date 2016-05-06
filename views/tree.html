@@ -5,10 +5,16 @@
     }
 </style>
 <script type="text/ng-template" id="dataTree">
-    <div><span ng-if="data[children] && data[children].length > 0" ng-class="{'glyphicon-plus':!data.expanded,'glyphicon-minus':data.expanded}"
+    <div>
+        <!--<span ng-if="data[children] && data[children].length > 0" ng-class="{'glyphicon-plus':!data.expanded,'glyphicon-minus':data.expanded}"
           class="icon expand-icon glyphicon"
           ng-click="data.expanded = !data.expanded;$event.stopPropagation()"
-    ></span><span ng-class="{'selected':data.selected}">{{ data.name }}</span>
+    ></span>-->
+        <span ng-if="data[children] && data[children].length > 0" ng-click="data.expanded = !data.expanded;$event.stopPropagation()">
+            <img ng-if="!data.expanded" width="12" height="12" src="../../../images/colapse.png" alt="[+]">
+        <img ng-if="data.expanded" width="12" height="12" src="../../../images/expand.png" alt="[-]">
+        </span>
+        <span ng-class="{'selected':data.selected}">{{ data.name }}</span>
     </div>
     <ul class="list-group" ng-if="(data[children] || data[children].length > 0) && data.expanded">
         <li class="list-group-item node-treeview1 node-selected" ng-repeat="data in data[children]" ng-click="select(data,$event)" ng-include="'dataTree'">
