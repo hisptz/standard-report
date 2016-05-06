@@ -64,7 +64,7 @@
     <div ng-if="reportStatus == 'Executed'">
         <input type="button" value="View Report" ng-click="generateDataSetReport()"
                    html-link="">
-        <input type="button" value="Download PDF">
+        <input type="button" value="Download PDF" ng-click="download()">
         <input type="button" value="Undo Report Creation" ng-click="undoDataSetReport()">
         <div ng-bind-html="file"></div>
     </div>

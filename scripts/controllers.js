@@ -135,6 +135,9 @@ var appControllers = angular.module('appControllers', [])
         $scope.load = function(url){
             $location.path(url);
         };
+        $scope.download = function(url){
+            window.open('../archive/' + $routeParams.dataSet + '_' + $routeParams.orgUnit + '_' +$routeParams.period + '.pdf', '_blank');
+        };
 
         $scope.generateDataSetReport = function () {
             $location.path("/report/" + $routeParams.dataSet + "/" + $routeParams.orgUnit + "/" + $routeParams.period);
