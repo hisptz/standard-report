@@ -11,7 +11,7 @@
     <script type="text/javascript">
         window.dhis2 = window.dhis2 || {};
         dhis2.settings = dhis2.settings || {};
-        dhis2.settings.baseUrl = 'ards';
+        dhis2.settings.baseUrl = 'demo';
     </script>
     <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/jquery.min.js"></script>
     <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/ui/jquery-ui.min.js"></script>
@@ -68,7 +68,8 @@
         z-index: 100;
         margin-top: 11px;
     }
-    #showLeftBar{
+
+    #showLeftBar {
 
         margin-top: 110px;
     }
@@ -77,23 +78,37 @@
         color: white !important;
     }
 </style>
+<script>
+    var showAnimated = function(){
+        dhis2.leftBar.showAnimated();
+    }
+    var hideAnimated = function(){
+        dhis2.leftBar.hideAnimated();
+    }
+    var extendAnimated = function(){
+        dhis2.leftBar.extendAnimated();
+    }
+</script>
 <body>
-<d2-header-bar style="display:none"></d2-header-bar>
-<div ng-include="'views/header.html'"></div>
+<d2-header-bar></d2-header-bar>
+<!--<div ng-include="'views/header.html'"></div>-->
 <span id="showLeftBar" ng-style="showStyle">
-        <a href="javascript:dhis2.leftBar.showAnimated()" title="Show menu">
+        <a href="javascript:showAnimated()" title="Show menu">
             <i class="fa fa-arrow-right leftBarIcon"></i></a>
       </span>
 <div id="leftBar" ng-style="leftBarStyle">
     <div id="hideLeftBar">
         <a href="../../../dhis-web-reporting/index.action" title="Show main menu" id="showMainMenuLink">
             <i class="fa fa-home leftBarIcon"></i></a>
-        <a href="javascript:dhis2.leftBar.hideAnimated()" ng-click="myStyle={'margin-left': '50px'};showStyle={'display': 'block'}" title="Hide menu"
-           id="hideMainMenuLink">
+        <a href="javascript:hideAnimated"
+            title="Hide menu"
+           id="hideMainMenuLink"><!--ng-click="myStyle={'margin-left': '50px'};showStyle={'display': 'block'}"-->
             <i class="fa fa-arrow-left leftBarIcon"></i></a>
-        <a href="javascript:dhis2.leftBar.extendAnimated()" ng-click="myStyle['margin-left']='270px';showStyle={'display': 'none'}"
+        <a href="javascript:extendAnimated()"
+
            title="Extend menu" id="extendMainMenuLink">
             <i class="fa fa-arrow-right leftBarIcon"></i></a>
+        <!--ng-click="myStyle['margin-left']='270px';showStyle={'display': 'none'}"-->
     </div>
 
     <div id="leftBarContents">
@@ -117,7 +132,7 @@
 
 <div id="headerMessage" class="bold"></div>
 
-<div class="page" id="mainPages" ng-style="myStyle">
+<div class="page" id="mainPages">
     <div ng-view></div>
 </div>
 

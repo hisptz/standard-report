@@ -62,10 +62,12 @@
 
     </div>
     <div ng-if="reportStatus == 'Executed'">
-        <input type="button" value="View Report" ng-click="generateDataSetReport()"
-                   html-link="">
         <input type="button" value="Download PDF" ng-click="download()">
         <input type="button" value="Undo Report Creation" ng-click="undoDataSetReport()">
+        <div  ng-if="!file" class="loader" style="margin-top: 0px;">
+            <img
+                    src="../../../images/ajax-loader-bar.gif"> Checking Archive..
+        </div>
         <div ng-bind-html="file"></div>
     </div>
     <div  ng-if="reportStatus == 'Not Executed'">
