@@ -77,34 +77,54 @@
     .menuLink, .dropdown-toggle, .navbar-brand {
         color: white !important;
     }
+
+    .contentLeft {
+        margin-left: 100px;
+    }
+
+    .contentRight {
+        margin-left: 450px;
+    }
 </style>
 <script>
-    var showAnimated = function(){
-        dhis2.leftBar.showAnimated();
+    var hideAnimated = dhis2.leftBar.hideAnimated;
+    dhis2.leftBar.hideAnimated = function () {
+        hideAnimated();
+        document.getElementById("mainPages").classList.add("contentLeft");
     }
-    var hideAnimated = function(){
-        dhis2.leftBar.hideAnimated();
+    var showAnimated = dhis2.leftBar.showAnimated;
+    dhis2.leftBar.showAnimated = function () {
+        showAnimated();
+        document.getElementById("mainPages").classList.remove("contentLeft");
     }
-    var extendAnimated = function(){
-        dhis2.leftBar.extendAnimated();
+    var extendAnimated = dhis2.leftBar.extendAnimated;
+    dhis2.leftBar.extendAnimated = function () {
+        extendAnimated();
+        document.getElementById("mainPages").classList.add("contentRight");
+    }
+
+    var retract = dhis2.leftBar.retract;
+    dhis2.leftBar.retract = function () {
+        retract();
+        document.getElementById("mainPages").classList.remove("contentRight");
     }
 </script>
 <body>
 <d2-header-bar></d2-header-bar>
 <!--<div ng-include="'views/header.html'"></div>-->
 <span id="showLeftBar" ng-style="showStyle">
-        <a href="javascript:showAnimated()" title="Show menu">
+        <a href="javascript:dhis2.leftBar.showAnimated()" title="Show menu">
             <i class="fa fa-arrow-right leftBarIcon"></i></a>
       </span>
 <div id="leftBar" ng-style="leftBarStyle">
     <div id="hideLeftBar">
         <a href="../../../dhis-web-reporting/index.action" title="Show main menu" id="showMainMenuLink">
             <i class="fa fa-home leftBarIcon"></i></a>
-        <a href="javascript:hideAnimated"
-            title="Hide menu"
+        <a href="javascript:dhis2.leftBar.hideAnimated()"
+           title="Hide menu"
            id="hideMainMenuLink"><!--ng-click="myStyle={'margin-left': '50px'};showStyle={'display': 'block'}"-->
             <i class="fa fa-arrow-left leftBarIcon"></i></a>
-        <a href="javascript:extendAnimated()"
+        <a href="javascript:dhis2.leftBar.extendAnimated()"
 
            title="Extend menu" id="extendMainMenuLink">
             <i class="fa fa-arrow-right leftBarIcon"></i></a>

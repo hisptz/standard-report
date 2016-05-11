@@ -39,7 +39,7 @@
                         <td>{{completeDataSetRegistrations.length}}</td>
                         <td>{{data.organisationUnit.children.length - completeDataSetRegistrations.length}}</td>
                         <td ng-class="{red:(completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100 < 70,green:(completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100>= 70}">
-                            {{(completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100}}
+                            {{(completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100  | number : 2}}%
                         </td>
                     </tr>
                 </table>

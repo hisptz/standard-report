@@ -1,24 +1,25 @@
+
 'use strict';
 
 /* App Module */
 
 var app = angular.module('app',
-                    ['ui.bootstrap',
-                     'ngRoute', 
-                     'ngCookies', 
-                     'ngSanitize',
-                     'appDirectives', 
-                     'appControllers', 
-                     'appServices',
-                     'appFilters',
-                     'd2Services',
-                     'd2Controllers',
-                     'pascalprecht.translate',
-                     'd2HeaderBar','FileManagerApp'
-                    ])
-              
-.value('DHIS2URL', '../../../');
-app.config(function($translateProvider,$routeProvider,fileManagerConfigProvider) {
+    ['ui.bootstrap',
+        'ngRoute',
+        'ngCookies',
+        'ngSanitize',
+        'appDirectives',
+        'appControllers',
+        'appServices',
+        'appFilters',
+        'd2Services',
+        'd2Controllers',
+        'pascalprecht.translate',
+        'd2HeaderBar', 'FileManagerApp'
+    ])
+
+    .value('DHIS2URL', '../../../');
+app.config(function ($translateProvider, $routeProvider, fileManagerConfigProvider) {
     var defaults = fileManagerConfigProvider.$get();
     fileManagerConfigProvider.set({
         appName: 'Report Archive Manager',
@@ -26,7 +27,7 @@ app.config(function($translateProvider,$routeProvider,fileManagerConfigProvider)
             remove: true
         })
     });
-	$routeProvider.when('/', {
+    $routeProvider.when('/', {
         templateUrl: 'views/home.html'
     }).when('/standardReport', {
         controller: 'StandardReportController',
@@ -43,9 +44,9 @@ app.config(function($translateProvider,$routeProvider,fileManagerConfigProvider)
     }).when('/archive', {
         templateUrl: 'views/archive.html'
     }).otherwise({
-        redirectTo : '/'
+        redirectTo: '/'
     });
-     
+
     $translateProvider.preferredLanguage('en');
     $translateProvider.useSanitizeValueStrategy('escaped');
     $translateProvider.useLoader('i18nLoader');

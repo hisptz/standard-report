@@ -41,7 +41,6 @@ var appServices = angular.module('appServices', ['ngResource'])
                 var deffered = $q.defer();
                 $http.post(DHIS2URL + "api/dataStore/notExecuted/" + data.dataSet + "_" + data.orgUnit + "_" + data.period, {})
                     .then(function (results) {
-                        console.log(results);
                         deffered.resolve();
                     });
                 return deffered.promise;
