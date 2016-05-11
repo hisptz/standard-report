@@ -15,7 +15,7 @@ var app = angular.module('app',
         'd2Services',
         'd2Controllers',
         'pascalprecht.translate',
-        'd2HeaderBar', 'FileManagerApp'
+        'd2HeaderBar', 'FileManagerApp','toaster'
     ])
 
     .value('DHIS2URL', '../../../');
@@ -39,6 +39,15 @@ app.config(function ($translateProvider, $routeProvider, fileManagerConfigProvid
         controller: 'ReportController',
         templateUrl: 'views/report.html'
     }).when('/reportRequest/:dataSet/:orgUnit/:period', {
+        controller: 'ReportRequestController',
+        templateUrl: 'views/reportRequest.html'
+    }).when('/report/dataSet/:dataSet/orgUnit/:orgUnit/period/:period', {
+        controller: 'ReportController',
+        templateUrl: 'views/report.html'
+    }).when('/report/dataSet/:dataSet/orgUnit/:orgUnit/period/:period/preview', {
+        controller: 'ReportController',
+        templateUrl: 'views/report.html'
+    }).when('/reportRequest/dataSet/:dataSet/orgUnit/:orgUnit/period/:period', {
         controller: 'ReportRequestController',
         templateUrl: 'views/reportRequest.html'
     }).when('/archive', {

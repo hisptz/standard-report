@@ -39,6 +39,7 @@
     <script type="text/javascript"
             src="../../../dhis-web-commons/javascripts/dhis2/dhis2.angular.controllers.js"></script>
     <script src="assets/js/ng-file-upload/ng-file-upload.min.js"></script>
+    <script type="text/javascript" src="assets/js/toaster/toaster.min.js"></script>
     <script type="text/javascript" src="assets/js/filemanager/angular-filemanager.min.js"></script>
 
     <script type="text/javascript" src="scripts/app.js"></script>
@@ -55,13 +56,15 @@
     <link type="text/css" rel="stylesheet" href="../../../dhis-web-commons/font-awesome/css/font-awesome.min.css"/>
     <link type="text/css" rel="stylesheet" media="screen" href="assets/css/widgets.css"/>
     <link type="text/css" rel="stylesheet" media="screen" href="../../../dhis-web-commons/css/menu.css">
+    <link type="text/css" rel="stylesheet" href="assets/js/toaster/toaster.min.css">
 
     <link type="text/css" rel="stylesheet" href="assets/css/style.css">
 
 </head>
 <style>
     #mainPages {
-        margin-top: 150px
+        margin-top: 150px;
+        margin-left: 300px;
     }
 
     #leftBar {
@@ -71,7 +74,7 @@
 
     #showLeftBar {
 
-        margin-top: 110px;
+        margin-top: 70px;
     }
 
     .menuLink, .dropdown-toggle, .navbar-brand {
@@ -79,11 +82,16 @@
     }
 
     .contentLeft {
-        margin-left: 100px;
+        margin-left: 30px;
     }
 
     .contentRight {
         margin-left: 450px;
+    }
+    #toast-container{
+        top:144px;
+        left:50%;
+        margin-left:-100px;
     }
 </style>
 <script>
@@ -111,6 +119,7 @@
 </script>
 <body>
 <d2-header-bar></d2-header-bar>
+<toaster-container></toaster-container>
 <!--<div ng-include="'views/header.html'"></div>-->
 <span id="showLeftBar" ng-style="showStyle">
         <a href="javascript:dhis2.leftBar.showAnimated()" title="Show menu">
@@ -136,10 +145,9 @@
         <h2>Report&nbsp;</h2>
         <ul>
             <li><a href="#/standardReport">Standard Report&nbsp;</a></li>
-            <li><a href="../../../dhis-web-reporting/showDataSetReportForm.action">Custom Report&nbsp;</a></li>
+            <li><a href="../../../dhis-web-reporting/displayViewReportForm.action">Custom Report&nbsp;</a></li>
             <li><a href="../../../dhis-web-reporting/displayViewDataCompletenessForm.action">Submission Status&nbsp;</a>
             </li>
-            <li><a href="../../../dhis-web-reporting/displayViewDocumentForm.action">Resource&nbsp;</a></li>
             <li><a href="../../../dhis-web-reporting/showDataApprovalForm.action">Data Approval&nbsp;</a></li>
         </ul>
 

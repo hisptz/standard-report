@@ -33,7 +33,9 @@ var appDirectives = angular.module('appDirectives', [])
                     }
                 }
                 $scope.select = function (data, $event) {
-                    $event.stopPropagation();
+                    if($event){
+                        $event.stopPropagation();
+                    }
                     if ($scope.config.numberOfSelection != undefined) {
                         if ($scope.config.numberOfSelection == 1) {
                             $scope.updateSingleSelection(data);
@@ -57,6 +59,7 @@ var appDirectives = angular.module('appDirectives', [])
                     }
 
                 }
+                $scope.config.toggleSelection = $scope.select;
             },
             templateUrl: 'views/tree.html'
         }
@@ -81,7 +84,7 @@ var appDirectives = angular.module('appDirectives', [])
             controller: function ($scope) {
                 $scope.data = {
                     dataElements:[]
-                }
+                };
                 console.log($scope.config);
                 $scope.config.dataElements.forEach(function(dataElementId){
                     $scope.config.dataElementsDetails.forEach(function(dataElement){

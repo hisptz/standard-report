@@ -6,6 +6,12 @@
 
 var appServices = angular.module('appServices', ['ngResource'])
     .factory("ReportService", function ($http, DHIS2URL, $location, $q) {
+        var userDeffered = $q.defer();
+        var user = undefined;
+        $http.get(DHIS2URL + "api/me.json").then(function (results) {
+            user = results.data;
+            userDeffered.resolve(user);
+        })
         var archiveProgram = undefined;
         $http.get(DHIS2URL + "api/programs/UZjKG3b3nwV.json?fields=id,programStages[programStageDataElements[dataElement[:all]]]")
             .then(function (results) {
@@ -55,6 +61,12 @@ var appServices = angular.module('appServices', ['ngResource'])
                         });
                     });
                 return deffered.promise;
+            },
+            getUser:function(){
+                if(user){
+                    userDeffered.resolve(user);
+                }
+                return userDeffered.promise;
             }
         }
 
