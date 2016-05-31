@@ -16,20 +16,15 @@
     <img
             src="../../../images/ajax-loader-bar.gif"> {{loadTracker}}
 </div>
-<div ng-if="!loadTracker" id="criteria" class="inputCriteria" style="width: 360px; margin-top: 0px;">
+<div id="criteria" class="inputCriteria" style="width: 360px; margin-top: 0px;">
 
     <!-- Data set -->
 
     <div class="inputSection" style="margin-top: 0px;">
         <label>Report</label><br>
-        <select ng-options="dataSet as dataSet.name for dataSet in data.dataSets" style="width:330px"
+        <select ng-disabled="loadTracker" ng-options="dataSet as dataSet.name for dataSet in data.dataSets" style="width:330px"
                 ng-model="data.dataSet">
-            <option value="">[ Select Data Set ]</option>
-            <!--<option value="">[ Select ]</option>
-
-            <option ng-repeat="dataSet in data.dataSets">
-                {{dataSet.name}}
-            </option>-->
+            <option value="">[ Select Report ]</option>
         </select>
     </div>
 
@@ -41,7 +36,7 @@
         <label>Report Period</label><br>
 
 
-        <select ng-model="data.period" style="width:185px">
+        <select ng-disabled="loadTracker" ng-model="data.period" style="width:185px">
             <!--  ng-options="item.name as item.value for item in data.periodTypes[data.dataSet.periodType].list"-->
             <option value="">[ Select Period ]</option>
             <option ng-repeat="periodType in data.periodTypes[data.dataSet.periodType].list"
@@ -54,11 +49,6 @@
     </div>
 
     <!-- Organisation unit -->
-
-    <div class="inputSection" style="margin-top: 0px;">
-        <label>Use data for selected unit only</label>
-        <input type="checkbox" id="selectedUnitOnly" name="selectedUnitOnly" value="true">
-    </div>
 
     <div class="inputSection" style="margin-top: 0px;">
         <label>Report Adminstrative Units</label><br>
@@ -85,14 +75,3 @@
     </div>
 
 </div>
-<!--<form>
-    <div class="row">
-        <div class="col-sm-6 form-group">
-            <label for="reportid">Report</label>
-            <select ng-options="dataSet as dataSet.name for dataSet in data.dataSets"  class="form-control"
-                    ng-model="data.dataSet">
-                <option value="">[ Select Data Set ]</option>
-            </select>
-        </div>
-    </div>
-</form>-->

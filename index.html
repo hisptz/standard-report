@@ -28,7 +28,7 @@
     <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular-animate.js"></script>
     <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/ui-bootstrap.js"></script>
     <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.util.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/commons.js"></script>
+    <script type="text/javascript" src="assets/js/commons.js"></script>
     <script type="text/javascript" src="../../../main.js"></script>
 
     <script type="text/javascript"
@@ -62,36 +62,35 @@
 
 </head>
 <style>
-    #mainPages {
-        margin-top: 150px;
-        margin-left: 300px;
-    }
+
 
     #leftBar {
         z-index: 100;
         margin-top: 11px;
     }
 
-    #showLeftBar {
+    #showLeftBar,#rightBar {
 
         margin-top: 70px;
     }
 
-    .menuLink, .dropdown-toggle, .navbar-brand {
-        color: white !important;
-    }
-
     .contentLeft {
-        margin-left: 30px;
+        margin-left: 30px !important;
     }
 
     .contentRight {
-        margin-left: 450px;
+        margin-left: 450px !important;
     }
-    #toast-container{
-        top:144px;
-        left:50%;
-        margin-left:-100px;
+
+    #toast-container {
+        top: 144px;
+        left: 50%;
+        margin-left: -100px;
+    }
+
+    #mainPages {
+        margin-top: 150px;
+        margin-left: 300px;
     }
 </style>
 <script>
@@ -127,7 +126,7 @@
       </span>
 <div id="leftBar" ng-style="leftBarStyle">
     <div id="hideLeftBar">
-        <a href="../../../dhis-web-reporting/index.action" title="Show main menu" id="showMainMenuLink">
+        <a href="#/" title="Show main menu" id="showMainMenuLink">
             <i class="fa fa-home leftBarIcon"></i></a>
         <a href="javascript:dhis2.leftBar.hideAnimated()"
            title="Hide menu"

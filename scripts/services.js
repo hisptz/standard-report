@@ -11,12 +11,7 @@ var appServices = angular.module('appServices', ['ngResource'])
         $http.get(DHIS2URL + "api/me.json").then(function (results) {
             user = results.data;
             userDeffered.resolve(user);
-        })
-        var archiveProgram = undefined;
-        $http.get(DHIS2URL + "api/programs/UZjKG3b3nwV.json?fields=id,programStages[programStageDataElements[dataElement[:all]]]")
-            .then(function (results) {
-                archiveProgram = results.data;
-            });
+        });
         return {
             sortOrganisationUnits: function (orgUnit) {
                 var that = this;
@@ -30,17 +25,23 @@ var appServices = angular.module('appServices', ['ngResource'])
                 }
             },
             getPeriodDate: function (period) {
+                console.log(period);
                 var returnDate = {};
                 if (period.indexOf("July") != -1) {
                     returnDate.startDate = period.substr(0, 4) + "-07-01";
                     returnDate.endDate = (parseInt(period.substr(0, 4)) + 1) + "-06-30";
                 } else if (period.indexOf("Q") != -1) {
                     returnDate.startDate = period.substr(0, 4) + "-07-01";
-                    returnDate.startDate = (parseInt(period.substr(0, 4)) + 1) + "-06-30";
+                    returnDate.endDate = (parseInt(period.substr(0, 4)) + 1) + "-06-30";
                 } else {
-                    returnDate.startDate = period.substr(0, 4) + "-" + period.substr(5) + "-01";
-                    returnDate.endDate = period.substr(0, 4) + "-" + period.substr(5) + "-31";
+                    /*var monthVal = parseInt(period.substr(5));
+                    if(monthVal < 10){
+                        monthVal = "0" + monthVal;
+                    }*/
+                    returnDate.startDate = period.substr(0, 4) + "-" + period.substr(4) + "-01";
+                    returnDate.endDate = period.substr(0, 4) + "-" + period.substr(4) + "-31";
                 }
+                console.log(JSON.stringify(returnDate));
                 return returnDate;
             },
             createDataSetReport: function (data) {
@@ -56,9 +57,10 @@ var appServices = angular.module('appServices', ['ngResource'])
                 var that = this;
                 $http.delete(DHIS2URL + "api/dataStore/executed/" + data.dataSet + "_" + data.orgUnit + "_" + data.period)
                     .then(function (results) {
-                        that.createDataSetReport(data).then(function () {
+                        deffered.resolve();
+                        /*that.createDataSetReport(data).then(function () {
                             deffered.resolve();
-                        });
+                        });*/
                     });
                 return deffered.promise;
             },
