@@ -31,6 +31,17 @@ HTMLCollection.prototype.forEach = function (callback) {
         parent.appendChild(detatchedItem);
     }
 }
+Element.prototype.remove = function() {
+    if(this.parentElement)
+        this.parentElement.removeChild(this);
+}
+NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
+    for(var i = this.length - 1; i >= 0; i--) {
+        if(this[i] && this[i].parentElement) {
+            this[i].parentElement.removeChild(this[i]);
+        }
+    }
+}
 function isFloat(val) {
     var floatRegex = /^-?\d+(?:[.,]\d*?)?$/;
     if (!floatRegex.test(val))
@@ -114,6 +125,18 @@ var appDirectives = angular.module('appDirectives', [])
             templateUrl: 'views/tree.html'
         }
     })
+    .directive("integer", function ($timeout) {
+        return {
+            link: function (scope, elem) {
+                $timeout(function(){
+                    if(elem[0].innerHTML != ""){
+                        elem[0].innerHTML = parseInt(elem[0].innerHTML);
+                    }
+
+                })
+            }
+        }
+    })
     .directive("childrenOrganisationUnits", function () {
         return {
             scope: {
@@ -169,52 +192,102 @@ var appDirectives = angular.module('appDirectives', [])
                         }
 
                         elem[0].children.sort(dynamicSortMultiple(dataElementIndexes));
-                        elem[0].children.forEach(function (child) {
-                            child.children.forEach(function (tdChild, index) {
-
-                                if (dataElementIndexes.indexOf(index) > -1) {
-                                    dataElementIndexes.forEach(function (dataElementIndex, dataIndex) {
-                                        tdChild.setAttribute("col" + dataIndex, child.children[dataElementIndex].innerHTML);
-                                    });
-
-                                }
-                            })
-                        });
+                        var elementsToDelete = [];
+                        //Merge number values depending on group
                         dataElementIndexes.forEach(function (group, index) {
-                            elem[0].children.forEach(function (child, checkingIndex) {
-                                while (elem[0].children[checkingIndex + 1]) {
+                            for(var i1 = 0; i1 < elem[0].children.length; i1++){
+                                var checkingIndex = i1;
+                                var child = elem[0].children[i1];
+                                if (elem[0].children[checkingIndex + 1])
+                                {
                                     if (child.children[group].innerHTML == elem[0].children[checkingIndex + 1].children[group].innerHTML) {
                                         var isInTheSameRow = true;
-                                        //if(index != 0)
-                                        dataElementIndexes.forEach(function (dataElementIndex, index3) {
-                                            if (index3 <= index && child.children[index3].innerHTML != elem[0].children[checkingIndex + 1].children[index3].innerHTML) {
-                                                isInTheSameRow = false;
-                                            }
-                                        });
-                                        if (isInTheSameRow) {
-                                            elem[0].children[checkingIndex + 1].children[group].innerHTML = "";
-                                            for(var i = group + 1; i >= 0; i++){
-                                                console.log("Awesome:",i);
-                                                if(dataElementIndexes.indexOf(i) > -1 || !child.children[i])
-                                                    break;
-                                                console.log("Even More:",isFloat(child.children[i].innerHTML),isInt(child.children[i].innerHTML));
-                                                if(isInt(child.children[i].innerHTML)){
-                                                    child.children[i].innerHTML = parseInt(child.children[i].innerHTML) + parseInt(elem[0].children[checkingIndex + 1].children[i].innerHTML);
-                                                    //elem[0].children[checkingIndex + 1].children[i].innerHTML = "+";
-                                                }else if(isFloat(child.children[i].innerHTML)){
-                                                    child.children[i].innerHTML = parseFloat(child.children[i].innerHTML) + " + " + parseFloat(elem[0].children[checkingIndex + 1].children[i].innerHTML);
-                                                    child.children[i].innerHTML = "{{'dhfs'}}";
-                                                    //$compile(child.children)(scope);
-                                                    //elem[0].children[checkingIndex + 1].children[i].innerHTML = "+";
+                                        var loopIndex = checkingIndex + 1;
+                                        while(isInTheSameRow){
+                                            dataElementIndexes.forEach(function (dataElementIndex, index3) {
+                                                if (index3 <= index && child.children[index3].innerHTML != elem[0].children[loopIndex].children[index3].innerHTML) {
+                                                    isInTheSameRow = false;
                                                 }
+                                            });
+                                            if (isInTheSameRow) {
 
+                                                for(var i = group + 1; i >= 0; i++)
+                                                {
+                                                    if(dataElementIndexes.indexOf(i) > -1 || !child.children[i]){
+                                                        break;
+                                                    }
+
+                                                    if(isInt(child.children[i].innerHTML)){
+                                                        child.children[i].innerHTML = (parseInt(child.children[i].innerHTML) + parseInt(elem[0].children[loopIndex].children[i].innerHTML)).toFixed(1);
+                                                        //elem[0].children[checkingIndex + 1].children[i].innerHTML = "+";
+                                                    }else if(isFloat(child.children[i].innerHTML)){
+                                                        child.children[i].innerHTML = (parseFloat(child.children[i].innerHTML)  + parseFloat(elem[0].children[loopIndex].children[i].innerHTML)).toFixed(1) ;
+                                                        elementsToDelete.push(elem[0].children[loopIndex].children[i]);
+                                                        if(child.children[i].toRowSpan){
+                                                            child.children[i].toRowSpan++;
+                                                        }else{
+                                                            child.children[i].toRowSpan = 2;
+                                                        }
+                                                    }
+                                                }
+                                                i1 = loopIndex;
+                                                loopIndex++;
                                             }
                                         }
                                     }
-                                    checkingIndex++;
+                                }
+                            }
+                        });
+
+                        var elementsWithRowSpan = {};
+                        console.log(dataElementIndexes);
+                        //Look for cells to row span
+                        dataElementIndexes.forEach(function (group, index) {
+                            for(var i1 = 0; i1 < elem[0].children.length; i1++){
+                                var checkingIndex = i1;
+                                var child = elem[0].children[i1];
+                                if (elem[0].children[checkingIndex + 1])
+                                {
+                                    if (child.children[group].innerHTML == elem[0].children[checkingIndex + 1].children[group].innerHTML) {
+                                        var isInTheSameRow = true;
+                                        var loopIndex = checkingIndex + 1;
+                                        while(isInTheSameRow){
+                                            //Check whether the cell is valid for grouping
+                                            dataElementIndexes.forEach(function (dataElementIndex, index3) {
+                                                if (index3 <= index && child.children[index3].innerHTML != elem[0].children[loopIndex].children[index3].innerHTML) {
+                                                    isInTheSameRow = false;
+                                                }
+                                            });
+                                            if (isInTheSameRow) {
+                                                //Set the rows to span
+                                                if(child.children[group].toRowSpan){
+                                                    child.children[group].toRowSpan++;
+                                                }else{
+                                                    child.children[group].toRowSpan = 2;
+                                                }
+                                                //Add for deletion later
+                                                elementsToDelete.push(elem[0].children[loopIndex].children[group]);
+                                                i1 = loopIndex;
+                                                loopIndex++;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                        //Set row span to the required cells.
+                        elem[0].children.forEach(function (child,rowIndex) {
+                            child.children.forEach(function (child2,colIndex) {
+                                if(child2.toRowSpan){
+                                    child2.rowSpan = child2.toRowSpan;
                                 }
                             });
                         });
+                        //Delete unrequired cells
+                        elementsToDelete.forEach(function(element){
+                            element.remove();
+                        })
+
                     });
 
                 }
@@ -227,11 +300,16 @@ var appDirectives = angular.module('appDirectives', [])
                 };
 
                 $scope.config.dataElements.forEach(function (dataElementId) {
-                    $scope.config.dataElementsDetails.forEach(function (dataElement) {
-                        if (dataElement.id == dataElementId) {
-                            $scope.data.dataElements.push(dataElement);
-                        }
-                    });
+                    if($scope.config.dataElementsDetails){
+                        $scope.config.dataElementsDetails.forEach(function (dataElement) {
+                            if (dataElement.id == dataElementId) {
+                                $scope.data.dataElements.push(dataElement);
+                            }
+                        });
+                    }else{
+                        console.log("Else:",$scope.config);
+                    }
+
                 });
                 if ($scope.config.groupBy) {//If grouping is required
                     //$scope.data.groupedEvents = [];
