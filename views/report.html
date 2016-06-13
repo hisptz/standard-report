@@ -9,6 +9,11 @@
     .progress i { line-height: 35px;
         font-size: 20px;}
 </style>
+<div ng-if="preview" class="alert alert-info" role="alert">
+    <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    <span class="sr-only">Error:</span>
+    This is a preview copy of the reports.
+</div>
 <div ng-if="error" class="alert alert-danger" role="alert">
     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
     <span class="sr-only">Error:</span>
@@ -19,8 +24,8 @@
         <i>{{loadingStatus}}</i>
     </progressbar>
     <div ng-if="progressValue == 100 && notArchive" id="control" style="margin-top: 0px;">
+        <input type="button" ng-if="preview" ng-disabled="isNotAuthorized() || reportStatus == 'Executed' || reportStatus == 'Not Executed'" value="Create Report" style="width:120px" ng-click="createDataSetReport()" html-link="">
         <input type="button" id="dataButton" value="Change Data Criteria" style="width:140px" ng-click="back()" ng-if="trustedHtml">
-        <input type="button" ng-if="preview" value="Create Report" style="width:120px" ng-click="createDataSetReport()" html-link="">
         <input type="button" value="Cancel" ng-click="generateDataSetReport('/standardReport')">
     </div>
     <br />

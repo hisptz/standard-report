@@ -31,13 +31,13 @@ HTMLCollection.prototype.forEach = function (callback) {
         parent.appendChild(detatchedItem);
     }
 }
-Element.prototype.remove = function() {
-    if(this.parentElement)
+Element.prototype.remove = function () {
+    if (this.parentElement)
         this.parentElement.removeChild(this);
 }
-NodeList.prototype.remove = HTMLCollection.prototype.remove = function() {
-    for(var i = this.length - 1; i >= 0; i--) {
-        if(this[i] && this[i].parentElement) {
+NodeList.prototype.remove = HTMLCollection.prototype.remove = function () {
+    for (var i = this.length - 1; i >= 0; i--) {
+        if (this[i] && this[i].parentElement) {
             this[i].parentElement.removeChild(this[i]);
         }
     }
@@ -128,13 +128,35 @@ var appDirectives = angular.module('appDirectives', [])
     .directive("integer", function ($timeout) {
         return {
             link: function (scope, elem) {
-                $timeout(function(){
-                    if(elem[0].innerHTML != ""){
+                $timeout(function () {
+                    if (elem[0].innerHTML != "") {
                         elem[0].innerHTML = parseInt(elem[0].innerHTML);
                     }
 
                 })
             }
+        }
+    })
+    .directive("listByWard", function () {
+        return {
+            scope: {
+                listByWard: '=',
+                orgUnit: '='
+            },
+            replace: true,
+            controller: function ($scope) {
+                console.log($scope.listByWard);
+                $scope.data = [];
+                $scope.listByWard.forEach(function (value) {
+                    //value[]
+                    $scope.orgUnit.children.forEach(function (orgUnit) {
+                        if (orgUnit.id == value.orgUnit) {
+                            $scope.data.push({name:orgUnit.name,value:value.value});
+                        }
+                    })
+                })
+            },
+            templateUrl: 'views/listByWard.html'
         }
     })
     .directive("childrenOrganisationUnits", function () {
@@ -148,7 +170,7 @@ var appDirectives = angular.module('appDirectives', [])
             templateUrl: 'views/tree.html'
         }
     })
-    .directive("autogrowing", function ($timeout,$compile) {
+    .directive("autogrowing", function ($timeout, $compile) {
         return {
             scope: {
                 config: '='
@@ -169,7 +191,12 @@ var appDirectives = angular.module('appDirectives', [])
                         });
                         function dynamicSort(property) {
                             return function (obj1, obj2) {
-
+                                if(obj1.children[property].innerHTML == ""){
+                                    return 1;
+                                }
+                                if(obj2.children[property].innerHTML == ""){
+                                    return -1;
+                                }
                                 return obj1.children[property].innerHTML > obj2.children[property].innerHTML ? 1
                                     : obj1.children[property].innerHTML < obj2.children[property].innerHTML ? -1 : 0;
                             }
@@ -195,37 +222,40 @@ var appDirectives = angular.module('appDirectives', [])
                         var elementsToDelete = [];
                         //Merge number values depending on group
                         dataElementIndexes.forEach(function (group, index) {
-                            for(var i1 = 0; i1 < elem[0].children.length; i1++){
+                            for (var i1 = 0; i1 < elem[0].children.length; i1++) {
                                 var checkingIndex = i1;
                                 var child = elem[0].children[i1];
-                                if (elem[0].children[checkingIndex + 1])
-                                {
+                                if (elem[0].children[checkingIndex + 1]) {
                                     if (child.children[group].innerHTML == elem[0].children[checkingIndex + 1].children[group].innerHTML) {
                                         var isInTheSameRow = true;
                                         var loopIndex = checkingIndex + 1;
-                                        while(isInTheSameRow){
+                                        while (isInTheSameRow) {
                                             dataElementIndexes.forEach(function (dataElementIndex, index3) {
-                                                if (index3 <= index && child.children[index3].innerHTML != elem[0].children[loopIndex].children[index3].innerHTML) {
+                                                if(elem[0].children[loopIndex]){
+                                                    if (index3 <= index && child.children[index3].innerHTML != elem[0].children[loopIndex].children[index3].innerHTML) {
+                                                        isInTheSameRow = false;
+                                                    }
+                                                }else{
                                                     isInTheSameRow = false;
                                                 }
+
                                             });
                                             if (isInTheSameRow) {
 
-                                                for(var i = group + 1; i >= 0; i++)
-                                                {
-                                                    if(dataElementIndexes.indexOf(i) > -1 || !child.children[i]){
+                                                for (var i = group + 1; i >= 0; i++) {
+                                                    if (dataElementIndexes.indexOf(i) > -1 || !child.children[i]) {
                                                         break;
                                                     }
 
-                                                    if(isInt(child.children[i].innerHTML)){
+                                                    if (isInt(child.children[i].innerHTML)) {
                                                         child.children[i].innerHTML = (parseInt(child.children[i].innerHTML) + parseInt(elem[0].children[loopIndex].children[i].innerHTML)).toFixed(1);
                                                         //elem[0].children[checkingIndex + 1].children[i].innerHTML = "+";
-                                                    }else if(isFloat(child.children[i].innerHTML)){
-                                                        child.children[i].innerHTML = (parseFloat(child.children[i].innerHTML)  + parseFloat(elem[0].children[loopIndex].children[i].innerHTML)).toFixed(1) ;
+                                                    } else if (isFloat(child.children[i].innerHTML)) {
+                                                        child.children[i].innerHTML = (parseFloat(child.children[i].innerHTML) + parseFloat(elem[0].children[loopIndex].children[i].innerHTML)).toFixed(1);
                                                         elementsToDelete.push(elem[0].children[loopIndex].children[i]);
-                                                        if(child.children[i].toRowSpan){
+                                                        if (child.children[i].toRowSpan) {
                                                             child.children[i].toRowSpan++;
-                                                        }else{
+                                                        } else {
                                                             child.children[i].toRowSpan = 2;
                                                         }
                                                     }
@@ -243,26 +273,30 @@ var appDirectives = angular.module('appDirectives', [])
                         console.log(dataElementIndexes);
                         //Look for cells to row span
                         dataElementIndexes.forEach(function (group, index) {
-                            for(var i1 = 0; i1 < elem[0].children.length; i1++){
+                            for (var i1 = 0; i1 < elem[0].children.length; i1++) {
                                 var checkingIndex = i1;
                                 var child = elem[0].children[i1];
-                                if (elem[0].children[checkingIndex + 1])
-                                {
+                                if (elem[0].children[checkingIndex + 1]) {
                                     if (child.children[group].innerHTML == elem[0].children[checkingIndex + 1].children[group].innerHTML) {
                                         var isInTheSameRow = true;
                                         var loopIndex = checkingIndex + 1;
-                                        while(isInTheSameRow){
+                                        while (isInTheSameRow) {
                                             //Check whether the cell is valid for grouping
                                             dataElementIndexes.forEach(function (dataElementIndex, index3) {
-                                                if (index3 <= index && child.children[index3].innerHTML != elem[0].children[loopIndex].children[index3].innerHTML) {
+                                                if(elem[0].children[loopIndex]){
+                                                    if (index3 <= index && child.children[index3].innerHTML != elem[0].children[loopIndex].children[index3].innerHTML) {
+                                                        isInTheSameRow = false;
+                                                    }
+                                                }else{
                                                     isInTheSameRow = false;
                                                 }
+
                                             });
                                             if (isInTheSameRow) {
                                                 //Set the rows to span
-                                                if(child.children[group].toRowSpan){
+                                                if (child.children[group].toRowSpan) {
                                                     child.children[group].toRowSpan++;
-                                                }else{
+                                                } else {
                                                     child.children[group].toRowSpan = 2;
                                                 }
                                                 //Add for deletion later
@@ -276,15 +310,15 @@ var appDirectives = angular.module('appDirectives', [])
                             }
                         });
                         //Set row span to the required cells.
-                        elem[0].children.forEach(function (child,rowIndex) {
-                            child.children.forEach(function (child2,colIndex) {
-                                if(child2.toRowSpan){
+                        elem[0].children.forEach(function (child, rowIndex) {
+                            child.children.forEach(function (child2, colIndex) {
+                                if (child2.toRowSpan) {
                                     child2.rowSpan = child2.toRowSpan;
                                 }
                             });
                         });
                         //Delete unrequired cells
-                        elementsToDelete.forEach(function(element){
+                        elementsToDelete.forEach(function (element) {
                             element.remove();
                         })
 
@@ -300,14 +334,14 @@ var appDirectives = angular.module('appDirectives', [])
                 };
 
                 $scope.config.dataElements.forEach(function (dataElementId) {
-                    if($scope.config.dataElementsDetails){
+                    if ($scope.config.dataElementsDetails) {
                         $scope.config.dataElementsDetails.forEach(function (dataElement) {
                             if (dataElement.id == dataElementId) {
                                 $scope.data.dataElements.push(dataElement);
                             }
                         });
-                    }else{
-                        console.log("Else:",$scope.config);
+                    } else {
+                        console.log("Else:", $scope.config);
                     }
 
                 });

@@ -57,6 +57,7 @@
     <link type="text/css" rel="stylesheet" media="screen" href="assets/css/widgets.css"/>
     <link type="text/css" rel="stylesheet" media="screen" href="../../../dhis-web-commons/css/menu.css">
     <link type="text/css" rel="stylesheet" href="assets/js/toaster/toaster.min.css">
+    <link type="text/css" rel="stylesheet" href="../../../dhis-web-commons/css/light_blue/light_blue.css">
 
     <link type="text/css" rel="stylesheet" href="assets/css/style.css">
 
@@ -92,6 +93,9 @@
         margin-top: 150px;
         margin-left: 300px;
     }
+    .introItem {
+        height: 100px;
+    }
 </style>
 <script>
     var hideAnimated = dhis2.leftBar.hideAnimated;
@@ -126,8 +130,6 @@
       </span>
 <div id="leftBar" ng-style="leftBarStyle">
     <div id="hideLeftBar">
-        <a href="#/" title="Show main menu" id="showMainMenuLink">
-            <i class="fa fa-home leftBarIcon"></i></a>
         <a href="javascript:dhis2.leftBar.hideAnimated()"
            title="Hide menu"
            id="hideMainMenuLink"><!--ng-click="myStyle={'margin-left': '50px'};showStyle={'display': 'block'}"-->

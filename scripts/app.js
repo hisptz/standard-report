@@ -44,7 +44,7 @@ app.config(function ($translateProvider, $routeProvider, fileManagerConfigProvid
     }).when('/report/dataSet/:dataSet/orgUnit/:orgUnit/period/:period', {
         controller: 'ReportController',
         templateUrl: 'views/report.html'
-    }).when('/report/dataSet/:dataSet/orgUnit/:orgUnit/period/:period/preview', {
+    }).when('/report/dataSet/:dataSet/orgUnit/:orgUnit/period/:period/:preview', {
         controller: 'ReportController',
         templateUrl: 'views/report.html'
     }).when('/reportRequest/dataSet/:dataSet/orgUnit/:orgUnit/period/:period', {
