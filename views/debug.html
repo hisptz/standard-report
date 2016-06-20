@@ -1,0 +1,70 @@
+<div><!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal2">
+        <div ng-if="config.type == 'dataElement'">Data Element</div><div ng-if="config.type == 'indicator'">Indicator</div>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel"><div ng-if="config.type == 'dataElement'">Data Element</div><div ng-if="config.type == 'indicator'">Indicator</div></h4>
+                </div>
+                <div class="modal-body">
+                    <table ng-if="config.type == 'dataElement'">
+                        <tr>
+                            <td>Name of Data Element</td><td></td>
+                        </tr>
+                        <tr>
+                            <td>Dataset source</td><td>Ward Annual Entry Form (WF03)</td>
+                        </tr>
+                        <tr>
+                            <td>Aggregation operator</td><td>Sum</td>
+                        </tr>
+                        <tr>
+                            <td>Value type</td><td>Positive Integer</td>
+                        </tr>
+                        <tr>
+                            <td>Administrative Unit</td><td></td>
+                        </tr>
+                        <tr>
+                            <td>Consolidation Methods</td><td>Pivot Table</td>
+                        </tr>
+                        <tr>
+                            <td>Values used</td><td>20,10,22,2</td>
+                        </tr>
+                    </table>
+                    <table ng-if="config.type == 'indicator'">
+                        <tr>
+                            <td>Name of Indicator</td><td></td>
+                        </tr>
+                        <tr>
+                            <td>Dataset source</td><td>Ward Monthly Entry Form (WF01)</td>
+                        </tr>
+                        <tr>
+                            <td>Formula</td><td>Dataelement1 - Dataelement2</td>
+                        </tr>
+                        <tr>
+                            <td>Value type</td><td>Integer</td>
+                        </tr>
+                        <tr>
+                            <td>Administrative Unit</td><td>Baraa</td>
+                        </tr>
+                        <tr>
+                            <td>Consolidation Methods</td><td>Pivot Table</td>
+                        </tr>
+                        <tr>
+                            <td>Values used</td><td>5,3,22,6,77</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

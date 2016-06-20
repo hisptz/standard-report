@@ -38,9 +38,12 @@
     <script type="text/javascript"
             src="../../../dhis-web-commons/javascripts/dhis2/dhis2.angular.controllers.js"></script>
     <script src="assets/js/ng-file-upload/ng-file-upload.min.js"></script>
+    <script type="text/javascript" src="assets/js/toaster/toaster.min.js"></script>
     <script type="text/javascript" src="assets/js/filemanager/angular-filemanager.min.js"></script>
 
     <script type="text/javascript" src="scripts/app.js"></script>
+    <script>
+    </script>
     <script type="text/javascript" src="scripts/services.js"></script>
     <script type="text/javascript" src="scripts/directives.js"></script>
     <script type="text/javascript" src="scripts/controllers.js"></script>
@@ -58,19 +61,46 @@
     <link type="text/css" rel="stylesheet" href="assets/css/style.css">
 
     <style>
-        #leftBar, #headerMessage {
-            margin-top: 50px
+        .btn {
+            display: none
         }
 
-        .menuLink, .dropdown-toggle, .navbar-brand {
+        .navbar-inverse .navbar-nav > li > a {
             color: white !important;
         }
-        .btn{
-            display:none
+        .reportHeader{
+            display:none;
+        }
+        .answer{
+            width:250px;
+            height:30px;
+            border-bottom:3px solid black;
+            display: inline-flex;
+        }
+        .adminstrative table{
+            font-size:20px;
+        }
+        td.underline{
+            margin-left:5px;
+            border-bottom:3px solid black;
         }
     </style>
+
 </head>
 <body>
-<div ng-view></div>
+<div ng-controller="CoverController">
+    <div ng-include="url"></div>
+</div>
+<!--<div id="app2" ng-app="app2">
+    <div ng-view>
+
+    </div>
+</div>-->
+<div>
+    <div ng-view>
+
+    </div>
+</div>
+
 </body>
 </html>

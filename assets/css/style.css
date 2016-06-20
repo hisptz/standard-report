@@ -3,7 +3,9 @@
     font-weight: normal;
     color: #585D61;
 }
-
+.navbar-inverse .navbar-nav > li > a {
+    color: #ffffff;
+}
 .vertical-spacing{
     margin-top: 20px;    
 }
@@ -22,4 +24,7 @@ table
 .page {
     font-size: 9pt;
     margin: 65px 10px 10px 270px;
+}
+c-tree .list-group .list-group-item{
+    border:none;
 }

@@ -4,9 +4,9 @@
     "description": "Report App",
     "launch_path": "index.html",
     "icons": {
-        "16": "/img/icon.png",
-        "48": "/img/icon.png",
-        "128": "/img/icon.png"
+        "16": "",
+        "48": "",
+        "128": ""
     },
     "developer": {
         "name": "HISPTZ",

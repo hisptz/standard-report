@@ -1,5 +1,11 @@
+
 <tbody>
-<tr>
-    <td ng-repeat="dataElement in data.dataElements">{{dataElement.event[dataElement.name]}}</td>
+<tr ng-if="!config.groupBy" ng-repeat="event in data.events">
+    <!--<td ng-repeat="dataElement in data.dataElements">{{dataElement.event[dataElement.name]}}</td>-->
+    <td ng-repeat="dataElement in data.dataElements">{{event[dataElement.name]}}</td>
+</tr>
+<tr  ng-if="config.groupBy" ng-repeat="event in data.events">
+    <!--<td ng-repeat="dataElement in data.dataElements">{{dataElement.event[dataElement.name]}}</td>-->
+    <td style="border:1px solid lightgrey" ng-if="event[dataElement.name] != undefined" ng-repeat="dataElement in data.dataElements">{{event[dataElement.name]}}</td>
 </tr>
 </tbody>
