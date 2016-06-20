@@ -26,7 +26,7 @@
     <div ng-if="progressValue == 100 && notArchive" id="control" style="margin-top: 0px;">
         <input type="button" ng-if="preview" ng-disabled="isNotAuthorized() || reportStatus == 'Executed' || reportStatus == 'Not Executed'" value="Create Report" style="width:120px" ng-click="createDataSetReport()" html-link="">
         <input type="button" id="dataButton" value="Change Data Criteria" style="width:140px" ng-click="back()" ng-if="trustedHtml">
-        <input type="button" value="Cancel" ng-click="generateDataSetReport('/standardReport')">
+        <input type="button" value="Cancel" ng-click="generateDataSetReport('/dataSetReport')">
     </div>
     <br />
     <div>

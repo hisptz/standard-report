@@ -42,6 +42,8 @@
     <script type="text/javascript" src="assets/js/filemanager/angular-filemanager.min.js"></script>
 
     <script type="text/javascript" src="scripts/app.js"></script>
+    <script>
+    </script>
     <script type="text/javascript" src="scripts/services.js"></script>
     <script type="text/javascript" src="scripts/directives.js"></script>
     <script type="text/javascript" src="scripts/controllers.js"></script>
@@ -59,15 +61,46 @@
     <link type="text/css" rel="stylesheet" href="assets/css/style.css">
 
     <style>
-        .btn{
-            display:none
+        .btn {
+            display: none
         }
+
         .navbar-inverse .navbar-nav > li > a {
             color: white !important;
         }
+        .reportHeader{
+            display:none;
+        }
+        .answer{
+            width:250px;
+            height:30px;
+            border-bottom:3px solid black;
+            display: inline-flex;
+        }
+        .adminstrative table{
+            font-size:20px;
+        }
+        td.underline{
+            margin-left:5px;
+            border-bottom:3px solid black;
+        }
     </style>
+
 </head>
 <body>
-<div ng-view></div>
+<div ng-controller="CoverController">
+    <div ng-include="url"></div>
+</div>
+<!--<div id="app2" ng-app="app2">
+    <div ng-view>
+
+    </div>
+</div>-->
+<div>
+    <div ng-view>
+
+    </div>
+</div>
+
 </body>
 </html>

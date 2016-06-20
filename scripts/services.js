@@ -25,7 +25,6 @@ var appServices = angular.module('appServices', ['ngResource'])
                 }
             },
             getPeriodDate: function (period) {
-                console.log(period);
                 var returnDate = {};
                 if (period.indexOf("July") != -1) {
                     returnDate.startDate = period.substr(0, 4) + "-07-01";
@@ -41,7 +40,6 @@ var appServices = angular.module('appServices', ['ngResource'])
                     returnDate.startDate = period.substr(0, 4) + "-" + period.substr(4) + "-01";
                     returnDate.endDate = period.substr(0, 4) + "-" + period.substr(4) + "-31";
                 }
-                console.log(JSON.stringify(returnDate));
                 return returnDate;
             },
             createDataSetReport: function (data) {

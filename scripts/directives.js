@@ -159,6 +159,18 @@ var appDirectives = angular.module('appDirectives', [])
             templateUrl: 'views/listByWard.html'
         }
     })
+    .directive("debug", function () {
+        return {
+            scope: {
+                config:"="
+            },
+            replace: true,
+            controller: function ($scope) {
+
+            },
+            templateUrl: 'views/debug.html'
+        }
+    })
     .directive("childrenOrganisationUnits", function () {
         return {
             scope: {

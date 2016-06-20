@@ -17,6 +17,12 @@
 .cde-greyfield {
     background-color: #e0e0e0;
 }
+    .tabSpace{
+        padding-left:40px
+    }
+    u{
+        padding:5px;
+    }
 </style>
 </p>
 
@@ -25,7 +31,7 @@
 </div>
 
 <div class="text text-center ng-scope">
-    <h2><strong>(OWM - TAMISEMI)</strong></h2>
+    <h2><strong>(OR - TAMISEMI)</strong></h2>
 </div>
 
 <div class="nembo text text-center ng-scope"><img class="img-rounded" src="../../../dhis-web-commons/css/portalImages/nembo.png" style="height:120px;width:100px"></div>
@@ -38,12 +44,41 @@
     <h2><strong>ANNUAL DATA COLLECTION REPORT</strong></h2>
 </div>
 
+
+
+<div class="text ng-scope">
+    <h3 class="adminstrative">
+        <table>
+            <tr><td colspan="2">IDENTIFICATION DETAILS</td></tr>
+            <tr><td align="right">Region:</td><td class="underline">{{region}}</td></tr>
+            <tr><td>District</td><td class="underline">{{district}}</td></tr>
+            <tr><td>Financial Year</td><td class="underline">{{periodString}}</td></tr>
+            <tr><td>Name (contact person)</td><td class="underline"></td></tr>
+            <tr><td>Address</td><td>P.O. BOX</td><td class="underline"></td></tr>
+            <tr><td></td><td>E-mail</td><td style="width:250px" class="underline"></td></tr>
+            <tr><td></td><td>Mobile</td><td class="underline"></td></tr>
+            <tr><td>Date of submission</td><td class="underline"></td></tr>
+            <tr><td>Number of submiteed wards</td><td class="underline"></td></tr>
+        </table>
+        <br/>
+        <span class="tabSpace"></span>Region <u>{{region}}</u><br/>
+        <span class="tabSpace"></span>District <u>{{district}}</u><br/>
+        Financial Year <u>{{periodString}}</u><br/>
+
+        Name (contact person) <span></span><br/>
+        Address<span class="tabSpace"></span>P.O. BOX<div class="answer"></div><br/>
+        &nbsp;&nbsp;&nbsp;<span class="tabSpace"></span><span class="tabSpace"></span>E-mail<br/>
+        &nbsp;&nbsp;&nbsp;<span class="tabSpace"></span><span class="tabSpace"></span>Mobile<br/>
+        Date of submission<br/>
+        Number of submiteed wards<br/>
+    </h3>
+</div>
+
 <div class="annually text text-center ng-scope">
     <address>
         <h3><strong>ASPD Monitoring &amp; Evaluation Thematic Working Group </strong></h3>
+        <h4>P.O. Box 9192, Dar es Salaam</h4>
+        <h4>Tel & Fax: +255 22 286 4460</h4>
+        <h4>E-mail: doo@kilimo.go.tz</h4>
     </address>
-</div>
-
-<div class="text text-center ng-scope">
-    <h3 class="adminstrative">&nbsp;</h3>
 </div>
