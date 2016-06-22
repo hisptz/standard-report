@@ -70,6 +70,7 @@
         }
         .reportHeader{
             display:none;
+            margin-top:300px;
         }
         .answer{
             width:250px;
@@ -82,24 +83,22 @@
         }
         td.underline{
             margin-left:5px;
-            border-bottom:3px solid black;
+            border-bottom:3px dotted black;
         }
     </style>
 
 </head>
 <body>
-<div ng-controller="CoverController">
-    <div ng-include="url"></div>
+<div ng-controller="CoverController" style="margin-top: 150px;">
+    <div ng-include="'views/cover.html'"></div>
 </div>
 <!--<div id="app2" ng-app="app2">
     <div ng-view>
 
     </div>
 </div>-->
-<div>
-    <div ng-view>
-
-    </div>
+<div class="page" id="mainPages">
+    <div ng-view></div>
 </div>
 
 </body>

@@ -79,13 +79,42 @@
         <div ng-if="loadFile">
             <input type="button" value="Download PDF" ng-click="download()">
             <input type="button"  ng-disabled="isNotAuthorized()" value="Undo Report Creation" ng-click="undoDataSetReport()">
-            <input ng-if="!approveData.data && approvalStatus == ''" type="button"  ng-disabled="isNotApproved()" value="Approve" ng-click="approve()">
-            <input ng-if="approveData.data && approvalStatus == ''" type="button"  ng-disabled="isNotApproved()" value="Disapprove" ng-click="disApprove()">
+            <input ng-if="!approveData.user && approvalStatus == ''" type="button"  ng-disabled="isNotApproved()" value="Approve" ng-click="approve()">
+            <input ng-if="approveData.user && approvalStatus == ''" type="button"  ng-disabled="isNotApproved()" value="Disapprove" ng-click="disApprove()">
             <span ng-if="approvalStatus != ''" class="loader" style="margin-top: 0px;">
                 <img
                         src="../../../images/ajax-loader-bar.gif"> {{approvalStatus}}
             </span>
-            <input type="button" data-toggle="modal" data-target="#myModal" value="Comment" ng-click="showComment()"/><br /><br />
+            <input type="button" data-toggle="collapse" data-target="#demo" value="Comment" ng-click="showComment()"/><br /><br />
+            <div ng-if="approveData.user && approvalStatus == ''" class="alert alert-info" role="alert">
+                <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                Approved by {{approveData.user.name}} on {{approveData.lastUpdated | date}}
+            </div>
+
+            <div id="demo" class="collapse">
+                <div>
+                <div  ng-if="savingComment == 'savingLoad'" class="loader" style="margin-top: 0px;">
+                    <img src="../../../images/ajax-loader-bar.gif"> Saving Comment..
+                </div>
+                <div ng-if="savingComment == 'commentLoad'" class="loader" style="margin-top: 0px;">
+                    <img src="../../../images/ajax-loader-bar.gif"> Loading Previous Comments..
+                </div>
+                <div ng-if="savingComment == ''">
+                    <div ng-if="commentData.lastUpdated" class="alert alert-info" role="alert">
+                        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        Last Updated on {{commentData.lastUpdated | date}} by {{commentData.lastCommenter.name}}
+                    </div>
+                    <textarea ng-disabled="approveData.user" placeholder="Write Your Comment Here" ng-model="commentData.comment"style="width: 100%;">
+
+                    </textarea>
+                    <br /><br />
+                    <button type="button" style="display:initial" class="btn btn-default" data-dismiss="collapse" ng-click="closeComment()">Close</button>
+                    <button data-toggle="collapse" data-target="#demo" type="button"  ng-disabled="approveData.user" style="display:initial" class="btn btn-success" ng-click="saveComment()">Save changes</button>
+                </div>
+                </div>
+            </div>
             <div ng-bind-html="file"></div>
         </div>
     </div>

@@ -166,7 +166,7 @@ var appDirectives = angular.module('appDirectives', [])
             },
             replace: true,
             controller: function ($scope) {
-
+                console.log($scope);
             },
             templateUrl: 'views/debug.html'
         }
@@ -189,7 +189,6 @@ var appDirectives = angular.module('appDirectives', [])
             },
             link: function (scope, elem, attrs, controller) {
                 if (scope.config.groupBy) {
-                    console.log(elem);
 
                     var arr = Array.prototype.slice.call(elem[0].rows);
                     $timeout(function () {
@@ -282,7 +281,6 @@ var appDirectives = angular.module('appDirectives', [])
                         });
 
                         var elementsWithRowSpan = {};
-                        console.log(dataElementIndexes);
                         //Look for cells to row span
                         dataElementIndexes.forEach(function (group, index) {
                             for (var i1 = 0; i1 < elem[0].children.length; i1++) {
@@ -359,7 +357,6 @@ var appDirectives = angular.module('appDirectives', [])
                 });
                 if ($scope.config.groupBy) {//If grouping is required
                     //$scope.data.groupedEvents = [];
-                    console.log("Config:", $scope.config);
                     $scope.foundDataValues = {};
                     $scope.config.groupBy.forEach(function (group, index) {
                         if (index == 0) {

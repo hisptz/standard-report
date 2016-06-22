@@ -348,10 +348,8 @@ var appControllers = angular.module('appControllers', [])
                     $scope.loadTracker = undefined;
                 });
         });
-        $scope.showComment = function(){
-            $scope.commentData = {
-
-            }
+        $scope.showComment = function () {
+            $scope.commentData = {}
             $scope.savingComment = "commentLoad";
             $http.get(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
                 $scope.savingComment = "";
@@ -360,20 +358,24 @@ var appControllers = angular.module('appControllers', [])
                 $scope.savingComment = "";
                 toaster.pop('info', "Information", "No comments where found.");
             });
-            $scope.saveComment = function(){
+            $scope.saveComment = function () {
                 console.log(JSON.stringify($scope.commentData));
                 $scope.savingComment = "savingLoad";
-                $scope.commentData = {comment:$scope.commentData.comment,lastUpdated:new Date(),lastCommenter:$scope.user};
-                if($scope.commentData.lastCommenter){
-                    $http.put(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period,$scope.commentData).then(function (results) {
+                $scope.commentData = {
+                    comment: $scope.commentData.comment,
+                    lastUpdated: new Date(),
+                    lastCommenter: $scope.user
+                };
+                if ($scope.commentData.lastCommenter) {
+                    $http.put(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period, $scope.commentData).then(function (results) {
                         $scope.savingComment = "";
                         toaster.pop('success', "Success", "Saved Comments Successfully.");
                     }, function (error) {
                         $scope.savingComment = "error";
                         toaster.pop('error', "Failure", "Failed to post the comment. Please Try again.");
                     });
-                }else{
-                    $http.post(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period,$scope.commentData).then(function (results) {
+                } else {
+                    $http.post(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period, $scope.commentData).then(function (results) {
                         $scope.savingComment = "";
                         toaster.pop('success', "Success", "Saved Comments Successfully.");
                     }, function (error) {
@@ -383,50 +385,41 @@ var appControllers = angular.module('appControllers', [])
                 }
 
             }
+            $scope.closeComment = function(){
+                $('#demo').collapse('toggle');
+            }
         }
-        $scope.approveData = {
-
-        }
+        $scope.approveData = {}
         $http.get(DHIS2URL + "api/dataStore/approve/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
             //$scope.savingComment = "";
-            $scope.approveData.data = results.data;
+            $scope.approveData = results.data;
         }, function (error) {
             //$scope.savingComment = "";
             //toaster.pop('info', "Information", "No comments where found.");
         });
         $scope.approvalStatus = "";
-        $scope.approve = function(){
+        $scope.approve = function () {
             $scope.approvalStatus = "Approving Report..";
-            if($scope.approveData.data){
-                $http.put(DHIS2URL + "api/dataStore/approve/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period,{}).then(function (results) {
-                    $scope.approveData.data = true;
-                    $scope.approvalStatus = "";
-                    toaster.pop('success', "Success", "Report Approved Successfully.");
-                }, function (error) {
-                    $scope.approvalStatus = "";
-                    toaster.pop('error', "Failure", "Failed to approve report. Please Try again.");
-                });
-            }else{
-                $http.post(DHIS2URL + "api/dataStore/approve/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period,{}).then(function (results) {
-                    $scope.approveData.data = true;
-                    $scope.approvalStatus = "";
-                    toaster.pop('success', "Success", "Report Approved Successfully.");
-                }, function (error) {
-                    $scope.approvalStatus = "";
-                    toaster.pop('error', "Failure", "Failed to approve report. Please Try again.");
-                });
-            }
+            $scope.approveData = {lastUpdated: new Date(), user: $scope.user};
+            $http.post(DHIS2URL + "api/dataStore/approve/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period, $scope.approveData).then(function (results) {
+                //$scope.approveData.data = true;
+                $scope.approvalStatus = "";
+                toaster.pop('success', "Success", "Report Approved Successfully.");
+            }, function (error) {
+                $scope.approvalStatus = "";
+                toaster.pop('error', "Failure", "Failed to approve report. Please Try again.");
+            });
         }
-        $scope.disApprove = function(){
+        $scope.disApprove = function () {
             $scope.approvalStatus = "Disapproving Report..";
             $http.delete(DHIS2URL + "api/dataStore/approve/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
-                    $scope.approveData.data = undefined;
+                $scope.approveData = {};
                 $scope.approvalStatus = "";
-                    toaster.pop('success', "Success", "Report Disapproved Successfully.");
-                }, function (error) {
+                toaster.pop('success', "Success", "Report Disapproved Successfully.");
+            }, function (error) {
                 $scope.approvalStatus = "";
-                    toaster.pop('error', "Failure", "Failed to disapprove report. Please Try again.");
-                });
+                toaster.pop('error', "Failure", "Failed to disapprove report. Please Try again.");
+            });
 
         }
     })
@@ -655,10 +648,10 @@ var appControllers = angular.module('appControllers', [])
         $scope.nonAggregatedDataElements = [];
         $scope.nonAggregatedDataElementsDate = [];
         $scope.autogrowingPrograms = {};
-        $scope.getElementReplacment = function(content,type){
+        $scope.getElementReplacment = function (content, type) {
             var div = "<div>" + content;
-            if($routeParams.preview == "debug"){
-                div += "<debug config='{type:\""+type+"\"}'></debug>";
+            if ($routeParams.preview == "debug") {
+                div += "<debug config='{type:\"" + type + "\"}'></debug>";
             }
             div += "</div>";
             return div;
@@ -686,25 +679,25 @@ var appControllers = angular.module('appControllers', [])
                     });
                     if (isValidAggregate) {
                         if (match[0].indexOf("lastMonthOfQuarter") > -1) {//If it is last month of quarter
-                            newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{lastMonthOfQuarterData['" + idMacth[1] + "." + idMacth[2] + "']}}","dataElement"));
+                            newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{lastMonthOfQuarterData['" + idMacth[1] + "." + idMacth[2] + "']}}", "dataElement"));
                             $scope.lastMonthOfQuarter.push(idMacth[1] + "." + idMacth[2]);
                         } else if (match[0].indexOf("fourthQuarter") > -1) {//If it is last month of quarter
                             var label = "<div>";
                             if (match[0].indexOf("integer") > -1) {
                                 //label = "<label integer >";
                             }
-                            newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{fourthQuarterData['" + idMacth[1] + "." + idMacth[2] + "']}}","dataElement"));
+                            newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{fourthQuarterData['" + idMacth[1] + "." + idMacth[2] + "']}}", "dataElement"));
                             $scope.fourthQuarter.push(idMacth[1] + "." + idMacth[2]);
                         } else if (match[0].indexOf("cumulative-to-date") > -1) {//If it is last month of quarter
                             var label = "<div>";
-                            newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{cumulativeToDateData['" + idMacth[1] + "." + idMacth[2] + "']}}","dataElement"));
+                            newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{cumulativeToDateData['" + idMacth[1] + "." + idMacth[2] + "']}}", "dataElement"));
                             $scope.cumulativeToDate.push(idMacth[1] + "." + idMacth[2]);
                         } else if (match[0].indexOf("list-by-ward") > -1) {//If it is last month of quarter
                             var label = "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' org-unit='orgUnit'>";
-                            newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{listByWardData['" + idMacth[1] + "." + idMacth[2] + "']}}","dataElement"));
+                            newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' org-unit='orgUnit'>");
                             $scope.listByWard.push(idMacth[1] + "." + idMacth[2]);
                         } else {
-                            newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{dataElementsData['" + idMacth[1] + "." + idMacth[2] + "']}}","dataElement"));
+                            newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{dataElementsData['" + idMacth[1] + "." + idMacth[2] + "']}}", "dataElement"));
                             $scope.dataElements.push(idMacth[1] + "." + idMacth[2]);
                         }
 
@@ -714,7 +707,7 @@ var appControllers = angular.module('appControllers', [])
                         } else {
                             $scope.nonAggregatedDataElements.push(idMacth[1] + "." + idMacth[2]);
                         }
-                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{dataElementsData['" + idMacth[1] + "." + idMacth[2] + "']}}","dataElement"));
+                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{dataElementsData['" + idMacth[1] + "." + idMacth[2] + "']}}", "dataElement"));
                     }
                 } else if ((idMacth = /id="indicator(.*?)"/.exec(match[0])) !== null) {
                     if (match[0].indexOf("fourthQuarter") > -1) {//If it is last month of quarter
@@ -722,10 +715,10 @@ var appControllers = angular.module('appControllers', [])
                         if (match[0].indexOf("integer") > -1) {
                             label = "<label integer >";
                         }
-                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{fourthQuarterData['" + idMacth[1] + "']}}","indicator"));
+                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{fourthQuarterData['" + idMacth[1] + "']}}", "indicator"));
                         $scope.fourthQuarter.push(idMacth[1]);
                     } else {
-                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{dataElementsData['" + idMacth[1] + "']}}","indicator"));
+                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{dataElementsData['" + idMacth[1] + "']}}", "indicator"));
                         $scope.dataElements.push(idMacth[1]);
                     }
 
@@ -735,10 +728,10 @@ var appControllers = angular.module('appControllers', [])
                         if (match[0].indexOf("integer") > -1) {
                             label = "<label integer >";
                         }
-                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{fourthQuarterData['" + idMacth[1] + "']}}","dataElement"));
+                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{fourthQuarterData['" + idMacth[1] + "']}}", "dataElement"));
                         $scope.fourthQuarter.push(idMacth[1]);
                     } else {
-                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{dataElementsData['" + idMacth[1] + "']}}","dataElement"));
+                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{dataElementsData['" + idMacth[1] + "']}}", "dataElement"));
                         $scope.dataElements.push(idMacth[1]);
                     }
                 } else {
@@ -897,31 +890,33 @@ var appControllers = angular.module('appControllers', [])
             });
         };
     })
-    .controller("CoverController", function ($scope,$location,$http,DHIS2URL) {
-
-
-        var url = $location.$$url.replace("/dataSetReport","").replace("/report/","").replace("dataSet/","").replace("/orgUnit/","/").replace("/period/","/").split("/");
-        console.log(url);
+    .controller("CoverController", function ($scope, $location, $http, DHIS2URL) {
+        var url = $location.$$url.replace("/dataSetReport", "").replace("/report/", "").replace("dataSet/", "").replace("/orgUnit/", "/").replace("/period/", "/").split("/");
         $scope.dataSet = url[0];
         $scope.orgUnit = url[1];
         $scope.period = url[2];
-        $http.get(DHIS2URL + "api/dataSets/" +$scope.dataSet+".json").then(function(result){
-            if(result.data.name.indexOf("Annual Integrated Report") > -1){
-                $scope.url = "views/integratedannual.cover.html";
+        $scope.dataSetDetails = {};
+        $http.get(DHIS2URL + "api/dataSets/" + $scope.dataSet + ".json").then(function (result) {
+            console.log(result);
+            $scope.dataSetDetails = result.data;
+            if($scope.dataSetDetails.periodType == 'FinancialJuly'){
+                if ($scope.period.indexOf("July") > -1) {
+                    $scope.periodString = "July " + $scope.period.substr(0, 4) + " - June " + (parseInt($scope.period.substr(0, 4)) + 1);
+                }
+            }else if($scope.dataSetDetails.periodType == 'Quarterly'){
+                $scope.periodString = parseInt($scope.period.substr(0, 4));
+            }else if($scope.dataSetDetails.periodType == 'Monthly'){
+                $scope.periodString = $scope.period.substr(4, 6) + " " + $scope.period.substr(0, 4);
             }
         });
-        $http.get(DHIS2URL + "api/organisationUnits/" +$scope.orgUnit+".json?fields=name,level,parent[name,level]").then(function(result){
+        $http.get(DHIS2URL + "api/organisationUnits/" + $scope.orgUnit + ".json?fields=name,level,parent[name,level]").then(function (result) {
             console.log(result.data.level);
-            if(result.data.level == 3){
+            if (result.data.level == 3) {
                 $scope.district = result.data.name;
                 $scope.region = result.data.parent.name;
-            }
-            if(result.data.name.indexOf("Annual Integrated Report") > -1){
-                $scope.url = "views/integratedannual.cover.html";
+            }else if (result.data.level == 2) {
+                $scope.region = result.data.parent.name;
             }
         });
         $scope.periodString = ""
-        if($scope.period.endsWith("July")){
-            $scope.periodString = "July " + $scope.period.substr(0,4) + " - June " + (parseInt($scope.period.substr(0,4)) + 1);
-        }
     })

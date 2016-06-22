@@ -43,7 +43,7 @@ angular.module('app',
         }).when('/dataSetReport/report/dataSet/:dataSet/orgUnit/:orgUnit/period/:period', {
             controller: 'ReportController',
             templateUrl: 'views/report.html'
-        }).when('/report/dataSet/:dataSet/orgUnit/:orgUnit/period/:period/:preview', {
+        }).when('/dataSetReport/report/dataSet/:dataSet/orgUnit/:orgUnit/period/:period/:preview', {
             controller: 'ReportController',
             templateUrl: 'views/report.html'
         }).when('/dataSetReport/reportRequest/dataSet/:dataSet/orgUnit/:orgUnit/period/:period', {
