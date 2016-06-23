@@ -15,16 +15,19 @@
                 <div class="modal-body">
                     <table ng-if="config.type == 'dataElement'">
                         <tr>
-                            <td>Name of Data Element</td><td></td>
+                            <td>Name of Data Element</td><td>{{config.data.dataElement.name}}</td>
                         </tr>
                         <tr>
-                            <td>Dataset source</td><td>Ward Annual Entry Form (WF03)</td>
+                            <td>Dataset source</td><td></td>
                         </tr>
                         <tr>
-                            <td>Aggregation operator</td><td>Sum</td>
+                            <td>Aggregation operator</td><td>{{config.data.dataElement.aggregationType}}</td>
                         </tr>
                         <tr>
-                            <td>Value type</td><td>Positive Integer</td>
+                            <td>Value type</td><td>{{config.data.dataElement.valueType}}</td>
+                        </tr>
+                        <tr>
+                            <td>Estimation Method</td><td>{{estimation}}</td>
                         </tr>
                         <tr>
                             <td>Administrative Unit</td><td></td>
@@ -33,7 +36,7 @@
                             <td>Consolidation Methods</td><td>Pivot Table</td>
                         </tr>
                         <tr>
-                            <td>Values used</td><td>20,10,22,2</td>
+                            <td>Values used</td><td>{{config.data.data}}</td>
                         </tr>
                     </table>
                     <table ng-if="config.type == 'indicator'">

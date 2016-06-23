@@ -89,7 +89,11 @@
             <div ng-if="approveData.user && approvalStatus == ''" class="alert alert-info" role="alert">
                 <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
                 <span class="sr-only">Error:</span>
-                Approved by {{approveData.user.name}} on {{approveData.lastUpdated | date}}
+                Approved by {{approveData.user.name}} on {{approveData.lastUpdated | date}}<br /><br />
+
+                Comments:<br /><br />
+
+                <i>{{commentData.comment}}</i>
             </div>
 
             <div id="demo" class="collapse">

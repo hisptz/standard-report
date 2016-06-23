@@ -166,7 +166,13 @@ var appDirectives = angular.module('appDirectives', [])
             },
             replace: true,
             controller: function ($scope) {
-                console.log($scope);
+                //console.log($scope.config);
+                $scope.estimation = "Not Applicaple"
+                $scope.config.data.dataElement.attributeValues.forEach(function(attributeValue){
+                    if(attributeValue.attribute.name == "Estimation"){
+                        $scope.estimation = attributeValue.value;
+                    }
+                })
             },
             templateUrl: 'views/debug.html'
         }

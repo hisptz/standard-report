@@ -348,16 +348,15 @@ var appControllers = angular.module('appControllers', [])
                     $scope.loadTracker = undefined;
                 });
         });
+        $scope.savingComment = "commentLoad";
+        $http.get(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
+            $scope.savingComment = "";
+            $scope.commentData = results.data;
+        }, function (error) {
+            $scope.savingComment = "";
+            toaster.pop('info', "Information", "No comments where found.");
+        });
         $scope.showComment = function () {
-            $scope.commentData = {}
-            $scope.savingComment = "commentLoad";
-            $http.get(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
-                $scope.savingComment = "";
-                $scope.commentData = results.data;
-            }, function (error) {
-                $scope.savingComment = "";
-                toaster.pop('info', "Information", "No comments where found.");
-            });
             $scope.saveComment = function () {
                 console.log(JSON.stringify($scope.commentData));
                 $scope.savingComment = "savingLoad";
@@ -424,6 +423,7 @@ var appControllers = angular.module('appControllers', [])
         }
     })
     .controller("ReportController", function ($scope, $http, $routeParams, $sce, $q, DHIS2URL, $timeout, $compile, $location, ReportService, $window, toaster) {
+        var common = 50;
         $scope.reloadPage = function () {
             window.location.reload();
         }
@@ -466,8 +466,29 @@ var appControllers = angular.module('appControllers', [])
                     $scope.data.dataSetForm = results.data;
                     var trustedHtml = $scope.renderHtml(results.data.dataEntryForm.htmlCode, results.data.dataElements);
 
+                    if ($routeParams.preview == "debug") {
+                        for (var i = 0; i < $scope.debugDataElements.length; i ++) {
+                            $scope.debugData[$scope.debugDataElements[i]] = {
+                                data:[]
+                            };
+                        }
+                        for (var i = 0; i < $scope.debugDataElements.length; i += common) {
+                            $http.get(DHIS2URL + "api/dataElements.json?fields=:all,attributeValues[:all,attribute[:all]]&filter=id:in:[" + $scope.debugDataElements.slice(i, i + common).join(",") + "]").then(function (results) {
+                                results.data.dataElements.forEach(function(dataElemen){
+                                    $scope.debugData[dataElemen.id].dataElement = dataElemen;
+                                });
+                            });
+                            $http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.debugDataElements.slice(i, i + common).join(";") + "&dimension=pe:"+$routeParams.period+"&filter=ou:"+$routeParams.orgUnit+";LEVEL-4").then(function (results) {
+                                results.data.rows.forEach(function(row){
+                                    $scope.debugData[row[0]].data.push(row);
+
+                                 });
+
+                            });
+                        }
+                    }
                     $scope.loadingStatus = "Loading Data Values";
-                    var common = 50;
+
                     $scope.progressValue = 20;
                     var progressFactor = 60 / (($scope.dataElements.length + $scope.nonAggregatedDataElements.length + $scope.lastMonthOfQuarter.length + $scope.fourthQuarter.length) / common);
                     for (var i = 0; i < $scope.dataElements.length; i += common) {
@@ -602,6 +623,8 @@ var appControllers = angular.module('appControllers', [])
                                         })
                                     });
                                     $timeout(function () {
+                                        console.log($scope.debugData['JA033keuwLg']);
+                                        console.log($scope.debugData['hLaBUV8pGic']);
                                         deffered.resolve();
                                     });
                                 }, function (error) {
@@ -648,10 +671,21 @@ var appControllers = angular.module('appControllers', [])
         $scope.nonAggregatedDataElements = [];
         $scope.nonAggregatedDataElementsDate = [];
         $scope.autogrowingPrograms = {};
+        $scope.debugDataElements = [];
+        $scope.debugData = {};
         $scope.getElementReplacment = function (content, type) {
-            var div = "<div>" + content;
+            var div = "<div>{{" + content + "}}";
             if ($routeParams.preview == "debug") {
-                div += "<debug config='{type:\"" + type + "\"}'></debug>";
+                var processed = content.replace("dataElementsData['","").replace("']","");
+                if(processed.indexOf(".") > -1 && content.indexOf("dataElementsData['") > -1){
+                    processed = processed.substr(0,processed.indexOf("."));
+                    $scope.debugDataElements.push(processed);
+                    div += "<debug config=\"{type:'" + type + "',data:debugData['"+processed+"']}\"></debug>";
+                }else{
+
+                }
+
+
             }
             div += "</div>";
             return div;
@@ -679,25 +713,25 @@ var appControllers = angular.module('appControllers', [])
                     });
                     if (isValidAggregate) {
                         if (match[0].indexOf("lastMonthOfQuarter") > -1) {//If it is last month of quarter
-                            newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{lastMonthOfQuarterData['" + idMacth[1] + "." + idMacth[2] + "']}}", "dataElement"));
+                            newHtml = newHtml.replace(match[0], $scope.getElementReplacment("lastMonthOfQuarterData['" + idMacth[1] + "." + idMacth[2] + "']", "dataElement"));
                             $scope.lastMonthOfQuarter.push(idMacth[1] + "." + idMacth[2]);
                         } else if (match[0].indexOf("fourthQuarter") > -1) {//If it is last month of quarter
                             var label = "<div>";
                             if (match[0].indexOf("integer") > -1) {
                                 //label = "<label integer >";
                             }
-                            newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{fourthQuarterData['" + idMacth[1] + "." + idMacth[2] + "']}}", "dataElement"));
+                            newHtml = newHtml.replace(match[0], $scope.getElementReplacment("fourthQuarterData['" + idMacth[1] + "." + idMacth[2] + "']", "dataElement"));
                             $scope.fourthQuarter.push(idMacth[1] + "." + idMacth[2]);
                         } else if (match[0].indexOf("cumulative-to-date") > -1) {//If it is last month of quarter
                             var label = "<div>";
-                            newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{cumulativeToDateData['" + idMacth[1] + "." + idMacth[2] + "']}}", "dataElement"));
+                            newHtml = newHtml.replace(match[0], $scope.getElementReplacment("cumulativeToDateData['" + idMacth[1] + "." + idMacth[2] + "']", "dataElement"));
                             $scope.cumulativeToDate.push(idMacth[1] + "." + idMacth[2]);
                         } else if (match[0].indexOf("list-by-ward") > -1) {//If it is last month of quarter
                             var label = "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' org-unit='orgUnit'>";
                             newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' org-unit='orgUnit'>");
                             $scope.listByWard.push(idMacth[1] + "." + idMacth[2]);
                         } else {
-                            newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{dataElementsData['" + idMacth[1] + "." + idMacth[2] + "']}}", "dataElement"));
+                            newHtml = newHtml.replace(match[0], $scope.getElementReplacment("dataElementsData['" + idMacth[1] + "." + idMacth[2] + "']", "dataElement"));
                             $scope.dataElements.push(idMacth[1] + "." + idMacth[2]);
                         }
 
@@ -707,7 +741,7 @@ var appControllers = angular.module('appControllers', [])
                         } else {
                             $scope.nonAggregatedDataElements.push(idMacth[1] + "." + idMacth[2]);
                         }
-                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{dataElementsData['" + idMacth[1] + "." + idMacth[2] + "']}}", "dataElement"));
+                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("dataElementsData['" + idMacth[1] + "." + idMacth[2] + "']", "dataElement"));
                     }
                 } else if ((idMacth = /id="indicator(.*?)"/.exec(match[0])) !== null) {
                     if (match[0].indexOf("fourthQuarter") > -1) {//If it is last month of quarter
@@ -715,10 +749,10 @@ var appControllers = angular.module('appControllers', [])
                         if (match[0].indexOf("integer") > -1) {
                             label = "<label integer >";
                         }
-                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{fourthQuarterData['" + idMacth[1] + "']}}", "indicator"));
+                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("fourthQuarterData['" + idMacth[1] + "']", "indicator"));
                         $scope.fourthQuarter.push(idMacth[1]);
                     } else {
-                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{dataElementsData['" + idMacth[1] + "']}}", "indicator"));
+                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("dataElementsData['" + idMacth[1] + "']", "indicator"));
                         $scope.dataElements.push(idMacth[1]);
                     }
 
@@ -728,10 +762,10 @@ var appControllers = angular.module('appControllers', [])
                         if (match[0].indexOf("integer") > -1) {
                             label = "<label integer >";
                         }
-                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{fourthQuarterData['" + idMacth[1] + "']}}", "dataElement"));
+                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("fourthQuarterData['" + idMacth[1] + "']", "dataElement"));
                         $scope.fourthQuarter.push(idMacth[1]);
                     } else {
-                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("{{dataElementsData['" + idMacth[1] + "']}}", "dataElement"));
+                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("dataElementsData['" + idMacth[1] + "']", "dataElement"));
                         $scope.dataElements.push(idMacth[1]);
                     }
                 } else {
@@ -786,6 +820,7 @@ var appControllers = angular.module('appControllers', [])
                         $scope.progressValue = 100;
                         $scope.loadingReport = false;
                         $window.document.title = "Report Loaded";
+
                     });
                 }, function (error) {
                     $scope.error = "Hey";

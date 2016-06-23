@@ -41,7 +41,7 @@
 </div>
 
 <div class="interReport text text-center ng-scope">
-    <h2><strong>ANNUAL DATA COLLECTION REPORT</strong></h2>
+    <h2><strong><span ng-if="!district && !region">NATIONAL </span> ANNUAL DATA COLLECTION REPORT</strong></h2>
 </div>
 
 
@@ -52,9 +52,9 @@
             <tr><td colspan="2">IDENTIFICATION DETAILS</td></tr>
             <tr ng-if="region"><td>Region:</td><td class="underline">{{region}}</td></tr>
             <tr ng-if="district"><td>District:</td><td class="underline">{{district}}</td></tr>
-            <tr  ng-if="dataSetDetails.periodType == 'FinancialJuly'"><td>Financial Year:</td><td class="underline">{{periodString}}</td></tr>
-            <tr  ng-if="dataSetDetails.periodType == 'Monthl'"><td>Month:</td><td class="underline">{{periodString}}</td></tr>
-            <tr  ng-if="dataSetDetails.periodType == 'Quarterly'"><td>Quartely:</td>
+            <tr ng-if="dataSetDetails.periodType == 'FinancialJuly'"><td>Financial Year:</td><td class="underline">{{periodString}}</td></tr>
+            <tr ng-if="dataSetDetails.periodType == 'Monthl'"><td>Month:</td><td class="underline">{{periodString}}</td></tr>
+            <tr ng-if="dataSetDetails.periodType == 'Quarterly'"><td>Quartely:</td>
                 <td>
                     <table>
                         <tr><td>First Quarter:</td><td>(July - September {{periodString}})</td></tr>
@@ -82,5 +82,3 @@
         <h4>E-mail: doo@kilimo.go.tz</h4>
     </address>
 </div>
-
-<div style="height: 300px;"></div>
