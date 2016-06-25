@@ -46,7 +46,7 @@ var appControllers = angular.module('appControllers', [])
                             })
                         });
                         if (this.list.length == 0) {
-                            this.populateList(new Date(date.getFullYear() - 2, date.getMonth() + 1, date.getDate()))
+                            this.populateList(new Date(date.getFullYear() - 1, date.getMonth() + 1, date.getDate()))
                         }
                     }
                 },
