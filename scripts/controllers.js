@@ -439,9 +439,16 @@ var appControllers = angular.module('appControllers', [])
         $scope.isNotApproved = function(){
             var returnValue = true;
             $scope.user.organisationUnits.forEach(function(orgUnit){
-                if(orgUnit.id == $scope.data.organisationUnit.parent.id){
-                    returnValue = false;
+                if($scope.data.organisationUnit.parent){
+                    if(orgUnit.id == $scope.data.organisationUnit.parent.id){
+                        returnValue = false;
+                    }
+                }else{
+                    if(orgUnit.level == 1){
+                        returnValue = false;
+                    }
                 }
+
             })
             return returnValue;
         }
