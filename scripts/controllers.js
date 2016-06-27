@@ -337,7 +337,6 @@ var appControllers = angular.module('appControllers', [])
             });
 
         };
-        $scope.user = {};
         $http.get(DHIS2URL + "api/me.json?fields=:all,organisationUnits[id,level]").then(function (results) {
             $scope.user = results.data;
             $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,children[id,name]")
@@ -353,6 +352,7 @@ var appControllers = angular.module('appControllers', [])
             $scope.savingComment = "";
             $scope.commentData = results.data;
         }, function (error) {
+            $scope.commentData = {};
             $scope.savingComment = "";
             toaster.pop('info', "Information", "No comments where found.");
         });
@@ -360,11 +360,6 @@ var appControllers = angular.module('appControllers', [])
             $scope.saveComment = function () {
                 console.log(JSON.stringify($scope.commentData));
                 $scope.savingComment = "savingLoad";
-                $scope.commentData = {
-                    comment: $scope.commentData.comment,
-                    lastUpdated: new Date(),
-                    lastCommenter: $scope.user
-                };
                 if ($scope.commentData.lastCommenter) {
                     $http.put(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period, $scope.commentData).then(function (results) {
                         $scope.savingComment = "";
@@ -374,6 +369,11 @@ var appControllers = angular.module('appControllers', [])
                         toaster.pop('error', "Failure", "Failed to post the comment. Please Try again.");
                     });
                 } else {
+                    $scope.commentData = {
+                        comment: $scope.commentData.comment,
+                        lastUpdated: new Date(),
+                        lastCommenter: $scope.user
+                    };
                     $http.post(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period, $scope.commentData).then(function (results) {
                         $scope.savingComment = "";
                         toaster.pop('success', "Success", "Saved Comments Successfully.");
@@ -465,28 +465,6 @@ var appControllers = angular.module('appControllers', [])
                 $http.get(DHIS2URL + "api/dataSets/" + $routeParams.dataSet + ".json?fields=:all,dataEntryForm[htmlCode],dataElements[id,valueType]").then(function (results) {
                     $scope.data.dataSetForm = results.data;
                     var trustedHtml = $scope.renderHtml(results.data.dataEntryForm.htmlCode, results.data.dataElements);
-
-                    if ($routeParams.preview == "debug") {
-                        for (var i = 0; i < $scope.debugDataElements.length; i ++) {
-                            $scope.debugData[$scope.debugDataElements[i]] = {
-                                data:[]
-                            };
-                        }
-                        for (var i = 0; i < $scope.debugDataElements.length; i += common) {
-                            $http.get(DHIS2URL + "api/dataElements.json?fields=:all,attributeValues[:all,attribute[:all]]&filter=id:in:[" + $scope.debugDataElements.slice(i, i + common).join(",") + "]").then(function (results) {
-                                results.data.dataElements.forEach(function(dataElemen){
-                                    $scope.debugData[dataElemen.id].dataElement = dataElemen;
-                                });
-                            });
-                            $http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.debugDataElements.slice(i, i + common).join(";") + "&dimension=pe:"+$routeParams.period+"&filter=ou:"+$routeParams.orgUnit+";LEVEL-4").then(function (results) {
-                                results.data.rows.forEach(function(row){
-                                    $scope.debugData[row[0]].data.push(row);
-
-                                 });
-
-                            });
-                        }
-                    }
                     $scope.loadingStatus = "Loading Data Values";
 
                     $scope.progressValue = 20;
@@ -511,6 +489,7 @@ var appControllers = angular.module('appControllers', [])
                                             $scope.listByWard.forEach(function (dx) {
                                                 $scope.listByWardData[dx] = [];
                                             });
+                                            if(dataSetResults.data.dataValues)
                                             dataSetResults.data.dataValues.forEach(function (value) {
                                                 if ($scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo]) {
                                                     $scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo].push(value);
@@ -623,8 +602,6 @@ var appControllers = angular.module('appControllers', [])
                                         })
                                     });
                                     $timeout(function () {
-                                        console.log($scope.debugData['JA033keuwLg']);
-                                        console.log($scope.debugData['hLaBUV8pGic']);
                                         deffered.resolve();
                                     });
                                 }, function (error) {
@@ -671,24 +648,24 @@ var appControllers = angular.module('appControllers', [])
         $scope.nonAggregatedDataElements = [];
         $scope.nonAggregatedDataElementsDate = [];
         $scope.autogrowingPrograms = {};
-        $scope.debugDataElements = [];
-        $scope.debugData = {};
         $scope.getElementReplacment = function (content, type) {
             var div = "<div>{{" + content + "}}";
             if ($routeParams.preview == "debug") {
                 var processed = content.replace("dataElementsData['","").replace("']","");
-                if(processed.indexOf(".") > -1 && content.indexOf("dataElementsData['") > -1){
-                    processed = processed.substr(0,processed.indexOf("."));
-                    $scope.debugDataElements.push(processed);
-                    div += "<debug config=\"{type:'" + type + "',data:debugData['"+processed+"']}\"></debug>";
+                var addition ="";
+                if(content.indexOf("dataElementsData['") > -1){
+                    addition = "type='" +type +"'";
                 }else{
 
                 }
-
+                div += "<debug dg-id='"+processed+"' "+addition+"></debug>";
 
             }
             div += "</div>";
             return div;
+        }
+        $scope.getDebugId = function(id){
+            return $scope.debugData[id];
         }
         function performRender(html, dataElements) {
             var inputRegEx = /<input (.*?)>/g;
@@ -794,7 +771,11 @@ var appControllers = angular.module('appControllers', [])
                         $scope.autogrowingPrograms[config.programId].dataElementsDetails = [];
                         $scope.autogrowingPrograms[config.programId].data = [];
                     }
-                    newHtml = newHtml.replace(match[0], "<tbody autogrowing config='autogrowingPrograms[\"" + config.programId + "\"]'></tbody>");
+                    var directive = "autogrowing";
+                    if ($routeParams.preview == "debug") {
+                        directive = "autogrowing-debug";
+                    }
+                    newHtml = newHtml.replace(match[0], "<tbody "+directive+" config='autogrowingPrograms[\"" + config.programId + "\"]'></tbody>");
                 }
             }
             ;
@@ -808,6 +789,7 @@ var appControllers = angular.module('appControllers', [])
             return $sce.trustAsHtml(newHtml);
         };
         //Load dataset informatioin
+
         $http.get(DHIS2URL + "api/dataSets/" + $routeParams.dataSet + ".json?fields=attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
             $scope.dataSet = results.data;
             //Load organisation Unit data
@@ -832,6 +814,10 @@ var appControllers = angular.module('appControllers', [])
         }, function (error) {
             toaster.pop('error', "Error" + error.status, "Error Loading Data Set. Please try again");
         });
+        $scope.user = {};
+        $http.get(DHIS2URL + "api/me.json?fields=:all,organisationUnits[id,level]").then(function (results) {
+
+            $scope.user = results.data;
         $http.get(DHIS2URL + "api/dataStore/notExecuted/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
             $scope.reportStatus = "Not Executed";
         }, function (error) {
@@ -911,6 +897,7 @@ var appControllers = angular.module('appControllers', [])
                     }
                 });
             }
+        });
         });
         $scope.createDataSetReport = function () {
             ReportService.createDataSetReport({

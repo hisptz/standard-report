@@ -70,5 +70,10 @@ var appServices = angular.module('appServices', ['ngResource'])
             }
         }
 
+    })
+    .factory("DebugService", function (){
+        return {
+            "DR01":{"NK6MyHADqBo.WgIlmdIhlpD":{consolidation:"Formula (Average)",source:"WF01"}}
+        }
     });
 
