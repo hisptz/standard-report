@@ -54,6 +54,9 @@
                         </table>
                     </td>
                 </tr>
+                <tr ng-if="objectType == 'dataElement'">
+                    <td>Value(s) Used</td><td>{{data.data.join(",")}}</td>
+                </tr>
                 <tr>
                     <td>Consolidation Methods</td><td>{{TOR.consolidation}}</td>
                 </tr>

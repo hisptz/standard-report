@@ -163,9 +163,11 @@ var appDirectives = angular.module('appDirectives', [])
         return {
             scope: {
                 config: "=",
+                aDebug: "=",
                 dgId: "@",
                 type: "@",
-                dgOrgUnit: "@"
+                dgOrgUnit: "@",
+                eventId: "="
             },
             replace: true,
             controller: function ($scope, $modal, DHIS2URL, $http, $routeParams) {
@@ -173,10 +175,11 @@ var appDirectives = angular.module('appDirectives', [])
                     var modalInstance = $modal.open({
                         animation: true,
                         templateUrl: 'myModalContent.html',
-                        controller: function ($scope, parentScope, $modalInstance, DebugService) {
+                        controller: function ($scope, parentScope, $modalInstance, DebugService, ReportService) {
                             $scope.data = {
                                 data: []
                             };
+                            console.log(parentScope);
                             $scope.objectType = parentScope.type;
                             $scope.estimation = "Not Applicable";
                             $scope.id = parentScope.dgId;
@@ -221,17 +224,35 @@ var appDirectives = angular.module('appDirectives', [])
                                 return id;
                             }
                             $scope.dataElements = [];
+                            var periods = ReportService.getPeriodDate($routeParams.period);
                             $scope.fetchOrgUnitData = function (objectId, orgUnit, type) {
                                 if (type == "indicator") {
                                     $scope.matcher.forEach(function (id) {
                                         $scope.fetchOrgUnitData(id, orgUnit, "dataElement");
                                     });
                                 } else {
-                                    $http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + objectId + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + orgUnit.id).then(function (results) {
-                                        results.data.rows.forEach(function (row) {
-                                            orgUnit.data[objectId] = row[2];
+
+                                    if (parentScope.aDebug) {
+
+                                        $http.get(DHIS2URL + "api/events.json?program=" + parentScope.aDebug.programId + "&startDate=" + periods.startDate + "&endDate=" + periods.endDate + "&orgUnit:" + orgUnit.id).then(function (results) {
+                                            //console.log("DataValues:", results);
+                                            results.data.events.forEach(function (event) {
+                                                if(event.event == parentScope.eventId && event.orgUnit == objectId){
+                                                    event.dataValues.forEach(function(dataValue){
+                                                        if(dataValue.dataElement == parentScope.dgId){
+                                                            orgUnit.data[objectId] = dataValue.value;
+                                                        }
+                                                    })
+                                                }
+                                            });
                                         });
-                                    });
+                                    } else {
+                                        $http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + objectId + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + orgUnit.id).then(function (results) {
+                                            results.data.rows.forEach(function (row) {
+                                                orgUnit.data[objectId] = row[2];
+                                            });
+                                        });
+                                    }
                                 }
                             }
                             var url = DHIS2URL + "api/" + parentScope.type + "s/" + object + ".json?fields=:all,dataSets[id,name,attributeValues,periodType,dataEntryForm],attributeValues[:all,attribute[:all]]";
@@ -251,7 +272,7 @@ var appDirectives = angular.module('appDirectives', [])
                                     });
                                     $scope.estimationData = [];
                                     $http.get(DHIS2URL + "api/dataValueSets.json?de=" + object + "&co=" + parentScope.dgId.substr(parentScope.dgId.indexOf(".") + 1) + dataSetUrl + "&period=" + $routeParams.period + "&orgUnit=" + $routeParams.orgUnit).then(function (result) {
-                                        console.log("DataValues:", result);
+
                                         if (result.data.dataValues) {
                                             result.data.dataValues.forEach(function (dataValue) {
                                                 if (dataValue.dataElement == object && dataValue.categoryOptionCombo == parentScope.dgId.substr(parentScope.dgId.indexOf(".") + 1) && dataValue.attributeOptionCombo == "") {
@@ -284,16 +305,30 @@ var appDirectives = angular.module('appDirectives', [])
                                         $scope.TOR = DebugService["DR01"][parentScope.dgId]
                                     }
                                 })
-                                $http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + parentScope.dgId + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit).then(function (results) {
-                                    results.data.rows.forEach(function (row) {
-                                        $scope.data.data.push(row[2]);
-
+                                if (parentScope.aDebug) {
+                                    $http.get(DHIS2URL + "api/events.json?program=" + parentScope.aDebug.programId + "&startDate=" + periods.startDate + "&endDate=" + periods.endDate + "&orgUnit:" + $routeParams.orgUnit).then(function (results) {
+                                        console.log("DataValues:", results);
+                                        results.data.events.forEach(function (event) {
+                                            if(event.event == parentScope.eventId){
+                                                event.dataValues.forEach(function(dataValue){
+                                                    if(dataValue.dataElement == parentScope.dgId){
+                                                        $scope.data.data.push(dataValue.value);
+                                                    }
+                                                })
+                                            }
+                                        });
                                     });
+                                }else{
+                                    $http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + parentScope.dgId + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit).then(function (results) {
+                                        results.data.rows.forEach(function (row) {
+                                            $scope.data.data.push(row[2]);
 
-                                });
-                                $http.get(DHIS2URL + "api/organisationUnits/" + parentScope.dgOrgUnit + ".json?fields=:all,children[id,name]").then(function (results) {
+                                        });
+                                    });
+                                }
+
+                                $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=:all,children[id,name]").then(function (results) {
                                     $scope.orgUnit = results.data;
-
                                     $scope.orgUnit.children.forEach(function (child) {
                                         child.data = {};
                                         $scope.fetchOrgUnitData(parentScope.dgId, child, parentScope.type);
@@ -309,9 +344,6 @@ var appDirectives = angular.module('appDirectives', [])
                             };
                         },
                         resolve: {
-                            data: function () {
-                                return $scope.data;
-                            },
                             parentScope: function () {
                                 return $scope;
                             }
@@ -554,6 +586,7 @@ var appDirectives = angular.module('appDirectives', [])
     .directive("autogrowingDebug", function ($timeout, $compile) {
         return {
             scope: {
+                aDebug: "=",
                 config: '='
             },
             link: function (scope, elem, attrs, controller) {
@@ -586,6 +619,7 @@ var appDirectives = angular.module('appDirectives', [])
                         return result;
                     }
                 }
+
                 var arr = Array.prototype.slice.call(elem[0].rows);
                 $timeout(function () {
                     elem[0].children.forEach(function (child, rowIndex) {
@@ -708,7 +742,8 @@ var appDirectives = angular.module('appDirectives', [])
                     elem[0].children.forEach(function (child, rowIndex) {
                         child.children.forEach(function (child2, colIndex) {
                             child2.id = scope.config.dataElements[colIndex];
-                            child2.innerHTML = child2.innerHTML + "<debug dg-id='"+child2.id+"' type='dataElement'>DataElement</debug>";
+                            child2.innerHTML = child2.innerHTML + "<debug a-debug='aDebug'  event-id='event.Event' dg-id='" + child2.id + "' type='dataElement'>D</debug>";
+                            //$compile(child2)(scope);
                         });
                     });
                     $compile(elem[0].children)(scope);
@@ -721,7 +756,6 @@ var appDirectives = angular.module('appDirectives', [])
                     dataElements: [],
                     events: []
                 };
-
                 $scope.config.dataElements.forEach(function (dataElementId) {
                     if ($scope.config.dataElementsDetails) {
                         $scope.config.dataElementsDetails.forEach(function (dataElement) {

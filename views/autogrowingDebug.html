@@ -2,7 +2,7 @@
 <tbody>
 <tr ng-if="!config.groupBy" ng-repeat="event in data.events">
     <!--<td ng-repeat="dataElement in data.dataElements">{{dataElement.event[dataElement.name]}}</td>-->
-    <td ng-repeat="dataElement in data.dataElements">{{event[dataElement.name]}}</td>
+    <td ng-repeat="dataElement in data.dataElements" event-id="event.Event">{{event[dataElement.name]}}</td>
 </tr>
 <tr  ng-if="config.groupBy" ng-repeat="event in data.events">
     <!--<td ng-repeat="dataElement in data.dataElements">{{dataElement.event[dataElement.name]}}</td>-->

@@ -773,7 +773,7 @@ var appControllers = angular.module('appControllers', [])
                     }
                     var directive = "autogrowing";
                     if ($routeParams.preview == "debug") {
-                        directive = "autogrowing-debug";
+                        directive = "autogrowing-debug a-debug= '" + JSON.stringify(config) + "'";
                     }
                     newHtml = newHtml.replace(match[0], "<tbody "+directive+" config='autogrowingPrograms[\"" + config.programId + "\"]'></tbody>");
                 }
