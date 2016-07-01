@@ -176,7 +176,7 @@ var appDirectives = angular.module('appDirectives', [])
                         animation: true,
                         size:'lg',
                         templateUrl: 'myModalContent.html',
-                        controller: function ($scope, parentScope, $modalInstance, DebugService, ReportService) {
+                        controller: function ($scope, parentScope, $modalInstance, DebugService, ReportService,$q) {
                             $scope.data = {
                                 data: []
                             };
@@ -226,7 +226,9 @@ var appDirectives = angular.module('appDirectives', [])
                             }
                             $scope.dataElements = [];
                             var periods = ReportService.getPeriodDate($routeParams.period);
-                            $scope.fetchOrgUnitData = function (objectId, orgUnit, type) {
+                            var promises = [];
+                            $scope.loading = true;
+                            $scope.fetchOrgUnitData = function (objectId, orgUnit, type,second) {
                                 if (type == "indicator") {
                                     $scope.matcher.forEach(function (id) {
                                         $scope.fetchOrgUnitData(id, orgUnit, "dataElement");
@@ -235,7 +237,7 @@ var appDirectives = angular.module('appDirectives', [])
 
                                     if (parentScope.aDebug) {
 
-                                        $http.get(DHIS2URL + "api/events.json?program=" + parentScope.aDebug.programId + "&startDate=" + periods.startDate + "&endDate=" + periods.endDate + "&orgUnit:" + orgUnit.id).then(function (results) {
+                                        promises.push($http.get(DHIS2URL + "api/events.json?program=" + parentScope.aDebug.programId + "&startDate=" + periods.startDate + "&endDate=" + periods.endDate + "&orgUnit:" + orgUnit.id).then(function (results) {
                                             //console.log("DataValues:", results);
                                             results.data.events.forEach(function (event) {
                                                 if(event.event == parentScope.eventId && event.orgUnit == objectId){
@@ -246,14 +248,23 @@ var appDirectives = angular.module('appDirectives', [])
                                                     })
                                                 }
                                             });
-                                        });
+                                        }));
                                     } else {
-                                        $http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + objectId + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + orgUnit.id).then(function (results) {
+
+                                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + objectId + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + orgUnit.id).then(function (results) {
+                                            if(second){
+                                                console.log(second);
+                                            }
                                             results.data.rows.forEach(function (row) {
                                                 orgUnit.data[objectId] = row[2];
                                             });
-                                        });
+                                        }));
                                     }
+                                }
+                                if(orgUnit.children){
+                                    orgUnit.children.forEach(function(child){
+                                        $scope.fetchOrgUnitData(objectId, child, type,"second");
+                                    })
                                 }
                             }
                             var url = DHIS2URL + "api/" + parentScope.type + "s/" + object + ".json?fields=:all,dataSets[id,name,attributeValues,periodType,dataEntryForm],attributeValues[:all,attribute[:all]]";
@@ -272,9 +283,11 @@ var appDirectives = angular.module('appDirectives', [])
                                         dataSetUrl = "&dataSet=" + dataSet.id;
                                     });
                                     $scope.estimationData = [];
-                                    $http.get(DHIS2URL + "api/dataValues.json?cc=zinlBc5Ee63&cp=wxia6oenpQz&de=" + object + "&co=" + parentScope.dgId.substr(parentScope.dgId.indexOf(".") + 1) + "&pe=" + $routeParams.period + "&ou=" + $routeParams.orgUnit).then(function (result) {
+                                    promises.push($http.get(DHIS2URL + "api/dataValues.json?cc=zinlBc5Ee63&cp=wxia6oenpQz&de=" + object + "&co=" + parentScope.dgId.substr(parentScope.dgId.indexOf(".") + 1) + "&pe=" + $routeParams.period + "&ou=" + $routeParams.orgUnit).then(function (result) {
                                         $scope.estimationData = result.data;
-                                    });
+                                    },function(error){
+
+                                    }));
                                 }
                                 if (parentScope.type == "indicator") {
                                     $scope.matcher = [];
@@ -300,7 +313,7 @@ var appDirectives = angular.module('appDirectives', [])
                                     }
                                 })
                                 if (parentScope.aDebug) {
-                                    $http.get(DHIS2URL + "api/events.json?program=" + parentScope.aDebug.programId + "&startDate=" + periods.startDate + "&endDate=" + periods.endDate + "&orgUnit:" + $routeParams.orgUnit).then(function (results) {
+                                    promises.push($http.get(DHIS2URL + "api/events.json?program=" + parentScope.aDebug.programId + "&startDate=" + periods.startDate + "&endDate=" + periods.endDate + "&orgUnit:" + $routeParams.orgUnit).then(function (results) {
                                         console.log("DataValues:", results);
                                         results.data.events.forEach(function (event) {
                                             if(event.event == parentScope.eventId){
@@ -311,21 +324,25 @@ var appDirectives = angular.module('appDirectives', [])
                                                 })
                                             }
                                         });
-                                    });
+                                    }));
                                 }else{
-                                    $http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + parentScope.dgId + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit).then(function (results) {
+                                    promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + parentScope.dgId + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit).then(function (results) {
                                         results.data.rows.forEach(function (row) {
                                             $scope.data.data.push(row[2]);
 
                                         });
-                                    });
+                                    }));
                                 }
 
-                                $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=:all,children[id,name]").then(function (results) {
+                                $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=:all,children[id,name,children[id,name,children[id,name]]]").then(function (results) {
                                     $scope.orgUnit = results.data;
                                     $scope.orgUnit.children.forEach(function (child) {
                                         child.data = {};
                                         $scope.fetchOrgUnitData(parentScope.dgId, child, parentScope.type);
+                                    })
+                                    $q.all(promises).then(function () {
+                                        console.log($scope.orgUnit);
+                                        $scope.loading = false;
                                     })
                                 });
                             });

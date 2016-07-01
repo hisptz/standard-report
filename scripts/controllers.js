@@ -424,6 +424,13 @@ var appControllers = angular.module('appControllers', [])
     })
     .controller("ReportController", function ($scope, $http, $routeParams, $sce, $q, DHIS2URL, $timeout, $compile, $location, ReportService, $window, toaster) {
         var common = 50;
+        $scope.state = $routeParams.preview;
+        $scope.showDebug = function(){
+            $location.path("/dataSetReport/report/dataSet/" + $routeParams.dataSet + "/orgUnit/" + $routeParams.orgUnit + "/period/" + $routeParams.period + "/debug");
+        };
+        $scope.showPreview = function(){
+            $location.path("/dataSetReport/report/dataSet/" + $routeParams.dataSet + "/orgUnit/" + $routeParams.orgUnit + "/period/" + $routeParams.period + "/preview");
+        };
         $scope.reloadPage = function () {
             window.location.reload();
         }

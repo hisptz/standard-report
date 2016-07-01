@@ -1,20 +1,29 @@
-<div><!-- Button trigger modal -->
+<div style="display: initial;"><!-- Button trigger modal -->
     <style>
-        .modal-dialog{
+        .modal-dialog {
             width: 90%;
         }
     </style>
+
     <script type="text/ng-template" id="myModalContent.html">
         <div class="modal-header">
             Debug <span ng-if="objectType == 'dataElement'">Data Element </span><span ng-if="objectType == 'indicator'">Indicator </span>Panel
-            <button type="button" class="close"  ng-click="cancel()"><span
+            <button type="button" class="close" ng-click="cancel()"><span
                     aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="myModalLabel"><div ng-if="config.type == 'dataElement'">Data Element</div><div ng-if="config.type == 'indicator'">Indicator</div></h4>
+            <h4 class="modal-title" id="myModalLabel">
+                <div ng-if="config.type == 'dataElement'">Data Element</div>
+                <div ng-if="config.type == 'indicator'">Indicator</div>
+            </h4>
         </div>
         <div class="modal-body">
-            <table class="table table-bordered">
+            <div ng-if="loading">
+                <img src="../../../images/ajax-loader-bar.gif"> Loading Debug Data..
+            </div>
+            <table ng-if="!loading" class="table table-bordered">
                 <tr>
-                    <td style="width: 20%;">Name of <span ng-if="objectType == 'dataElement'">Data Element </span><span ng-if="objectType == 'indicator'">Indicator </span></td><td>{{data.object.name}}</td>
+                    <td style="width: 20%;">Name of <span ng-if="objectType == 'dataElement'">Data Element </span><span
+                            ng-if="objectType == 'indicator'">Indicator </span></td>
+                    <td>{{data.object.name}}</td>
                 </tr>
                 <tr>
                     <td>Dataset source</td>
@@ -28,48 +37,73 @@
                     </td>
                 </tr>
                 <tr ng-if="objectType == 'dataElement'">
-                    <td>Aggregation operator</td><td>{{data.object.aggregationType}}</td>
+                    <td>Aggregation operator</td>
+                    <td>{{data.object.aggregationType}}</td>
                 </tr>
                 <tr ng-if="objectType == 'dataElement'">
-                    <td>Value type</td><td>{{data.object.valueType}}</td>
+                    <td>Value type</td>
+                    <td>{{data.object.valueType}}</td>
                 </tr>
                 <tr ng-if="objectType == 'indicator'">
-                    <td>Numerator</td><td>{{getFormulaDescription(data.object.numerator)}}</td>
+                    <td>Numerator</td>
+                    <td>{{getFormulaDescription(data.object.numerator)}}</td>
                 </tr>
                 <tr ng-if="objectType == 'indicator'">
-                    <td>Denominator</td><td>{{getFormulaDescription(data.object.denominator)}}</td>
+                    <td>Denominator</td>
+                    <td>{{getFormulaDescription(data.object.denominator)}}</td>
                 </tr>
                 <tr>
-                    <td>Administrative Unit</td>
+                    <td>Source Values</td>
                     <td>{{orgUnit.name}}
                         <table class="table table-bordered">
 
-                            <thead><tr>
+                            <thead>
+                            <tr>
                                 <td>#</td>
                                 <td>Name</td>
                                 <td ng-if="objectType == 'dataElement'">Value</td>
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{getDXName(dx)}}</td>
-                            </tr></thead>
+                            </tr>
+                            </thead>
+                            <tbody ng-if="orgUnit.level == 2">
+                            <tr ng-repeat-start="child in orgUnit.children | orderBy:'name'">
+                                <td rowspan="{{child.children.length}}">{{child.name}}</td>
+                                <td ng-if="objectType == 'dataElement'">{{child.data[id]}}</td>
+                                <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}</td>
+                            </tr>
+                            <tr ng-if="$index != 0" ng-repeat="child1 in child.children | orderBy:'name'">
+                                <td>{{child1.name}}</td>
+                                <td ng-if="objectType == 'dataElement'">{{child1.data[id]}}</td>
+                                <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child1.data[dx]}}</td>
+                            </tr>
+                            <tr ng-repeat-end></tr>
+                            </tbody>
+                            <tbody ng-if="orgUnit.level == 3">
                             <tr ng-repeat="child in orgUnit.children | orderBy:'name'">
                                 <td>{{$index + 1}}</td>
                                 <td>{{child.name}}</td>
                                 <td ng-if="objectType == 'dataElement'">{{child.data[id]}}</td>
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}</td>
                             </tr>
+                            </tbody>
                         </table>
                     </td>
                 </tr>
                 <tr ng-if="objectType == 'dataElement'">
-                    <td>Value(s) Used</td><td>{{data.data.join(",")}}</td>
+                    <td>Aggregation Results Value</td>
+                    <td>{{data.data.join(",")}}</td>
                 </tr>
                 <tr>
-                    <td>Consolidation Methods</td><td>{{TOR.consolidation}}</td>
+                    <td>Consolidation Methods</td>
+                    <td>{{TOR.consolidation}}</td>
                 </tr>
                 <tr ng-if="objectType == 'dataElement'">
-                    <td>Estimation Method</td><td>{{estimation}}</td>
+                    <td>Estimation Method</td>
+                    <td>{{estimation}}</td>
                 </tr>
                 <tr ng-if="objectType == 'dataElement'">
-                    <td>Estimation Data</td><td>{{estimationData.join(",")}}</td>
+                    <td>Estimation Data</td>
+                    <td>{{estimationData.join(",")}}</td>
                 </tr>
             </table>
         </div>
