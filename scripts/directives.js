@@ -174,6 +174,7 @@ var appDirectives = angular.module('appDirectives', [])
                 $scope.show = function () {
                     var modalInstance = $modal.open({
                         animation: true,
+                        size:'lg',
                         templateUrl: 'myModalContent.html',
                         controller: function ($scope, parentScope, $modalInstance, DebugService, ReportService) {
                             $scope.data = {
@@ -271,15 +272,8 @@ var appDirectives = angular.module('appDirectives', [])
                                         dataSetUrl = "&dataSet=" + dataSet.id;
                                     });
                                     $scope.estimationData = [];
-                                    $http.get(DHIS2URL + "api/dataValueSets.json?de=" + object + "&co=" + parentScope.dgId.substr(parentScope.dgId.indexOf(".") + 1) + dataSetUrl + "&period=" + $routeParams.period + "&orgUnit=" + $routeParams.orgUnit).then(function (result) {
-
-                                        if (result.data.dataValues) {
-                                            result.data.dataValues.forEach(function (dataValue) {
-                                                if (dataValue.dataElement == object && dataValue.categoryOptionCombo == parentScope.dgId.substr(parentScope.dgId.indexOf(".") + 1) && dataValue.attributeOptionCombo == "") {
-                                                    $scope.estimationData.push(dataValue.value);
-                                                }
-                                            })
-                                        }
+                                    $http.get(DHIS2URL + "api/dataValues.json?cc=zinlBc5Ee63&cp=wxia6oenpQz&de=" + object + "&co=" + parentScope.dgId.substr(parentScope.dgId.indexOf(".") + 1) + "&pe=" + $routeParams.period + "&ou=" + $routeParams.orgUnit).then(function (result) {
+                                        $scope.estimationData = result.data;
                                     });
                                 }
                                 if (parentScope.type == "indicator") {
