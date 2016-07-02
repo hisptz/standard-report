@@ -177,6 +177,17 @@ var appDirectives = angular.module('appDirectives', [])
                         size:'lg',
                         templateUrl: 'myModalContent.html',
                         controller: function ($scope, parentScope, $modalInstance, DebugService, ReportService,$q) {
+                            try{
+                                new Clipboard('.btn', {
+                                    target: function(trigger) {
+                                        return document.getElementById("copyTable");
+                                    }
+                                });
+                            }catch(e){
+
+                            }
+
+                            $scope.param = $routeParams;
                             $scope.data = {
                                 data: []
                             };
@@ -228,6 +239,19 @@ var appDirectives = angular.module('appDirectives', [])
                             var periods = ReportService.getPeriodDate($routeParams.period);
                             var promises = [];
                             $scope.loading = true;
+                            var counter = 0;
+                            $scope.getDataValueData = function(url,objectId,orgUnit,categoryOptionCombo){
+                                promises.push($http.get(url).then(function (results) {
+
+                                    if(!orgUnit.data[objectId]){
+                                        orgUnit.data[objectId] = {};
+                                    }
+                                    orgUnit.data[objectId][categoryOptionCombo.name] = results.data;
+                                    console.log("DataAnlysis:",orgUnit);
+                                },function(){
+
+                                }));
+                            }
                             $scope.fetchOrgUnitData = function (objectId, orgUnit, type,second) {
                                 if (type == "indicator") {
                                     $scope.matcher.forEach(function (id) {
@@ -250,102 +274,107 @@ var appDirectives = angular.module('appDirectives', [])
                                             });
                                         }));
                                     } else {
-
-                                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + objectId + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + orgUnit.id).then(function (results) {
-                                            if(second){
-                                                console.log(second);
-                                            }
-                                            results.data.rows.forEach(function (row) {
-                                                orgUnit.data[objectId] = row[2];
-                                            });
-                                        }));
+                                        var objectRequest = "";
+                                        if(objectId.indexOf(".") > -1){
+                                            objectRequest ="de=" + objectId.substr(0,objectId.indexOf(".")) + "&co=" + objectId.substr(objectId.indexOf(".") + 1);
+                                        }else{
+                                            objectRequest ="de=" + objectId;
+                                        }
+                                        $scope.categoryCombo.categoryOptionCombos.forEach(function(categoryOptionCombo){
+                                            var url = DHIS2URL + "api/dataValues.json?cc="+$scope.categoryCombo.id+"&cp="+categoryOptionCombo.categoryOptions[0].id+"&" + objectRequest + "&pe=" + $routeParams.period + "&ou=" + orgUnit.id;
+                                            $scope.getDataValueData(url,objectId,orgUnit,categoryOptionCombo)
+                                        });
                                     }
                                 }
-                                if(orgUnit.children){
+                                if(($scope.dataSetOrganisationUnitLevel - orgUnit.level) != 0){
                                     orgUnit.children.forEach(function(child){
+                                        child.data = {};
                                         $scope.fetchOrgUnitData(objectId, child, type,"second");
                                     })
                                 }
-                            }
-                            var url = DHIS2URL + "api/" + parentScope.type + "s/" + object + ".json?fields=:all,dataSets[id,name,attributeValues,periodType,dataEntryForm],attributeValues[:all,attribute[:all]]";
-                            $http.get(url).then(function (results) {
-                                $scope.data.object = results.data;
-                                $scope.data.object.attributeValues.forEach(function (attributeValue) {
-                                    if (attributeValue.attribute.name == "Estimation") {
-                                        $scope.estimation = attributeValue.value;
-                                    }
-                                });
-
-                                if (parentScope.type == "dataElement") {
-                                    var dataSetUrl = ""
-                                    $scope.data.object.dataSets.forEach(function (dataSet) {
-                                        console.log(dataSet);
-                                        dataSetUrl = "&dataSet=" + dataSet.id;
-                                    });
-                                    $scope.estimationData = [];
-                                    promises.push($http.get(DHIS2URL + "api/dataValues.json?cc=zinlBc5Ee63&cp=wxia6oenpQz&de=" + object + "&co=" + parentScope.dgId.substr(parentScope.dgId.indexOf(".") + 1) + "&pe=" + $routeParams.period + "&ou=" + $routeParams.orgUnit).then(function (result) {
-                                        $scope.estimationData = result.data;
-                                    },function(error){
-
-                                    }));
-                                }
-                                if (parentScope.type == "indicator") {
-                                    $scope.matcher = [];
-                                    $scope.data.object.numerator.match(/#\{.+?\}/g).forEach(function (dx) {
-                                        $scope.matcher.push(dx.replace("#{", "").replace("}", ""));
-                                    });
-                                    var dataElementIds = [];
-                                    $scope.matcher.forEach(function (dx) {
-                                        var dataElementId = dx;
-                                        if (dataElementId.indexOf(".") > -1) {
-                                            dataElementId = dataElementId.substr(0, dataElementId.indexOf("."));
+                            };
+                            $http.get(DHIS2URL + "api/categoryCombos.json?fields=:all,categoryOptionCombos[:all]&filter=name:eq:Data Dimension").then(function(result){
+                                $scope.categoryCombo = result.data.categoryCombos[0];
+                                var url = DHIS2URL + "api/" + parentScope.type + "s/" + object + ".json?fields=:all,dataSets[organisationUnits[id,level],id,name,attributeValues,periodType,dataEntryForm],attributeValues[:all,attribute[:all]]";
+                                $http.get(url).then(function (results) {
+                                    $scope.data.object = results.data;
+                                    $scope.data.object.attributeValues.forEach(function (attributeValue) {
+                                        if (attributeValue.attribute.name == "Estimation") {
+                                            $scope.estimation = attributeValue.value;
                                         }
-                                        dataElementIds.push(dataElementId);
+                                    });
+                                    $scope.data.object.dataSets.forEach(function(dataSet){
+                                        dataSet.organisationUnits.forEach(function(organisationUnit){
+                                            $scope.dataSetOrganisationUnitLevel = organisationUnit.level;
+                                        })
                                     })
-                                    var url = DHIS2URL + "api/dataElements.json?filter=id:in:[" + dataElementIds.join(",") + "]&fields=:all,categoryCombo[categoryOptionCombos[id,name]],dataSets[name,attributeValues,periodType,dataEntryForm],attributeValues[:all,attribute[:all]]";
-                                    $http.get(url).then(function (results) {
-                                        $scope.dataElements = (results.data.dataElements);
-                                    })
-                                }
-                                $scope.data.object.dataSets.forEach(function (dataSet) {
-                                    if (dataSet.name.indexOf("DR01") > -1) {
-                                        $scope.TOR = DebugService["DR01"][parentScope.dgId]
+                                    if (parentScope.type == "dataElement") {
+                                        $scope.estimationData = [];
+                                        promises.push($http.get(DHIS2URL + "api/dataValues.json?cc=zinlBc5Ee63&cp=wxia6oenpQz&de=" + object + "&co=" + parentScope.dgId.substr(parentScope.dgId.indexOf(".") + 1) + "&pe=" + $routeParams.period + "&ou=" + $routeParams.orgUnit).then(function (result) {
+                                            $scope.estimationData = result.data;
+                                        },function(error){
+
+                                        }));
                                     }
-                                })
-                                if (parentScope.aDebug) {
-                                    promises.push($http.get(DHIS2URL + "api/events.json?program=" + parentScope.aDebug.programId + "&startDate=" + periods.startDate + "&endDate=" + periods.endDate + "&orgUnit:" + $routeParams.orgUnit).then(function (results) {
-                                        console.log("DataValues:", results);
-                                        results.data.events.forEach(function (event) {
-                                            if(event.event == parentScope.eventId){
-                                                event.dataValues.forEach(function(dataValue){
-                                                    if(dataValue.dataElement == parentScope.dgId){
-                                                        $scope.data.data.push(dataValue.value);
-                                                    }
-                                                })
+                                    if (parentScope.type == "indicator") {
+                                        $scope.matcher = [];
+                                        $scope.data.object.numerator.match(/#\{.+?\}/g).forEach(function (dx) {
+                                            $scope.matcher.push(dx.replace("#{", "").replace("}", ""));
+                                        });
+                                        var dataElementIds = [];
+                                        $scope.matcher.forEach(function (dx) {
+                                            var dataElementId = dx;
+                                            if (dataElementId.indexOf(".") > -1) {
+                                                dataElementId = dataElementId.substr(0, dataElementId.indexOf("."));
                                             }
-                                        });
-                                    }));
-                                }else{
-                                    promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + parentScope.dgId + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit).then(function (results) {
-                                        results.data.rows.forEach(function (row) {
-                                            $scope.data.data.push(row[2]);
+                                            dataElementIds.push(dataElementId);
+                                        })
+                                        var url = DHIS2URL + "api/dataElements.json?filter=id:in:[" + dataElementIds.join(",") + "]&fields=:all,categoryCombo[categoryOptionCombos[id,name]],dataSets[name,attributeValues,periodType,dataEntryForm],attributeValues[:all,attribute[:all]]";
+                                        $http.get(url).then(function (results) {
+                                            $scope.dataElements = (results.data.dataElements);
+                                        })
+                                    }
+                                    $scope.data.object.dataSets.forEach(function (dataSet) {
+                                        if (dataSet.name.indexOf("DR01") > -1) {
+                                            $scope.TOR = DebugService["DR01"][parentScope.dgId]
+                                        }
+                                    });
+                                    if (parentScope.aDebug) {
+                                        promises.push($http.get(DHIS2URL + "api/events.json?program=" + parentScope.aDebug.programId + "&startDate=" + periods.startDate + "&endDate=" + periods.endDate + "&orgUnit:" + $routeParams.orgUnit).then(function (results) {
+                                            console.log("DataValues:", results);
+                                            results.data.events.forEach(function (event) {
+                                                if(event.event == parentScope.eventId){
+                                                    event.dataValues.forEach(function(dataValue){
+                                                        if(dataValue.dataElement == parentScope.dgId){
+                                                            $scope.data.data.push(dataValue.value);
+                                                        }
+                                                    })
+                                                }
+                                            });
+                                        }));
+                                    }else{
+                                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + parentScope.dgId + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit).then(function (results) {
+                                            results.data.rows.forEach(function (row) {
+                                                $scope.data.data.push(row[2]);
 
-                                        });
-                                    }));
-                                }
-
-                                $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=:all,children[id,name,children[id,name,children[id,name]]]").then(function (results) {
-                                    $scope.orgUnit = results.data;
-                                    $scope.orgUnit.children.forEach(function (child) {
-                                        child.data = {};
-                                        $scope.fetchOrgUnitData(parentScope.dgId, child, parentScope.type);
-                                    })
-                                    $q.all(promises).then(function () {
-                                        console.log($scope.orgUnit);
-                                        $scope.loading = false;
-                                    })
+                                            });
+                                        }));
+                                    }
+                                    $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=:all,children[id,level,name,children[id,level,name,children[id,level,name]]]").then(function (results) {
+                                        $scope.orgUnit = results.data;
+                                        /*$scope.orgUnit.children.forEach(function (child) {
+                                            child.data = {};
+                                            $scope.fetchOrgUnitData(parentScope.dgId, child, parentScope.type);
+                                        })*/
+                                        $scope.orgUnit.data = {};
+                                        $scope.fetchOrgUnitData(parentScope.dgId, $scope.orgUnit, parentScope.type);
+                                        $q.all(promises).then(function () {
+                                            $scope.loading = false;
+                                        })
+                                    });
                                 });
-                            });
+                            })
+
                             $scope.ok = function () {
                                 $modalInstance.close();
                             };

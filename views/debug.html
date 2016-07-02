@@ -7,22 +7,23 @@
 
     <script type="text/ng-template" id="myModalContent.html">
         <div class="modal-header">
-            Debug <span ng-if="objectType == 'dataElement'">Data Element </span><span ng-if="objectType == 'indicator'">Indicator </span>Panel
+            Debug <span ng-if="objectType == 'dataElement'">Data Element </span><span ng-if="objectType == 'indicator'">Computed Values </span>Panel
             <button type="button" class="close" ng-click="cancel()"><span
                     aria-hidden="true">&times;</span></button>
             <h4 class="modal-title" id="myModalLabel">
                 <div ng-if="config.type == 'dataElement'">Data Element</div>
-                <div ng-if="config.type == 'indicator'">Indicator</div>
+                <div ng-if="config.type == 'indicator'">Computed Values</div>
             </h4>
         </div>
         <div class="modal-body">
             <div ng-if="loading">
                 <img src="../../../images/ajax-loader-bar.gif"> Loading Debug Data..
             </div>
-            <table ng-if="!loading" class="table table-bordered">
+            <button class="btn">Copy</button>
+            <table id="copyTable" ng-if="!loading" class="table table-bordered">
                 <tr>
                     <td style="width: 20%;">Name of <span ng-if="objectType == 'dataElement'">Data Element </span><span
-                            ng-if="objectType == 'indicator'">Indicator </span></td>
+                            ng-if="objectType == 'indicator'">Computed Values </span></td>
                     <td>{{data.object.name}}</td>
                 </tr>
                 <tr>
@@ -52,38 +53,62 @@
                     <td>Denominator</td>
                     <td>{{getFormulaDescription(data.object.denominator)}}</td>
                 </tr>
+                <tr ng-if="objectType == 'dataElement'">
+                    <td>Estimation Method</td>
+                    <td>{{estimation}}</td>
+                </tr>
                 <tr>
                     <td>Source Values</td>
-                    <td>{{orgUnit.name}}
+                    <td>
                         <table class="table table-bordered">
-
-                            <thead>
+                            <thead ng-if="(dataSetOrganisationUnitLevel - orgUnit.level) == 2">
                             <tr>
-                                <td>#</td>
-                                <td>Name</td>
-                                <td ng-if="objectType == 'dataElement'">Value</td>
+                                <td>Region</td>
+                                <td>District</td>
+                                <td ng-repeat="categoryOptionCombo in categoryCombo.categoryOptionCombos | orderBy:'name'" ng-if="objectType == 'dataElement'">{{categoryOptionCombo.name}}</td>
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{getDXName(dx)}}</td>
                             </tr>
                             </thead>
-                            <tbody ng-if="orgUnit.level == 2">
+                            <thead ng-if="(dataSetOrganisationUnitLevel - orgUnit.level) != 2">
+                            <tr>
+                                <td>#</td>
+                                <td>Name</td>
+                                <td ng-repeat="categoryOptionCombo in categoryCombo.categoryOptionCombos | orderBy:'name'" ng-if="objectType == 'dataElement'">{{categoryOptionCombo.name}}</td>
+                                <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{getDXName(dx)}}</td>
+                            </tr>
+                            </thead>
+                            <tbody ng-if="(dataSetOrganisationUnitLevel - orgUnit.level) == 2">
                             <tr ng-repeat-start="child in orgUnit.children | orderBy:'name'">
                                 <td rowspan="{{child.children.length}}">{{child.name}}</td>
-                                <td ng-if="objectType == 'dataElement'">{{child.data[id]}}</td>
+                                <td ng-if="$first" ng-repeat="child1 in child.children | orderBy:'name'">{{child1.name}}</td>
+                                <td ng-repeat="categoryOptionCombo in categoryCombo.categoryOptionCombos | orderBy:'name'" ng-if="objectType == 'dataElement'"><span ng-repeat="child1 in child.children | orderBy:'name'" ng-if="$first">{{child1.data[id][categoryOptionCombo.name].join(",")}}</span></td>
+                                <!--<td ng-repeat="child1 in child.children | orderBy:'name'" ng-if="objectType == 'dataElement' && $first">{{child1.data[id].actual.join(",")}}</td>
+                                <td ng-repeat="child1 in child.children | orderBy:'name'" ng-if="objectType == 'dataElement' && $first">{{child1.data[id].estimate.join(",")}}</td>-->
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}</td>
                             </tr>
                             <tr ng-if="$index != 0" ng-repeat="child1 in child.children | orderBy:'name'">
                                 <td>{{child1.name}}</td>
-                                <td ng-if="objectType == 'dataElement'">{{child1.data[id]}}</td>
+                                <td ng-repeat="categoryOptionCombo in categoryCombo.categoryOptionCombos | orderBy:'name'" ng-if="objectType == 'dataElement'">{{child1.data[id][categoryOptionCombo.name].join(",")}}</td>
+                                <!--<td ng-if="objectType == 'dataElement'">{{child1.data[id].actual.join(",")}}</td>
+                                <td ng-if="objectType == 'dataElement'">{{child1.data[id].estimate.join(",")}}</td>-->
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child1.data[dx]}}</td>
                             </tr>
                             <tr ng-repeat-end></tr>
                             </tbody>
-                            <tbody ng-if="orgUnit.level == 3">
+                            <tbody ng-if="(dataSetOrganisationUnitLevel - orgUnit.level) == 1">
                             <tr ng-repeat="child in orgUnit.children | orderBy:'name'">
                                 <td>{{$index + 1}}</td>
                                 <td>{{child.name}}</td>
-                                <td ng-if="objectType == 'dataElement'">{{child.data[id]}}</td>
+                                <td ng-repeat="categoryOptionCombo in categoryCombo.categoryOptionCombos | orderBy:'name'" ng-if="objectType == 'dataElement'">{{child.data[id][categoryOptionCombo.name].join(",")}}</td>
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}</td>
+                            </tr>
+                            </tbody>
+                            <tbody ng-if="orgUnit.level == dataSetOrganisationUnitLevel">
+                            <tr>
+                                <td>{{$index + 1}}</td>
+                                <td>{{orgUnit.name}}</td>
+                                <td ng-repeat="categoryOptionCombo in categoryCombo.categoryOptionCombos | orderBy:'name'" ng-if="objectType == 'dataElement'">{{orgUnit.data[id][categoryOptionCombo.name].join(",")}}</td>
+                                <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{data.data.join(",")}}</td>
                             </tr>
                             </tbody>
                         </table>
@@ -98,12 +123,12 @@
                     <td>{{TOR.consolidation}}</td>
                 </tr>
                 <tr ng-if="objectType == 'dataElement'">
-                    <td>Estimation Method</td>
-                    <td>{{estimation}}</td>
-                </tr>
-                <tr ng-if="objectType == 'dataElement'">
                     <td>Estimation Data</td>
                     <td>{{estimationData.join(",")}}</td>
+                </tr>
+                <tr>
+                    <td>For Developer Use</td>
+                    <td>#/dataSetReport/report/dataSet/{{param.dataSet}}/orgUnit/{{param.orgUnit}}/period/{{param.period}}/debug</td>
                 </tr>
             </table>
         </div>
