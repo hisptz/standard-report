@@ -1,0 +1,213 @@
+<div > <!-- Do not set style attr -->
+
+
+    <div id="sharingSettings" title="Sharing settings" style="display: none;" class="page">
+        <table style="width: 100%;">
+            <tbody>
+            <tr>
+                <td colspan="2" style="height: 40px"><span class="settingHeader" id="sharingName"></span></td>
+            </tr>
+            <tr>
+                <td><input style="width: 100%;" id="sharingFindUserGroup" placeholder="Search for user groups"></td>
+                <td style="width: 24px;"><button id="addUserGroupAccess" disabled="disabled" style="width:24px; margin-left:2px; text-align:center;">+</button></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <table id="sharingAccessTable" style="width: 100%; margin-top: 6px;">
+            <tbody>
+            <tr>
+                <td colspan="2" style="padding: 5px 0"><span class="tipText">Created by: </span><span class="tipText" id="sharingUser"></span></td>
+            </tr>
+            <tr>
+                <td style="width: 300px; padding: 5px 0;">External access (without login)</td>
+                <td style="text-align: right;">
+                    <input id="sharingExternalAccess" type="checkbox" value="true">
+                </td>
+                <td style="width: 25px; text-align: center;"></td>
+            </tr>
+            <tr>
+                <td style="width: 300px;">Public access (with login)</td>
+                <td>
+                    <select id="sharingPublicAccess" style="width: 150px;">
+                        <option selected="selected" value="--------">None</option>
+                        <option value="r-------">Can view</option>
+                        <option value="rw------">Can edit and view</option>
+                    </select>
+                </td>
+                <td style="width: 25px; text-align: center;"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script id="user-group-access-template" type="text/template">
+        <tr id="<%= id %>">
+            <td class="sharingGroupName" style="width: 300px;"><%= label %></td>
+            <td>
+                <select class="sharingGroupAccess" style="width: 150px;">
+                    <option value="r-------" <% if(access == 'r-------') { %>selected<% } %>>Can view</option>
+                    <option value="rw------" <% if(access == 'rw------') { %>selected<% } %>>Can edit and view</option>
+                </select>
+            </td>
+            <td style="width: 25px; text-align: center;"><a href="" class="removeUserGroupAccess">X</a></td>
+        </tr>
+    </script>
+
+    <script type="text/javascript">
+        jQuery(document).ready(function(){
+//            tableSorter( 'listTable' );
+//
+            dhis2.contextmenu.makeContextMenu({
+                menuId: 'contextMenu',
+                menuItemActiveClass: 'contextMenuItemActive',
+                listItemProps: ['id', 'uid', 'name', 'type', 'report-type']
+            });
+        });
+
+        var i18n_none = 'None';
+        var i18n_yes = 'Yes';
+        var i18n_no = 'No';
+        var i18n_confirm_remove_report = 'Are you sure you will delete the report?';
+        var i18n_confirm_add_to_dashboard = 'Are you sure want to add this report to the dashboard?';
+    </script>
+
+    <h3>Custom Report <a href="javascript:getHelpContent('dataset_reports')" title="Help"><i class="fa fa-question-circle"></i></a>
+    </h3>
+
+    <div id="contextMenu" style="{{contextMenu}}" class="contextMenu">
+        <ul id="contextMenuItems" class="contextMenuItems">
+            <li ng-if="read"><a href="#/customReport/{{currentReport.id}}/create"><i class="fa fa-play"></i>&nbsp;&nbsp;Create</a></li>
+            <li ng-if="manage" ><a data-target-fn="showSharingDialogWithContext"><i class="fa fa-share"></i>&nbsp;&nbsp;Sharing settings</a></li>
+            <li ng-if="update" ><a data-target-fn="displayAddReportForm"><i class="fa fa-edit"></i>&nbsp;&nbsp;Edit report</a></li>
+            <li ng-if="delete" ><a data-target-fn="removeReport"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;Remove</a></li>
+            <li ng-if="externalize"><a data-target-fn="showReportDetails"><i class="fa fa-info-circle"></i>&nbsp;&nbsp;Show details</a></li>
+        </ul>
+    </div>
+
+    <table class="mainPageTable">
+        <tbody><tr>
+            <td style="vertical-align:top">
+                <table width="100%">
+                    <tbody><tr>
+                        <td>
+                            <form id="filterKeyForm" ng-submit="filterReport(reportName)"  class="ng-pristine ng-valid">
+                            <input type="text" id="key" name="key" ng-model="reportName" placeholder="Filter by name" class="filterInput">
+                            <input type="hidden" id="curKey" name="curKey" value="">
+                            <input type="submit" id="filterButton" value="Filter" class="filterButton">
+                            <input type="button" value="Clear" ng-click="clearFilter()" class="filterButton">
+                            </form>
+                        </td>
+                        <td colspan="5" style="text-align:right;width: 102px;">
+                            <input type="button" value="Add new" ng-click="addNewReport()">
+                        </td>
+                    </tr>
+                    </tbody></table>
+                <table class="listTable" id="listTable">
+                    <colgroup><col>
+                    </colgroup><thead>
+                <tr>
+                    <th class="header headerSortDown">Name</th>
+                </tr>
+                </thead>
+
+                    <tbody id="list">
+
+                    <tr
+                            ng-repeat="report in reportList"
+                            id="tr82751" data-id="82751"
+                            data-uid="{{report.id}}"
+                            data-type="Report"
+                            data-name="{{report.name}}"
+                            data-report-type="JASPER_REPORT_TABLE"
+                            data-can-manage="true" data-can-update="true"
+                            data-can-delete="true" class="listRow {{hover[$index]}} {{click[$index]}}"
+                            ng-class="getClass($index)"
+                            ng-mouseover="getHover($index)"
+                            ng-click="getClick($event,$index)"
+                            >
+
+                        <td>{{report.name}}</td>
+
+                    </tr>
+                    </tbody>
+                </table>
+                <p></p>
+                <div class="paging-container">
+
+                    <input type="hidden" id="baseLink" value="/demo/dhis-web-reporting/displayViewReportForm.action?">
+                    <input type="hidden" id="currentPage" value="1">
+                    <input type="hidden" id="numberOfPages" value="3">
+                    <table style="background-color: #ebf0f6;" width="100%">
+                        <tbody><tr>
+                            <td>
+                                <span>No. of pages:</span> {{pageCount}}
+                            </td>
+                            <td>
+                                <span>No. of rows per page:</span>
+                                <input type="text" id="sizeOfPage"  ng-model="pageSize" style="width:50px" >
+                            </td>
+                            <td>
+                                <span>Jump to page:</span>
+                                <input type="text" id="jumpToPage"  ng-model="pageNumber" style="width:50px" >
+                            </td>
+                            <td>
+                                <input type="button" id="submitButton" style="width:40px;" value="Go" ng-click="loadReports(pageNumber,pageSize)">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4"><hr></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <div class="paging">
+                                    <a ng-click="goFirstPage()" ng-if="pageNumber>1"  style="cursor: pointer"  title="First">««</a>
+                                    <a ng-click="goPrevPage(pageNumber,pageCount)"  ng-if="pageNumber>1"  style="cursor: pointer"  class="last" title="Previous">«</a>
+
+                                    <span class="first" ng-if="pageNumber==1" title="First">««</span>
+                                    <span class="prev" ng-if="pageNumber==1" title="Previous">«</span>
+
+                                    <span>1</span>
+                                    <span>1</span>
+                                    <span>1</span>
+
+                                    <span class="first" ng-if="pageNumber==pageCount"  class="next" title="Next">»</span>
+                                    <span class="prev" ng-if="pageNumber==pageCount" class="last" title="Last">»»</span>
+
+                                    <a ng-click="goNextPage(pageNumber,pageSize)" ng-if="pageNumber!=pageCount"  style="cursor: pointer"  class="next" title="Next">»</a>
+                                    <a ng-click="goLastPage()" ng-if="pageNumber!=pageCount" style="cursor: pointer" class="last" title="Last">»»</a>
+
+
+
+                                </div>
+
+                            </td>
+                        </tr>
+                        </tbody></table>
+                </div>
+
+                <script>
+//                    jQuery.cookie( "currentPage", 1 );
+                </script>
+            </td>
+
+            <td id="detailsData">
+                <div id="detailsArea">
+                    <div id="hideDetailsArea">
+                        <a href="javascript:hideDetails()" title="Hide details"><img src="../images/hide.png" alt="Hide details"></a>
+                    </div>
+                    <p><label>Name:</label><br><span id="nameField"></span></p>
+                    <p><label>Report Table:</label><br><span id="reportTableNameField"></span></p>
+                    <p><label>Include admin unit group sets param:</label><br><span id="orgGroupSetsField"></span></p>
+                    <p><label>ID:</label><br><span id="idField"></span></p>
+                </div>
+                <div id="warningArea">
+                    <div id="hideDetailsArea">
+                        <a href="javascript:hideWarning()" title="hide_warning"><img src="../images/hide.png" alt="hide_warning'"></a>
+                    </div>
+                    <p><span id="warningField"></span></p>
+                </div>
+            </td>
+        </tr>
+        </tbody></table>
+</div>
