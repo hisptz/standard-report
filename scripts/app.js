@@ -51,6 +51,18 @@ angular.module('app',
             templateUrl: 'views/reportRequest.html'
         }).when('/dataSetReport/archive', {
             templateUrl: 'views/archive.html'
+        }).when('/customReport', {
+            templateUrl: 'views/customReport/customReport.html',
+            controller:'CustomReportController'
+        }).when('/customReport/:uid/create', {
+            templateUrl: 'views/customReport/createCustomReport.html',
+            controller:'CreateCustomReportController'
+        }).when('/customReport/:uid/render', {
+            templateUrl: 'views/customReport/renderCustomReport.html',
+            controller:'CreateCustomReportController'
+        }).when('/customReport/new', {
+            templateUrl: 'views/customReport/newCustomReport.html',
+            controller:'NewCustomReportController'
         }).otherwise({
             redirectTo: '/'
         });

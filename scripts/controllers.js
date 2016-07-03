@@ -1193,3 +1193,7 @@ var appControllers = angular.module('appControllers', [])
         }
 
     })
+    .controller('NewCustomReportController', function ($scope, DHIS2URL, $http, $sce, $timeout, $location, ReportService, toaster) {
+        ///customReport/new
+
+    })
