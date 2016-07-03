@@ -942,3 +942,247 @@ var appControllers = angular.module('appControllers', [])
         });
         $scope.periodString = ""
     })
+    .controller('CustomReportController', function ($scope, DHIS2URL, $http, $sce, $timeout, $location, ReportService, toaster) {
+
+        $scope.reportList = {};
+
+        $scope.pageNumber = 1;
+        $scope.pageSize = 50;
+        $scope.pageCount = 0;
+
+        $scope.alter = "listAlternateRow";
+        $scope.hover = [];
+        $scope.click = [];
+
+        $scope.goPrevPage = function (  pageNumber, pageSize  ) {
+            pageNumber-=1;
+            if(pageNumber<1){
+                pageNumber = 1;
+            }
+            $scope.pageNumber = pageNumber;
+            $scope.loadReports( pageNumber, pageSize );
+        }
+
+        $scope.goFirstPage = function (    ) {
+            $scope.pageNumber = 1;
+            $scope.loadReports( $scope.pageNumber, $scope.pageSize );
+        }
+
+        $scope.goNextPage = function (  pageNumber, pageSize  ) {
+            pageNumber+=1;
+            if(pageNumber>$scope.pageCount){
+                pageNumber = $scope.pageCount;
+            }
+            $scope.pageNumber = pageNumber;
+            $scope.loadReports( pageNumber, pageSize );
+        }
+
+        $scope.goLastPage = function (   ) {
+            $scope.pageNumber = $scope.pageCount;
+            $scope.loadReports( $scope.pageNumber, $scope.pageSize );
+        }
+
+
+        $scope.loadReports = function ( pageNumber, pageSize ) {
+
+            $http.get(DHIS2URL + "/api/reports.json?fields=*&page="+pageNumber+"&pageSize="+pageSize).then(function(result){
+
+                $scope.reportList  = $scope.prepareReports(result);
+            });
+
+        }
+
+        $scope.loadFilteredReports = function ( filterName ) {
+
+            $http.get(DHIS2URL + "/api/reports.json?filter=name:ilike:"+filterName+"&fields=*").then(function(result){
+
+                $scope.reportList  = $scope.prepareReports(result);
+            });
+
+        }
+
+
+
+        $scope.filterReport = function ( reportName ) {
+
+            if ( reportName && reportName != "" ) {
+                $scope.loadFilteredReports( reportName );
+            }else{
+
+                $scope.loadReports( $scope.pageNumber,$scope.pageSize );
+            }
+
+        }
+
+        $scope.clearFilter = function (  ) {
+
+            $scope.reportName = null;
+
+        }
+
+        $scope.addNewReport = function (  ) {
+
+            console.log("Adding new Report");
+
+        }
+
+        $scope.prepareReports = function ( results ) {
+            $scope.pageCount = results.data.pager.pageCount;
+            var data = results.data.reports;
+
+            return data;
+
+        }
+
+        $scope.getClass = function (index) {
+            if( index % 2  === 0) {
+
+            }else{
+                return "";
+            }
+            return $scope.alter;
+        }
+
+        /**
+         * Change State of the table row on hover
+         * */
+
+        $scope.getHover = function (index) {
+            $scope.hover = [];
+            $scope.hover[index] = "listHoverRow";
+            return $scope.hover;
+        }
+
+        $scope.getClick = function (event,index) {
+            localStorage.setItem($scope.reportList[index].id,JSON.stringify($scope.reportList[index]));
+            $scope.read      = $scope.reportList[index].access.read;
+            $scope.manage    = $scope.reportList[index].access.manage;
+            $scope.write     = $scope.reportList[index].access.write;
+            $scope.update    = $scope.reportList[index].access.update;
+            $scope.delete    = $scope.reportList[index].access.delete;
+            $scope.externalize = $scope.reportList[index].access.externalize;
+            $scope.currentReport = $scope.reportList[index];
+            dhis2.contextmenu.makeContextMenu({
+                menuId: 'contextMenu',
+                menuItemActiveClass: 'contextMenuItemActive',
+                listItemProps: ['id', 'uid', 'name', 'type', 'report-type']
+            });
+
+            return $scope.click;
+        }
+
+        $scope.loadGetReportParamForm = function (currentReport) {
+            console.log(currentReport);
+        }
+
+        $scope.loadReports($scope.pageNumber,$scope.pageSize);
+
+    })
+    .controller('CreateCustomReportController', function ($scope, DHIS2URL, $http, $sce, $timeout,$routeParams, $location, ReportService, toaster) {
+
+        $scope.reportUid = $routeParams.uid;
+        $scope.report  = localStorage.getItem($scope.reportUid)?eval('('+localStorage.getItem($scope.reportUid)+')'):null;
+        $scope.reportPeriod = null;
+        dhis2.report = ReportService.dhis2.report;
+
+
+        $scope.data = {
+            selectedOrgUnit: undefined,
+            config: {},
+            archive: undefined,
+            report: [],
+            period: "",
+            periodTypes:ReportService.periodTypes
+        };
+
+        $scope.currentDate = new Date();
+
+        $scope.loadingArchive = false;
+
+
+        $scope.getReportPeriodType = function () {
+            var periodType = "FinancialJuly";
+            if ( $scope.report ) {
+                var relativePeriods = $scope.report.relativePeriods;
+
+                angular.forEach( relativePeriods, function (periodStatus, periodTypes) {
+
+                    if ( periodStatus ) {
+
+                        periodType = periodTypes;
+                    }
+
+                } )
+            }
+
+            if( periodType == 'thisYear' ) {
+
+                periodType = "FinancialJuly";
+            }
+
+            if( periodType == 'thisMonth' ) {
+
+                periodType = "Monthly";
+            }
+            if( periodType == 'thisQuarter' ) {
+
+                periodType = "Quarterly";
+            }
+
+            return periodType;
+        }
+
+        $scope.renderCustomReport = function ( reportUid ) {
+
+            $location.path('/customReport/'+reportUid+'/render');
+        }
+
+        $scope.periodType = $scope.getReportPeriodType();
+
+        $scope.data.periodTypes[$scope.periodType].populateList();
+
+        $scope.$watch("data.selectedOrgUnit", function (selectedOrgUnit) {
+            if (selectedOrgUnit) {
+
+                ReportService.prepareOrganisationUnit(selectedOrgUnit);
+                ReportService.prepareOrganisationUnitHierarchy(selectedOrgUnit,$scope.data.organisationUnits);
+
+                dhis2.report = ReportService.dhis2.report;
+
+                localStorage.setItem('dhis2',JSON.stringify(dhis2));
+
+            }
+        });
+
+
+        ReportService.getUser().then(function (results) {
+            var orgUnitIds = [];
+            results.organisationUnits.forEach(function (orgUnit) {
+                orgUnitIds.push(orgUnit.id);
+            });
+            $http.get(DHIS2URL + "api/organisationUnits.json?filter=id:in:[" + orgUnitIds + "]&fields=id,name,level,children[id,name,level,children[id,name,level,children[id,name,level,children[id,name,level,children]]]]")
+                .then(function (results) {
+                    $scope.data.organisationUnits = results.data.organisationUnits;
+                    $scope.data.organisationUnits.forEach(function (orgUnit) {
+                        ReportService.sortOrganisationUnits(orgUnit);
+                    });
+                }, function (error) {
+                    $scope.data.organisationUnits = [];
+                    toaster.pop('error', "Error" + error.status, "Error Loading Organisation Units. Please try again");
+                });
+        });
+        console.log($location.path());
+
+        if ( $location.path().indexOf('render') >=0 ) {
+
+            $scope.$on('$viewContentLoaded', function(event) {
+                dhis2 = eval('('+localStorage.getItem('dhis2')+')');
+                var renderedReport  = ReportService.getRenderedReport($scope.reportUid);
+                console.log(renderedReport.designContent);
+                $scope.renderedReport  = $sce.trustAsHtml(renderedReport.designContent);
+            });
+
+
+        }
+
+    })
