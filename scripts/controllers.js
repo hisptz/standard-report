@@ -361,6 +361,8 @@ var appControllers = angular.module('appControllers', [])
                 console.log(JSON.stringify($scope.commentData));
                 $scope.savingComment = "savingLoad";
                 if ($scope.commentData.lastCommenter) {
+                    $scope.commentData.lastUpdated = new Date();
+                    $scope.commentData.lastCommenter = $scope.user;
                     $http.put(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period, $scope.commentData).then(function (results) {
                         $scope.savingComment = "";
                         toaster.pop('success', "Success", "Saved Comments Successfully.");
