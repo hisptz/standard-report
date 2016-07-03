@@ -177,15 +177,7 @@ var appDirectives = angular.module('appDirectives', [])
                         size:'lg',
                         templateUrl: 'myModalContent.html',
                         controller: function ($scope, parentScope, $modalInstance, DebugService, ReportService,$q) {
-                            try{
-                                new Clipboard('.btn', {
-                                    target: function(trigger) {
-                                        return document.getElementById("copyTable");
-                                    }
-                                });
-                            }catch(e){
 
-                            }
 
                             $scope.param = $routeParams;
                             $scope.data = {
@@ -258,7 +250,7 @@ var appDirectives = angular.module('appDirectives', [])
                                         $scope.fetchOrgUnitData(id, orgUnit, "dataElement");
                                     });
                                 } else {
-
+                                    if($scope.orgUnit.level == orgUnit.level || ($scope.organisationUnitLevels + $scope.orgUnit.level == orgUnit.level ))
                                     if (parentScope.aDebug) {
 
                                         promises.push($http.get(DHIS2URL + "api/events.json?program=" + parentScope.aDebug.programId + "&startDate=" + periods.startDate + "&endDate=" + periods.endDate + "&orgUnit:" + orgUnit.id).then(function (results) {
@@ -286,7 +278,7 @@ var appDirectives = angular.module('appDirectives', [])
                                         });
                                     }
                                 }
-                                if(($scope.dataSetOrganisationUnitLevel - orgUnit.level) != 0){
+                                if(($scope.dataSetOrganisationUnit.level - orgUnit.level) != 0){
                                     orgUnit.children.forEach(function(child){
                                         child.data = {};
                                         $scope.fetchOrgUnitData(objectId, child, type,"second");
@@ -295,7 +287,7 @@ var appDirectives = angular.module('appDirectives', [])
                             };
                             $http.get(DHIS2URL + "api/categoryCombos.json?fields=:all,categoryOptionCombos[:all]&filter=name:eq:Data Dimension").then(function(result){
                                 $scope.categoryCombo = result.data.categoryCombos[0];
-                                var url = DHIS2URL + "api/" + parentScope.type + "s/" + object + ".json?fields=:all,dataSets[organisationUnits[id,level],id,name,attributeValues,periodType,dataEntryForm],attributeValues[:all,attribute[:all]]";
+                                var url = DHIS2URL + "api/" + parentScope.type + "s/" + object + ".json?fields=:all,dataSets[organisationUnits[id,path,level],id,name,attributeValues,periodType,dataEntryForm],attributeValues[:all,attribute[:all]]";
                                 $http.get(url).then(function (results) {
                                     $scope.data.object = results.data;
                                     $scope.data.object.attributeValues.forEach(function (attributeValue) {
@@ -303,9 +295,20 @@ var appDirectives = angular.module('appDirectives', [])
                                             $scope.estimation = attributeValue.value;
                                         }
                                     });
+                                    var topLevel = 0,lowLevel = 0;
                                     $scope.data.object.dataSets.forEach(function(dataSet){
                                         dataSet.organisationUnits.forEach(function(organisationUnit){
-                                            $scope.dataSetOrganisationUnitLevel = organisationUnit.level;
+                                            if(organisationUnit.path.indexOf($routeParams.orgUnit) > -1){
+                                                if(organisationUnit.path.endsWith($routeParams.orgUnit)){
+                                                    topLevel = organisationUnit.level;
+                                                    console.log("Path:",organisationUnit.level,organisationUnit.path);
+                                                }else{
+                                                    lowLevel = organisationUnit.level;
+                                                    console.log("Path1:",organisationUnit.level,organisationUnit.path);
+                                                }
+
+                                                $scope.dataSetOrganisationUnit = organisationUnit;
+                                            }
                                         })
                                     })
                                     if (parentScope.type == "dataElement") {
@@ -360,7 +363,14 @@ var appDirectives = angular.module('appDirectives', [])
                                             });
                                         }));
                                     }
-                                    $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=:all,children[id,level,name,children[id,level,name,children[id,level,name]]]").then(function (results) {
+                                    $scope.organisationUnitLevels = lowLevel - topLevel;
+                                    var childrenUrl = ",{}";
+                                    for(var i = 0; i < lowLevel - topLevel;i++){
+                                        childrenUrl = childrenUrl.replace("{}","children[id,level,name,{}]")
+                                    }
+                                    childrenUrl = childrenUrl.replace(",{}","")
+                                    console.log("Children:",childrenUrl)
+                                    $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=:all" + childrenUrl).then(function (results) {
                                         $scope.orgUnit = results.data;
                                         /*$scope.orgUnit.children.forEach(function (child) {
                                             child.data = {};
@@ -382,6 +392,15 @@ var appDirectives = angular.module('appDirectives', [])
                             $scope.cancel = function () {
                                 $modalInstance.dismiss('cancel');
                             };
+                            /*try{
+                                new Clipboard('.btn', {
+                                    target: function(trigger) {
+                                        return document.getElementById("copyTable");
+                                    }
+                                });
+                            }catch(e){
+
+                            }*/
                         },
                         resolve: {
                             parentScope: function () {

@@ -24,13 +24,17 @@
                 <tr>
                     <td style="width: 20%;">Name of <span ng-if="objectType == 'dataElement'">Data Element </span><span
                             ng-if="objectType == 'indicator'">Computed Values </span></td>
-                    <td>{{data.object.name}}</td>
+                    <td>{{data.object.name}} </td>
+                </tr>
+                <tr>
+                    <td style="width: 20%;">Administartive </td>
+                    <td>{{orgUnit.name}}</td>
                 </tr>
                 <tr>
                     <td>Dataset source</td>
                     <td>
                         <table>
-                            <tr ng-repeat="dataSet in data.object.dataSets | dataEntryForm">
+                            <tr ng-repeat="dataSet in data.object.dataSets | dataEntryForm:TOR.source">
                                 <td>{{dataSet.name}}</td>
                                 <td></td>
                             </tr>
@@ -61,7 +65,7 @@
                     <td>Source Values</td>
                     <td>
                         <table class="table table-bordered">
-                            <thead ng-if="(dataSetOrganisationUnitLevel - orgUnit.level) == 2">
+                            <thead ng-if="(dataSetOrganisationUnit.level - orgUnit.level) == 2">
                             <tr>
                                 <td>Region</td>
                                 <td>District</td>
@@ -69,7 +73,7 @@
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{getDXName(dx)}}</td>
                             </tr>
                             </thead>
-                            <thead ng-if="(dataSetOrganisationUnitLevel - orgUnit.level) != 2">
+                            <thead ng-if="(dataSetOrganisationUnit.level - orgUnit.level) != 2">
                             <tr>
                                 <td>#</td>
                                 <td>Name</td>
@@ -77,7 +81,7 @@
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{getDXName(dx)}}</td>
                             </tr>
                             </thead>
-                            <tbody ng-if="(dataSetOrganisationUnitLevel - orgUnit.level) == 2">
+                            <tbody ng-if="organisationUnitLevels == 2">
                             <tr ng-repeat-start="child in orgUnit.children | orderBy:'name'">
                                 <td rowspan="{{child.children.length}}">{{child.name}}</td>
                                 <td ng-if="$first" ng-repeat="child1 in child.children | orderBy:'name'">{{child1.name}}</td>
@@ -95,7 +99,7 @@
                             </tr>
                             <tr ng-repeat-end></tr>
                             </tbody>
-                            <tbody ng-if="(dataSetOrganisationUnitLevel - orgUnit.level) == 1">
+                            <tbody ng-if="organisationUnitLevels == 1">
                             <tr ng-repeat="child in orgUnit.children | orderBy:'name'">
                                 <td>{{$index + 1}}</td>
                                 <td>{{child.name}}</td>
@@ -103,7 +107,7 @@
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}</td>
                             </tr>
                             </tbody>
-                            <tbody ng-if="orgUnit.level == dataSetOrganisationUnitLevel">
+                            <tbody ng-if="organisationUnitLevels == 0">
                             <tr>
                                 <td>{{$index + 1}}</td>
                                 <td>{{orgUnit.name}}</td>
@@ -128,7 +132,12 @@
                 </tr>
                 <tr>
                     <td>For Developer Use</td>
-                    <td>#/dataSetReport/report/dataSet/{{param.dataSet}}/orgUnit/{{param.orgUnit}}/period/{{param.period}}/debug</td>
+                    <td>
+                        <table>
+                            <tr><td>Object ID</td><td>{{id}} </td></tr>
+                            <tr><td>Url</td><td>#/dataSetReport/report/dataSet/{{param.dataSet}}/orgUnit/{{param.orgUnit}}/period/{{param.period}}/debug</td></tr>
+                        </table>
+                    </td>
                 </tr>
             </table>
         </div>

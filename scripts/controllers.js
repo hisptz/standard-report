@@ -656,9 +656,9 @@ var appControllers = angular.module('appControllers', [])
         $scope.nonAggregatedDataElementsDate = [];
         $scope.autogrowingPrograms = {};
         $scope.getElementReplacment = function (content, type) {
-            var div = "<div>{{" + content + "}}";
+            var processed = content.replace("dataElementsData['","").replace("']","");
+            var div = "<div gid='"+processed+"'>{{" + content + "}}";
             if ($routeParams.preview == "debug") {
-                var processed = content.replace("dataElementsData['","").replace("']","");
                 var addition ="";
                 if(content.indexOf("dataElementsData['") > -1){
                     addition = "type='" +type +"'";
