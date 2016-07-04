@@ -63,6 +63,12 @@ angular.module('app',
         }).when('/customReport/new', {
             templateUrl: 'views/customReport/newCustomReport.html',
             controller:'NewCustomReportController'
+        }).when('/submissionStatus', {
+            templateUrl: 'views/submissionStatus/submissionStatus.html',
+            controller:'SubmissionStatusReportController'
+        }).when('/dataApproval', {
+            templateUrl: 'views/dataApproval/dataApproval.html',
+            controller:'DataApprovalController'
         }).otherwise({
             redirectTo: '/'
         });

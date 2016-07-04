@@ -1,0 +1,296 @@
+<style>
+    #currentSelection1
+    {
+        padding: 6px;
+        background-color: #eee;
+        border: 1px solid #bbb;
+        text-align: right;
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        filter: alpha(opacity=85);
+        opacity: 0.85;
+        border-radius: 3px;
+        z-index: 10000;
+    }
+    .interpretationArea
+    {
+        height: 40px;
+        width: 455px;
+        border: 1px solid #c0c0c0;
+        resize: none;
+        overflow: auto;
+        padding: 4px 0 0px 6px;
+    }
+
+    #shareForm
+    {
+        margin: 0 0 10px 0;
+    }
+    #comments{
+        margin: 0 0 10px 0;
+    }
+    .resultDiv
+    {
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        padding: 20px;
+    }
+
+    #approvalNotification
+    {
+        width: auto;
+        display: inline-block;
+        vertical-align: top;
+        margin-left: 10px;
+    }
+
+    @media print
+    {
+        div#control
+        {
+            display: none;
+        }
+
+        h3#dataSetReportHeader
+        {
+            display: none;
+        }
+
+        #shareForm
+        {
+            display: none;
+        }
+
+        .gridTable
+        {
+            width: 100%;
+        }
+        #comments{
+            display: none;
+        }
+    }
+
+</style>
+<div class="col-md-12" style="margin-top: 0px;"><!--mainPage--> <!-- Do not set style attr -->
+   <span id="showLeftBars" class="pull-left hidden-sm hidden-xs">
+         <div id="max" style="display: none; margin-top: 0px;">
+             <a href="#" onclick="javascript:maxSide()" title="show menu"><img src="../images/extend_menu.png" width="16" height="16"></a>
+         </div>
+   </span>
+    <script type="text/javascript">
+
+//        dhis2.appr.metaData = {
+//            "periodTypes": [
+//                "Daily",                            "Weekly",                            "Monthly",                            "BiMonthly",                            "Quarterly",                            "SixMonthly",                            "SixMonthlyApril",                            "Yearly",                            "FinancialApril",                            "FinancialJuly",                            "FinancialOct"                    ]
+//        };
+
+//        selection.setListenerFunction( dhis2.appr.orgUnitSelected  );
+
+        var i18n_select_data_set = 'Please select a form';
+        var i18n_select_period_type = 'Select period type';
+        var i18n_select_period = 'Please select a period';
+        var i18n_select_organisation_unit = 'Please select an administrative unit';
+        var i18n_generating_report = 'Generating report';
+        var i18n_select_option_view_all = 'Select option \/ View all';
+        var i18n_waiting_for_lower_level_approval = 'Waiting for lower levels to approve';
+        var i18n_ready_for_approval_at_a_higher_level = 'Ready for approval at a higher level';
+        var i18n_ready_for_approval = 'Ready for approval';
+        var i18n_approval_not_relevant = 'Approval not relevant';
+        var i18n_waiting_for_approval_elsewhere = 'Waiting for approval elsewhere';
+        var i18n_approved_at_a_higher_level = 'Approved at a higher level';
+        var i18n_approved = 'Approved';
+        var i18n_approved_elsewhere = 'Approved elsewhere';
+        var i18n_accepted_elsewhere = 'Accepted elsewhere';
+        var i18n_approved_and_accepted = 'Approved and accepted';
+        var i18n_approved_for_part_of_this_period = 'Approved for part of this period';
+        var i18n_accepted_for_part_of_this_period = 'Accepted for part of this period';
+        var i18n_approved_elsewhere_for_part_of_this_period = 'Approved elsewhere for part of this period';
+        var i18n_accepted_elsewhere_for_part_of_this_period = 'Accepted elsewhere for part of this period';
+        var i18n_confirm_approval = 'Are you sure you want to approve this data set?';
+        var i18n_confirm_unapproval = 'Are you sure you want to unapprove this data set?';
+        var i18n_confirm_accept = 'Are you sure you want to accept this data set approval?';
+        var i18n_confirm_unaccept = 'Are you sure you want to unaccept this data set approval?';
+        $(document).ready(function(){
+            $("option[value=Daily]").remove();
+            $('.dth').hide();
+            $('.dtp').hide();
+
+
+            // logging user activities
+            monitorLoadedReport();
+        });
+    </script>
+
+    <style type="text/css">
+        div#orgUnitTree {
+            width:328px;
+            height:200px;
+            border:1px solid #ccc;
+            margin-bottom: 8px;
+        }
+
+        div#control {
+            margin-bottom: 15px;
+        }
+
+        div.inputSection {
+            padding-top: 7px;
+            padding-bottom: 5px;
+        }
+
+        .approveButton {
+            display: none;
+        }
+        #comments{
+            display: none;
+        }
+        .list-group-item{
+            padding: 0px 0px!important;
+        }
+
+        div#selectionTree ul
+        {
+            margin: 0em 0em 0em 0.5em;
+        }
+
+    </style>
+
+    <h3 id="dataSetReportHeader">Data Approval</h3>
+
+    <div class="message message-info" style="margin-bottom: 14px; margin-top: 0px;">
+        <span>Approval status</span>:
+        <span id="approvalNotification">Ready for approval at a higher level</span>
+    </div>
+    <div id="comments" style="margin-top: 0px; display: block;">
+        <textarea id="interpretationArea" class="interpretationArea" placeholder="write comments to this report" data-ng-model="interpretation"></textarea>
+        <br>
+        <input type="button" value="comment" onclick="dhis2.appr.shareInterpretation( '${uid}', '' )" width="120px">
+        <em id="commentDetails" class="bg-success"></em>
+    </div>
+    <br>
+    <div id="control" style="margin-top: 0px;">
+        <input type="button" id="dataButton" value="Data criteria" style="width:140px" onclick="dhis2.dsr.showCriteria()" disabled="disabled">
+        <input type="button" id="approveButton" value="Approve" onclick="dhis2.appr.approveData()" class="approveButton" style="width: 120px; display: none;">
+        <input type="button" id="unapproveButton" value="Unapprove" onclick="dhis2.appr.unapproveData()" class="approveButton" style="width:120px">
+        <input type="button" id="acceptButton" value="Accept" onclick="dhis2.appr.acceptData()" class="approveButton" style="width:120px">
+        <input type="button" id="unacceptButton" value="Unaccept" onclick="dhis2.appr.unacceptData()" class="approveButton" style="width:120px">
+
+    </div>
+
+    <div id="criteria" class="inputCriteria" style="width: 360px; margin-top: 0px; overflow: hidden; display: block;">
+
+        <!-- Data set -->
+
+        <div class="inputSection" style="margin-top: 0px;">
+            <label>Report</label><br>
+            <select id="dataSetId" name="dataSetId" style="width:330px" onchange="dhis2.appr.dataSetSelected()">
+                <option value="">[ Select ]</option>
+                <option value="HhyM40b8ma1" data-pt="FinancialJuly" data-cc="false">
+                    Annual Integrated Report
+                </option>
+                <option value="OBnVfEenAuW" data-pt="FinancialJuly" data-cc="false">
+                    District Annually Report
+                </option>
+                <option value="cSC1VV8uMh9" data-pt="Monthly" data-cc="false">
+                    Monthly District Report
+                </option>
+                <option value="Znn30Q67yDO" data-pt="Quarterly" data-cc="false">
+                    Quarterly District Report
+                </option>
+                <option value="QLoyT2aHGes" data-pt="Quarterly" data-cc="false">
+                    Quarterly Integrated Report
+                </option>
+            </select>
+        </div>
+
+        <!-- Period -->
+
+        <div class="inputSection" style="margin-top: 0px;">
+            <label>Report period</label><br>
+            <div class="loader" style="margin-top: 0px; display: none;"><img src="../images/ajax-loader-bar.gif"></div>
+            <select id="periodType" name="periodType" style="width:174px" onchange="dhis2.appr.displayPeriods()"><option value="">[ Select period type ]</option><option value="FinancialJuly" selected="selected">FinancialJuly</option></select>
+            <input type="button" style="width:75px" value="Prev year" onclick="dhis2.appr.displayPreviousPeriods()">
+            <input type="button" style="width:75px" value="Next year" onclick="dhis2.appr.displayNextPeriods()"><br>
+            <select id="periodId" name="periodId" style="width:330px" onchange="dhis2.appr.periodSelected()">
+                <option value="2016July">July 2016 - June 2017</option><option value="2015July">July 2015 - June 2016</option><option value="2014July">July 2014 - June 2015</option><option value="2013July">July 2013 - June 2014</option><option value="2012July">July 2012 - June 2013</option><option value="2011July">July 2011 - June 2012</option></select>
+        </div>
+
+        <!-- Organisation unit -->
+
+        <div class="inputSection" style="margin-top: 0px;">
+            <label>Report administrative unit</label><br>
+
+            <div id="selectionTree" style="width: 325px; height: 210px; background-image: none; background-repeat: no-repeat;">
+                <div ng-if="!data.organisationUnits" class="loader" style="margin-top: 0px;"><img
+                        src="../../../images/ajax-loader-bar.gif">Loading Organisation Units</div>
+                <c-tree ng-if="data.organisationUnits" tree-modal='data.organisationUnits' ng-model="data.selectedOrgUnit"
+                        config="data.config"></c-tree>
+            </div>
+
+            <img id="ouwt_loader" src="../images/ajax-loader-bar.gif" style="display: none;">
+        </div>
+
+        <div class="inputSection" style="margin-top: 0px;">
+            <input type="button" value="Get data" style="width:120px" onclick="dhis2.appr.generateDataReport()">
+            <input type="button" value="Cancel" style="width:120px" onclick="dhis2.dsr.hideCriteria()">
+        </div>
+
+    </div>
+
+
+    <style type="text/css">
+
+        div#loaderDiv
+        {
+            color: #1c425c;
+            font-size: 14px;
+            border: 1px solid #9aaab5;
+            margin-bottom: 15px;
+            width: 500px;
+            height: 230px;
+            text-align: center;
+            display: none;
+            border-radius: 3px;
+        }
+
+    </style>
+
+    <div id="loaderDiv" style="margin-top: 0px; display: none;">
+
+        <br><br><br>
+
+        <img src="../images/ajax-loader-circle.gif">
+
+        <br><br><br>
+
+        <p>Please wait while the system is processing...</p>
+
+    </div>
+
+    <div id="" style="margin-top: 0px;">
+        <script>
+            $('#dataSetId').on('change',function(){
+                $("option[value=Daily]").remove();
+                $("option[value=Weekly]").remove();
+                $("option[value=BiMonthly]").remove();
+                $("option[value=SixMonthly]").remove();
+                $("option[value=SixMonthlyApril]").remove();
+                $("option[value=Yearly]").remove();
+                $("option[value=FinancialApril]").remove();
+                $("option[value=FinancialOct]").remove();
+            });
+        </script>
+
+        <div id="rightBar" style="margin-top: 0px;">
+          <span id="hideRightBar"><a href="javascript:hideHelpContent()" title="Close">
+              <img id="hideRightBarImg" src="../images/hide.png" alt="Close"></a>
+          </span>
+            <div id="rightBarContents" style="margin-top: 0px;"></div>
+
+        </div>
+
+    </div>
+
+
+</div>

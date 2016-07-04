@@ -1196,4 +1196,114 @@ var appControllers = angular.module('appControllers', [])
     .controller('NewCustomReportController', function ($scope, DHIS2URL, $http, $sce, $timeout, $location, ReportService, toaster) {
         ///customReport/new
 
+    }).controller('SubmissionStatusReportController', function ($scope, DHIS2URL, $http, $sce, $timeout, $location, ReportService, toaster) {
+        //
+        //$scope.reportUid = $routeParams.uid;
+        //$scope.report  = localStorage.getItem($scope.reportUid)?eval('('+localStorage.getItem($scope.reportUid)+')'):null;
+        //$scope.reportPeriod = null;
+        //dhis2.report = ReportService.dhis2.report;
+
+
+        $scope.data = {
+            selectedOrgUnit: undefined,
+            config: {},
+            archive: undefined,
+            report: [],
+            period: "",
+            periodTypes:ReportService.periodTypes
+        };
+
+        $scope.$watch("data.selectedOrgUnit", function (selectedOrgUnit) {
+            if (selectedOrgUnit) {
+
+            }
+        });
+
+
+        ReportService.getUser().then(function (results) {
+
+            var orgUnitIds = [];
+            results.organisationUnits.forEach(function (orgUnit) {
+                orgUnitIds.push(orgUnit.id);
+            });
+            $http.get(DHIS2URL + "api/organisationUnits.json?filter=id:in:[" + orgUnitIds + "]&fields=id,name,level,children[id,name,level,children[id,name,level,children[id,name,level,children[id,name,level,children]]]]")
+                .then(function (results) {
+                    $scope.data.organisationUnits = results.data.organisationUnits;
+                    $scope.data.organisationUnits.forEach(function (orgUnit) {
+                        ReportService.sortOrganisationUnits(orgUnit);
+                    });
+                }, function (error) {
+                    $scope.data.organisationUnits = [];
+                    toaster.pop('error', "Error" + error.status, "Error Loading Organisation Units. Please try again");
+                });
+        });
+
+        //
+        //if ( $location.path().indexOf('render') >=0 ) {
+        //
+        //    $scope.$on('$viewContentLoaded', function(event) {
+        //        dhis2 = eval('('+localStorage.getItem('dhis2')+')');
+        //        var renderedReport  = ReportService.getRenderedReport($scope.reportUid);
+        //        console.log(renderedReport.designContent);
+        //        $scope.renderedReport  = $sce.trustAsHtml(renderedReport.designContent);
+        //    });
+        //
+        //
+        //}
+
+
+    }).controller('DataApprovalController', function ($scope, DHIS2URL, $http, $sce, $timeout, $location, ReportService, toaster) {
+        //
+        //$scope.reportUid = $routeParams.uid;
+        //$scope.report  = localStorage.getItem($scope.reportUid)?eval('('+localStorage.getItem($scope.reportUid)+')'):null;
+        //$scope.reportPeriod = null;
+        //dhis2.report = ReportService.dhis2.report;
+
+
+        $scope.data = {
+            selectedOrgUnit: undefined,
+            config: {},
+            archive: undefined,
+            report: [],
+            period: "",
+            periodTypes:ReportService.periodTypes
+        };
+
+        $scope.$watch("data.selectedOrgUnit", function (selectedOrgUnit) {
+            if (selectedOrgUnit) {
+
+            }
+        });
+
+
+        ReportService.getUser().then(function (results) {
+            var orgUnitIds = [];
+            results.organisationUnits.forEach(function (orgUnit) {
+                orgUnitIds.push(orgUnit.id);
+            });
+            $http.get(DHIS2URL + "api/organisationUnits.json?filter=id:in:[" + orgUnitIds + "]&fields=id,name,level,children[id,name,level,children[id,name,level,children[id,name,level,children[id,name,level,children]]]]")
+                .then(function (results) {
+                    $scope.data.organisationUnits = results.data.organisationUnits;
+                    $scope.data.organisationUnits.forEach(function (orgUnit) {
+                        ReportService.sortOrganisationUnits(orgUnit);
+                    });
+                }, function (error) {
+                    $scope.data.organisationUnits = [];
+                    toaster.pop('error', "Error" + error.status, "Error Loading Organisation Units. Please try again");
+                });
+        });
+
+        //
+        //if ( $location.path().indexOf('render') >=0 ) {
+        //
+        //    $scope.$on('$viewContentLoaded', function(event) {
+        //        dhis2 = eval('('+localStorage.getItem('dhis2')+')');
+        //        var renderedReport  = ReportService.getRenderedReport($scope.reportUid);
+        //        console.log(renderedReport.designContent);
+        //        $scope.renderedReport  = $sce.trustAsHtml(renderedReport.designContent);
+        //    });
+        //
+        //
+        //}
+
     })
