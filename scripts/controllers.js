@@ -361,6 +361,8 @@ var appControllers = angular.module('appControllers', [])
                 console.log(JSON.stringify($scope.commentData));
                 $scope.savingComment = "savingLoad";
                 if ($scope.commentData.lastCommenter) {
+                    $scope.commentData.lastUpdated = new Date();
+                    $scope.commentData.lastCommenter = $scope.user;
                     $http.put(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period, $scope.commentData).then(function (results) {
                         $scope.savingComment = "";
                         toaster.pop('success', "Success", "Saved Comments Successfully.");
@@ -656,9 +658,9 @@ var appControllers = angular.module('appControllers', [])
         $scope.nonAggregatedDataElementsDate = [];
         $scope.autogrowingPrograms = {};
         $scope.getElementReplacment = function (content, type) {
-            var div = "<div>{{" + content + "}}";
+            var processed = content.replace("dataElementsData['","").replace("']","");
+            var div = "<div gid='"+processed+"'>{{" + content + "}}";
             if ($routeParams.preview == "debug") {
-                var processed = content.replace("dataElementsData['","").replace("']","");
                 var addition ="";
                 if(content.indexOf("dataElementsData['") > -1){
                     addition = "type='" +type +"'";
