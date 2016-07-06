@@ -12,6 +12,40 @@ var appServices = angular.module('appServices', ['ngResource'])
             user = results.data;
             userDeffered.resolve(user);
         });
+
+
+        Object.prototype.equals = function(x)
+        {
+            var p;
+            for(p in this) {
+                if(typeof(x[p])=='undefined') {return false;}
+            }
+
+            for(p in this) {
+                if (this[p]) {
+                    switch(typeof(this[p])) {
+                        case 'object':
+                            if (!this[p].equals(x[p])) { return false; } break;
+                        case 'function':
+                            if (typeof(x[p])=='undefined' ||
+                                (p != 'equals' && this[p].toString() != x[p].toString()))
+                                return false;
+                            break;
+                        default:
+                            if (this[p] != x[p]) { return false; }
+                    }
+                } else {
+                    if (x[p])
+                        return false;
+                }
+            }
+
+            for(p in x) {
+                if(typeof(this[p])=='undefined') {return false;}
+            }
+
+            return true;
+        }
         return {
             periodTypes: {
                 "Monthly": {
@@ -92,7 +126,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                         var date = new Date();
                         this.list = [];
                         for (var i = date.getFullYear() - 5; i < date.getFullYear() + 5; i++) {
-                            this.list.push({name: "" + i});
+                            this.list.push({name: "" + i,value: "" + i});
                         }
                     }
                 },
@@ -1467,6 +1501,41 @@ var appServices = angular.module('appServices', ['ngResource'])
                          });*/
                     });
                 return deffered.promise;
+            },
+            getCompletenessSatus: function(dataCriteria){
+                var deffered = $q.defer();
+                $http.get(DHIS2URL + "api/completeDataSetRegistrations?dataSet=" + dataCriteria.dataSet + "&orgUnit=" + dataCriteria.orgUnit + "&startDate="+dataCriteria.period.startDate+"&endDate="+dataCriteria.period.endDate+"&children=true")
+                    .then(function (results) {
+                        deffered.resolve();
+                    });
+                return deffered.promise;
+            },
+            getApprovalStatus: function(dataCriteria){
+                var deffered = $q.defer();
+                $http.get(DHIS2URL + "api/dataApprovals?ds="+dataCriteria.dataset+"&pe="+dataCriteria.period+"&ou="+dataCriteria.orgUnit)
+                    .then(function (results) {
+                        deffered.resolve();
+                    });
+                return deffered.promise;
+            },
+            getDatasets: function(){
+                return $http.get(DHIS2URL + "api/dataSets.json?fields=id,displayName,timelyDays,periodType,organisationUnits&paging=false")
+            },
+            hasObject:function (obj, list) {
+                var found = 0;
+                angular.forEach(list, function(value) {
+                    if (value.equals(obj)) {
+                        found++;
+                                return true;
+                    }
+
+                });
+
+                if(found>0){
+                    return true;
+                }
+
+                return false;
             },
             getUser:function(){
                 if(user){

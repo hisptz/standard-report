@@ -1197,12 +1197,6 @@ var appControllers = angular.module('appControllers', [])
         ///customReport/new
 
     }).controller('SubmissionStatusReportController', function ($scope, DHIS2URL, $http, $sce, $timeout, $location, ReportService, toaster) {
-        //
-        //$scope.reportUid = $routeParams.uid;
-        //$scope.report  = localStorage.getItem($scope.reportUid)?eval('('+localStorage.getItem($scope.reportUid)+')'):null;
-        //$scope.reportPeriod = null;
-        //dhis2.report = ReportService.dhis2.report;
-
 
         $scope.data = {
             selectedOrgUnit: undefined,
@@ -1213,12 +1207,43 @@ var appControllers = angular.module('appControllers', [])
             periodTypes:ReportService.periodTypes
         };
 
+        $scope.dataSet = '0';
+        $scope.selectedOrgUnit = '';
+        $scope.displayDatasetSelected = function () {
+            var dataSetSelected = $scope.dataSets[$scope.dataSet];
+        }
+
+        $scope.setBase='registration';
+        $scope.type='0';
+
+        $scope.completenessBase = function(completenessBase){
+            $scope.setBase = completenessBase;
+        }
+
+        $scope.displayPeriods = function(periodType){
+            if($scope.type!='0'){
+                $scope.data.periodTypes[$scope.type].populateList();
+            }
+        }
+
+        $scope.currentDate = new Date();
+        $scope.displayPreviousPeriods = function () {
+            $scope.currentDate = new Date($scope.currentDate.getFullYear() - 1, $scope.currentDate.getMonth(), $scope.currentDate.getDate());
+            $scope.data.periodTypes[$scope.type].populateList($scope.currentDate);
+            console.log($scope.data.periodTypes[$scope.type].list)
+        };
+
+        $scope.displayNextPeriods = function () {
+            $scope.currentDate = new Date($scope.currentDate.getFullYear() + 1, $scope.currentDate.getMonth(), $scope.currentDate.getDate());
+            $scope.data.periodTypes[$scope.type].populateList($scope.currentDate);
+            console.log($scope.data.periodTypes[$scope.type].list)
+        };
+
         $scope.$watch("data.selectedOrgUnit", function (selectedOrgUnit) {
             if (selectedOrgUnit) {
-
+                $scope.selectedOrgUnit = selectedOrgUnit;
             }
         });
-
 
         ReportService.getUser().then(function (results) {
 
@@ -1238,18 +1263,132 @@ var appControllers = angular.module('appControllers', [])
                 });
         });
 
-        //
-        //if ( $location.path().indexOf('render') >=0 ) {
-        //
-        //    $scope.$on('$viewContentLoaded', function(event) {
-        //        dhis2 = eval('('+localStorage.getItem('dhis2')+')');
-        //        var renderedReport  = ReportService.getRenderedReport($scope.reportUid);
-        //        console.log(renderedReport.designContent);
-        //        $scope.renderedReport  = $sce.trustAsHtml(renderedReport.designContent);
-        //    });
-        //
-        //
-        //}
+        ReportService.getDatasets().then(function(results) {
+            $scope.dataSets = results.data.dataSets;
+        });
+
+        $scope.getStartAndEndDate = function(periodType,period){
+            var dates = {startDate:"",endDate:""};
+
+            if( periodType == 'FinancialJuly' ){
+
+                var year = period.substring(0,4);
+                dates.startDate = year+"-07-01";
+                dates.endDate = eval(Number(year)+1)+"-06-31";
+                return dates;
+            }
+
+            if( periodType == 'Yearly' ){
+
+                dates.startDate = period+"-01-01";
+                dates.endDate = period+"-12-31";
+                return dates;
+
+            }
+
+            if( periodType == 'Quarterly' ){
+
+                var periodArray = period.split('Q');
+                if( periodArray[1] == 1 ) {
+                    dates.startDate = periodArray[0]+"-01-01";
+                    dates.endDate = periodArray[0]+"-03-31";
+                }
+
+                if( periodArray[1] == 2 ) {
+                    dates.startDate = periodArray[0]+"-04-01";
+                    dates.endDate = periodArray[0]+"-06-31";
+                }
+
+                if( periodArray[1] == 3 ) {
+                    dates.startDate = periodArray[0]+"-07-01";
+                    dates.endDate = periodArray[0]+"-09-31";
+                }
+
+                if( periodArray[1] == 4 ) {
+                    dates.startDate = periodArray[0]+"-10-01";
+                    dates.endDate = periodArray[0]+"-12-31";
+                }
+
+                return dates;
+
+            }
+
+            if( periodType == 'Monthly' ){
+
+                var year = period.substring(0,4);
+                var month = period.substring(4);
+
+                dates.startDate = year+"-"+month+"-01";
+                dates.endDate = year+"-"+month+"-31";
+                return dates;
+
+            }
+
+        }
+
+
+        $scope.completenessEngine = function(datasetOrgUnits,selectedOrgUnits) {
+
+            var completeCounter = 0;
+
+            if ( selectedOrgUnits instanceof Array ) {
+
+                angular.forEach(selectedOrgUnits,function(orgUnitObject,index){
+
+                    var orgUnit = {id:orgUnitObject.id};
+                    if ( ReportService.hasObject(orgUnit,datasetOrgUnits) ) {
+                        console.log(ReportService.hasObject(orgUnit,datasetOrgUnits))
+                        completeCounter++;
+                    }
+                })
+
+            }else{
+                var orgUnit = {id:selectedOrgUnits.id};
+                if ( ReportService.hasObject(orgUnit,datasetOrgUnits) ) {
+                    completeCounter++;
+                }
+
+            }
+
+            return completeCounter;
+        }
+
+        $scope.displayCompleteness = function(){
+
+            var completenesObject = [];
+
+            var dataCriteria = {};
+            var expectedReportPerFacility = 0;
+
+            dataCriteria.dataSet = $scope.dataSets[$scope.dataSet-1];
+            dataCriteria.orgUnit = $scope.selectedOrgUnit.id;
+
+            var dataSetOrganisationUnits = dataCriteria.dataSet.organisationUnits;
+
+            if( $scope.selectedOrgUnit.level == 3 ) {
+                var completeness = 0;
+                completeness = $scope.completenessEngine(dataSetOrganisationUnits,$scope.selectedOrgUnit.children);
+                console.log($scope.selectedOrgUnit);
+                console.log(completeness);
+
+            }else if ( $scope.selectedOrgUnit.level == 4 ) {
+                var completeness = 0;
+                var orgObject = {id:dataCriteria.orgUnit};
+
+                completeness = $scope.completenessEngine(dataSetOrganisationUnits,$scope.selectedOrgUnit);
+                console.log($scope.selectedOrgUnit);
+                console.log(completeness);
+
+            }else{
+                var completeness = 0;
+                var orgObject = {id:dataCriteria.orgUnit};
+                completeness = $scope.completenessEngine(dataSetOrganisationUnits,$scope.selectedOrgUnit.children);
+                console.log($scope.selectedOrgUnit);
+                console.log(completeness);
+            }
+
+
+        }
 
 
     }).controller('DataApprovalController', function ($scope, DHIS2URL, $http, $sce, $timeout, $location, ReportService, toaster) {
