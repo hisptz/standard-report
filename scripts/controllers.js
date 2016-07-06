@@ -3,7 +3,7 @@
 'use strict';
 /* Controllers */
 var appControllers = angular.module('appControllers', [])
-    .controller('StandardReportController', function ($scope, DHIS2URL, $http, $sce, $timeout, $location, ReportService, toaster) {
+    .controller('StandardReportController', function ($scope, DHIS2URL, $http, $sce, $timeout, $location, ReportService, toaster,$routeParams) {
 
         $scope.data = {
             selectedOrgUnit: undefined,
@@ -111,9 +111,7 @@ var appControllers = angular.module('appControllers', [])
                 }
             }
         };
-        $scope.cancel = function () {
 
-        };
         $scope.currentDate = new Date();
         $scope.displayPreviousPeriods = function () {
             $scope.currentDate = new Date($scope.currentDate.getFullYear() - 1, $scope.currentDate.getMonth(), $scope.currentDate.getDate());
@@ -163,9 +161,27 @@ var appControllers = angular.module('appControllers', [])
         });
         $scope.archiveDataElements = [];
         $scope.loadTracker = "Loading Data Sets";
+        $scope.setOrganisationUnitSelection = function(orgUnit){
+            if(orgUnit.id == $routeParams.orgUnit){
+                console.log(orgUnit);
+                $scope.data.config.toggleSelection(orgUnit);
+            }
+            if(orgUnit.children){
+                orgUnit.children.forEach(function(child){
+                    $scope.setOrganisationUnitSelection(child);
+                })
+            }
+        }
         $http.get(DHIS2URL + "api/dataSets.json?fields=id,name,periodType,attributeValues[value,attribute[name]],organisationUnits[id]&filter=attributeValues.value:eq:true&filter=attributeValues.attribute.name:eq:Is Report").then(function (results) {
             $scope.data.dataSets = results.data.dataSets;
             $scope.loadTracker = undefined;
+            if($routeParams.dataSet){
+                $scope.data.dataSets.forEach(function(dataSet){
+                    if(dataSet.id == $routeParams.dataSet){
+                        $scope.data.dataSet = dataSet;
+                    }
+                })
+            }
             ReportService.getUser().then(function (results) {
                 var orgUnitIds = [];
                 results.organisationUnits.forEach(function (orgUnit) {
@@ -175,8 +191,18 @@ var appControllers = angular.module('appControllers', [])
                     .then(function (results) {
                         $scope.data.organisationUnits = results.data.organisationUnits;
                         $scope.data.organisationUnits.forEach(function (orgUnit) {
+
                             ReportService.sortOrganisationUnits(orgUnit);
                         });
+                        if($routeParams.dataSet){
+                            //$scope.data.period = $routeParams.period;
+                            $timeout(function(){
+                                $scope.data.organisationUnits.forEach(function(orgUnit){
+                                    $scope.setOrganisationUnitSelection(orgUnit)
+                                })
+                            })
+
+                        }
                         $scope.loadTracker = undefined;
                     }, function (error) {
                         $scope.data.organisationUnits = [];
@@ -425,6 +451,10 @@ var appControllers = angular.module('appControllers', [])
         }
     })
     .controller("ReportController", function ($scope, $http, $routeParams, $sce, $q, DHIS2URL, $timeout, $compile, $location, ReportService, $window, toaster) {
+        $scope.dataCriteria = false;
+        $scope.changeCriteria = function(){
+            $scope.dataCriteria = !$scope.dataCriteria;
+        }
         var common = 50;
         $scope.state = $routeParams.preview;
         $scope.showDebug = function(){
