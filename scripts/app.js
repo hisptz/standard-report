@@ -28,6 +28,9 @@ angular.module('app',
         });
         $routeProvider.when('/', {
             templateUrl: 'views/home.html'
+        }).when('/Aggregation', {
+            controller: 'AggregationController',
+            templateUrl: 'views/aggregation.html'
         }).when('/dataSetReport', {
             controller: 'StandardReportController',
             templateUrl: 'views/standardReport.html'
