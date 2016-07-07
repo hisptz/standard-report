@@ -379,7 +379,7 @@ var appDirectives = angular.module('appDirectives', [])
                                             }
                                             url += categoryOptionCombo.categoryOptions[0].id;
                                         });
-                                        $scope.getDataValueData(url,objectId,orgUnit,categoryOptionCombo)
+                                        $scope.getDataValueData(url,objectId,orgUnit)
                                     }
                                 }
                                 if(($scope.dataSetOrganisationUnit.level - orgUnit.level) != 0){
