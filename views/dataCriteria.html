@@ -34,7 +34,7 @@
             <!--  ng-options="item.name as item.value for item in data.periodTypes[data.dataSet.periodType].list"-->
             <option value="">[ Select Period ]</option>
             <option ng-repeat="periodType in data.periodTypes[data.dataSet.periodType].list"
-                    ng-value="periodType.value">
+                    value="{{periodType.value}}">
                 {{periodType.name}}
             </option>
         </select>

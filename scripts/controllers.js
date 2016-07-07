@@ -133,6 +133,7 @@ var appControllers = angular.module('appControllers', [])
         $scope.$watch("data.dataSet", function (value) {
             if (value) {
                 $scope.currentDate = new Date();
+                $scope.data.period = "";
                 $scope.data.periodTypes[value.periodType].populateList();
             }
         });
@@ -200,6 +201,13 @@ var appControllers = angular.module('appControllers', [])
                                 $scope.data.organisationUnits.forEach(function(orgUnit){
                                     $scope.setOrganisationUnitSelection(orgUnit)
                                 })
+                                $scope.data.period = $routeParams.period;
+                                /*$scope.data.periodTypes[$scope.data.dataSet.periodType].list.forEach(function(listItem){
+                                    console.log(listItem);
+                                    if(listItem.value == $routeParams.period){
+
+                                    }
+                                })*/
                             })
 
                         }
@@ -272,6 +280,28 @@ var appControllers = angular.module('appControllers', [])
                 $scope.reloadPage();
             });
         };
+        $scope.dataStoreExecuted = undefined;
+        $scope.fetchCompleteness = function(dataSet){
+            var isReport = false;
+            dataSet.attributeValues.forEach(function (attributeValue) {
+                if(attributeValue.attribute.name == "Is Report"){
+                    if(attributeValue.value == "true"){
+                        isReport = true;
+                        console.log("True",attributeValue.value)
+                    }else{
+                        console.log("False",attributeValue.value)
+                    }
+
+                }
+            })
+            if(isReport){
+                $http.get(DHIS2URL + "api/dataStore/executed" + $routeParams.dataSet + ".json?fields=attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
+                    $scope.dataStoreExecuted = results.data;
+                });
+            }else{
+
+            }
+        };
         $scope.completeDataSetRegistrationsLoading = false;
         $scope.reportStatus = "";
         //$scope.file = undefinde;
@@ -292,6 +322,10 @@ var appControllers = angular.module('appControllers', [])
                             $scope.file = $sce.trustAsHtml(result.data);
                             $scope.loadFile = true;
 
+                        },function(error){
+                            if (error.data.httpStatusCode == 4043) {
+                                toaster.pop('error', "Error" + error.status, "Access to archive is denied. Please contact Administrator for access.");
+                            }
                         })
                     }, function (error) {
                         if (error.data.httpStatusCode == 404) {
@@ -333,6 +367,34 @@ var appControllers = angular.module('appControllers', [])
                                                     toaster.pop('error', "Error" + error.status, "Error Loading Archive. Please try again");
                                                 });
                                             }
+                                            if (attributeValue.attribute.name == "Source") {
+                                                var sourceArray = eval("(" + attributeValue.value +")");
+
+                                                sourceArray.forEach(function(source){
+                                                    if(source.level == $scope.data.organisationUnit.level){
+                                                        var sourceIds = [];
+                                                        source.sources.forEach(function(dataSource){
+                                                            if(dataSource.dataSet){
+                                                                sourceIds.push(dataSource.dataSet);
+                                                            }else if(dataSource.report){
+                                                                sourceIds.push(dataSource.report);
+                                                            }
+                                                        })
+
+                                                        $http.get(DHIS2URL + "api/dataSets.json?filter=id:in:[" +sourceIds+"]&fields=id,displayName,attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
+                                                            $scope.sourceDataSets = results.data.dataSets;
+                                                            $scope.sourceDataSets.forEach(function(dataSet){
+                                                                $scope.fetchCompleteness(dataSet);
+                                                            })
+                                                            console.log(results.data.dataSets);
+                                                        }, function (error) {
+                                                            $scope.error = "heye";
+                                                            $scope.completeDataSetRegistrationsLoading = false;
+                                                            toaster.pop('error', "Error" + error.status, "Error Loading Archive. Please try again");
+                                                        });
+                                                    }
+                                                })
+                                            }
                                         });
                                         if (!dataSetFound) {
                                             $scope.completeDataSetRegistrations = [];
@@ -365,7 +427,7 @@ var appControllers = angular.module('appControllers', [])
         };
         $http.get(DHIS2URL + "api/me.json?fields=:all,organisationUnits[id,level]").then(function (results) {
             $scope.user = results.data;
-            $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,children[id,name]")
+            $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,level,children[id,name]")
                 .then(function (results) {
                     $scope.data.organisationUnit = results.data;
                     ReportService.sortOrganisationUnits($scope.data.organisationUnit);
@@ -688,7 +750,7 @@ var appControllers = angular.module('appControllers', [])
         $scope.nonAggregatedDataElementsDate = [];
         $scope.autogrowingPrograms = {};
         $scope.getElementReplacment = function (content, type) {
-            var processed = content.replace("dataElementsData['","").replace("']","");
+            var processed = content.replace("dataElementsData['","").replace("dataElementsData['","").replace("fourthQuarterData['","").replace("']","");
             var div = "<div gid='"+processed+"'>{{" + content + "}}";
             if ($routeParams.preview == "debug") {
                 var addition ="";

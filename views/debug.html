@@ -59,7 +59,7 @@
                 </tr>
                 <tr ng-if="objectType == 'dataElement'">
                     <td>Estimation Method</td>
-                    <td>{{estimation}}</td>
+                    <td>{{estimation}} {{parentScope.aDebug}}</td>
                 </tr>
                 <tr>
                     <td>Source Values</td>
@@ -69,15 +69,15 @@
                             <tr>
                                 <td>Region</td>
                                 <td>District</td>
-                                <td ng-repeat="categoryOptionCombo in categoryCombo.categoryOptionCombos | orderBy:'name'" ng-if="objectType == 'dataElement'">{{categoryOptionCombo.name}}</td>
-                                <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{getDXName(dx)}}</td>
+                                <td ng-repeat="categoryOptionCombo in categoryCombo.categoryOptionCombos | orderBy:'name'" ng-if="objectType == 'dataElement' && !parentScope.aDebug">{{categoryOptionCombo.name}}</td>
+                                <td ng-if="objectType == 'indicator' && !parentScope.aDebug" ng-repeat="dx in matcher">{{getDXName(dx)}}</td>
                             </tr>
                             </thead>
                             <thead ng-if="(dataSetOrganisationUnit.level - orgUnit.level) != 2">
                             <tr>
                                 <td>#</td>
-                                <td>Name</td>
-                                <td ng-repeat="categoryOptionCombo in categoryCombo.categoryOptionCombos | orderBy:'name'" ng-if="objectType == 'dataElement'">{{categoryOptionCombo.name}}</td>
+                                <td>Name{{parentScope.aDebug}}</td>
+                                <td ng-repeat="categoryOptionCombo in categoryCombo.categoryOptionCombos | orderBy:'name'" ng-if="objectType == 'dataElement' && !parentScope.aDebug">{{categoryOptionCombo.name}}</td>
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{getDXName(dx)}}</td>
                             </tr>
                             </thead>

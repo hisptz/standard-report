@@ -39,7 +39,40 @@
                 }
             </style>
             <criteria class="criteria" ng-show="dataCriteria"></criteria>
-            <div class="col-sm-12" ng-if="completeDataSetRegistrations">
+            <div class="col-sm-12" ng-repeat="sourceDataSet in sourceDataSets">
+                <br/>
+                <h4>{{sourceDataSet.displayName}} Completion Status</h4>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Ward Total</th>
+                        <th>Wards Completed</th>
+                        <th>Wards Not Completed</th>
+                        <th>Completion Percentage</th>
+                    </tr>
+                    <tr>
+                        <td>{{data.organisationUnit.children.length}}</td>
+                        <td>{{completeDataSetRegistrations.length}}</td>
+                        <td>{{data.organisationUnit.children.length - completeDataSetRegistrations.length}}</td>
+                        <td ng-class="{red:(completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100 < 70,green:(completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100>= 70}">
+                            {{(completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100  | number : 2}}%
+                        </td>
+                    </tr>
+                </table>
+                <h4>Form Completion Status Details</h4>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Organisation Unit</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr ng-repeat="orgUnit in data.organisationUnit.children">
+                        <td>{{orgUnit.name}}</td>
+                        <td ng-class="{red:getOrgUnitStatus(orgUnit.id)=='Incomplete',green:getOrgUnitStatus(orgUnit.id)=='Complete'}">
+                            {{getOrgUnitStatus(orgUnit.id)}}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <!--<div class="col-sm-12" ng-if="completeDataSetRegistrations">
                 <br/>
                 <h4>Form Completion Status</h4>
                 <table class="table table-bordered">
@@ -71,7 +104,7 @@
                         </td>
                     </tr>
                 </table>
-            </div>
+            </div>-->
         </div>
 
 
@@ -136,7 +169,8 @@
     <div  ng-if="reportStatus == 'Not Executed'">
         The report is being processed. <br /><br />
         <input type="button" value="Preview" ng-click="generateDataSetReport()">
-        <input type="button" value="Cancel" ng-click="load('/dataSetReport')">
+        <input type="button" value="Change Criteria" ng-click="dataCriteria = !dataCriteria">
+        <criteria class="criteria" ng-show="dataCriteria"></criteria>
     </div>
 </div>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

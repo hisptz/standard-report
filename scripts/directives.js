@@ -232,6 +232,7 @@ var appDirectives = angular.module('appDirectives', [])
                             $scope.objectType = parentScope.type;
                             $scope.estimation = "Not Applicable";
                             $scope.id = parentScope.dgId;
+                            $scope.parentScope = parentScope;
                             var object = parentScope.dgId;
                             if (object.indexOf(".") > -1) {
                                 object = object.substr(0, object.indexOf("."));
@@ -695,34 +696,7 @@ var appDirectives = angular.module('appDirectives', [])
             },
             link: function (scope, elem, attrs, controller) {
 
-                function dynamicSort(property) {
-                    return function (obj1, obj2) {
-                        if (obj1.children[property].innerHTML == "") {
-                            return 1;
-                        }
-                        if (obj2.children[property].innerHTML == "") {
-                            return -1;
-                        }
-                        return obj1.children[property].innerHTML > obj2.children[property].innerHTML ? 1
-                            : obj1.children[property].innerHTML < obj2.children[property].innerHTML ? -1 : 0;
-                    }
-                }
 
-                function dynamicSortMultiple(indexes) {
-                    //save the arguments object as it will be overwritten
-                    //note that arguments object is an array-like object
-                    //consisting of the names of the properties to sort by
-                    return function (obj1, obj2) {
-                        var i = 0, result = 0;
-                        //try getting a different result from 0 (equal)
-                        //as long as we have extra properties to compare
-                        while (result === 0 && i < indexes.length) {
-                            result = dynamicSort(indexes[i])(obj1, obj2);
-                            i++;
-                        }
-                        return result;
-                    }
-                }
 
                 var arr = Array.prototype.slice.call(elem[0].rows);
                 $timeout(function () {
@@ -731,7 +705,36 @@ var appDirectives = angular.module('appDirectives', [])
                             child2.id = scope.config.dataElements[colIndex];
                         });
                     });
+                    function dynamicSort(property) {
+                        return function (obj1, obj2) {
+                            if (obj1.children[property].innerHTML == "") {
+                                return 1;
+                            }
+                            if (obj2.children[property].innerHTML == "") {
+                                return -1;
+                            }
+                            return obj1.children[property].innerHTML > obj2.children[property].innerHTML ? 1
+                                : obj1.children[property].innerHTML < obj2.children[property].innerHTML ? -1 : 0;
+                        }
+                    }
+
+                    function dynamicSortMultiple(indexes) {
+                        //save the arguments object as it will be overwritten
+                        //note that arguments object is an array-like object
+                        //consisting of the names of the properties to sort by
+                        return function (obj1, obj2) {
+                            var i = 0, result = 0;
+                            //try getting a different result from 0 (equal)
+                            //as long as we have extra properties to compare
+                            while (result === 0 && i < indexes.length) {
+                                result = dynamicSort(indexes[i])(obj1, obj2);
+                                i++;
+                            }
+                            return result;
+                        }
+                    }
                     if (scope.config.groupBy) {
+
                         var dataElementIndexes = [];
                         scope.config.groupBy.forEach(function (group, index) {
                             scope.data.dataElements.forEach(function (dataElement, cindex) {
