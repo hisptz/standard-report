@@ -333,7 +333,7 @@ var appDirectives = angular.module('appDirectives', [])
                                     }
                                     var categoryOptionIndex = 1;
                                     var dataIndex = 3;
-                                    results.headers.forEach(function(header,index){
+                                    results.data.headers.forEach(function(header,index){
                                         if(header.column == "Data Dimension"){
                                             categoryOptionIndex = index;
                                         }else if(header.column == "Value"){
