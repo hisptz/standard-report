@@ -331,7 +331,10 @@ var appDirectives = angular.module('appDirectives', [])
                                     if(!orgUnit.data[objectId]){
                                         orgUnit.data[objectId] = {};
                                     }
-                                    orgUnit.data[objectId][categoryOptionCombo.name] = results.data;
+                                    $scope.categoryCombo.categoryOptionCombos.forEach(function(categoryOptionCombo,index){
+                                        orgUnit.data[objectId][categoryOptionCombo.name] = results.data;
+                                    });
+
                                     console.log("DataAnlysis:",orgUnit);
                                 },function(){
 
@@ -365,10 +368,18 @@ var appDirectives = angular.module('appDirectives', [])
                                         }else{
                                             objectRequest ="de=" + objectId;
                                         }
-                                        $scope.categoryCombo.categoryOptionCombos.forEach(function(categoryOptionCombo){
-                                            var url = DHIS2URL + "api/dataValues.json?cc="+$scope.categoryCombo.id+"&cp="+categoryOptionCombo.categoryOptions[0].id+"&" + objectRequest + "&pe=" + $routeParams.period + "&ou=" + orgUnit.id;
+                                        /*$scope.categoryCombo.categoryOptionCombos.forEach(function(categoryOptionCombo){
+                                            //var url = DHIS2URL + "api/dataValues.json?cc="+$scope.categoryCombo.id+"&cp="+categoryOptionCombo.categoryOptions[0].id+"&" + objectRequest + "&pe=" + $routeParams.period + "&ou=" + orgUnit.id;
                                             $scope.getDataValueData(url,objectId,orgUnit,categoryOptionCombo)
+                                        });*/
+                                        var url = DHIS2URL + "api/analytics.json?dimension=dx:" +objectId+ "&dimension=pe:" + $routeParams.period + "&filter=ou:" + orgUnit.id + "&displayProperty=NAME&dimension=" + $scope.categoryCombo.id +":";
+                                        $scope.categoryCombo.categoryOptionCombos.forEach(function(categoryOptionCombo,index){
+                                            if(index != 0){
+                                                url += ";"
+                                            }
+                                            url += categoryOptionCombo.categoryOptions[0].id;
                                         });
+                                        $scope.getDataValueData(url,objectId,orgUnit,categoryOptionCombo)
                                     }
                                 }
                                 if(($scope.dataSetOrganisationUnit.level - orgUnit.level) != 0){
