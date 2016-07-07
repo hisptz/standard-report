@@ -327,15 +327,19 @@ var appDirectives = angular.module('appDirectives', [])
                             var counter = 0;
                             $scope.getDataValueData = function(url,objectId,orgUnit,categoryOptionCombo){
                                 promises.push($http.get(url).then(function (results) {
-
+                                    console.log("Analysis Data:",results);
                                     if(!orgUnit.data[objectId]){
                                         orgUnit.data[objectId] = {};
                                     }
-                                    $scope.categoryCombo.categoryOptionCombos.forEach(function(categoryOptionCombo,index){
-                                        orgUnit.data[objectId][categoryOptionCombo.name] = results.data;
-                                    });
+                                    results.data.rows.forEach(function(row){
+                                        $scope.category.categoryOptions.forEach(function(categoryOption,index){
+                                            if(categoryOption.id == row[1]){
+                                                orgUnit.data[objectId][categoryOption.name] = row[3];
+                                            }
 
-                                    console.log("DataAnlysis:",orgUnit);
+                                        });
+                                    })
+
                                 },function(){
 
                                 }));
@@ -372,12 +376,12 @@ var appDirectives = angular.module('appDirectives', [])
                                             //var url = DHIS2URL + "api/dataValues.json?cc="+$scope.categoryCombo.id+"&cp="+categoryOptionCombo.categoryOptions[0].id+"&" + objectRequest + "&pe=" + $routeParams.period + "&ou=" + orgUnit.id;
                                             $scope.getDataValueData(url,objectId,orgUnit,categoryOptionCombo)
                                         });*/
-                                        var url = DHIS2URL + "api/analytics.json?dimension=dx:" +objectId+ "&dimension=pe:" + $routeParams.period + "&filter=ou:" + orgUnit.id + "&displayProperty=NAME&dimension=" + $scope.categoryCombo.id +":";
-                                        $scope.categoryCombo.categoryOptionCombos.forEach(function(categoryOptionCombo,index){
+                                        var url = DHIS2URL + "api/analytics.json?dimension=dx:" +objectId+ "&dimension=pe:" + $routeParams.period + "&filter=ou:" + orgUnit.id + "&displayProperty=NAME&dimension=" + $scope.category.id +":";
+                                        $scope.category.categoryOptions.forEach(function(categoryOption,index){
                                             if(index != 0){
                                                 url += ";"
                                             }
-                                            url += categoryOptionCombo.categoryOptions[0].id;
+                                            url += categoryOption.id;
                                         });
                                         $scope.getDataValueData(url,objectId,orgUnit)
                                     }
@@ -389,8 +393,8 @@ var appDirectives = angular.module('appDirectives', [])
                                     })
                                 }
                             };
-                            $http.get(DHIS2URL + "api/categoryCombos.json?fields=:all,categoryOptionCombos[:all]&filter=name:eq:Data Dimension").then(function(result){
-                                $scope.categoryCombo = result.data.categoryCombos[0];
+                            $http.get(DHIS2URL + "api/categories.json?fields=:all,categoryOptions[:all]&filter=name:eq:Data Dimension").then(function(result){
+                                $scope.category = result.data.categories[0];
                                 var url = DHIS2URL + "api/" + parentScope.type + "s/" + object + ".json?fields=:all,dataSets[organisationUnits[id,path,level],id,name,attributeValues,periodType,dataEntryForm],attributeValues[:all,attribute[:all]]";
                                 $http.get(url).then(function (results) {
                                     $scope.data.object = results.data;
