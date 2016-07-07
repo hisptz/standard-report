@@ -331,10 +331,19 @@ var appDirectives = angular.module('appDirectives', [])
                                     if(!orgUnit.data[objectId]){
                                         orgUnit.data[objectId] = {};
                                     }
+                                    var categoryOptionIndex = 1;
+                                    var dataIndex = 3;
+                                    results.headers.forEach(function(header,index){
+                                        if(header.column == "Data Dimension"){
+                                            categoryOptionIndex = index;
+                                        }else if(header.column == "Value"){
+                                            dataIndex = index;
+                                        }
+                                    })
                                     results.data.rows.forEach(function(row){
                                         $scope.category.categoryOptions.forEach(function(categoryOption,index){
-                                            if(categoryOption.id == row[1]){
-                                                orgUnit.data[objectId][categoryOption.name] = row[3];
+                                            if(categoryOption.id == row[categoryOptionIndex]){
+                                                orgUnit.data[objectId][categoryOption.name] = row[dataIndex];
                                             }
 
                                         });
