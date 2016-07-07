@@ -22,6 +22,7 @@ var appControllers = angular.module('appControllers', [])
                         this.list = [];
                         var that = this;
                         var year = date.getFullYear();
+                        monthNames.reverse();
                         monthNames.forEach(function (monthName, index) {
 
                             var monthVal = index + 7;
@@ -39,7 +40,7 @@ var appControllers = angular.module('appControllers', [])
                             if (monthVal < 10) {
                                 monthVal = "0" + monthVal;
                             }
-                            that.list.push({
+                            that.list.unshift({
                                 name: monthName + " " + year,
                                 value: year + "" + monthVal
                             })
@@ -74,7 +75,7 @@ var appControllers = angular.module('appControllers', [])
                             if ((year == testDate.getFullYear() && quarterVal > ((testDate.getMonth() + 1) % 4)) || year > testDate.getFullYear()) {
                                 return;
                             }
-                            that.list.push({
+                            that.list.unshift({
                                 name: quarter + " " + year,
                                 value: year + "Q" + quarterVal
                             })
@@ -90,7 +91,7 @@ var appControllers = angular.module('appControllers', [])
                         var date = new Date();
                         this.list = [];
                         for (var i = date.getFullYear() - 5; i < date.getFullYear() + 5; i++) {
-                            this.list.push({name: "" + i});
+                            this.list.unshift({name: "" + i});
                         }
                     }
                 },
@@ -105,7 +106,7 @@ var appControllers = angular.module('appControllers', [])
                             if ((i == testDate.getFullYear() && (testDate.getMonth() + 1) < 7) || (i == (testDate.getFullYear() - 1) && (testDate.getMonth() + 1) < 7) || i > testDate.getFullYear()) {
                                 continue;
                             }
-                            this.list.push({name: "July " + i + " - June " + (i + 1), value: i + "July"});
+                            this.list.unshift({name: "July " + i + " - June " + (i + 1), value: i + "July"});
                         }
                     }
                 }
@@ -201,13 +202,14 @@ var appControllers = angular.module('appControllers', [])
                                 $scope.data.organisationUnits.forEach(function(orgUnit){
                                     $scope.setOrganisationUnitSelection(orgUnit)
                                 })
+                                var date = undefined;
+                                if($routeParams.period.indexOf("Q") > -1){
+                                    console.log($routeParams.period.substr(0,4))
+                                    date = new Date(parseInt($routeParams.period.substr(0,4)),((parseInt($routeParams.period.substr(5)) * 3) + 10 ) % 12,1);
+                                    console.log(date);
+                                }
+                                $scope.data.periodTypes[$scope.data.dataSet.periodType].populateList(date);
                                 $scope.data.period = $routeParams.period;
-                                /*$scope.data.periodTypes[$scope.data.dataSet.periodType].list.forEach(function(listItem){
-                                    console.log(listItem);
-                                    if(listItem.value == $routeParams.period){
-
-                                    }
-                                })*/
                             })
 
                         }
