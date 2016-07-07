@@ -165,7 +165,6 @@ var appControllers = angular.module('appControllers', [])
         $scope.loadTracker = "Loading Data Sets";
         $scope.setOrganisationUnitSelection = function(orgUnit){
             if(orgUnit.id == $routeParams.orgUnit){
-                console.log(orgUnit);
                 $scope.data.config.toggleSelection(orgUnit);
             }
             if(orgUnit.children){

@@ -5,7 +5,6 @@
 var appFilters = angular.module('appFilters', [])
 .filter('dataEntryForm', function() {
     return function(input,formSource) {
-        console.log("ARguments:",arguments);
         var output = [];
         if(input)
         input.forEach(function(form){

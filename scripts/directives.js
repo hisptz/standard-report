@@ -275,7 +275,6 @@ var appDirectives = angular.module('appDirectives', [])
                             $scope.data = {
                                 data: []
                             };
-                            console.log(parentScope);
                             $scope.objectType = parentScope.type;
                             $scope.estimation = "Not Applicable";
                             $scope.id = parentScope.dgId;
@@ -418,10 +417,8 @@ var appDirectives = angular.module('appDirectives', [])
                                             if(organisationUnit.path.indexOf($routeParams.orgUnit) > -1){
                                                 if(organisationUnit.path.endsWith($routeParams.orgUnit)){
                                                     topLevel = organisationUnit.level;
-                                                    console.log("Path:",organisationUnit.level,organisationUnit.path);
                                                 }else{
                                                     lowLevel = organisationUnit.level;
-                                                    console.log("Path1:",organisationUnit.level,organisationUnit.path);
                                                 }
 
                                                 $scope.dataSetOrganisationUnit = organisationUnit;
@@ -486,7 +483,6 @@ var appDirectives = angular.module('appDirectives', [])
                                         childrenUrl = childrenUrl.replace("{}","children[id,level,name,{}]")
                                     }
                                     childrenUrl = childrenUrl.replace(",{}","")
-                                    console.log("Children:",childrenUrl)
                                     $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=:all" + childrenUrl).then(function (results) {
                                         $scope.orgUnit = results.data;
                                         /*$scope.orgUnit.children.forEach(function (child) {
