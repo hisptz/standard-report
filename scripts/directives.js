@@ -438,7 +438,7 @@ var appDirectives = angular.module('appDirectives', [])
                             $scope.cancel = function () {
                                 $modalInstance.dismiss('cancel');
                             };
-                            /*try{
+                            try{
                                 new Clipboard('.btn', {
                                     target: function(trigger) {
                                         return document.getElementById("copyTable");
@@ -446,7 +446,7 @@ var appDirectives = angular.module('appDirectives', [])
                                 });
                             }catch(e){
 
-                            }*/
+                            }
                         },
                         resolve: {
                             parentScope: function () {

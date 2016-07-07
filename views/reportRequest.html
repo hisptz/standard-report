@@ -1,4 +1,7 @@
 <style>
+    .yellow {
+        background-color: yellow;
+    }
     .red {
         background-color: lightcoral;
     }
@@ -41,8 +44,78 @@
             <criteria class="criteria" ng-show="dataCriteria"></criteria>
             <div class="col-sm-12" ng-repeat="sourceDataSet in sourceDataSets">
                 <br/>
-                <h4>{{sourceDataSet.displayName}} Completion Status</h4>
-                <table class="table table-bordered">
+                <h4>{{sourceDataSet.displayName}} Completion Status </h4>
+                <table ng-if="sourceDataSet.isReport" class="table table-bordered">
+                    <tr>
+                        <th>Administrative Unit</th><th>Report Status</th>
+                    </tr>
+                    <tr ng-if="sourceDataSet.orgUnitLevel == data.organisationUnit.level">
+                        <td>{{data.organisationUnit.name}}</td>
+                        <td ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) > -1}">
+                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) == -1)">Not Created</span>
+                            <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) > -1">Created</span>
+                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) > -1">In Progress</span>
+                        </td>
+                    </tr>
+                    <tr ng-if="sourceDataSet.orgUnitLevel != data.organisationUnit.level" ng-repeat="child in data.organisationUnit.children">
+                        <td>{{child.name}}</td>
+                        <td ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) > -1}">
+                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) == -1)">Not Created</span>
+                            <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) > -1">Created</span>
+                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) > -1">In Progress</span>
+                        </td>
+                    </tr>
+                </table>
+                <table ng-if="!sourceDataSet.isReport" class="table table-bordered">
+                    <tr>
+                        <th>Administrative Unit</th><th>Report Status</th>
+                    </tr>
+                    <tr ng-if="sourceDataSet.orgUnitLevel == data.organisationUnit.level">
+                        <td>{{data.organisationUnit.name}}</td>
+                        <td ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) > -1}">
+                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) == -1)">Not Created</span>
+                            <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) > -1">Created</span>
+                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) > -1">In Progress</span>
+                        </td>
+                    </tr>
+                    <tr ng-if="sourceDataSet.orgUnitLevel != data.organisationUnit.level" ng-repeat="child in data.organisationUnit.children">
+                        <td>{{child.name}}</td>
+                        <td ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) > -1}">
+                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) == -1)">Not Created</span>
+                            <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) > -1">Created</span>
+                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) > -1">In Progress</span>
+                        </td>
+                    </tr>
+                </table>
+                <table ng-if="!sourceDataSet.isReport" class="table table-bordered">
+                    <tr>
+                        <th>{{getLevelName(data.organisationUnit.level + 1)}} Total</th>
+                        <th>{{getLevelName(data.organisationUnit.level + 1)}} Completed</th>
+                        <th>{{getLevelName(data.organisationUnit.level + 1)}} Not Completed</th>
+                        <th>Completion Percentage</th>
+                    </tr>
+                    <tr>
+                        <td>{{data.organisationUnit.children.length}}</td>
+                        <td>{{sourceDataSet.completeDataSetRegistrations.length}}</td>
+                        <td>{{data.organisationUnit.children.length - sourceDataSet.completeDataSetRegistrations.length}}</td>
+                        <td ng-class="{red:(sourceDataSet.completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100 < 70,green:(sourceDataSet.completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100>= 70}">
+                            {{(sourceDataSet.completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100  | number : 2}}%
+                        </td>
+                    </tr>
+                </table>
+                <table ng-if="!sourceDataSet.isReport && sourceDataSet.completeDataSetRegistrations" class="table table-bordered">
+                    <tr>
+                        <th>Organisation Unit</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr ng-repeat="orgUnit in data.organisationUnit.children">
+                        <td>{{orgUnit.name}}</td>
+                        <td ng-class="{red:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id)=='Incomplete',green:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id)=='Complete'}">
+                            {{getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id)}}
+                        </td>
+                    </tr>
+                </table>
+                <!--<table class="table table-bordered">
                     <tr>
                         <th>Ward Total</th>
                         <th>Wards Completed</th>
@@ -70,7 +143,7 @@
                             {{getOrgUnitStatus(orgUnit.id)}}
                         </td>
                     </tr>
-                </table>
+                </table>-->
             </div>
             <!--<div class="col-sm-12" ng-if="completeDataSetRegistrations">
                 <br/>
