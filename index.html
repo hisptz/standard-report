@@ -125,7 +125,7 @@
         document.getElementById("mainPages").classList.remove("contentRight");
     }
 </script>
-<body>
+<body ng-controller="MainController">
 <d2-header-bar></d2-header-bar>
 <toaster-container></toaster-container>
 <!--<div ng-include="'views/header.html'"></div>-->
@@ -157,8 +157,8 @@
             <!--<li><a href="#/dataApproval">Data Approval&nbsp;</a></li>-->
         </ul>
 
-        <h2>Analytics&nbsp;</h2>
-        <ul>
+        <h2 ng-if="allowAnalytics">Analytics&nbsp;</h2>
+        <ul ng-if="allowAnalytics">
             <li><a href="#/Aggregation">Aggregation&nbsp;</a></li>
         </ul>
     </div>

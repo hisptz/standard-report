@@ -8,7 +8,7 @@ var appServices = angular.module('appServices', ['ngResource'])
     .factory("ReportService", function ($http, DHIS2URL, $location, $q) {
         var userDeffered = $q.defer();
         var user = undefined;
-        $http.get(DHIS2URL + "api/me.json").then(function (results) {
+        $http.get(DHIS2URL + "api/me.json?fields=:all,userCredentials[:all,userRoles[:all]]").then(function (results) {
             user = results.data;
             userDeffered.resolve(user);
         });

@@ -230,8 +230,16 @@ var appControllers = angular.module('appControllers', [])
 
         };
     })
-    .controller("MainController", function ($scope, DHIS2URL, $http) {
-
+    .controller("MainController", function ($scope, DHIS2URL, $http,ReportService) {
+        $scope.allowAnalytics = false;
+        ReportService.getUser().then(function(user){
+            $scope.user = user;
+            $scope.user.userCredentials.userRoles.forEach(function(role){
+                if(role.authorities.indexOf("F_SCHEDULING_CASE_AGGREGATE_QUERY_BUILDER") > -1){
+                    $scope.allowAnalytics = true;
+                }
+            })
+        });
     })
     .controller("ReportRequestController", function ($scope, $routeParams, $http, DHIS2URL, ReportService, $location, $sce, toaster, $timeout) {
         $scope.reloadPage = function () {
