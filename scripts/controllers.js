@@ -1413,11 +1413,15 @@ var appControllers = angular.module('appControllers', [])
     })
     .controller('AggregationController', function ($scope, $interval, DHIS2URL, $http, $sce, $timeout, $location, ReportService, toaster) {
         $scope.startAggregation = function(){
+            var today = new Date();
+            var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+            var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+            var dateTime = date+' '+time;
             var status_response = {'is_running': 'No',
                 'is_needed': 'Yes',
                 'status': 'waiting',
                 'activities':
-                    [{date: new Date().format('m-d-Y h:i:s'), 'action': 'Starting Agregation process'}]
+                    [{date: dateTime, 'action': 'Starting Agregation process'}]
             };
             $http.put(DHIS2URL + "api/dataStore/estimation/status", status_response )
                 .then(function (results) {
