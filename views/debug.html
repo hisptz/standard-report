@@ -95,14 +95,14 @@
                             <tr ng-repeat-start="child in orgUnit.children | orderBy:'name'">
                                 <td rowspan="{{child.children.length}}">{{child.name}}</td>
                                 <td ng-if="$first" ng-repeat="child1 in child.children | orderBy:'name'">{{child1.name}}</td>
-                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'"><span ng-repeat="child1 in child.children | orderBy:'name'" ng-if="$first">{{child1.data[id][categoryOption.name].join(",")}}</span></td>
+                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'"><span ng-repeat="child1 in child.children | orderBy:'name'" ng-if="$first">{{child1.data[id][categoryOption.name]}}</span></td>
                                 <!--<td ng-repeat="child1 in child.children | orderBy:'name'" ng-if="objectType == 'dataElement' && $first">{{child1.data[id].actual.join(",")}}</td>
                                 <td ng-repeat="child1 in child.children | orderBy:'name'" ng-if="objectType == 'dataElement' && $first">{{child1.data[id].estimate.join(",")}}</td>-->
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}</td>
                             </tr>
                             <tr ng-if="$index != 0" ng-repeat="child1 in child.children | orderBy:'name'">
                                 <td>{{child1.name}}</td>
-                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'">{{child1.data[id][categoryOption.name].join(",")}}</td>
+                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'">{{child1.data[id][categoryOption.name]}}</td>
                                 <!--<td ng-if="objectType == 'dataElement'">{{child1.data[id].actual.join(",")}}</td>
                                 <td ng-if="objectType == 'dataElement'">{{child1.data[id].estimate.join(",")}}</td>-->
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child1.data[dx]}}</td>
@@ -113,14 +113,14 @@
                             <tr ng-repeat="child in orgUnit.children | orderBy:'name'">
                                 <td>{{$index + 1}}</td>
                                 <td>{{child.name}}</td>
-                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'">{{child.data[id][categoryOption.name].join(",")}}</td>
+                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'">{{child.data[id][categoryOption.name]}}</td>
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}</td>
                             </tr>
                             </tbody>
                             <tbody ng-if="organisationUnitLevels <= 0">
                             <tr>
                                 <td>{{orgUnit.name}}</td>
-                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'">{{orgUnit.data[id][categoryOption.name].join(",")}}</td>
+                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'">{{orgUnit.data[id][categoryOption.name]}}</td>
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{data.data.join(",")}}</td>
                             </tr>
                             </tbody>
