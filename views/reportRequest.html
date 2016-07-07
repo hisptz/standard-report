@@ -66,7 +66,7 @@
                         </td>
                     </tr>
                 </table>
-                <table ng-if="!sourceDataSet.isReport" class="table table-bordered">
+                <table ng-if="sourceDataSet.isReport" class="table table-bordered">
                     <tr>
                         <th>Administrative Unit</th><th>Report Status</th>
                     </tr>
@@ -106,7 +106,7 @@
                 <table ng-if="!sourceDataSet.isReport && sourceDataSet.completeDataSetRegistrations" class="table table-bordered">
                     <tr>
                         <th>Organisation Unit</th>
-                        <th>Status</th>
+                        <th>Data Entry Status</th>
                     </tr>
                     <tr ng-repeat="orgUnit in data.organisationUnit.children">
                         <td>{{orgUnit.name}}</td>
