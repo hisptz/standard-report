@@ -1302,7 +1302,8 @@ var appControllers = angular.module('appControllers', [])
     .controller('NewCustomReportController', function ($scope, DHIS2URL, $http, $sce, $timeout, $location, ReportService, toaster) {
         ///customReport/new
 
-    }).controller('SubmissionStatusReportController', function ($scope, DHIS2URL, $http, $sce, $timeout, $location, ReportService, toaster) {
+    })
+    .controller('SubmissionStatusReportController', function ($scope, DHIS2URL, $http, $sce, $timeout, $location, ReportService, toaster) {
         //
         //$scope.reportUid = $routeParams.uid;
         //$scope.report  = localStorage.getItem($scope.reportUid)?eval('('+localStorage.getItem($scope.reportUid)+')'):null;
@@ -1358,7 +1359,8 @@ var appControllers = angular.module('appControllers', [])
         //}
 
 
-    }).controller('DataApprovalController', function ($scope, DHIS2URL, $http, $sce, $timeout, $location, ReportService, toaster) {
+    })
+    .controller('DataApprovalController', function ($scope, DHIS2URL, $http, $sce, $timeout, $location, ReportService, toaster) {
         //
         //$scope.reportUid = $routeParams.uid;
         //$scope.report  = localStorage.getItem($scope.reportUid)?eval('('+localStorage.getItem($scope.reportUid)+')'):null;
@@ -1413,3 +1415,30 @@ var appControllers = angular.module('appControllers', [])
         //}
 
     })
+    .controller('AggregationController', function ($scope, $interval, DHIS2URL, $http, $sce, $timeout, $location, ReportService, toaster) {
+        $scope.startAggregation = function(){
+            var status_response = {'is_running': 'No',
+                'is_needed': 'Yes',
+                'status': 'waiting',
+                'activities':
+                    [{date: new Date().format('m-d-Y h:i:s'), 'action': 'Starting Agregation process'}]
+            };
+            $http.put(DHIS2URL + "api/dataStore/estimation/status", status_response )
+                .then(function (results) {
+                    $http.get(DHIS2URL + 'api/dataStore/estimation/status').success(function(analytics_response){
+                        $scope.activities = analytics_response;
+                    })
+                    $interval(function() {
+                        $http.get(DHIS2URL + 'api/dataStore/estimation/status').success(function(analytics_response){
+                            $scope.activities = analytics_response;
+                        })
+
+                        $http.get(DHIS2URL + 'api/system/tasks/ANALYTICSTABLE_UPDATE').success(function(analytics_status){
+                            $scope.analytics_activities = analytics_status;
+                        })
+                    }, 2000);
+
+                });
+            $http.get(DHIS2URL + 'api/dataStore/estimation/status')
+        }
+    });
