@@ -438,7 +438,11 @@ var appControllers = angular.module('appControllers', [])
                         $http.get(DHIS2URL + "api/dataStore/notExecuted").then(function (results) {
                             $scope.dataStore.notExecuted = results.data;
                             $scope.watchParameters();
+                        },function(){
+                            $scope.watchParameters();
                         });
+                    },function(){
+                        $scope.watchParameters();
                     });
                     $scope.loadTracker = undefined;
                 });

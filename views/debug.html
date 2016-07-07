@@ -62,7 +62,7 @@
                     <td>{{estimation}} {{parentScope.aDebug}}</td>
                 </tr>
                 <tr>
-                    <td>Source Values</td>
+                    <td>Source Values{{organisationUnitLevels}}</td>
                     <td>
                         <table class="table table-bordered">
                             <thead ng-if="(dataSetOrganisationUnit.level - orgUnit.level) == 2">
@@ -76,7 +76,7 @@
                             <thead ng-if="(dataSetOrganisationUnit.level - orgUnit.level) != 2">
                             <tr>
                                 <td>#</td>
-                                <td>Name{{parentScope.aDebug}}</td>
+                                <td>Name</td>
                                 <td ng-repeat="categoryOptionCombo in categoryCombo.categoryOptionCombos | orderBy:'name'" ng-if="objectType == 'dataElement' && !parentScope.aDebug">{{categoryOptionCombo.name}}</td>
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{getDXName(dx)}}</td>
                             </tr>

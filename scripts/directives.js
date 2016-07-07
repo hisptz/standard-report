@@ -409,7 +409,7 @@ var appDirectives = angular.module('appDirectives', [])
                                             });
                                         }));
                                     }
-                                    $scope.organisationUnitLevels = lowLevel - topLevel;
+                                    $scope.organisationUnitLevels = topLevel - lowLevel;
                                     var childrenUrl = ",{}";
                                     for(var i = 0; i < lowLevel - topLevel;i++){
                                         childrenUrl = childrenUrl.replace("{}","children[id,level,name,{}]")
