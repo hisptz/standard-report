@@ -113,7 +113,13 @@
                             <tr ng-repeat="child in orgUnit.children | orderBy:'name'">
                                 <td>{{$index + 1}}</td>
                                 <td>{{child.name}}({{child.id}})</td>
-                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'">{{child.data[id][categoryOption.name]}}</td>
+                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'">
+                                    <span ng-if="!parentScope.special">{{child.data[id][categoryOption.name]}}</span>
+                                    <table ng-if="parentScope.special">
+                                        <tr><th>Period</th><th>Value</th></tr>
+                                        <tr ng-repeat="data in child.data[id][categoryOption.name]"><td>{{data.period}}</td><td>{{data.value}}</td></tr>
+                                    </table>
+                                </td>
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}</td>
                             </tr>
                             </tbody>

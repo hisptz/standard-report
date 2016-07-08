@@ -333,17 +333,34 @@ var appDirectives = angular.module('appDirectives', [])
                                     }
                                     var categoryOptionIndex = 1;
                                     var dataIndex = 3;
+                                    var periodIndex = 2;
                                     results.data.headers.forEach(function(header,index){
                                         if(header.column == "Data Dimension"){
                                             categoryOptionIndex = index;
                                         }else if(header.column == "Value"){
                                             dataIndex = index;
+                                        }else if(header.column == "Period"){
+                                            periodIndex = index;
                                         }
                                     })
                                     results.data.rows.forEach(function(row){
                                         $scope.category.categoryOptions.forEach(function(categoryOption,index){
                                             if(categoryOption.id == row[categoryOptionIndex]){
-                                                orgUnit.data[objectId][categoryOption.name] = row[dataIndex];
+                                                if($scope.parentScope.special){
+                                                    if(orgUnit.data[objectId][categoryOption.name]){
+                                                        orgUnit.data[objectId][categoryOption.name].push({
+                                                            period:row[periodIndex],
+                                                            value:row[dataIndex]
+                                                        });
+                                                    }else{
+                                                        orgUnit.data[objectId][categoryOption.name] = [{
+                                                            period:row[periodIndex],
+                                                            value:row[dataIndex]
+                                                        }];
+                                                    }
+                                                }else{
+                                                    orgUnit.data[objectId][categoryOption.name] = row[dataIndex];
+                                                }
                                             }
 
                                         });
