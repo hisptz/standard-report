@@ -801,13 +801,19 @@ var appControllers = angular.module('appControllers', [])
         $scope.getElementReplacment = function (content, type) {
             var processed = content.replace("dataElementsData['","").replace("dataElementsData['","").replace("lastMonthOfQuarterData['","").replace("cumulativeToDateData['","").replace("fourthQuarterData['","").replace("']","");
             if(content.indexOf("dataElementsData['") == -1 && content.indexOf("fourthQuarterData['") == -1){
-                console.log("Outside the realm:",content)
+                console.log(type,":Outside:",content)
             }
             var div = "<div gid='"+processed+"'>{{" + content + "}}";
             if ($routeParams.preview == "debug") {
                 var addition ="";
                 if(content.indexOf("dataElementsData['") > -1){
                     addition = "type='" +type +"'";
+                }else if(content.indexOf("lastMonthOfQuarterData['") > -1){
+                    addition = "type='" +type +"' special='lastMonthOfQuarter'";
+                }else if(content.indexOf("cumulativeToDateData['") > -1){
+                    addition = "type='" +type +"' special='cumulativeToDate'";
+                }else if(content.indexOf("fourthQuarterData['") > -1){
+                    addition = "type='" +type +"' special='fourthQuarter'";
                 }else{
 
                 }
