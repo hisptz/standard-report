@@ -247,7 +247,7 @@ var appControllers = angular.module('appControllers', [])
         ReportService.getUser().then(function(user){
             $scope.user = user;
             $scope.user.userCredentials.userRoles.forEach(function(role){
-                if(role.authorities.indexOf("F_SCHEDULING_CASE_AGGREGATE_QUERY_BUILDER") > -1){
+                if((role.authorities.indexOf("F_SCHEDULING_CASE_AGGREGATE_QUERY_BUILDER") > -1) || (role.authorities.indexOf("ALL") > -1)){
                     $scope.allowAnalytics = true;
                 }
             })
