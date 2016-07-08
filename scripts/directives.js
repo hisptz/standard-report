@@ -212,7 +212,8 @@ var appDirectives = angular.module('appDirectives', [])
                 dgId: "@",
                 type: "@",
                 dgOrgUnit: "@",
-                eventId: "="
+                eventId: "=",
+                special: "@"
             },
             replace: true,
             controller: function ($scope, $modal, DHIS2URL, $http, $routeParams) {
@@ -351,7 +352,46 @@ var appDirectives = angular.module('appDirectives', [])
                                 },function(){
 
                                 }));
+                            };
+                            $scope.getPeriod = function(){
+                                var period = $routeParams.period;
+                                if($scope.parentScope.special){
+                                    if($scope.parentScope.special == "cumulativeToDate"){
+                                        var year = parseInt($routeParams.period.substr(0,4));
+                                        var quarter = parseInt($routeParams.period.substr(5,6));
+                                        while(quarter != 3){
+                                            quarter--;
+                                            if(quarter == 0){
+                                                quarter = 4;
+                                                year--;
+                                            }
+                                            period += ";" + year + "Q" + quarter;
+                                        }
+                                    }else if($scope.parentScope.special == "lastMonthOfQuarter") {
+                                        var year = parseInt($routeParams.period.substr(0, 4));
+                                        var quarter = parseInt($routeParams.period.substr(5, 6));
+                                        if(quarter == 1){
+                                            period = year + "03"
+                                        }else if(quarter == 2){
+                                            period = year + "06"
+                                        }else if(quarter == 3){
+                                            period = year + "09"
+                                        }else if(quarter == 4){
+                                            period = year + "12"
+                                        }
+                                    }else if($scope.parentScope.special == "fourthQuarter") {
+                                        var year = parseInt($routeParams.period.substr(0, 4));
+                                        var quarter = parseInt($routeParams.period.substr(5, 6));
+                                        if(quarter == 1 || quarter == 2){
+                                            period = year + "Q2"
+                                        }else if(quarter == 3 || quarter == 4){
+                                            period = (year + 1) + "Q2"
+                                        }
+                                    }
+                                }
+                                return period;
                             }
+                            var calculatedPeriod = $scope.getPeriod();
                             $scope.fetchOrgUnitData = function (objectId, orgUnit, type,second) {
                                 if (type == "indicator") {
                                     $scope.matcher.forEach(function (id) {
@@ -380,11 +420,7 @@ var appDirectives = angular.module('appDirectives', [])
                                         }else{
                                             objectRequest ="de=" + objectId;
                                         }
-                                        /*$scope.categoryCombo.categoryOptionCombos.forEach(function(categoryOptionCombo){
-                                            //var url = DHIS2URL + "api/dataValues.json?cc="+$scope.categoryCombo.id+"&cp="+categoryOptionCombo.categoryOptions[0].id+"&" + objectRequest + "&pe=" + $routeParams.period + "&ou=" + orgUnit.id;
-                                            $scope.getDataValueData(url,objectId,orgUnit,categoryOptionCombo)
-                                        });*/
-                                        var url = DHIS2URL + "api/analytics.json?dimension=dx:" +objectId+ "&dimension=pe:" + $routeParams.period + "&filter=ou:" + orgUnit.id + "&displayProperty=NAME&dimension=" + $scope.category.id +":";
+                                        var url = DHIS2URL + "api/analytics.json?dimension=dx:" +objectId+ "&dimension=pe:" + calculatedPeriod + "&filter=ou:" + orgUnit.id + "&displayProperty=NAME&dimension=" + $scope.category.id +":";
                                         $scope.category.categoryOptions.forEach(function(categoryOption,index){
                                             if(index != 0){
                                                 url += ";"
@@ -411,6 +447,15 @@ var appDirectives = angular.module('appDirectives', [])
                                             $scope.estimation = attributeValue.value;
                                         }
                                     });
+                                    if($scope.parentScope.special){
+                                        if($scope.parentScope.special == "cumulativeToDate"){
+                                            $scope.data.object.aggregationType = "CUMULATIVE TO DATE";
+                                        }else if($scope.parentScope.special == "lastMonthOfQuarter") {
+                                            $scope.data.object.aggregationType = "LAST MONTH OF QUARTER";
+                                        }else if($scope.parentScope.special == "fourthQuarter") {
+                                            $scope.data.object.aggregationType = "FOURTH QUARTER";
+                                        }
+                                    }
                                     var topLevel = 0,lowLevel = 0;
                                     $scope.data.object.dataSets.forEach(function(dataSet){
                                         dataSet.organisationUnits.forEach(function(organisationUnit){
@@ -470,7 +515,8 @@ var appDirectives = angular.module('appDirectives', [])
                                             });
                                         }));
                                     }else{
-                                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + parentScope.dgId + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit).then(function (results) {
+                                        var period = $scope.getPeriod();
+                                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + parentScope.dgId + "&dimension=pe:" + period + "&filter=ou:" + $routeParams.orgUnit).then(function (results) {
                                             results.data.rows.forEach(function (row) {
                                                 $scope.data.data.push(row[2]);
 
