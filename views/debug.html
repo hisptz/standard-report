@@ -77,7 +77,7 @@
                                 <td ng-if="objectType == 'indicator' && !parentScope.aDebug" ng-repeat="dx in matcher">{{getDXName(dx)}}</td>
                             </tr>
                             </thead>
-                            <thead ng-if="(dataSetOrganisationUnit.level - orgUnit.level) != 2">
+                            <thead ng-if="(dataSetOrganisationUnit.level - orgUnit.level) == 1">
                             <tr>
                                 <td>#</td>
                                 <td>Name</td>
