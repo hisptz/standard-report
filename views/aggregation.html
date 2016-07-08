@@ -11,8 +11,8 @@
                     <td>
                         {{ data.date }} : {{ data.action }} &nbsp;&nbsp;&nbsp;
                         <img ng-if="data.action == 'The Aggregation Operation is complete'" src="../../../images/completed.png">
-                        <img ng-if="activities.is_running != 'Yes'" src="../../../images/ajax-loader-bar.gif">
-                        <small ng-if="activities.analytics_is_running == 'Yes'"><strong>-> Check status on right side -></strong></small>
+                        <!--<img ng-if="activities.is_running != 'Yes'" src="../../../images/ajax-loader-bar.gif">-->
+                        <small ng-if="data.action == 'Initiating Analytics'"><strong>-> Check status on right side -></strong></small>
                     </td>
                 </tr>
             </table>
