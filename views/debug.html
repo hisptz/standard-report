@@ -66,10 +66,10 @@
                     <td>{{estimation}} {{parentScope.aDebug}}</td>
                 </tr>
                 <tr>
-                    <td>Source Values</td>
+                    <td>Source Values {{organisationUnitLevels}}</td>
                     <td>
                         <table class="table table-bordered">
-                            <thead ng-if="(dataSetOrganisationUnit.level - orgUnit.level) == 2">
+                            <thead ng-if="organisationUnitLevels == 2">
                             <tr>
                                 <td>Region</td>
                                 <td>District</td>
@@ -77,7 +77,7 @@
                                 <td ng-if="objectType == 'indicator' && !parentScope.aDebug" ng-repeat="dx in matcher">{{getDXName(dx)}}</td>
                             </tr>
                             </thead>
-                            <thead ng-if="(dataSetOrganisationUnit.level - orgUnit.level) == 1">
+                            <thead ng-if="organisationUnitLevels == 1">
                             <tr>
                                 <td>#</td>
                                 <td>Name</td>
@@ -150,7 +150,8 @@
                                         <tr ng-repeat="data in orgUnit.data[id][categoryOption.name]"><td>{{data.period}}</td><td>{{data.value}}</td></tr>
                                     </table>
                                 </td>
-                                <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{data.data.join(",")}}</td>
+                                <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{data.data.join(",")}}
+                                </td>
                             </tr>
                             </tbody>
                         </table>
