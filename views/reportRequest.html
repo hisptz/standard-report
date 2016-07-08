@@ -33,8 +33,8 @@
             <div class="col-sm-12" style="margin-bottom:20px">
                 <input type="button" value="Change Criteria" ng-click="dataCriteria = !dataCriteria">
                 <input type="button" ng-disabled="isNotAuthorized() || data.organisationUnit.level != 3"
-                       value="Create report" style="width:120px" ng-click="createDataSetReport()" html-link="">
-                <input type="button" value="Preview" ng-click="generateDataSetReport()">
+                       value="Create Report" style="width:120px" ng-click="createDataSetReport()" html-link="">
+                <input type="button" ng-disabled="isNotAuthorized()" value="Preview" ng-click="generateDataSetReport()">
             </div>
             <style>
                 .criteria #criteria{
