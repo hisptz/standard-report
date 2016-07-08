@@ -17,7 +17,7 @@
 <div ng-if="error" class="alert alert-danger" role="alert">
     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
     <span class="sr-only">Error:</span>
-    There was a problem. Please try to <a ng-click="reloadPage()">Reload</a>.
+    There was a problem. Please try again later.
 </div>
 <div ng-if="!error" class="col-sm-10">
     <div  ng-if="reportStatus == ''" class="loader" style="margin-top: 0px;">
@@ -32,7 +32,7 @@
         <div ng-if="!(!completeDataSetRegistrations && completeDataSetRegistrationsLoading)">
             <div class="col-sm-12" style="margin-bottom:20px">
                 <input type="button" value="Change Criteria" ng-click="dataCriteria = !dataCriteria">
-                <input type="button" ng-disabled="isNotAuthorized()"
+                <input type="button" ng-disabled="isNotAuthorized() || data.organisationUnit.level != 3"
                        value="Create report" style="width:120px" ng-click="createDataSetReport()" html-link="">
                 <input type="button" value="Preview" ng-click="generateDataSetReport()">
             </div>

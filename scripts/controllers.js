@@ -22,9 +22,7 @@ var appControllers = angular.module('appControllers', [])
                         this.list = [];
                         var that = this;
                         var year = date.getFullYear();
-                        monthNames.reverse();
                         monthNames.forEach(function (monthName, index) {
-
                             var monthVal = index + 7;
 
                             if (monthVal > 12) {
@@ -173,6 +171,16 @@ var appControllers = angular.module('appControllers', [])
                 })
             }
         }
+        $scope.doesValueExist = function(period){
+            var returnVal = false;
+            $scope.data.periodTypes[$scope.data.dataSet.periodType].list.forEach(function(p){
+                if(p.value == period){
+                    console.log(p);
+                    returnVal = true;
+                }
+            })
+            return returnVal;
+        }
         $http.get(DHIS2URL + "api/dataSets.json?fields=id,name,periodType,attributeValues[value,attribute[name]],organisationUnits[id]&filter=attributeValues.value:eq:true&filter=attributeValues.attribute.name:eq:Is Report").then(function (results) {
             $scope.data.dataSets = results.data.dataSets;
             $scope.loadTracker = undefined;
@@ -196,21 +204,24 @@ var appControllers = angular.module('appControllers', [])
                             ReportService.sortOrganisationUnits(orgUnit);
                         });
                         if($routeParams.dataSet){
-                            //$scope.data.period = $routeParams.period;
-                            $timeout(function(){
-                                $scope.data.organisationUnits.forEach(function(orgUnit){
+
+                            $scope.data.organisationUnits.forEach(function(orgUnit){
+                                try{
                                     $scope.setOrganisationUnitSelection(orgUnit)
-                                })
-                                var date = undefined;
-                                if($routeParams.period.indexOf("Q") > -1){
-                                    console.log($routeParams.period.substr(0,4))
-                                    date = new Date(parseInt($routeParams.period.substr(0,4)),((parseInt($routeParams.period.substr(5)) * 3) + 10 ) % 12,1);
-                                    console.log(date);
+                                }catch(e){
+
                                 }
+                            })
+                            var date = new Date();
+
+                            do{
                                 $scope.data.periodTypes[$scope.data.dataSet.periodType].populateList(date);
+                                date.setTime(date.getTime() - (1000*60*60*24*365));
+                            }
+                            while(!$scope.doesValueExist($routeParams.period));
+                            $timeout(function(){
                                 $scope.data.period = $routeParams.period;
                             })
-
                         }
                         $scope.loadTracker = undefined;
                     }, function (error) {
@@ -313,9 +324,11 @@ var appControllers = angular.module('appControllers', [])
                         dataSet.completeDataSetRegistrations = [];
                     }
                 }, function (error) {
-                    $scope.error = "heye";
-                    $scope.completeDataSetRegistrationsLoading = false;
-                    toaster.pop('error', "Error" + error.status, "Error Loading Archive. Please try again");
+                    //alert("");
+                    //$scope.error = "heye";
+                    dataSet.completeDataSetRegistrations = []
+                    //$scope.completeDataSetRegistrationsLoading = false;
+                    //toaster.pop('error', "Error" + error.status, "Error Loading Archive. Please try again");
                 });
             }
         };
@@ -479,7 +492,7 @@ var appControllers = angular.module('appControllers', [])
         }, function (error) {
             $scope.commentData = {};
             $scope.savingComment = "";
-            toaster.pop('info', "Information", "No comments where found.");
+            //toaster.pop('info', "Information", "No comments where found.");
         });
         $scope.showComment = function () {
             $scope.saveComment = function () {
