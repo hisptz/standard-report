@@ -772,7 +772,7 @@ var appControllers = angular.module('appControllers', [])
         }
         var periodDate = ReportService.getPeriodDate($routeParams.period);
         $scope.fetchEventAnalytics = function (programId) {
-            return $http.get(DHIS2URL + "api/analytics/events/query/" + programId + "?startDate=" + periodDate.startDate + "&endDate=" + periodDate.endDate + "&dimension=ou:" + $routeParams.orgUnit + "&dimension=" + $scope.autogrowingPrograms[programId].dataElements.join("&dimension="))
+            return $http.get(DHIS2URL + "api/analytics/events/query/" + programId + "?dimension=pe:" + $routeParams.period + "&dimension=ou:" + $routeParams.orgUnit + "&dimension=" + $scope.autogrowingPrograms[programId].dataElements.join("&dimension="))
                 .then(function (analyticsResults) {
                     analyticsResults.data.rows.forEach(function (row) {
                         var object = {};
