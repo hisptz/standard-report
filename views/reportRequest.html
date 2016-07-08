@@ -19,7 +19,7 @@
     <span class="sr-only">Error:</span>
     There was a problem. Please try to <a ng-click="reloadPage()">Reload</a>.
 </div>
-<div ng-if="!error" class="col-sm-6">
+<div ng-if="!error" class="col-sm-10">
     <div  ng-if="reportStatus == ''" class="loader" style="margin-top: 0px;">
         <img
                 src="../../../images/ajax-loader-bar.gif"> Checking Archive..
@@ -115,69 +115,7 @@
                         </td>
                     </tr>
                 </table>
-                <!--<table class="table table-bordered">
-                    <tr>
-                        <th>Ward Total</th>
-                        <th>Wards Completed</th>
-                        <th>Wards Not Completed</th>
-                        <th>Completion Percentage</th>
-                    </tr>
-                    <tr>
-                        <td>{{data.organisationUnit.children.length}}</td>
-                        <td>{{completeDataSetRegistrations.length}}</td>
-                        <td>{{data.organisationUnit.children.length - completeDataSetRegistrations.length}}</td>
-                        <td ng-class="{red:(completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100 < 70,green:(completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100>= 70}">
-                            {{(completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100  | number : 2}}%
-                        </td>
-                    </tr>
-                </table>
-                <h4>Form Completion Status Details</h4>
-                <table class="table table-bordered">
-                    <tr>
-                        <th>Organisation Unit</th>
-                        <th>Status</th>
-                    </tr>
-                    <tr ng-repeat="orgUnit in data.organisationUnit.children">
-                        <td>{{orgUnit.name}}</td>
-                        <td ng-class="{red:getOrgUnitStatus(orgUnit.id)=='Incomplete',green:getOrgUnitStatus(orgUnit.id)=='Complete'}">
-                            {{getOrgUnitStatus(orgUnit.id)}}
-                        </td>
-                    </tr>
-                </table>-->
             </div>
-            <!--<div class="col-sm-12" ng-if="completeDataSetRegistrations">
-                <br/>
-                <h4>Form Completion Status</h4>
-                <table class="table table-bordered">
-                    <tr>
-                        <th>Ward Total</th>
-                        <th>Wards Completed</th>
-                        <th>Wards Not Completed</th>
-                        <th>Completion Percentage</th>
-                    </tr>
-                    <tr>
-                        <td>{{data.organisationUnit.children.length}}</td>
-                        <td>{{completeDataSetRegistrations.length}}</td>
-                        <td>{{data.organisationUnit.children.length - completeDataSetRegistrations.length}}</td>
-                        <td ng-class="{red:(completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100 < 70,green:(completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100>= 70}">
-                            {{(completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100  | number : 2}}%
-                        </td>
-                    </tr>
-                </table>
-                <h4>Form Completion Status Details</h4>
-                <table class="table table-bordered">
-                    <tr>
-                        <th>Organisation Unit</th>
-                        <th>Status</th>
-                    </tr>
-                    <tr ng-repeat="orgUnit in data.organisationUnit.children">
-                        <td>{{orgUnit.name}}</td>
-                        <td ng-class="{red:getOrgUnitStatus(orgUnit.id)=='Incomplete',green:getOrgUnitStatus(orgUnit.id)=='Complete'}">
-                            {{getOrgUnitStatus(orgUnit.id)}}
-                        </td>
-                    </tr>
-                </table>
-            </div>-->
         </div>
 
 

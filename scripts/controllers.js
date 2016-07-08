@@ -436,9 +436,18 @@ var appControllers = angular.module('appControllers', [])
             });
 
         };
+        $scope.isNotApproved = function(){
+            var returnValue = true;
+            $scope.user.organisationUnits.forEach(function(orgUnit){
+                if(orgUnit.id == $scope.data.organisationUnit.parent.id){
+                    returnValue = false;
+                }
+            })
+            return returnValue;
+        }
         $http.get(DHIS2URL + "api/me.json?fields=:all,organisationUnits[id,level]").then(function (results) {
             $scope.user = results.data;
-            $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,level,children[id,name]")
+            $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,level,parent,children[id,name]")
                 .then(function (results) {
                     $scope.data.organisationUnit = results.data;
                     ReportService.sortOrganisationUnits($scope.data.organisationUnit);
