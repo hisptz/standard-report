@@ -488,14 +488,6 @@ var appDirectives = angular.module('appDirectives', [])
                                             }
                                         })
                                     })
-                                    if (parentScope.type == "dataElement") {
-                                        $scope.estimationData = [];
-                                        promises.push($http.get(DHIS2URL + "api/dataValues.json?cc=zinlBc5Ee63&cp=wxia6oenpQz&de=" + object + "&co=" + parentScope.dgId.substr(parentScope.dgId.indexOf(".") + 1) + "&pe=" + $routeParams.period + "&ou=" + $routeParams.orgUnit).then(function (result) {
-                                            $scope.estimationData = result.data;
-                                        },function(error){
-
-                                        }));
-                                    }
                                     if (parentScope.type == "indicator") {
                                         $scope.matcher = [];
                                         $scope.data.object.numerator.match(/#\{.+?\}/g).forEach(function (dx) {
