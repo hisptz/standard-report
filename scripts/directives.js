@@ -447,7 +447,7 @@ var appDirectives = angular.module('appDirectives', [])
                                         $scope.getDataValueData(url,objectId,orgUnit)
                                     }
                                 }
-                                //if(($scope.dataSetOrganisationUnit.level - orgUnit.level) != 0)
+                                if(orgUnit.children)
                                 {
                                     orgUnit.children.forEach(function(child){
                                         child.data = {};
