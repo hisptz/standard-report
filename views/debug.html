@@ -99,7 +99,7 @@
                                     <span ng-repeat="child1 in child.children | orderBy:'name'" ng-if="$first">
 
                                         <span ng-if="!parentScope.special">{{child1.data[id][categoryOption.name]}}</span>
-                                    <table ng-if="parentScope.special">
+                                    <table ng-if="parentScope.special" class="table">
                                         <tr><th>Period</th><th>Value</th></tr>
                                         <tr ng-repeat="data in child1.data[id][categoryOption.name]"><td>{{data.period}}</td><td>{{data.value}}</td></tr>
                                     </table>
@@ -114,7 +114,7 @@
                                 <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'">
 
                                     <span ng-if="!parentScope.special">{{child1.data[id][categoryOption.name]}}</span>
-                                    <table ng-if="parentScope.special">
+                                    <table ng-if="parentScope.special" class="table">
                                         <tr><th>Period</th><th>Value</th></tr>
                                         <tr ng-repeat="data in child1.data[id][categoryOption.name]"><td>{{data.period}}</td><td>{{data.value}}</td></tr>
                                     </table>
@@ -131,7 +131,7 @@
                                 <td>{{child.name}}({{child.id}})</td>
                                 <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'">
                                     <span ng-if="!parentScope.special">{{child.data[id][categoryOption.name]}}</span>
-                                    <table ng-if="parentScope.special">
+                                    <table ng-if="parentScope.special" class="table">
                                         <tr><th>Period</th><th>Value</th></tr>
                                         <tr ng-repeat="data in child.data[id][categoryOption.name]"><td>{{data.period}}</td><td>{{data.value}}</td></tr>
                                     </table>
@@ -145,7 +145,7 @@
                                 <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'">
 
                                     <span ng-if="!parentScope.special">{{orgUnit.data[id][categoryOption.name]}}</span>
-                                    <table ng-if="parentScope.special">
+                                    <table ng-if="parentScope.special" class="table">
                                         <tr><th>Period</th><th>Value</th></tr>
                                         <tr ng-repeat="data in orgUnit.data[id][categoryOption.name]"><td>{{data.period}}</td><td>{{data.value}}</td></tr>
                                     </table>
