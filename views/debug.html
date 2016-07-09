@@ -232,7 +232,7 @@
                             <tr ng-repeat="event in parentScope.autoData.events">
                                 <!--<td ng-repeat="dataElement in data.dataElements">{{dataElement.event[dataElement.name]}}</td>-->
                                 <td style="border:1px solid lightgrey" ng-if="event[dataElement.name] != undefined"
-                                    ng-repeat="dataElement in parentScope.autoData.data.dataElements">{{event[dataElement.name]}}
+                                    ng-repeat="dataElement in parentScope.autoData.dataElements">{{event[dataElement.name]}}
                                 </td>
                             </tr>
                             </tbody>
