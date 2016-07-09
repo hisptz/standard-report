@@ -215,7 +215,7 @@ var appDirectives = angular.module('appDirectives', [])
                 event: "=",
                 special: "@",
                 report:"=",
-                autoData:""
+                autoData:"="
             },
             replace: true,
             controller: function ($scope, $modal, DHIS2URL, $http, $routeParams) {
