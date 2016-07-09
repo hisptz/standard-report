@@ -13,8 +13,9 @@ var appControllers = angular.module('appControllers', [])
             period: "",
             periodTypes: {
                 "Monthly": {
-                    name: "Monthly", value: "Monthly", list: [],
+                    name: "Monthly", value: "Monthly", allowNext:true, allowPrevious:true, list: [],
                     populateList: function (date) {
+                        //this.allowNext = true;
                         var monthNames = ["July", "August", "September", "October", "November", "December", "January", "February", "March", "April", "May", "June"];
                         if (!date) {
                             date = new Date();
@@ -33,23 +34,29 @@ var appControllers = angular.module('appControllers', [])
                             }
                             var testDate = new Date();
                             if ((year == testDate.getFullYear() && monthVal > (testDate.getMonth() + 1)) || year > testDate.getFullYear()) {
+
                                 return;
                             }
                             if (monthVal < 10) {
                                 monthVal = "0" + monthVal;
                             }
-                            that.list.unshift({
-                                name: monthName + " " + year,
-                                value: year + "" + monthVal
-                            })
+                            if(!(testDate.getMonth() + 1 == monthVal && testDate.getFullYear() == year)){
+                                that.allowNext = true;
+                                that.list.unshift({
+                                    name: monthName + " " + year,
+                                    value: year + "" + monthVal
+                                })
+                            }
+
                         });
                         if (this.list.length == 0) {
-                            this.populateList(new Date(date.getFullYear() - 1, date.getMonth() + 1, date.getDate()))
+                            this.populateList(new Date(date.getFullYear() - 1, date.getMonth() + 1, date.getDate()));
+                            that.allowNext = false;
                         }
                     }
                 },
                 "Quarterly": {
-                    name: "Quarterly", value: "Quarterly", list: [],
+                    name: "Quarterly", value: "Quarterly", allowNext:true, allowPrevious:true,list: [],
                     populateList: function (date) {
                         var quarters = ["July - September", "October - December", "January - March", "April - June"];
                         if (!date) {
@@ -73,13 +80,18 @@ var appControllers = angular.module('appControllers', [])
                             if ((year == testDate.getFullYear() && quarterVal > ((testDate.getMonth() + 1) % 4)) || year > testDate.getFullYear()) {
                                 return;
                             }
-                            that.list.unshift({
-                                name: quarter + " " + year,
-                                value: year + "Q" + quarterVal
-                            })
+                            if(!(Math.ceil(((new Date()).getMonth() + 1)/3) == quarterVal && testDate.getFullYear() == year)){
+                                console.log(((new Date()).getMonth() + 1),Math.ceil(((new Date()).getMonth() + 1)/3),testDate.getFullYear())
+                                that.list.unshift({
+                                    name: quarter + " " + year,
+                                    value: year + "Q" + quarterVal
+                                });
+                                that.allowNext = true;
+                            }
                         });
                         if (this.list.length == 0) {
-                            this.populateList(new Date(date.getFullYear() - 2, date.getMonth() + 1, date.getDate()))
+                            this.populateList(new Date(date.getFullYear() - 1, date.getMonth() + 1, date.getDate()));
+                            that.allowNext = false;
                         }
                     }
                 },
@@ -94,18 +106,24 @@ var appControllers = angular.module('appControllers', [])
                     }
                 },
                 "FinancialJuly": {
-                    name: "Financial-July", value: "FinancialJuly", list: [],
+                    name: "Financial-July", value: "FinancialJuly", allowNext:false, allowPrevious:false, list: [],
                     populateList: function () {
                         var date = new Date();
                         this.list = [];
                         var testDate = new Date();
 
-                        for (var i = date.getFullYear() - 5; i < date.getFullYear() + 5; i++) {
-                            if ((i == testDate.getFullYear() && (testDate.getMonth() + 1) < 7) || (i == (testDate.getFullYear() - 1) && (testDate.getMonth() + 1) < 7) || i > testDate.getFullYear()) {
+                        for (var i = 2011; i < date.getFullYear(); i++) {
+                            if(i == date.getFullYear() && date.getMonth() < 7){
                                 continue;
                             }
                             this.list.unshift({name: "July " + i + " - June " + (i + 1), value: i + "July"});
                         }
+                        /*for (var i = date.getFullYear() - 5; i < date.getFullYear() + 5; i++) {
+                            if ((i == testDate.getFullYear() && (testDate.getMonth() + 1) < 7) || (i == (testDate.getFullYear() - 1) && (testDate.getMonth() + 1) < 7) || i > testDate.getFullYear()) {
+                                continue;
+                            }
+                            this.list.unshift({name: "July " + i + " - June " + (i + 1), value: i + "July"});
+                        }*/
                     }
                 }
             }
