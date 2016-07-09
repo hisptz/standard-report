@@ -363,6 +363,15 @@ var appControllers = angular.module('appControllers', [])
         });
         $scope.completeDataSetRegistrationsLoading = false;
         $scope.reportStatus = "";
+        $scope.setPeriodTypeValues = function(dataSet){
+            if(dataSet.periodType == "Quarterly"){
+                dataSet.periodTypeValue = 4;
+            }else if(dataSet.periodType == "Yearly" || dataSet.periodType == "FinancialJuly"){
+                dataSet.periodTypeValue = 1;
+            }else if(dataSet.periodType == "Monthly"){
+                dataSet.periodTypeValue = 12;
+            }
+        }
         //$scope.file = undefinde;
         $scope.watchParameters = function () {
             $scope.loadingArchive = true;
@@ -401,8 +410,9 @@ var appControllers = angular.module('appControllers', [])
                             $scope.loadingArchive = false;
                             if (!$scope.data.archive) {
                                 $scope.completeDataSetRegistrationsLoading = true;
-                                $http.get(DHIS2URL + "api/dataSets/" + $routeParams.dataSet + ".json?fields=name,attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
+                                $http.get(DHIS2URL + "api/dataSets/" + $routeParams.dataSet + ".json?fields=name,periodType,attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
                                     $scope.dataSet = results.data;
+                                    $scope.setPeriodTypeValues($scope.dataSet);
                                     $scope.isNotAuthorized = function () {
                                         var returnValue = true;
                                         $scope.dataSet.organisationUnits.forEach(function (dataSetOrgUnit) {
@@ -429,12 +439,15 @@ var appControllers = angular.module('appControllers', [])
                                                             sourceLevels[dataSource.dataSet] = dataSource.level;
                                                         })
 
-                                                        $http.get(DHIS2URL + "api/dataSets.json?filter=id:in:[" +sourceIds+"]&fields=id,displayName,attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
+                                                        $http.get(DHIS2URL + "api/dataSets.json?filter=id:in:[" +sourceIds+"]&fields=id,periodType,displayName,attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
                                                             $scope.sourceDataSets = results.data.dataSets;
                                                             $scope.sourceDataSets.forEach(function(dataSet){
                                                                 dataSet.orgUnitLevel = sourceLevels[dataSet.id];
+                                                                $scope.setPeriodTypeValues(dataSet);
+
                                                                 $scope.fetchCompleteness(dataSet,sourceLevels);
                                                             })
+
                                                             console.log(results.data.dataSets);
                                                         }, function (error) {
                                                             $scope.error = "heye";

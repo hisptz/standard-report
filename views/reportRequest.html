@@ -71,19 +71,22 @@
                         </td>
                     </tr>
                 </table>
+
                 <table ng-if="!sourceDataSet.isReport" class="table table-bordered">
                     <tr>
                         <th>{{getLevelName(data.organisationUnit.level + 1)}} Total</th>
-                        <th>{{getLevelName(data.organisationUnit.level + 1)}} Completed</th>
-                        <th>{{getLevelName(data.organisationUnit.level + 1)}} Not Completed</th>
+                        <th>Number of Periods</th>
+                        <th>{{getLevelName(data.organisationUnit.level + 1)}} Periods Completed</th>
+                        <th>{{getLevelName(data.organisationUnit.level + 1)}} Periods Not Completed</th>
                         <th>Completion Percentage</th>
                     </tr>
                     <tr>
                         <td>{{data.organisationUnit.children.length}}</td>
-                        <td>{{sourceDataSet.completeDataSetRegistrations.length}}</td>
-                        <td>{{data.organisationUnit.children.length - sourceDataSet.completeDataSetRegistrations.length}}</td>
+                        <td>{{sourceDataSet.periodTypeValue/dataSet.periodTypeValue}}</td>
+                        <td>{{sourceDataSet.completeDataSetRegistrations.length * (sourceDataSet.periodTypeValue/dataSet.periodTypeValue)}}</td>
+                        <td>{{(data.organisationUnit.children.length * sourceDataSet.periodTypeValue/dataSet.periodTypeValue) - sourceDataSet.completeDataSetRegistrations.length}}</td>
                         <td ng-class="{red:(sourceDataSet.completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100 < 70,green:(sourceDataSet.completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100>= 70}">
-                            {{(sourceDataSet.completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100  | number : 2}}%
+                            {{((sourceDataSet.completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100)/(sourceDataSet.periodTypeValue/dataSet.periodTypeValue)  | number : 2}}%
                         </td>
                     </tr>
                 </table>
