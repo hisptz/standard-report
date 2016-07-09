@@ -234,7 +234,7 @@ var appDirectives = angular.module('appDirectives', [])
                             $scope.estimation = "Not Applicable";
                             $scope.id = parentScope.dgId;
                             $scope.parentScope = parentScope;
-                            console.log($scope.parentScope.event);
+                            console.log($scope.parentScope.autoData);
                             var object = parentScope.dgId;
                             if (object.indexOf(".") > -1) {
                                 object = object.substr(0, object.indexOf("."));
@@ -474,8 +474,7 @@ var appDirectives = angular.module('appDirectives', [])
                                         }
                                     });
                                     if (parentScope.aDebug) {
-                                        promises.push($http.get(DHIS2URL + "api/events.json?program=" + parentScope.aDebug.programId + "&startDate=" + periods.startDate + "&endDate=" + periods.endDate + "&orgUnit:" + $routeParams.orgUnit).then(function (results) {
-                                            console.log("DataValues:", results);
+                                        /*promises.push($http.get(DHIS2URL + "api/events.json?program=" + parentScope.aDebug.programId + "&startDate=" + periods.startDate + "&endDate=" + periods.endDate + "&orgUnit:" + $routeParams.orgUnit).then(function (results) {
                                             results.data.events.forEach(function (event) {
                                                 if(event.event == parentScope.event.Event){
                                                     event.dataValues.forEach(function(dataValue){
@@ -485,7 +484,7 @@ var appDirectives = angular.module('appDirectives', [])
                                                     })
                                                 }
                                             });
-                                        }));
+                                        }));*/
                                     }else{
                                         var period = $scope.getPeriod();
                                         promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + parentScope.dgId + "&dimension=pe:" + period + "&filter=ou:" + $routeParams.orgUnit).then(function (results) {

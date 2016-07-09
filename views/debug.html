@@ -228,12 +228,11 @@
                         </table>
                         <table ng-if="parentScope.autoData" class="table table-bordered">
                             <thead>
-                            <th>Head</th>
+                            <th ng-repeat="dataElement in parentScope.autoData.dataElements">{{dataElement.name}}</th>
                             </thead>
                             <tbody>
 
                             <tr ng-repeat="event in parentScope.autoData.events">
-                                <td ng-repeat="dataElement in parentScope.autoData.dataElements">{{dataElement.event[dataElement.name]}}</td>
                                 <td ng-class="{orange:dataElement.id == data.object.id" ng-if="event[dataElement.name] != undefined"
                                     ng-repeat="dataElement in parentScope.autoData.dataElements">{{event[dataElement.name]}}
                                 </td>

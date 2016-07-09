@@ -783,7 +783,7 @@ var appControllers = angular.module('appControllers', [])
                                 });
 
                             }, function (error) {
-                                console.log(error);
+                                //console.log(error);
                             }));
                     }
                     $q.all(promises).then(function () {
