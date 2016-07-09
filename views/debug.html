@@ -3,6 +3,9 @@
         .modal-dialog {
             width: 90%;
         }
+        .orange{
+            background-color:orange;
+        }
     </style>
 
     <script type="text/ng-template" id="myModalContent.html">
@@ -230,8 +233,8 @@
                             <tbody>
 
                             <tr ng-repeat="event in parentScope.autoData.events">
-                                <!--<td ng-repeat="dataElement in data.dataElements">{{dataElement.event[dataElement.name]}}</td>-->
-                                <td style="border:1px solid lightgrey" ng-if="event[dataElement.name] != undefined"
+                                <td ng-repeat="dataElement in parentScope.autoData.dataElements">{{dataElement.event[dataElement.name]}}</td>
+                                <td ng-class="{orange:dataElement.id == data.object.id" ng-if="event[dataElement.name] != undefined"
                                     ng-repeat="dataElement in parentScope.autoData.dataElements">{{event[dataElement.name]}}
                                 </td>
                             </tr>
