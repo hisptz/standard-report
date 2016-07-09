@@ -463,6 +463,9 @@ var appControllers = angular.module('appControllers', [])
             })
             return returnValue;
         }
+        $scope.getPeriodName = function(){
+            return ReportService.getPeriodName($routeParams.period);
+        }
         $http.get(DHIS2URL + "api/me.json?fields=:all,organisationUnits[id,level]").then(function (results) {
             $scope.user = results.data;
             $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,level,parent,children[id,name]")
@@ -947,7 +950,9 @@ var appControllers = angular.module('appControllers', [])
             return $sce.trustAsHtml(newHtml);
         };
         //Load dataset informatioin
-
+        $scope.getPeriodName = function(){
+            return ReportService.getPeriodName($routeParams.period);
+        }
         $http.get(DHIS2URL + "api/dataSets/" + $routeParams.dataSet + ".json?fields=name,attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
             $scope.dataSet = results.data;
             console.log($scope.dataSet);

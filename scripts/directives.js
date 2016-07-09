@@ -225,55 +225,7 @@ var appDirectives = angular.module('appDirectives', [])
                         templateUrl: 'myModalContent.html',
                         controller: function ($scope, parentScope, $modalInstance, DebugService, ReportService,$q) {
 
-                            console.log(parentScope);
                             $scope.param = $routeParams;
-                            $scope.getDateName = function(period){
-                                if(period.endsWith("July")){
-                                    return "July " + period.substr(0,4) + " - June " + (parseInt(period.substr(0,4)) + 1);
-                                }else if(period.indexOf("Q") > -1){
-                                    var quarter = period.substr(period.indexOf("Q") + 1);
-                                    var name = "";
-                                    if(quarter == "1"){
-                                        name = "July - September";
-                                    }else if(quarter == "2"){
-                                        name = "October - December";
-                                    }else if(quarter == "3"){
-                                        name = "January - March";
-                                    }else if(quarter == "4"){
-                                        name = "April - June";
-                                    }
-                                    return name +  " " + (parseInt(period.substr(0,4)));
-                                }else{
-                                    var month = period.substr(4);
-                                    var name = "";
-                                    if(month == "01"){
-                                        name = "January";
-                                    }else if(month == "02"){
-                                        name = "February";
-                                    }else if(month == "03"){
-                                        name = "March";
-                                    }else if(month == "04"){
-                                        name = "April";
-                                    }else if(month == "05"){
-                                        name = "May";
-                                    }else if(month == "06"){
-                                        name = "June";
-                                    }else if(month == "07"){
-                                        name = "July";
-                                    }else if(month == "08"){
-                                        name = "August";
-                                    }else if(month == "09"){
-                                        name = "September";
-                                    }else if(month == "10"){
-                                        name = "October";
-                                    }else if(month == "11"){
-                                        name = "November";
-                                    }else if(month == "12"){
-                                        name = "December";
-                                    }
-                                    return name +  " " + (parseInt(period.substr(0,4)));
-                                }
-                            }
                             $scope.data = {
                                 data: []
                             };
@@ -328,7 +280,6 @@ var appDirectives = angular.module('appDirectives', [])
                             var counter = 0;
                             $scope.getDataValueData = function(url,objectId,orgUnit,categoryOptionCombo){
                                 promises.push($http.get(url).then(function (results) {
-                                    console.log("Analysis Data:",results);
                                     if(!orgUnit.data[objectId]){
                                         orgUnit.data[objectId] = {};
                                     }

@@ -12,7 +12,10 @@
 <div ng-if="preview" class="alert alert-info" role="alert">
     <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
     <span class="sr-only">Error:</span>
-    This is a preview copy of the reports.
+    This is a preview copy of the reports.<br />
+    {{dataSet.name}}<br />
+    {{getPeriodName()}}<br />
+    {{orgUnit.name}}
 </div>
 <div ng-if="error" class="alert alert-danger" role="alert">
     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>

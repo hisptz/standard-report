@@ -24,6 +24,11 @@
         <img
                 src="../../../images/ajax-loader-bar.gif"> Checking Archive..
     </div>
+    <table>
+        <tr><td>{{dataSet.name}}</td></tr>
+        <tr><td>{{data.organisationUnit.name}}</td></tr>
+        <tr><td>{{getPeriodName()}}</td></tr>
+    </table>
     <div class="row" ng-if="reportStatus == 'Starting'">
         <div ng-if="!completeDataSetRegistrations && completeDataSetRegistrationsLoading" class="loader" style="margin-top: 0px;">
             <img
