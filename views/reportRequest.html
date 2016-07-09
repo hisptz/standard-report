@@ -71,27 +71,6 @@
                         </td>
                     </tr>
                 </table>
-                <table ng-if="sourceDataSet.isReport" class="table table-bordered">
-                    <tr>
-                        <th>Administrative Unit</th><th>Report Status</th>
-                    </tr>
-                    <tr ng-if="sourceDataSet.orgUnitLevel == data.organisationUnit.level">
-                        <td>{{data.organisationUnit.name}}</td>
-                        <td ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) > -1}">
-                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) == -1)">Not Created</span>
-                            <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) > -1">Created</span>
-                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) > -1">In Progress</span>
-                        </td>
-                    </tr>
-                    <tr ng-if="sourceDataSet.orgUnitLevel != data.organisationUnit.level" ng-repeat="child in data.organisationUnit.children">
-                        <td>{{child.name}}</td>
-                        <td ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) > -1}">
-                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) == -1)">Not Created</span>
-                            <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) > -1">Created</span>
-                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) > -1">In Progress</span>
-                        </td>
-                    </tr>
-                </table>
                 <table ng-if="!sourceDataSet.isReport" class="table table-bordered">
                     <tr>
                         <th>{{getLevelName(data.organisationUnit.level + 1)}} Total</th>
