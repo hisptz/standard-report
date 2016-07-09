@@ -215,7 +215,8 @@ var appDirectives = angular.module('appDirectives', [])
                 event: "=",
                 special: "@",
                 report:"=",
-                autoData:"="
+                autoData:"=",
+                innerHtml:"@"
             },
             replace: true,
             controller: function ($scope, $modal, DHIS2URL, $http, $routeParams) {
@@ -935,7 +936,7 @@ var appDirectives = angular.module('appDirectives', [])
                     elem[0].children.forEach(function (child, rowIndex) {
                         child.children.forEach(function (child2, colIndex) {
                             child2.id = scope.config.dataElements[colIndex];
-                            child2.innerHTML = child2.innerHTML + "<debug a-debug='aDebug' report='dataSet' auto-data='data' event='event' dg-id='" + child2.id + "' type='dataElement'></debug>";
+                            child2.innerHTML = child2.innerHTML + "<debug a-debug='aDebug' inner-html='"+child2.innerHTML+"' report='dataSet' auto-data='data' event='event' dg-id='" + child2.id + "' type='dataElement'></debug>";
                             //$compile(child2)(scope);
                         });
                     });
