@@ -398,7 +398,7 @@ var appDirectives = angular.module('appDirectives', [])
                                             url += categoryOption.id;
                                         });
                                         $scope.getDataValueData(url,objectId,orgUnit);
-                                        $http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + $scope.dataSetId + "&orgUnit=" + orgUnit.id + "&startDate="+periodDate.startDate+"&endDate="+periodDate.endDate).then(function(result){
+                                        $http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + $scope.dataSetId + "&orgUnit=" + orgUnit.id + "&startDate="+periodDate.startDate+"&endDate="+periodDate.endDate).then(function(results){
                                             if (results.data.completeDataSetRegistrations) {
                                                 orgUnit.completeDataSetRegistrations = results.data.completeDataSetRegistrations;
                                             } else {

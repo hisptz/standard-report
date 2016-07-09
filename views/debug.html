@@ -55,7 +55,7 @@
                 </tr>
                 <tr ng-if="objectType == 'dataElement'">
                     <td>Domain Type</td>
-                    <td><span ng-if="data.object.domainType == 'AGGREGATE'">{{data.object.domainType}}</span>><span ng-if="data.object.domainType == 'TRACKER'">AUTO-GROWING</span></td>
+                    <td><span ng-if="data.object.domainType == 'AGGREGATE'">{{data.object.domainType}}</span><span ng-if="data.object.domainType == 'TRACKER'">AUTO-GROWING</span></td>
                 </tr>
                 <tr ng-if="objectType == 'dataElement'">
                     <td>Value type</td>
@@ -74,7 +74,7 @@
                     <td>{{estimation}} {{parentScope.aDebug}}</td>
                 </tr>
                 <tr>
-                    <td>Source Values {{organisationUnitLevels}}</td>
+                    <td>Source Values</td>
                     <td>
                         <table class="table table-bordered">
                             <thead ng-if="organisationUnitLevels == 2">
@@ -101,7 +101,8 @@
                             </thead>
                             <tbody ng-if="organisationUnitLevels == 2">
                             <tr ng-repeat-start="child in orgUnit.children | orderBy:'name'">
-                                <td rowspan="{{child.children.length}}">{{child.name}}</td>
+                                <td rowspan="{{child.children.length}}">{{child.name}}<span ng-if="child.completeDataSetRegistrations.length == 0" class="label label-danger"> Incomplete</span>
+                                    <span class="label label-success" ng-if="child.completeDataSetRegistrations.length > 0"> Incomplete</span></td>
                                 <td ng-if="$first" ng-repeat="child1 in child.children | orderBy:'name'">{{child1.name}}({{child1.id}})</td>
                                 <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'">
                                     <span ng-repeat="child1 in child.children | orderBy:'name'" ng-if="$first">
@@ -118,7 +119,8 @@
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}</td>
                             </tr>
                             <tr ng-if="$index != 0" ng-repeat="child1 in child.children | orderBy:'name'">
-                                <td>{{child1.name}}({{child1.id}})</td>
+                                <td>{{child1.name}}({{child1.id}})<span ng-if="child1.completeDataSetRegistrations.length == 0" class="label label-danger"> Incomplete</span>
+                                    <span class="label label-success" ng-if="child1.completeDataSetRegistrations.length > 0"> Incomplete</span></td>
                                 <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'">
 
                                     <span ng-if="!parentScope.special">{{child1.data[id][categoryOption.name]}}</span>
@@ -152,7 +154,8 @@
                             </tbody>
                             <tbody ng-if="organisationUnitLevels <= 0">
                             <tr>
-                                <td>{{orgUnit.name}}({{orgUnit.id}})</td>
+                                <td>{{orgUnit.name}}({{orgUnit.id}})<span ng-if="orgUnit.completeDataSetRegistrations.length == 0" class="label label-danger"> Incomplete</span>
+                                    <span class="label label-success" ng-if="orgUnit.completeDataSetRegistrations.length > 0"> Incomplete</span></td>
                                 <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'">
 
                                     <span ng-if="!parentScope.special">{{orgUnit.data[id][categoryOption.name]}}</span>
