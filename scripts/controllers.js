@@ -288,10 +288,10 @@ var appControllers = angular.module('appControllers', [])
             $location.path("/dataSetReport/report/dataSet/" + $routeParams.dataSet + "/orgUnit/" + $routeParams.orgUnit + "/period/" + $routeParams.period + "/preview");
 
         };
-        $scope.getOrgUnitStatus = function (completeDataSetRegistrations,id) {
+        $scope.getOrgUnitStatus = function (completeDataSetRegistrations,id,period) {
             var returnVal = "Incomplete";
             completeDataSetRegistrations.forEach(function (dataSet) {
-                if (dataSet.organisationUnit.id == id) {
+                if (dataSet.organisationUnit.id == id && period == dataSet.period.name) {
                     returnVal = "Complete";
                 }
             });
@@ -371,6 +371,17 @@ var appControllers = angular.module('appControllers', [])
             }else if(dataSet.periodType == "Monthly"){
                 dataSet.periodTypeValue = 12;
             }
+        }
+        $scope.getOrganisationUnitPeriods = function(dataSet){
+            var returnValue = [];
+            console.log(dataSet.periodType);
+            if(dataSet.periodType == "Quarterly"){
+
+                if($routeParams.period.endsWith("July")){
+                    returnValue = [$routeParams.period.substr(0,4) +"Q3",$routeParams.period.substr(0,4) +"Q4",(parseInt($routeParams.period.substr(0,4)) + 1) +"Q1",(parseInt($routeParams.period.substr(0,4)) + 1) +"Q2"]
+                }
+            }
+            return returnValue;
         }
         //$scope.file = undefinde;
         $scope.watchParameters = function () {
