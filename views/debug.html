@@ -24,11 +24,11 @@
                 <tr>
                     <td style="width: 20%;">Name of <span ng-if="objectType == 'dataElement'">Data Element </span><span
                             ng-if="objectType == 'indicator'">Computed Values </span></td>
-                    <td>{{data.object.name}} </td>
+                    <td>{{data.object.name}}</td>
                 </tr>
                 <tr>
                     <td style="width: 20%;">Name of Report Name</td>
-                    <td>{{parentScope.report.name}} </td>
+                    <td>{{parentScope.report.name}}</td>
                 </tr>
                 <tr>
                     <td style="width: 20%;">Administartive Unit</td>
@@ -55,7 +55,8 @@
                 </tr>
                 <tr ng-if="objectType == 'dataElement'">
                     <td>Domain Type</td>
-                    <td><span ng-if="data.object.domainType == 'AGGREGATE'">{{data.object.domainType}}</span><span ng-if="data.object.domainType == 'TRACKER'">AUTO-GROWING</span></td>
+                    <td><span ng-if="data.object.domainType == 'AGGREGATE'">{{data.object.domainType}}</span><span
+                            ng-if="data.object.domainType == 'TRACKER'">AUTO-GROWING</span></td>
                 </tr>
                 <tr ng-if="objectType == 'dataElement'">
                     <td>Value type</td>
@@ -81,36 +82,59 @@
                             <tr>
                                 <td>Region</td>
                                 <td>District</td>
-                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement' && !parentScope.aDebug">{{categoryOption.name}}({{categoryOption.id}})</td>
-                                <td ng-if="objectType == 'indicator' && !parentScope.aDebug" ng-repeat="dx in matcher">{{getDXName(dx)}}</td>
+                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'"
+                                    ng-if="objectType == 'dataElement' && !parentScope.aDebug">
+                                    {{categoryOption.name}}({{categoryOption.id}})
+                                </td>
+                                <td ng-if="objectType == 'indicator' && !parentScope.aDebug" ng-repeat="dx in matcher">
+                                    {{getDXName(dx)}}
+                                </td>
                             </tr>
                             </thead>
                             <thead ng-if="organisationUnitLevels == 1">
                             <tr>
                                 <td>#</td>
                                 <td>Name</td>
-                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement' && !parentScope.aDebug">{{categoryOption.name}}({{categoryOption.id}})</td>
+                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'"
+                                    ng-if="objectType == 'dataElement' && !parentScope.aDebug">
+                                    {{categoryOption.name}}({{categoryOption.id}})
+                                </td>
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{getDXName(dx)}}</td>
                             </tr>
                             <thead ng-if="organisationUnitLevels <= 0">
                             <tr>
                                 <td>Name</td>
-                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement' && !parentScope.aDebug">{{categoryOption.name}}({{categoryOption.id}})</td>
+                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'"
+                                    ng-if="objectType == 'dataElement' && !parentScope.aDebug">
+                                    {{categoryOption.name}}({{categoryOption.id}})
+                                </td>
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{getDXName(dx)}}</td>
                             </tr>
                             </thead>
                             <tbody ng-if="organisationUnitLevels == 2">
                             <tr ng-repeat-start="child in orgUnit.children | orderBy:'name'">
-                                <td rowspan="{{child.children.length}}">{{child.name}}<span ng-if="child.completeDataSetRegistrations.length == 0" class="label label-danger"> Incomplete</span>
-                                    <span class="label label-success" ng-if="child.completeDataSetRegistrations.length > 0"> Incomplete</span></td>
-                                <td ng-if="$first" ng-repeat="child1 in child.children | orderBy:'name'">{{child1.name}}({{child1.id}})</td>
-                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'">
+                                <td rowspan="{{child.children.length}}">{{child.name}}<span
+                                        ng-if="child.completeDataSetRegistrations.length == 0"
+                                        class="label label-danger"> Incomplete</span>
+                                    <span class="label label-success"
+                                          ng-if="child.completeDataSetRegistrations.length > 0"> Incomplete</span></td>
+                                <td ng-if="$first" ng-repeat="child1 in child.children | orderBy:'name'">
+                                    {{child1.name}}({{child1.id}})
+                                </td>
+                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'"
+                                    ng-if="objectType == 'dataElement'">
                                     <span ng-repeat="child1 in child.children | orderBy:'name'" ng-if="$first">
 
                                         <span ng-if="!parentScope.special">{{child1.data[id][categoryOption.name]}}</span>
                                     <table ng-if="parentScope.special" class="table">
-                                        <tr><th>Period</th><th>Value</th></tr>
-                                        <tr ng-repeat="data in child1.data[id][categoryOption.name]"><td>{{data.period}}</td><td>{{data.value}}</td></tr>
+                                        <tr>
+                                            <th>Period</th>
+                                            <th>Value</th>
+                                        </tr>
+                                        <tr ng-repeat="data in child1.data[id][categoryOption.name]">
+                                            <td>{{data.period}}</td>
+                                            <td>{{data.value}}</td>
+                                        </tr>
                                     </table>
                                     </span>
                                 </td>
@@ -119,14 +143,24 @@
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}</td>
                             </tr>
                             <tr ng-if="$index != 0" ng-repeat="child1 in child.children | orderBy:'name'">
-                                <td>{{child1.name}}({{child1.id}})<span ng-if="child1.completeDataSetRegistrations.length == 0" class="label label-danger"> Incomplete</span>
-                                    <span class="label label-success" ng-if="child1.completeDataSetRegistrations.length > 0"> Incomplete</span></td>
-                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'">
+                                <td>{{child1.name}}({{child1.id}})<span
+                                        ng-if="child1.completeDataSetRegistrations.length == 0"
+                                        class="label label-danger"> Incomplete</span>
+                                    <span class="label label-success"
+                                          ng-if="child1.completeDataSetRegistrations.length > 0"> Incomplete</span></td>
+                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'"
+                                    ng-if="objectType == 'dataElement'">
 
                                     <span ng-if="!parentScope.special">{{child1.data[id][categoryOption.name]}}</span>
                                     <table ng-if="parentScope.special" class="table">
-                                        <tr><th>Period</th><th>Value</th></tr>
-                                        <tr ng-repeat="data in child1.data[id][categoryOption.name]"><td>{{data.period}}</td><td>{{data.value}}</td></tr>
+                                        <tr>
+                                            <th>Period</th>
+                                            <th>Value</th>
+                                        </tr>
+                                        <tr ng-repeat="data in child1.data[id][categoryOption.name]">
+                                            <td>{{data.period}}</td>
+                                            <td>{{data.value}}</td>
+                                        </tr>
                                     </table>
                                 </td>
                                 <!--<td ng-if="objectType == 'dataElement'">{{child1.data[id].actual.join(",")}}</td>
@@ -139,14 +173,23 @@
                             <tr ng-repeat="child in orgUnit.children | orderBy:'name'">
                                 <td>{{$index + 1}}</td>
                                 <td>{{child.name}}({{child.id}})
-                                    <span ng-if="child.completeDataSetRegistrations.length == 0" class="label label-danger"> Incomplete</span>
-                                    <span class="label label-success" ng-if="child.completeDataSetRegistrations.length > 0"> Incomplete</span>
+                                    <span ng-if="child.completeDataSetRegistrations.length == 0"
+                                          class="label label-danger"> Incomplete</span>
+                                    <span class="label label-success"
+                                          ng-if="child.completeDataSetRegistrations.length > 0"> Incomplete</span>
                                 </td>
-                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'">
+                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'"
+                                    ng-if="objectType == 'dataElement'">
                                     <span ng-if="!parentScope.special">{{child.data[id][categoryOption.name]}}</span>
                                     <table ng-if="parentScope.special" class="table">
-                                        <tr><th>Period</th><th>Value</th></tr>
-                                        <tr ng-repeat="data in child.data[id][categoryOption.name]"><td>{{data.period}}</td><td>{{data.value}}</td></tr>
+                                        <tr>
+                                            <th>Period</th>
+                                            <th>Value</th>
+                                        </tr>
+                                        <tr ng-repeat="data in child.data[id][categoryOption.name]">
+                                            <td>{{data.period}}</td>
+                                            <td>{{data.value}}</td>
+                                        </tr>
                                     </table>
                                 </td>
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}</td>
@@ -154,14 +197,25 @@
                             </tbody>
                             <tbody ng-if="organisationUnitLevels <= 0">
                             <tr>
-                                <td>{{orgUnit.name}}({{orgUnit.id}})<span ng-if="orgUnit.completeDataSetRegistrations.length == 0" class="label label-danger"> Incomplete</span>
-                                    <span class="label label-success" ng-if="orgUnit.completeDataSetRegistrations.length > 0"> Incomplete</span></td>
-                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'">
+                                <td>{{orgUnit.name}}({{orgUnit.id}})<span
+                                        ng-if="orgUnit.completeDataSetRegistrations.length == 0"
+                                        class="label label-danger"> Incomplete</span>
+                                    <span class="label label-success"
+                                          ng-if="orgUnit.completeDataSetRegistrations.length > 0"> Incomplete</span>
+                                </td>
+                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'"
+                                    ng-if="objectType == 'dataElement'">
 
                                     <span ng-if="!parentScope.special">{{orgUnit.data[id][categoryOption.name]}}</span>
                                     <table ng-if="parentScope.special" class="table">
-                                        <tr><th>Period</th><th>Value</th></tr>
-                                        <tr ng-repeat="data in orgUnit.data[id][categoryOption.name]"><td>{{data.period}}</td><td>{{data.value}}</td></tr>
+                                        <tr>
+                                            <th>Period</th>
+                                            <th>Value</th>
+                                        </tr>
+                                        <tr ng-repeat="data in orgUnit.data[id][categoryOption.name]">
+                                            <td>{{data.period}}</td>
+                                            <td>{{data.value}}</td>
+                                        </tr>
                                     </table>
                                 </td>
                                 <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{data.data.join(",")}}
@@ -169,12 +223,17 @@
                             </tr>
                             </tbody>
                         </table>
-                        {{parentScope.autoData}}
-                        <table ng-if="data.object.domainType == 'TRACKER'" class="table table-bordered">
+                        <table ng-if="parentScope.autoData" class="table table-bordered">
+                            <thead>
+                            <th>Head</th>
+                            </thead>
                             <tbody>
+
                             <tr ng-repeat="event in parentScope.autoData.events">
                                 <!--<td ng-repeat="dataElement in data.dataElements">{{dataElement.event[dataElement.name]}}</td>-->
-                                <td style="border:1px solid lightgrey" ng-if="event[dataElement.name] != undefined" ng-repeat="dataElement in data.dataElements">{{event[dataElement.name]}}</td>
+                                <td style="border:1px solid lightgrey" ng-if="event[dataElement.name] != undefined"
+                                    ng-repeat="dataElement in data.dataElements">{{event[dataElement.name]}}
+                                </td>
                             </tr>
                             </tbody>
                         </table>
@@ -192,8 +251,16 @@
                     <td>For Developer Use</td>
                     <td>
                         <table class="table table-bordered">
-                            <tr><td>Object ID</td><td>{{id}} </td></tr>
-                            <tr><td>Url</td><td>#/dataSetReport/report/dataSet/{{param.dataSet}}/orgUnit/{{param.orgUnit}}/period/{{param.period}}/debug</td></tr>
+                            <tr>
+                                <td>Object ID</td>
+                                <td>{{id}}</td>
+                            </tr>
+                            <tr>
+                                <td>Url</td>
+                                <td>
+                                    #/dataSetReport/report/dataSet/{{param.dataSet}}/orgUnit/{{param.orgUnit}}/period/{{param.period}}/debug
+                                </td>
+                            </tr>
                         </table>
                     </td>
                 </tr>
