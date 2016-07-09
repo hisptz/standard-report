@@ -382,8 +382,11 @@ var appControllers = angular.module('appControllers', [])
                             $scope.loadFile = true;
 
                         },function(error){
-                            if (error.data.httpStatusCode == 4043) {
+                            $scope.loadFile = true;
+                            if (error.data.httpStatusCode == 403) {
                                 toaster.pop('error', "Error" + error.status, "Access to archive is denied. Please contact Administrator for access.");
+                            }else if (error.data.httpStatusCode == 404) {
+                                toaster.pop('error', "Error" + error.status, "Archive not available.");
                             }
                         })
                     }, function (error) {
