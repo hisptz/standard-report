@@ -361,6 +361,7 @@ var appDirectives = angular.module('appDirectives', [])
                                 return period;
                             }
                             var calculatedPeriod = $scope.getPeriod();
+                            var periodDate = ReportService.getPeriodDate($routeParams.period);
                             $scope.fetchOrgUnitData = function (objectId, orgUnit, type,second) {
                                 if (type == "indicator") {
                                     $scope.matcher.forEach(function (id) {
@@ -396,7 +397,14 @@ var appDirectives = angular.module('appDirectives', [])
                                             }
                                             url += categoryOption.id;
                                         });
-                                        $scope.getDataValueData(url,objectId,orgUnit)
+                                        $scope.getDataValueData(url,objectId,orgUnit);
+                                        $http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + $scope.dataSetId + "&orgUnit=" + orgUnit.id + "&startDate="+periodDate.startDate+"&endDate="+periodDate.endDate).then(function(result){
+                                            if (results.data.completeDataSetRegistrations) {
+                                                orgUnit.completeDataSetRegistrations = results.data.completeDataSetRegistrations;
+                                            } else {
+                                                orgUnit.completeDataSetRegistrations = [];
+                                            }
+                                        })
                                     }
                                 }
                                 if(orgUnit.children)
@@ -435,7 +443,7 @@ var appDirectives = angular.module('appDirectives', [])
                                                 }else{
                                                     lowLevel = organisationUnit.level;
                                                 }
-
+                                                $scope.dataSetId = dataSet.id;
                                                 $scope.dataSetOrganisationUnit = organisationUnit;
                                             }
                                         })

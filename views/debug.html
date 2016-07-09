@@ -136,7 +136,10 @@
                             <tbody ng-if="organisationUnitLevels == 1">
                             <tr ng-repeat="child in orgUnit.children | orderBy:'name'">
                                 <td>{{$index + 1}}</td>
-                                <td>{{child.name}}({{child.id}})</td>
+                                <td>{{child.name}}({{child.id}})
+                                    <span ng-if="child.completeDataSetRegistrations.length == 0" class="label label-danger"> Incomplete</span>
+                                    <span class="label label-success" ng-if="child.completeDataSetRegistrations.length > 0"> Incomplete</span>
+                                </td>
                                 <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'" ng-if="objectType == 'dataElement'">
                                     <span ng-if="!parentScope.special">{{child.data[id][categoryOption.name]}}</span>
                                     <table ng-if="parentScope.special" class="table">
