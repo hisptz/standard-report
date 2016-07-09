@@ -384,11 +384,16 @@ var appControllers = angular.module('appControllers', [])
                         },function(error){
                             $scope.loadFile = true;
                             console.log(error);
-                            if (error.data.httpStatusCode == 403) {
-                                toaster.pop('error', "Error" + error.status, "Access to archive is denied. Please contact Administrator for access.");
-                            }else if (error.data.httpStatusCode == 404) {
-                                toaster.pop('error', "Error" + error.status, "Archive not available.");
+                            if(error.status){
+                                if (error.status == 404) {
+                                    toaster.pop('error', "Error" + error.status, "Archive not available.");
+                                }
+                            }else{
+                                if (error.data.httpStatusCode == 403) {
+                                    toaster.pop('error', "Error" + error.status, "Access to archive is denied. Please contact Administrator for access.");
+                                }
                             }
+
                         })
                     }, function (error) {
                         if (error.data.httpStatusCode == 404) {
