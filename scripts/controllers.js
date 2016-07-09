@@ -505,9 +505,12 @@ var appControllers = angular.module('appControllers', [])
                             $scope.dataStore.notExecuted = results.data;
                             $scope.watchParameters();
                         },function(){
+                            $scope.dataStore.notExecuted = [];
                             $scope.watchParameters();
                         });
                     },function(){
+                        $scope.dataStore.notExecuted = [];
+                        $scope.dataStore.executed = [];
                         $scope.watchParameters();
                     });
                     $scope.loadTracker = undefined;
