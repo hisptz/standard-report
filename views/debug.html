@@ -239,7 +239,7 @@
                         </table>
                     </td>
                 </tr>
-                <tr ng-if="objectType == 'dataElement'">
+                <tr ng-if="objectType == 'dataElement' && data.object.domainType != 'TRACKER'">
                     <td>Aggregation Results Value</td>
                     <td>{{data.data.join(",")}}</td>
                 </tr>
