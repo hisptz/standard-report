@@ -383,6 +383,7 @@ var appControllers = angular.module('appControllers', [])
 
                         },function(error){
                             $scope.loadFile = true;
+                            console.log(error);
                             if (error.data.httpStatusCode == 403) {
                                 toaster.pop('error', "Error" + error.status, "Access to archive is denied. Please contact Administrator for access.");
                             }else if (error.data.httpStatusCode == 404) {
