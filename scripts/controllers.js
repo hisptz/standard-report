@@ -175,7 +175,6 @@ var appControllers = angular.module('appControllers', [])
             var returnVal = false;
             $scope.data.periodTypes[$scope.data.dataSet.periodType].list.forEach(function(p){
                 if(p.value == period){
-                    console.log(p);
                     returnVal = true;
                 }
             })
@@ -375,7 +374,7 @@ var appControllers = angular.module('appControllers', [])
                             $scope.loadingArchive = false;
                             if (!$scope.data.archive) {
                                 $scope.completeDataSetRegistrationsLoading = true;
-                                $http.get(DHIS2URL + "api/dataSets/" + $routeParams.dataSet + ".json?fields=attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
+                                $http.get(DHIS2URL + "api/dataSets/" + $routeParams.dataSet + ".json?fields=name,attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
                                     $scope.dataSet = results.data;
                                     $scope.isNotAuthorized = function () {
                                         var returnValue = true;
@@ -817,7 +816,7 @@ var appControllers = angular.module('appControllers', [])
                 }else{
 
                 }
-                div += "<debug dg-id='"+processed+"' "+addition+"></debug>";
+                div += "<debug report='dataSet' dg-id='"+processed+"' "+addition+"></debug>";
 
             }
             div += "</div>";
@@ -949,8 +948,9 @@ var appControllers = angular.module('appControllers', [])
         };
         //Load dataset informatioin
 
-        $http.get(DHIS2URL + "api/dataSets/" + $routeParams.dataSet + ".json?fields=attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
+        $http.get(DHIS2URL + "api/dataSets/" + $routeParams.dataSet + ".json?fields=name,attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
             $scope.dataSet = results.data;
+            console.log($scope.dataSet);
             //Load organisation Unit data
             $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,children[id,name]").then(function (results) {
                 $scope.orgUnit = results.data;
@@ -997,7 +997,7 @@ var appControllers = angular.module('appControllers', [])
                         if (!$scope.data.archive) {
                             $scope.completeDataSetRegistrationsLoading = true;
                             var periodDate = ReportService.getPeriodDate($routeParams.period);
-                            $http.get(DHIS2URL + "api/dataSets/" + $routeParams.dataSet + ".json?fields=attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
+                            $http.get(DHIS2URL + "api/dataSets/" + $routeParams.dataSet + ".json?fields=name,attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
                                 $scope.dataSet = results.data;
                                 $scope.isNotAuthorized = function () {
                                     var returnValue = true;

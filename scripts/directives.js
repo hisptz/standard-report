@@ -213,7 +213,8 @@ var appDirectives = angular.module('appDirectives', [])
                 type: "@",
                 dgOrgUnit: "@",
                 eventId: "=",
-                special: "@"
+                special: "@",
+                report:"="
             },
             replace: true,
             controller: function ($scope, $modal, DHIS2URL, $http, $routeParams) {
@@ -224,7 +225,7 @@ var appDirectives = angular.module('appDirectives', [])
                         templateUrl: 'myModalContent.html',
                         controller: function ($scope, parentScope, $modalInstance, DebugService, ReportService,$q) {
 
-
+                            console.log(parentScope);
                             $scope.param = $routeParams;
                             $scope.getDateName = function(period){
                                 if(period.endsWith("July")){
@@ -997,7 +998,6 @@ var appDirectives = angular.module('appDirectives', [])
                             childsToRemove.forEach(function (element) {
                                 element.remove();
                             })
-                            console.log(childsToRemove)
                         })
                 });
 
