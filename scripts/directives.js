@@ -212,9 +212,10 @@ var appDirectives = angular.module('appDirectives', [])
                 dgId: "@",
                 type: "@",
                 dgOrgUnit: "@",
-                eventId: "=",
+                event: "=",
                 special: "@",
-                report:"="
+                report:"=",
+                autoData:""
             },
             replace: true,
             controller: function ($scope, $modal, DHIS2URL, $http, $routeParams) {
@@ -233,6 +234,7 @@ var appDirectives = angular.module('appDirectives', [])
                             $scope.estimation = "Not Applicable";
                             $scope.id = parentScope.dgId;
                             $scope.parentScope = parentScope;
+                            console.log($scope.parentScope.event);
                             var object = parentScope.dgId;
                             if (object.indexOf(".") > -1) {
                                 object = object.substr(0, object.indexOf("."));
@@ -374,7 +376,7 @@ var appDirectives = angular.module('appDirectives', [])
                                         promises.push($http.get(DHIS2URL + "api/events.json?program=" + parentScope.aDebug.programId + "&startDate=" + periods.startDate + "&endDate=" + periods.endDate + "&orgUnit:" + orgUnit.id).then(function (results) {
                                             //console.log("DataValues:", results);
                                             results.data.events.forEach(function (event) {
-                                                if(event.event == parentScope.eventId && event.orgUnit == objectId){
+                                                if(event.event == parentScope.event.Event && event.orgUnit == objectId){
                                                     event.dataValues.forEach(function(dataValue){
                                                         if(dataValue.dataElement == parentScope.dgId){
                                                             orgUnit.data[objectId] = dataValue.value;
@@ -475,7 +477,7 @@ var appDirectives = angular.module('appDirectives', [])
                                         promises.push($http.get(DHIS2URL + "api/events.json?program=" + parentScope.aDebug.programId + "&startDate=" + periods.startDate + "&endDate=" + periods.endDate + "&orgUnit:" + $routeParams.orgUnit).then(function (results) {
                                             console.log("DataValues:", results);
                                             results.data.events.forEach(function (event) {
-                                                if(event.event == parentScope.eventId){
+                                                if(event.event == parentScope.event.Event){
                                                     event.dataValues.forEach(function(dataValue){
                                                         if(dataValue.dataElement == parentScope.dgId){
                                                             $scope.data.data.push(dataValue.value);
@@ -933,7 +935,7 @@ var appDirectives = angular.module('appDirectives', [])
                         child.children.forEach(function (child2, colIndex) {
                             child2.id = scope.config.dataElements[colIndex];
                             console.log(child2);
-                            child2.innerHTML = child2.innerHTML + "<debug a-debug='aDebug'  event-id='event.Event' dg-id='" + child2.id + "' type='dataElement'>D</debug>";
+                            child2.innerHTML = child2.innerHTML + "<debug a-debug='aDebug' auto-data='data' event='event' dg-id='" + child2.id + "' type='dataElement'></debug>";
                             //$compile(child2)(scope);
                         });
                     });
@@ -1020,6 +1022,6 @@ var appDirectives = angular.module('appDirectives', [])
 
                 }
             },
-            templateUrl: 'views/autogrowingDebug.html'
+            templateUrl: 'views/autogrowing.html'
         }
     })
