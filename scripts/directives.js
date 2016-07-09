@@ -422,6 +422,7 @@ var appDirectives = angular.module('appDirectives', [])
                                 var url = DHIS2URL + "api/" + parentScope.type + "s/" + object + ".json?fields=:all,dataSets[organisationUnits[id,path,level],id,name,attributeValues,periodType,dataEntryForm],attributeValues[:all,attribute[:all]]";
                                 $http.get(url).then(function (results) {
                                     $scope.data.object = results.data;
+                                    $scope.loaded = true;
                                     $scope.data.object.attributeValues.forEach(function (attributeValue) {
                                         if (attributeValue.attribute.name == "Estimation") {
                                             $scope.estimation = attributeValue.value;
@@ -466,7 +467,7 @@ var appDirectives = angular.module('appDirectives', [])
                                         var url = DHIS2URL + "api/dataElements.json?filter=id:in:[" + dataElementIds.join(",") + "]&fields=:all,categoryCombo[categoryOptionCombos[id,name]],dataSets[name,attributeValues,periodType,dataEntryForm],attributeValues[:all,attribute[:all]]";
                                         $http.get(url).then(function (results) {
                                             $scope.dataElements = (results.data.dataElements);
-                                            $scope.loaded = true;
+
                                         })
                                     }
                                     $scope.data.object.dataSets.forEach(function (dataSet) {
