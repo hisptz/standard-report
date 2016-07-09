@@ -978,6 +978,27 @@ var appDirectives = angular.module('appDirectives', [])
                         });
                     });
                     $compile(elem[0].children)(scope);
+                        $timeout(function() {
+                            var childsToRemove = [];
+                            elem[0].children.forEach(function (child, rowIndex) {
+                                var dataElements = [];
+                                child.children.forEach(function (child2, colIndex) {
+                                    //child2.id = scope.config.dataElements[colIndex];
+                                    if (dataElements.indexOf(child2.id) > -1) {
+                                        childsToRemove.push(child2);
+                                    } else {
+                                        dataElements.push(child2.id);
+                                    }
+
+                                    //child2.removeAttribute("ng-repeat");
+                                    //$compile(child2)(scope);
+                                });
+                            });
+                            childsToRemove.forEach(function (element) {
+                                element.remove();
+                            })
+                            console.log(childsToRemove)
+                        })
                 });
 
             },
