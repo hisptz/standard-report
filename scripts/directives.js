@@ -948,11 +948,11 @@ var appDirectives = angular.module('appDirectives', [])
                             var existingRows = []
                             elem[0].children.forEach(function (child, rowIndex) {
                                 console.log(child);
-                                console.log(child.event);
+                                console.log(child.getAttribute('event'));
                                 if (existingRows.indexOf(child.getAttribute('event')) > -1) {
-                                    childsToRemove.push(child.event);
+                                    childsToRemove.push(child.getAttribute('event'));
                                 }else{
-                                    existingRows.push(child.event);
+                                    existingRows.push(child.getAttribute('event'));
                                 }
                                 var dataElements = [];
                                 child.children.forEach(function (child2, colIndex) {
