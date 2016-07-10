@@ -950,7 +950,7 @@ var appDirectives = angular.module('appDirectives', [])
                                 console.log(child);
                                 console.log(child.getAttribute('event'));
                                 if (existingRows.indexOf(child.getAttribute('event')) > -1) {
-                                    childsToRemove.push(child.getAttribute('event'));
+                                    childsToRemove.push(child);
                                 }else{
                                     existingRows.push(child.getAttribute('event'));
                                 }
