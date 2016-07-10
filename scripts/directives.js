@@ -371,7 +371,7 @@ var appDirectives = angular.module('appDirectives', [])
                                         $scope.fetchOrgUnitData(id, orgUnit, "dataElement");
                                     });
                                 } else {
-                                    if($scope.orgUnit.level == orgUnit.level || ($scope.organisationUnitLevels + $scope.orgUnit.level == orgUnit.level ) || $scope.dataSetOrganisationUnit.level == orgUnit.level)
+
                                     if (parentScope.aDebug) {
 
                                         promises.push($http.get(DHIS2URL + "api/events.json?program=" + parentScope.aDebug.programId + "&startDate=" + periods.startDate + "&endDate=" + periods.endDate + "&orgUnit:" + orgUnit.id).then(function (results) {
@@ -387,27 +387,29 @@ var appDirectives = angular.module('appDirectives', [])
                                             });
                                         }));
                                     } else {
-                                        var objectRequest = "";
-                                        if(objectId.indexOf(".") > -1){
-                                            objectRequest ="de=" + objectId.substr(0,objectId.indexOf(".")) + "&co=" + objectId.substr(objectId.indexOf(".") + 1);
-                                        }else{
-                                            objectRequest ="de=" + objectId;
+                                        if($scope.orgUnit.level == orgUnit.level || ($scope.organisationUnitLevels + $scope.orgUnit.level == orgUnit.level ) || $scope.dataSetOrganisationUnit.level == orgUnit.level){
+                                            var objectRequest = "";
+                                            if(objectId.indexOf(".") > -1){
+                                                objectRequest ="de=" + objectId.substr(0,objectId.indexOf(".")) + "&co=" + objectId.substr(objectId.indexOf(".") + 1);
+                                            }else{
+                                                objectRequest ="de=" + objectId;
+                                            }
+                                            var url = DHIS2URL + "api/analytics.json?dimension=dx:" +objectId+ "&dimension=pe:" + calculatedPeriod + "&filter=ou:" + orgUnit.id + "&displayProperty=NAME&dimension=" + $scope.category.id +":";
+                                            $scope.category.categoryOptions.forEach(function(categoryOption,index){
+                                                if(index != 0){
+                                                    url += ";"
+                                                }
+                                                url += categoryOption.id;
+                                            });
+                                            $scope.getDataValueData(url,objectId,orgUnit);
+                                            $http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + $scope.dataSetId + "&orgUnit=" + orgUnit.id + "&startDate="+periodDate.startDate+"&endDate="+periodDate.endDate).then(function(results){
+                                                if (results.data.completeDataSetRegistrations) {
+                                                    orgUnit.completeDataSetRegistrations = results.data.completeDataSetRegistrations;
+                                                } else {
+                                                    orgUnit.completeDataSetRegistrations = [];
+                                                }
+                                            })
                                         }
-                                        var url = DHIS2URL + "api/analytics.json?dimension=dx:" +objectId+ "&dimension=pe:" + calculatedPeriod + "&filter=ou:" + orgUnit.id + "&displayProperty=NAME&dimension=" + $scope.category.id +":";
-                                        $scope.category.categoryOptions.forEach(function(categoryOption,index){
-                                            if(index != 0){
-                                                url += ";"
-                                            }
-                                            url += categoryOption.id;
-                                        });
-                                        $scope.getDataValueData(url,objectId,orgUnit);
-                                        $http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + $scope.dataSetId + "&orgUnit=" + orgUnit.id + "&startDate="+periodDate.startDate+"&endDate="+periodDate.endDate).then(function(results){
-                                            if (results.data.completeDataSetRegistrations) {
-                                                orgUnit.completeDataSetRegistrations = results.data.completeDataSetRegistrations;
-                                            } else {
-                                                orgUnit.completeDataSetRegistrations = [];
-                                            }
-                                        })
                                     }
                                 }
                                 if(orgUnit.children)
