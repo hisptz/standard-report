@@ -949,7 +949,7 @@ var appDirectives = angular.module('appDirectives', [])
                             elem[0].children.forEach(function (child, rowIndex) {
                                 console.log(child);
                                 console.log(child.event);
-                                if (existingRows.indexOf(child.event) > -1) {
+                                if (existingRows.indexOf(child.getAttribute('event')) > -1) {
                                     childsToRemove.push(child.event);
                                 }else{
                                     existingRows.push(child.event);
