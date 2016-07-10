@@ -380,6 +380,33 @@ var appControllers = angular.module('appControllers', [])
                 if($routeParams.period.endsWith("July")){
                     returnValue = [$routeParams.period.substr(0,4) +"Q3",$routeParams.period.substr(0,4) +"Q4",(parseInt($routeParams.period.substr(0,4)) + 1) +"Q1",(parseInt($routeParams.period.substr(0,4)) + 1) +"Q2"]
                 }
+            }else if(dataSet.periodType == "Monthly"){
+                if($routeParams.period.endsWith("July")){
+                    returnValue = [$routeParams.period.substr(0,4) +"07",
+                        $routeParams.period.substr(0,4) +"08",
+                        $routeParams.period.substr(0,4) +"09",
+                        $routeParams.period.substr(0,4) +"10",
+                        $routeParams.period.substr(0,4) +"11",
+                        $routeParams.period.substr(0,4) +"12",
+                        (parseInt($routeParams.period.substr(0,4)) + 1) +"01",
+                        (parseInt($routeParams.period.substr(0,4)) + 1) +"02",
+                        (parseInt($routeParams.period.substr(0,4)) + 1) +"03",
+                        (parseInt($routeParams.period.substr(0,4)) + 1) +"04",
+                        (parseInt($routeParams.period.substr(0,4)) + 1) +"05",
+                        (parseInt($routeParams.period.substr(0,4)) + 1) +"06"
+                    ]
+                }else if($routeParams.period.indexOf("Q") > -1){
+                    var quarterLastMonth = parseInt($routeParams.period.substr(5)) * 3;
+                    for(var i = quarterLastMonth - 2; i <= quarterLastMonth;i++){
+                        var monthVal = i;
+                        if(i < 10){
+                            monthVal = "0" + i;
+                        }
+                        returnValue.push($routeParams.period.substr(0,4) + monthVal);
+                    }
+                }else{
+                    returnValue.push($routeParams.period);
+                }
             }
             return returnValue;
         }
