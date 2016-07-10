@@ -279,7 +279,7 @@ var appDirectives = angular.module('appDirectives', [])
                             var promises = [];
                             $scope.loading = true;
                             var counter = 0;
-                            $scope.getDataValueData = function(url,objectId,orgUnit,categoryOptionCombo){
+                            $scope.getDataValueData = function(url,objectId,orgUnit,dataSet){
                                 promises.push($http.get(url).then(function (results) {
                                     if(!orgUnit.data[objectId]){
                                         orgUnit.data[objectId] = {};
@@ -297,31 +297,44 @@ var appDirectives = angular.module('appDirectives', [])
                                         }
                                     })
                                     results.data.rows.forEach(function(row){
-                                        $scope.category.categoryOptions.forEach(function(categoryOption,index){
-                                            if(categoryOption.id == row[categoryOptionIndex]){
-                                                if($scope.parentScope.special){
-                                                    if(orgUnit.data[objectId][categoryOption.name]){
-                                                        orgUnit.data[objectId][categoryOption.name].push({
-                                                            period:row[periodIndex],
-                                                            value:row[dataIndex]
-                                                        });
-                                                    }else{
-                                                        orgUnit.data[objectId][categoryOption.name] = [{
-                                                            period:row[periodIndex],
-                                                            value:row[dataIndex]
-                                                        }];
+                                        dataSet.categoryCombo.categories[0].categoryCombos.forEach(function(categoryCombo){
+                                            categoryCombo.categoryOptionCombos.forEach(function(categoryOptionCombo,index){
+                                                if(categoryOptionCombo.categoryOptions[0].id == row[categoryOptionIndex]){
+                                                    if(!orgUnit.data[objectId][dataSet.id]){
+                                                        orgUnit.data[objectId][dataSet.id] = {}
                                                     }
-                                                }else{
-                                                    orgUnit.data[objectId][categoryOption.name] = row[dataIndex];
+                                                    if($scope.parentScope.special){
+                                                        if(orgUnit.data[objectId][dataSet.id][categoryOptionCombo.name]){
+                                                            orgUnit.data[objectId][dataSet.id][categoryOptionCombo.name].push({
+                                                                period:row[periodIndex],
+                                                                value:row[dataIndex]
+                                                            });
+                                                        }else{
+                                                            orgUnit.data[objectId][dataSet.id][categoryOptionCombo.name] = [{
+                                                                period:row[periodIndex],
+                                                                value:row[dataIndex]
+                                                            }];
+                                                        }
+                                                    }else{
+                                                        orgUnit.data[objectId][dataSet.id][categoryOptionCombo.name] = row[dataIndex];
+                                                    }
                                                 }
-                                            }
 
-                                        });
+                                            })
+                                        })
                                     })
 
                                 },function(){
 
                                 }));
+                                promises.push($http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + dataSet.id + "&orgUnit=" + orgUnit.id + "&startDate="+periodDate.startDate+"&endDate="+periodDate.endDate).then(function(results){
+                                    orgUnit[dataSet.id] = {};
+                                    if (results.data.completeDataSetRegistrations) {
+                                        orgUnit[dataSet.id].completeDataSetRegistrations = results.data.completeDataSetRegistrations;
+                                    } else {
+                                        orgUnit[dataSet.id].completeDataSetRegistrations = [];
+                                    }
+                                }))
                             };
                             $scope.getPeriod = function(){
                                 var period = $routeParams.period;
@@ -363,10 +376,10 @@ var appDirectives = angular.module('appDirectives', [])
                             }
                             var calculatedPeriod = $scope.getPeriod();
                             var periodDate = ReportService.getPeriodDate($routeParams.period);
-                            $scope.fetchOrgUnitData = function (objectId, orgUnit, type,second) {
+                            $scope.fetchOrgUnitData = function (objectId, orgUnit, type,dataSet) {
                                 if (type == "indicator") {
                                     $scope.matcher.forEach(function (id) {
-                                        $scope.fetchOrgUnitData(id, orgUnit, "dataElement");
+                                        $scope.fetchOrgUnitData(id, orgUnit, "dataElement",dataSet);
                                     });
                                 } else {
 
@@ -380,21 +393,20 @@ var appDirectives = angular.module('appDirectives', [])
                                             }else{
                                                 objectRequest ="de=" + objectId;
                                             }
-                                            var url = DHIS2URL + "api/analytics.json?dimension=dx:" +objectId+ "&dimension=pe:" + calculatedPeriod + "&filter=ou:" + orgUnit.id + "&displayProperty=NAME&dimension=" + $scope.category.id +":";
-                                            $scope.category.categoryOptions.forEach(function(categoryOption,index){
-                                                if(index != 0){
-                                                    url += ";"
-                                                }
-                                                url += categoryOption.id;
-                                            });
-                                            $scope.getDataValueData(url,objectId,orgUnit);
-                                            $http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + $scope.dataSetId + "&orgUnit=" + orgUnit.id + "&startDate="+periodDate.startDate+"&endDate="+periodDate.endDate).then(function(results){
-                                                if (results.data.completeDataSetRegistrations) {
-                                                    orgUnit.completeDataSetRegistrations = results.data.completeDataSetRegistrations;
-                                                } else {
-                                                    orgUnit.completeDataSetRegistrations = [];
-                                                }
+                                            var url = DHIS2URL + "api/analytics.json?dimension=dx:" +objectId+ "&dimension=pe:" + calculatedPeriod + "&filter=ou:" + orgUnit.id + "&displayProperty=NAME&dimension=";
+                                            dataSet.categoryCombo.categories.forEach(function(category){
+                                                category.categoryCombos.forEach(function(categoryCombo){
+                                                    url += category.id +":";
+                                                    categoryCombo.categoryOptionCombos.forEach(function(categoryOptionCombo,index){
+                                                        if(index != 0){
+                                                            url += ";"
+                                                        }
+                                                        url += categoryOptionCombo.categoryOptions[0].id;
+
+                                                    })
+                                                })
                                             })
+                                            $scope.getDataValueData(url,objectId,orgUnit,dataSet);
                                         }
                                     }
                                 }
@@ -402,14 +414,15 @@ var appDirectives = angular.module('appDirectives', [])
                                 {
                                     orgUnit.children.forEach(function(child){
                                         child.data = {};
-                                        $scope.fetchOrgUnitData(objectId, child, type,"second");
+                                        $scope.fetchOrgUnitData(objectId, child, type,dataSet);
                                     })
                                 }
                             };
                             $http.get(DHIS2URL + "api/categories.json?fields=:all,categoryOptions[:all]&filter=name:eq:Data Dimension").then(function(result){
                                 $scope.category = result.data.categories[0];
-                                var url = DHIS2URL + "api/" + parentScope.type + "s/" + object + ".json?fields=:all,dataSets[organisationUnits[id,path,level],id,name,attributeValues,periodType,dataEntryForm],attributeValues[:all,attribute[:all]]";
+                                var url = DHIS2URL + "api/" + parentScope.type + "s/" + object + ".json?fields=:all,dataSets[categoryCombo[categories[id,categoryCombos[id,name,categoryOptionCombos[id,name,categoryOptions]]]],organisationUnits[id,path,level],id,name,attributeValues[:all,attribute[:all],periodType,dataEntryForm],attributeValues[:all,attribute[:all]]";
                                 $http.get(url).then(function (results) {
+
                                     $scope.data.object = results.data;
                                     $scope.loaded = true;
                                     $scope.data.object.attributeValues.forEach(function (attributeValue) {
@@ -417,6 +430,7 @@ var appDirectives = angular.module('appDirectives', [])
                                             $scope.estimation = attributeValue.value;
                                         }
                                     });
+                                    console.log($scope.data.object.dataSets);
                                     if($scope.parentScope.special){
                                         if($scope.parentScope.special == "cumulativeToDate"){
                                             $scope.data.object.aggregationType = "CUMULATIVE TO DATE";
@@ -460,6 +474,15 @@ var appDirectives = angular.module('appDirectives', [])
                                         })
                                     }
                                     $scope.data.object.dataSets.forEach(function (dataSet) {
+                                        dataSet.isReport = function(){
+                                            var returnVal = false;
+                                            this.attributeValues.forEach(function(attributeValue){
+                                                if(attributeValue.attribute.name == "Is Report"){
+                                                    returnVal = true;
+                                                }
+                                            })
+                                            return returnVal;
+                                        }
                                         if (dataSet.name.indexOf("DR01") > -1) {
                                             $scope.TOR = DebugService["DR01"][parentScope.dgId]
                                         }
@@ -498,7 +521,12 @@ var appDirectives = angular.module('appDirectives', [])
                                             $scope.fetchOrgUnitData(parentScope.dgId, child, parentScope.type);
                                         })*/
                                         $scope.orgUnit.data = {};
-                                        $scope.fetchOrgUnitData(parentScope.dgId, $scope.orgUnit, parentScope.type);
+                                        $scope.data.object.dataSets.forEach(function (dataSet) {
+                                            if(!dataSet.isReport()){
+                                                $scope.fetchOrgUnitData(parentScope.dgId, $scope.orgUnit, parentScope.type,dataSet);
+                                            }
+                                        });
+
                                         $q.all(promises).then(function () {
                                             $scope.loading = false;
                                         })

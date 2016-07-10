@@ -3,8 +3,9 @@
         .modal-dialog {
             width: 90%;
         }
-        .orange{
-            background-color:orange;
+
+        .orange {
+            background-color: orange;
         }
     </style>
 
@@ -80,152 +81,163 @@
                 <tr>
                     <td>Source Values</td>
                     <td>
-                        <table ng-if="data.object.domainType != 'TRACKER'" class="table table-bordered">
-                            <thead ng-if="organisationUnitLevels == 2">
-                            <tr>
-                                <td>Region</td>
-                                <td>District</td>
-                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'"
-                                    ng-if="objectType == 'dataElement' && !parentScope.aDebug">
-                                    {{categoryOption.name}}({{categoryOption.id}})
-                                </td>
-                                <td ng-if="objectType == 'indicator' && !parentScope.aDebug" ng-repeat="dx in matcher">
-                                    {{getDXName(dx)}}
-                                </td>
-                            </tr>
-                            </thead>
-                            <thead ng-if="organisationUnitLevels == 1">
-                            <tr>
-                                <td>#</td>
-                                <td>Name</td>
-                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'"
-                                    ng-if="objectType == 'dataElement' && !parentScope.aDebug">
-                                    {{categoryOption.name}}({{categoryOption.id}})
-                                </td>
-                                <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{getDXName(dx)}}</td>
-                            </tr>
-                            <thead ng-if="organisationUnitLevels <= 0">
-                            <tr>
-                                <td>Name</td>
-                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'"
-                                    ng-if="objectType == 'dataElement' && !parentScope.aDebug">
-                                    {{categoryOption.name}}({{categoryOption.id}})
-                                </td>
-                                <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{getDXName(dx)}}</td>
-                            </tr>
-                            </thead>
-                            <tbody ng-if="organisationUnitLevels == 2">
-                            <tr ng-repeat-start="child in orgUnit.children | orderBy:'name'">
-                                <td rowspan="{{child.children.length}}">{{child.name}}<span
-                                        ng-if="child.completeDataSetRegistrations.length == 0"
-                                        class="label label-danger"> Incomplete</span>
+                        <div ng-if="!dataSet.isReport()" ng-repeat="dataSet in data.object.dataSets">
+                            {{dataSet.name}}
+                            <table ng-if="data.object.domainType != 'TRACKER'" class="table table-bordered">
+                                <thead ng-if="organisationUnitLevels == 2">
+                                <tr>
+                                    <td>Region</td>
+                                    <td>District</td>
+                                    <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'"
+                                        ng-if="objectType == 'dataElement' && !parentScope.aDebug">
+                                        {{categoryOptionCombo.name}}({{categoryOption.id}})
+                                    </td>
+                                    <td ng-if="objectType == 'indicator' && !parentScope.aDebug"
+                                        ng-repeat="dx in matcher">
+                                        {{getDXName(dx)}}
+                                    </td>
+                                </tr>
+                                </thead>
+                                <thead ng-if="organisationUnitLevels == 1">
+                                <tr>
+                                    <td>#</td>
+                                    <td>Name</td>
+                                    <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'"
+                                        ng-if="objectType == 'dataElement' && !parentScope.aDebug">
+                                        {{categoryOptionCombo.name}}({{categoryOptionCombo.categoryOptions[0].id}})
+                                    </td>
+                                    <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{getDXName(dx)}}
+                                    </td>
+                                </tr>
+                                <thead ng-if="organisationUnitLevels <= 0">
+                                <tr>
+                                    <td>Name</td>
+                                    <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'"
+                                        ng-if="objectType == 'dataElement' && !parentScope.aDebug">
+                                        {{categoryOptionCombo.name}}({{categoryOption.id}})
+                                    </td>
+                                    <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{getDXName(dx)}}
+                                    </td>
+                                </tr>
+                                </thead>
+                                <tbody ng-if="organisationUnitLevels == 2">
+                                <tr ng-repeat-start="child in orgUnit.children | orderBy:'name'">
+                                    <td rowspan="{{child.children.length}}">{{child.name}}<span
+                                            ng-if="child.completeDataSetRegistrations.length == 0"
+                                            class="label label-danger"> Incomplete</span>
                                     <span class="label label-success"
-                                          ng-if="child.completeDataSetRegistrations.length > 0"> Incomplete</span></td>
-                                <td ng-if="$first" ng-repeat="child1 in child.children | orderBy:'name'">
-                                    {{child1.name}}({{child1.id}})
-                                </td>
-                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'"
-                                    ng-if="objectType == 'dataElement'">
+                                          ng-if="child.completeDataSetRegistrations.length > 0"> Complete</span></td>
+                                    <td ng-if="$first" ng-repeat="child1 in child.children | orderBy:'name'">
+                                        {{child1.name}}({{child1.id}})
+                                    </td>
+                                    <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'"
+                                        ng-if="objectType == 'dataElement'">
                                     <span ng-repeat="child1 in child.children | orderBy:'name'" ng-if="$first">
 
-                                        <span ng-if="!parentScope.special">{{child1.data[id][categoryOption.name]}}</span>
+                                        <span ng-if="!parentScope.special">{{child1.data[id][dataSet.id][categoryOptionCombo.name]}}</span>
                                     <table ng-if="parentScope.special" class="table">
                                         <tr>
                                             <th>Period</th>
                                             <th>Value</th>
                                         </tr>
-                                        <tr ng-repeat="data in child1.data[id][categoryOption.name]">
+                                        <tr ng-repeat="data in child1.data[id][categoryOptionCombo.name]">
                                             <td>{{data.period}}</td>
                                             <td>{{data.value}}</td>
                                         </tr>
                                     </table>
                                     </span>
-                                </td>
-                                <!--<td ng-repeat="child1 in child.children | orderBy:'name'" ng-if="objectType == 'dataElement' && $first">{{child1.data[id].actual.join(",")}}</td>
-                                <td ng-repeat="child1 in child.children | orderBy:'name'" ng-if="objectType == 'dataElement' && $first">{{child1.data[id].estimate.join(",")}}</td>-->
-                                <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}</td>
-                            </tr>
-                            <tr ng-if="$index != 0" ng-repeat="child1 in child.children | orderBy:'name'">
-                                <td>{{child1.name}}({{child1.id}})<span
-                                        ng-if="child1.completeDataSetRegistrations.length == 0"
-                                        class="label label-danger"> Incomplete</span>
+                                    </td>
+                                    <!--<td ng-repeat="child1 in child.children | orderBy:'name'" ng-if="objectType == 'dataElement' && $first">{{child1.data[id].actual.join(",")}}</td>
+                                    <td ng-repeat="child1 in child.children | orderBy:'name'" ng-if="objectType == 'dataElement' && $first">{{child1.data[id].estimate.join(",")}}</td>-->
+                                    <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}
+                                    </td>
+                                </tr>
+                                <tr ng-if="$index != 0" ng-repeat="child1 in child.children | orderBy:'name'">
+                                    <td>{{child1.name}}({{child1.id}})<span
+                                            ng-if="child1.completeDataSetRegistrations.length == 0"
+                                            class="label label-danger"> Incomplete</span>
                                     <span class="label label-success"
                                           ng-if="child1.completeDataSetRegistrations.length > 0"> Incomplete</span></td>
-                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'"
-                                    ng-if="objectType == 'dataElement'">
+                                    <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'"
+                                        ng-if="objectType == 'dataElement'">
 
-                                    <span ng-if="!parentScope.special">{{child1.data[id][categoryOption.name]}}</span>
-                                    <table ng-if="parentScope.special" class="table">
-                                        <tr>
-                                            <th>Period</th>
-                                            <th>Value</th>
-                                        </tr>
-                                        <tr ng-repeat="data in child1.data[id][categoryOption.name]">
-                                            <td>{{data.period}}</td>
-                                            <td>{{data.value}}</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                                <!--<td ng-if="objectType == 'dataElement'">{{child1.data[id].actual.join(",")}}</td>
-                                <td ng-if="objectType == 'dataElement'">{{child1.data[id].estimate.join(",")}}</td>-->
-                                <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child1.data[dx]}}</td>
-                            </tr>
-                            <tr ng-repeat-end></tr>
-                            </tbody>
-                            <tbody ng-if="organisationUnitLevels == 1">
-                            <tr ng-repeat="child in orgUnit.children | orderBy:'name'">
-                                <td>{{$index + 1}}</td>
-                                <td>{{child.name}}({{child.id}})
+                                        <span ng-if="!parentScope.special">{{child1.data[id][dataSet.id][categoryOptionCombo.name]}}</span>
+                                        <table ng-if="parentScope.special" class="table">
+                                            <tr>
+                                                <th>Period</th>
+                                                <th>Value</th>
+                                            </tr>
+                                            <tr ng-repeat="data in child1.data[id][categoryOptionCombo.name]">
+                                                <td>{{data.period}}</td>
+                                                <td>{{data.value}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <!--<td ng-if="objectType == 'dataElement'">{{child1.data[id].actual.join(",")}}</td>
+                                    <td ng-if="objectType == 'dataElement'">{{child1.data[id].estimate.join(",")}}</td>-->
+                                    <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">
+                                        {{child1.data[dx]}}
+                                    </td>
+                                </tr>
+                                <tr ng-repeat-end></tr>
+                                </tbody>
+                                <tbody ng-if="organisationUnitLevels == 1">
+                                <tr ng-repeat="child in orgUnit.children | orderBy:'name'">
+                                    <td>{{$index + 1}}</td>
+                                    <td>{{child.name}}({{child.id}})
                                     <span ng-if="child.completeDataSetRegistrations.length == 0"
                                           class="label label-danger"> Incomplete</span>
                                     <span class="label label-success"
                                           ng-if="child.completeDataSetRegistrations.length > 0"> Incomplete</span>
-                                </td>
-                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'"
-                                    ng-if="objectType == 'dataElement'">
-                                    <span ng-if="!parentScope.special">{{child.data[id][categoryOption.name]}}</span>
-                                    <table ng-if="parentScope.special" class="table">
-                                        <tr>
-                                            <th>Period</th>
-                                            <th>Value</th>
-                                        </tr>
-                                        <tr ng-repeat="data in child.data[id][categoryOption.name]">
-                                            <td>{{data.period}}</td>
-                                            <td>{{data.value}}</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                                <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}</td>
-                            </tr>
-                            </tbody>
-                            <tbody ng-if="organisationUnitLevels <= 0">
-                            <tr>
-                                <td>{{orgUnit.name}}({{orgUnit.id}})<span
-                                        ng-if="orgUnit.completeDataSetRegistrations.length == 0"
-                                        class="label label-danger"> Incomplete</span>
+                                    </td>
+                                    <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'"
+                                        ng-if="objectType == 'dataElement'">
+                                        <span ng-if="!parentScope.special">{{child.data[id][dataSet.id][categoryOptionCombo.name]}}</span>
+                                        <table ng-if="parentScope.special" class="table">
+                                            <tr>
+                                                <th>Period</th>
+                                                <th>Value</th>
+                                            </tr>
+                                            <tr ng-repeat="data in child.data[id][categoryOptionCombo.name]">
+                                                <td>{{data.period}}</td>
+                                                <td>{{data.value}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}
+                                    </td>
+                                </tr>
+                                </tbody>
+                                <tbody ng-if="organisationUnitLevels <= 0">
+                                <tr>
+                                    <td>{{orgUnit.name}}({{orgUnit.id}})<span
+                                            ng-if="orgUnit.completeDataSetRegistrations.length == 0"
+                                            class="label label-danger"> Incomplete</span>
                                     <span class="label label-success"
                                           ng-if="orgUnit.completeDataSetRegistrations.length > 0"> Incomplete</span>
-                                </td>
-                                <td ng-repeat="categoryOption in category.categoryOptions | orderBy:'name'"
-                                    ng-if="objectType == 'dataElement'">
+                                    </td>
+                                    <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'"
+                                        ng-if="objectType == 'dataElement'">
 
-                                    <span ng-if="!parentScope.special">{{orgUnit.data[id][categoryOption.name]}}</span>
-                                    <table ng-if="parentScope.special" class="table">
-                                        <tr>
-                                            <th>Period</th>
-                                            <th>Value</th>
-                                        </tr>
-                                        <tr ng-repeat="data in orgUnit.data[id][categoryOption.name]">
-                                            <td>{{data.period}}</td>
-                                            <td>{{data.value}}</td>
-                                        </tr>
-                                    </table>
-                                </td>
-                                <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{data.data.join(",")}}
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                                        <span ng-if="!parentScope.special">{{orgUnit.data[id][dataSet.id][categoryOptionCombo.name]}}</span>
+                                        <table ng-if="parentScope.special" class="table">
+                                            <tr>
+                                                <th>Period</th>
+                                                <th>Value</th>
+                                            </tr>
+                                            <tr ng-repeat="data in orgUnit.data[id][categoryOptionCombo.name]">
+                                                <td>{{data.period}}</td>
+                                                <td>{{data.value}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">
+                                        {{data.data.join(",")}}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                         <table ng-if="parentScope.autoData && loaded" class="table table-bordered">
                             <thead>
                             <th ng-repeat="dataElement in parentScope.autoData.dataElements">{{dataElement.name}}</th>
@@ -233,8 +245,10 @@
                             <tbody>
 
                             <tr ng-repeat="event in parentScope.autoData.events">
-                                <td ng-class="{orange:dataElement.id == data.object.id && parentScope.innerHtml == event[dataElement.name]}" ng-if="event[dataElement.name] != undefined"
-                                    ng-repeat="dataElement in parentScope.autoData.dataElements">{{event[dataElement.name]}}
+                                <td ng-class="{orange:dataElement.id == data.object.id && parentScope.innerHtml == event[dataElement.name]}"
+                                    ng-if="event[dataElement.name] != undefined"
+                                    ng-repeat="dataElement in parentScope.autoData.dataElements">
+                                    {{event[dataElement.name]}}
                                 </td>
                             </tr>
                             </tbody>
