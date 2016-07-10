@@ -1348,13 +1348,13 @@ var appServices = angular.module('appServices', ['ngResource'])
                 }else if(period.indexOf("Q") > -1){
                     var quarter = period.substr(period.indexOf("Q") + 1);
                     var name = "";
-                    if(quarter == "1"){
+                    if(quarter == "3"){
                         name = "July - September";
-                    }else if(quarter == "2"){
-                        name = "October - December";
-                    }else if(quarter == "3"){
-                        name = "January - March";
                     }else if(quarter == "4"){
+                        name = "October - December";
+                    }else if(quarter == "1"){
+                        name = "January - March";
+                    }else if(quarter == "2"){
                         name = "April - June";
                     }
                     return name +  " " + (parseInt(period.substr(0,4)));

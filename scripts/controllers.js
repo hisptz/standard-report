@@ -379,6 +379,8 @@ var appControllers = angular.module('appControllers', [])
 
                 if($routeParams.period.endsWith("July")){
                     returnValue = [$routeParams.period.substr(0,4) +"Q3",$routeParams.period.substr(0,4) +"Q4",(parseInt($routeParams.period.substr(0,4)) + 1) +"Q1",(parseInt($routeParams.period.substr(0,4)) + 1) +"Q2"]
+                }else if($routeParams.period.indexOf("Q")){
+                    returnValue = [$routeParams.period]
                 }
             }else if(dataSet.periodType == "Monthly"){
                 if($routeParams.period.endsWith("July")){

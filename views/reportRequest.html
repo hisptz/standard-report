@@ -71,7 +71,6 @@
                         </td>
                     </tr>
                 </table>
-
                 <table ng-if="!sourceDataSet.isReport" class="table table-bordered">
                     <tr>
                         <th>{{getLevelName(data.organisationUnit.level + 1)}} Total</th>
@@ -82,11 +81,17 @@
                     </tr>
                     <tr>
                         <td>{{data.organisationUnit.children.length}}</td>
-                        <td>{{sourceDataSet.periodTypeValue/dataSet.periodTypeValue}}</td>
-                        <td>{{sourceDataSet.completeDataSetRegistrations.length * (sourceDataSet.periodTypeValue/dataSet.periodTypeValue)}}</td>
-                        <td>{{(data.organisationUnit.children.length * sourceDataSet.periodTypeValue/dataSet.periodTypeValue) - sourceDataSet.completeDataSetRegistrations.length}}</td>
-                        <td ng-class="{red:(sourceDataSet.completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100 < 70,green:(sourceDataSet.completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100>= 70}">
+                        <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1">{{sourceDataSet.periodTypeValue/dataSet.periodTypeValue}}</td>
+                        <td  ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1">{{sourceDataSet.completeDataSetRegistrations.length * (sourceDataSet.periodTypeValue/dataSet.periodTypeValue)}}</td>
+                        <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1">{{(data.organisationUnit.children.length * sourceDataSet.periodTypeValue/dataSet.periodTypeValue) - sourceDataSet.completeDataSetRegistrations.length}}</td>
+                        <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1" ng-class="{red:(sourceDataSet.completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100 < 70,green:(sourceDataSet.completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100>= 70}">
                             {{((sourceDataSet.completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100)/(sourceDataSet.periodTypeValue/dataSet.periodTypeValue)  | number : 2}}%
+                        </td>
+                        <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue < 1">1</td>
+                        <td  ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue < 1">{{sourceDataSet.completeDataSetRegistrations.length}}</td>
+                        <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue < 1">{{(data.organisationUnit.children.length) - sourceDataSet.completeDataSetRegistrations.length}}</td>
+                        <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue < 1" ng-class="{red:(sourceDataSet.completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100 < 70,green:(sourceDataSet.completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100>= 70}">
+                            {{((sourceDataSet.completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100)  | number : 2}}%
                         </td>
                     </tr>
                 </table>
