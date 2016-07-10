@@ -945,10 +945,14 @@ var appDirectives = angular.module('appDirectives', [])
                     $compile(elem[0].children)(scope);
                         $timeout(function() {
                             var childsToRemove = [];
+                            var existingRows = []
                             elem[0].children.forEach(function (child, rowIndex) {
+                                console.log(child);
                                 console.log(child.event);
-                                if (dataElements.indexOf(child.event) > -1) {
+                                if (existingRows.indexOf(child.event) > -1) {
                                     childsToRemove.push(child.event);
+                                }else{
+                                    existingRows.push(child.event);
                                 }
                                 var dataElements = [];
                                 child.children.forEach(function (child2, colIndex) {
