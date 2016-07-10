@@ -1033,6 +1033,6 @@ var appDirectives = angular.module('appDirectives', [])
 
                 }
             },
-            templateUrl: 'views/autogrowing.html'
+            templateUrl: 'views/autogrowingDebug.html'
         }
     })
