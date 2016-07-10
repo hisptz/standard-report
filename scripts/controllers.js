@@ -407,6 +407,12 @@ var appControllers = angular.module('appControllers', [])
                 }else{
                     returnValue.push($routeParams.period);
                 }
+            }else if(dataSet.periodType == "FinancialJuly"){
+                if($routeParams.period.indexOf("Q") > -1){
+                    returnValue.push($routeParams.period);
+                }else{
+                    returnValue.push($routeParams.period.substr(0,4) + "07");
+                }
             }
             return returnValue;
         }
