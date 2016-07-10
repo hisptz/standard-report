@@ -167,7 +167,7 @@
                                                 <th>Period</th>
                                                 <th>Value</th>
                                             </tr>
-                                            <tr ng-repeat="data in child1.data[id][categoryOptionCombo.name]">
+                                            <tr ng-repeat="data in child1.data[id][dataSet.id][categoryOptionCombo.name]">
                                                 <td>{{data.period}}</td>
                                                 <td>{{data.value}}</td>
                                             </tr>
@@ -198,7 +198,7 @@
                                                 <th>Period</th>
                                                 <th>Value</th>
                                             </tr>
-                                            <tr ng-repeat="data in child.data[id][categoryOptionCombo.name]">
+                                            <tr ng-repeat="data in child.data[id][dataSet.id][categoryOptionCombo.name]">
                                                 <td>{{data.period}}</td>
                                                 <td>{{data.value}}</td>
                                             </tr>
@@ -225,7 +225,7 @@
                                                 <th>Period</th>
                                                 <th>Value</th>
                                             </tr>
-                                            <tr ng-repeat="data in orgUnit.data[id][categoryOptionCombo.name]">
+                                            <tr ng-repeat="data in orgUnit.data[id][dataSet.id][categoryOptionCombo.name]">
                                                 <td>{{data.period}}</td>
                                                 <td>{{data.value}}</td>
                                             </tr>
