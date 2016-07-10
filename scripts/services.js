@@ -1342,7 +1342,8 @@ var appServices = angular.module('appServices', ['ngResource'])
                 dhis2.report.organisationUnitChildren = selectedOrgUnit.children;
             },
             getPeriodName:function(period){
-                if(period.endsWith("July")){
+                if(period.indexOf("July") > -1){
+
                     return "July " + period.substr(0,4) + " - June " + (parseInt(period.substr(0,4)) + 1);
                 }else if(period.indexOf("Q") > -1){
                     var quarter = period.substr(period.indexOf("Q") + 1);

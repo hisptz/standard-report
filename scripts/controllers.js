@@ -514,8 +514,13 @@ var appControllers = angular.module('appControllers', [])
             })
             return returnValue;
         }
-        $scope.getPeriodName = function(){
-            return ReportService.getPeriodName($routeParams.period);
+        $scope.getPeriodName = function(period){
+            if(period){
+                return ReportService.getPeriodName(period);
+            }else{
+                return ReportService.getPeriodName($routeParams.period);
+            }
+
         }
         $http.get(DHIS2URL + "api/me.json?fields=:all,organisationUnits[id,level]").then(function (results) {
             $scope.user = results.data;
