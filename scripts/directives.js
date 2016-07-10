@@ -374,7 +374,7 @@ var appDirectives = angular.module('appDirectives', [])
 
                                     if (parentScope.aDebug) {
 
-                                        promises.push($http.get(DHIS2URL + "api/events.json?program=" + parentScope.aDebug.programId + "&startDate=" + periods.startDate + "&endDate=" + periods.endDate + "&orgUnit:" + orgUnit.id).then(function (results) {
+                                        /*promises.push($http.get(DHIS2URL + "api/events.json?program=" + parentScope.aDebug.programId + "&startDate=" + periods.startDate + "&endDate=" + periods.endDate + "&orgUnit:" + orgUnit.id).then(function (results) {
                                             //console.log("DataValues:", results);
                                             results.data.events.forEach(function (event) {
                                                 if(event.event == parentScope.event.Event && event.orgUnit == objectId){
@@ -385,7 +385,7 @@ var appDirectives = angular.module('appDirectives', [])
                                                     })
                                                 }
                                             });
-                                        }));
+                                        }));*/
                                     } else {
                                         if($scope.orgUnit.level == orgUnit.level || ($scope.organisationUnitLevels + $scope.orgUnit.level == orgUnit.level ) || $scope.dataSetOrganisationUnit.level == orgUnit.level){
                                             var objectRequest = "";
