@@ -190,7 +190,6 @@ var appDirectives = angular.module('appDirectives', [])
             },
             replace: true,
             controller: function ($scope) {
-                console.log($scope.listByWard);
                 $scope.data = [];
                 $scope.listByWard.forEach(function (value) {
                     //value[]
@@ -235,7 +234,6 @@ var appDirectives = angular.module('appDirectives', [])
                             $scope.estimation = "Not Applicable";
                             $scope.id = parentScope.dgId;
                             $scope.parentScope = parentScope;
-                            console.log($scope.parentScope.autoData);
                             var object = parentScope.dgId;
                             if (object.indexOf(".") > -1) {
                                 object = object.substr(0, object.indexOf("."));
@@ -374,18 +372,6 @@ var appDirectives = angular.module('appDirectives', [])
 
                                     if (parentScope.aDebug) {
 
-                                        /*promises.push($http.get(DHIS2URL + "api/events.json?program=" + parentScope.aDebug.programId + "&startDate=" + periods.startDate + "&endDate=" + periods.endDate + "&orgUnit:" + orgUnit.id).then(function (results) {
-                                            //console.log("DataValues:", results);
-                                            results.data.events.forEach(function (event) {
-                                                if(event.event == parentScope.event.Event && event.orgUnit == objectId){
-                                                    event.dataValues.forEach(function(dataValue){
-                                                        if(dataValue.dataElement == parentScope.dgId){
-                                                            orgUnit.data[objectId] = dataValue.value;
-                                                        }
-                                                    })
-                                                }
-                                            });
-                                        }));*/
                                     } else {
                                         if($scope.orgUnit.level == orgUnit.level || ($scope.organisationUnitLevels + $scope.orgUnit.level == orgUnit.level ) || $scope.dataSetOrganisationUnit.level == orgUnit.level){
                                             var objectRequest = "";
@@ -727,8 +713,6 @@ var appDirectives = angular.module('appDirectives', [])
                                 $scope.data.dataElements.push(dataElement);
                             }
                         });
-                    } else {
-                        console.log("Else:", $scope.config);
                     }
 
                 });
@@ -947,8 +931,6 @@ var appDirectives = angular.module('appDirectives', [])
                             var childsToRemove = [];
                             var existingRows = []
                             elem[0].children.forEach(function (child, rowIndex) {
-                                console.log(child);
-                                console.log(child.getAttribute('event'));
                                 if (existingRows.indexOf(child.getAttribute('event')) > -1) {
                                     childsToRemove.push(child);
                                 }else{
@@ -987,8 +969,6 @@ var appDirectives = angular.module('appDirectives', [])
                                 $scope.data.dataElements.push(dataElement);
                             }
                         });
-                    } else {
-                        console.log("Else:", $scope.config);
                     }
 
                 });
