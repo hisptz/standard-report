@@ -946,6 +946,10 @@ var appDirectives = angular.module('appDirectives', [])
                         $timeout(function() {
                             var childsToRemove = [];
                             elem[0].children.forEach(function (child, rowIndex) {
+                                console.log(child.event);
+                                if (dataElements.indexOf(child.event) > -1) {
+                                    childsToRemove.push(child.event);
+                                }
                                 var dataElements = [];
                                 child.children.forEach(function (child2, colIndex) {
                                     //child2.id = scope.config.dataElements[colIndex];

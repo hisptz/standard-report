@@ -326,9 +326,6 @@ var appControllers = angular.module('appControllers', [])
                 if(attributeValue.attribute.name == "Is Report"){
                     if(attributeValue.value == "true"){
                         isReport = true;
-                        console.log("True",attributeValue.value)
-                    }else{
-                        console.log("False",attributeValue.value)
                     }
                 }
             })
