@@ -244,11 +244,13 @@
                         </div>
                         <table ng-if="parentScope.autoData && loaded" class="table table-bordered">
                             <thead>
+                            <th>Administrative Unit</th>
                             <th ng-repeat="dataElement in parentScope.autoData.dataElements">{{dataElement.name}}</th>
                             </thead>
                             <tbody>
 
-                            <tr ng-repeat="event in parentScope.autoData.events">
+                            <tr ng-repeat="event in parentScope.autoData.events | orderBy:'\u0022Organisation unit name\u0022'">
+                                <td>{{event["Organisation unit name"]}}</td>
                                 <td ng-class="{orange:dataElement.id == data.object.id && parentScope.innerHtml == event[dataElement.name]}"
                                     ng-if="event[dataElement.name] != undefined"
                                     ng-repeat="dataElement in parentScope.autoData.dataElements">

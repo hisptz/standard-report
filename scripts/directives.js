@@ -895,7 +895,6 @@ var appDirectives = angular.module('appDirectives', [])
                                 var child = elem[0].children[i1];
                                 if (elem[0].children[checkingIndex + 1]) {
                                     if (child.children[group].children[0].innerHTML == elem[0].children[checkingIndex + 1].children[group].children[0].innerHTML) {
-                                        console.log(child.children[group].children[0].innerHTML);
                                         var isInTheSameRow = true;
                                         var loopIndex = checkingIndex + 1;
                                         while (isInTheSameRow) {
