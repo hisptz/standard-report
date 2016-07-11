@@ -30,6 +30,10 @@
                             ng-if="objectType == 'indicator'">Computed Values </span></td>
                     <td>{{data.object.name}}</td>
                 </tr>
+                <tr ng-if="parentScope.dgId.indexOf(categoryOptionCombo.id) > -1" ng-repeat="categoryOptionCombo in data.object.categoryCombo.categoryOptionCombos">
+                    <td style="width: 20%;">Category</td>
+                    <td>{{categoryOptionCombo.name}}</td>
+                </tr>
                 <tr>
                     <td style="width: 20%;">Name of Report Name</td>
                     <td>{{parentScope.report.name}}</td>

@@ -1525,9 +1525,66 @@ var appServices = angular.module('appServices', ['ngResource'])
         }
 
     })
-    .factory("DebugService", function (){
+    .factory("DebugService", function ($compile,$timeout,$q){
         var WFOO1 = {consolidation:"Formula (Sum), No Estimation",source:"WF00"};
+        var debugProcess = {
+            compile:function(element,scope){
+                var deffered = $q.defer();
+                $compile(element)(scope);
+                /*$timeout(function () {
+                    console.log("Timing Out")
+                    var childsToRemove = [];
+                    var existingRows = []
+                    element.forEach(function (child, rowIndex) {
+                        if (existingRows.indexOf(child.getAttribute('event')) > -1) {
+                            childsToRemove.push(child);
+                        } else {
+                            existingRows.push(child.getAttribute('event'));
+                        }
+                        var dataElements = [];
+                        child.children.forEach(function (child2, colIndex) {
+                            //child2.id = scope.config.dataElements[colIndex];
+                            if (dataElements.indexOf(child2.id) > -1) {
+                                childsToRemove.push(child2);
+                            } else {
+                                dataElements.push(child2.id);
+                            }
+
+                            //child2.removeAttribute("ng-repeat");
+                            //$compile(child2)(scope);
+                        });
+                    });
+                    childsToRemove.forEach(function (element) {
+                        element.remove();
+                    })
+                    deffered.resolve();
+                });*/
+                deffered.promise;
+            },
+            count:0,
+            elements:[],
+            addCompileElements: function(element,scope){
+                //this.compile(element,scope);
+                this.elements.push({element:element,scope:scope});
+                //console.log("Element:",this.elements.length);
+            },
+            finishCompileElements: function(element,scope){
+                this.count++;
+                if(this.count == this.elements.length){
+                    console.log("Awesome start compiling");
+                    this.elements.forEach(function(element){
+                        console.log("Here");
+                        $compile(element.element)(element.scope);
+                        console.log("Here1");
+                    })
+                }
+                //this.compile(element,scope);
+                /*this.elements.push(element);
+                 console.log("Element:",this.elements.length);*/
+            }
+        }
         return {
+            debugProcess:debugProcess,
             "DR01":{
                 "NK6MyHADqBo.WgIlmdIhlpD":{consolidation:"Formula (Average)",source:"WF01"},
                 "xBxqNNV8jLR.BktmzfgqCjX": WFOO1,
