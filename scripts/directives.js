@@ -229,6 +229,9 @@ var appDirectives = angular.module('appDirectives', [])
                             $scope.data = {
                                 data: []
                             };
+                            $scope.getDateName = function(){
+                                return ReportService.getPeriodName($routeParams.period);
+                            }
                             $scope.objectType = parentScope.type;
                             $scope.estimation = "Not Applicable";
                             $scope.id = parentScope.dgId;
@@ -422,6 +425,7 @@ var appDirectives = angular.module('appDirectives', [])
                                 $http.get(url).then(function (results) {
 
                                     $scope.data.object = results.data;
+
                                     $scope.loaded = true;
                                     $scope.data.object.attributeValues.forEach(function (attributeValue) {
                                         if (attributeValue.attribute.name == "Estimation") {
@@ -486,17 +490,7 @@ var appDirectives = angular.module('appDirectives', [])
                                         }
                                     });
                                     if (parentScope.aDebug) {
-                                        /*promises.push($http.get(DHIS2URL + "api/events.json?program=" + parentScope.aDebug.programId + "&startDate=" + periods.startDate + "&endDate=" + periods.endDate + "&orgUnit:" + $routeParams.orgUnit).then(function (results) {
-                                         results.data.events.forEach(function (event) {
-                                         if(event.event == parentScope.event.Event){
-                                         event.dataValues.forEach(function(dataValue){
-                                         if(dataValue.dataElement == parentScope.dgId){
-                                         $scope.data.data.push(dataValue.value);
-                                         }
-                                         })
-                                         }
-                                         });
-                                         }));*/
+
                                     } else {
                                         var period = $scope.getPeriod();
                                         promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + parentScope.dgId + "&dimension=pe:" + period + "&filter=ou:" + $routeParams.orgUnit).then(function (results) {
@@ -512,6 +506,13 @@ var appDirectives = angular.module('appDirectives', [])
                                         childrenUrl = childrenUrl.replace("{}", "children[id,level,name,{}]")
                                     }
                                     childrenUrl = childrenUrl.replace(",{}", "")
+                                    function getEstimation(dataSet) {
+                                        $http.get(DHIS2URL + "api/apps/archive/estimation/" + dataSet.id + "_" + $routeParams.orgUnit + "_" + $routeParams.period +".json").then(function(results){
+                                            console.log(results);
+                                            dataSet.estimation = results.data;
+                                            console.log(dataSet.estimation)
+                                        });
+                                    }
                                     $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=:all" + childrenUrl).then(function (results) {
                                         $scope.orgUnit = results.data;
                                         /*$scope.orgUnit.children.forEach(function (child) {
@@ -522,6 +523,9 @@ var appDirectives = angular.module('appDirectives', [])
                                         $scope.data.object.dataSets.forEach(function (dataSet) {
                                             if (!dataSet.isReport()) {
                                                 $scope.fetchOrgUnitData(parentScope.dgId, $scope.orgUnit, parentScope.type, dataSet);
+                                                if($scope.data.object.domainType == "AGGREGATE"){
+
+                                                }
                                             }
                                         });
 
