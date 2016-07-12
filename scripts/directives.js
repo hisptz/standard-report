@@ -691,12 +691,19 @@ var appDirectives = angular.module('appDirectives', [])
                                                     if (dataElementIndexes.indexOf(i) > -1 || !child.children[i]) {
                                                         break;
                                                     }
-
                                                     if (isInt(child.children[i].innerHTML)) {
-                                                        child.children[i].innerHTML = (parseInt(child.children[i].innerHTML) + parseInt(elem[0].children[loopIndex].children[i].innerHTML)).toFixed(1);
+                                                        var secondValue = parseInt(elem[0].children[loopIndex].children[i].innerHTML);
+                                                        if(elem[0].children[loopIndex].children[i].innerHTML == ""){
+                                                            secondValue = 0;
+                                                        }
+                                                        child.children[i].innerHTML = (parseInt(child.children[i].innerHTML) + secondValue).toFixed(1);
                                                         //elem[0].children[checkingIndex + 1].children[i].innerHTML = "+";
                                                     } else if (isFloat(child.children[i].innerHTML)) {
-                                                        child.children[i].innerHTML = (parseFloat(child.children[i].innerHTML) + parseFloat(elem[0].children[loopIndex].children[i].innerHTML)).toFixed(1);
+                                                        var secondValue = parseInt(elem[0].children[loopIndex].children[i].innerHTML);
+                                                        if(elem[0].children[loopIndex].children[i].innerHTML == ""){
+                                                            secondValue = 0.0;
+                                                        }
+                                                        child.children[i].innerHTML = (parseFloat(child.children[i].innerHTML) + secondValue).toFixed(1);
                                                         elementsToDelete.push(elem[0].children[loopIndex].children[i]);
                                                         if (child.children[i].toRowSpan) {
                                                             child.children[i].toRowSpan++;
@@ -704,6 +711,7 @@ var appDirectives = angular.module('appDirectives', [])
                                                             child.children[i].toRowSpan = 2;
                                                         }
                                                     }
+
                                                 }
                                                 i1 = loopIndex;
                                                 loopIndex++;
@@ -910,11 +918,19 @@ var appDirectives = angular.module('appDirectives', [])
                                                         break;
                                                     }
 
-                                                    if (isInt(child.children[i].children[0].innerHTML)) {
-                                                        child.children[i].children[0].innerHTML = (parseInt(child.children[i].children[0].innerHTML) + parseInt(elem[0].children[loopIndex].children[i].children[0].innerHTML)).toFixed(1);
+                                                    if (isInt(child.children[i].innerHTML)) {
+                                                        var secondValue = parseInt(elem[0].children[loopIndex].children[i].innerHTML);
+                                                        if(elem[0].children[loopIndex].children[i].innerHTML == ""){
+                                                            secondValue = 0;
+                                                        }
+                                                        child.children[i].innerHTML = (parseInt(child.children[i].innerHTML) + secondValue).toFixed(1);
                                                         //elem[0].children[checkingIndex + 1].children[i].innerHTML = "+";
-                                                    } else if (isFloat(child.children[i].children[0].innerHTML)) {
-                                                        child.children[i].children[0].innerHTML = (parseFloat(child.children[i].children[0].innerHTML) + parseFloat(elem[0].children[loopIndex].children[i].children[0].innerHTML)).toFixed(1);
+                                                    } else if (isFloat(child.children[i].innerHTML)) {
+                                                        var secondValue = parseInt(elem[0].children[loopIndex].children[i].innerHTML);
+                                                        if(elem[0].children[loopIndex].children[i].innerHTML == ""){
+                                                            secondValue = 0.0;
+                                                        }
+                                                        child.children[i].innerHTML = (parseFloat(child.children[i].innerHTML) + secondValue).toFixed(1);
                                                         elementsToDelete.push(elem[0].children[loopIndex].children[i]);
                                                         if (child.children[i].toRowSpan) {
                                                             child.children[i].toRowSpan++;

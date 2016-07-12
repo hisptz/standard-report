@@ -900,7 +900,7 @@ var appControllers = angular.module('appControllers', [])
         $scope.autogrowingPrograms = {};
         $scope.getElementReplacment = function (content, type) {
             var processed = content.replace("dataElementsData['","").replace("dataElementsData['","").replace("lastMonthOfQuarterData['","").replace("cumulativeToDateData['","").replace("fourthQuarterData['","").replace("']","");
-            if(content.indexOf("dataElementsData['") == -1 && content.indexOf("fourthQuarterData['") == -1){
+            if(content.indexOf("dataElementsData['") == -1 && content.indexOf("fourthQuarterData['") == -1  && content.indexOf("lastMonthOfQuarterData['") == -1 && content.indexOf("cumulativeToDateData['") == -1){
                 console.log(type,":Outside:",content)
             }
             var div = "<div gid='"+processed+"'>{{" + content + "}}";
