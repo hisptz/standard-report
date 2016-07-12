@@ -334,6 +334,8 @@ var appControllers = angular.module('appControllers', [])
             })
             dataSet.isReport = isReport;
             if(!isReport){
+                dataSet.orgUnitLevel = dataSet.organisationUnits[0].level;
+                console.log(dataSet.orgUnitLevel);
                 $http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + dataSet.id + "&orgUnit=" + $routeParams.orgUnit + "&startDate=" + periodDate.startDate + "&endDate=" + periodDate.endDate + "&children=true").then(function (results) {
                     if (results.data.completeDataSetRegistrations) {
                         dataSet.completeDataSetRegistrations = results.data.completeDataSetRegistrations;
@@ -346,6 +348,8 @@ var appControllers = angular.module('appControllers', [])
                     //$scope.completeDataSetRegistrationsLoading = false;
                     //toaster.pop('error', "Error" + error.status, "Error Loading Archive. Please try again");
                 });
+            }else{
+
             }
         };
         $scope.getLevelName = function(level){
@@ -486,10 +490,11 @@ var appControllers = angular.module('appControllers', [])
                                                             sourceLevels[dataSource.dataSet] = dataSource.level;
                                                         })
 
-                                                        $http.get(DHIS2URL + "api/dataSets.json?filter=id:in:[" +sourceIds+"]&fields=id,periodType,displayName,attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
+                                                        $http.get(DHIS2URL + "api/dataSets.json?filter=id:in:[" +sourceIds+"]&fields=id,periodType,displayName,attributeValues[value,attribute[name]],organisationUnits[id,level]").then(function (results) {
                                                             $scope.sourceDataSets = results.data.dataSets;
                                                             $scope.sourceDataSets.forEach(function(dataSet){
                                                                 dataSet.orgUnitLevel = sourceLevels[dataSet.id];
+
                                                                 $scope.setPeriodTypeValues(dataSet);
 
                                                                 $scope.fetchCompleteness(dataSet,sourceLevels);

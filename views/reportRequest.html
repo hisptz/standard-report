@@ -102,7 +102,7 @@
                     </tr>
                     </tbody>
                 </table>
-                <table ng-if="!sourceDataSet.isReport" class="table table-bordered">
+                <table ng-if="!sourceDataSet.isReport && sourceDataSet.orgUnitLevel != data.organisationUnit.level" class="table table-bordered">
                     <tr>
                         <th>{{getLevelName(data.organisationUnit.level + 1)}} Total</th>
                         <th>Number of Periods</th>
@@ -126,13 +126,37 @@
                         </td>
                     </tr>
                 </table>
+                <table ng-if="!sourceDataSet.isReport && sourceDataSet.orgUnitLevel == data.organisationUnit.level" class="table table-bordered">
+                    <tr>
+                        <th>{{getLevelName(data.organisationUnit.level)}} Total</th>
+                        <th>Number of Periods</th>
+                        <th>{{getLevelName(data.organisationUnit.level)}} For All Periods Completed</th>
+                        <th>{{getLevelName(data.organisationUnit.level)}} For All Periods Not Completed</th>
+                        <th>Completion Percentage</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1">{{sourceDataSet.periodTypeValue/dataSet.periodTypeValue}}</td>
+                        <td  ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1">{{sourceDataSet.completeDataSetRegistrations.length * (sourceDataSet.periodTypeValue/dataSet.periodTypeValue)}}</td>
+                        <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1">{{(sourceDataSet.periodTypeValue/dataSet.periodTypeValue) - sourceDataSet.completeDataSetRegistrations.length}}</td>
+                        <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1" ng-class="{red:(sourceDataSet.completeDataSetRegistrations.length) * 100 < 70,green:(sourceDataSet.completeDataSetRegistrations.length) * 100>= 70}">
+                            {{((sourceDataSet.completeDataSetRegistrations.length) * 100)/(sourceDataSet.periodTypeValue/dataSet.periodTypeValue)  | number : 2}}%
+                        </td>
+                        <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue < 1">1</td>
+                        <td  ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue < 1">{{sourceDataSet.completeDataSetRegistrations.length}}</td>
+                        <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue < 1">{{1 - sourceDataSet.completeDataSetRegistrations.length}}</td>
+                        <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue < 1" ng-class="{red:(sourceDataSet.completeDataSetRegistrations.length) * 100 < 70,green:(sourceDataSet.completeDataSetRegistrations.length) * 100>= 70}">
+                            {{((sourceDataSet.completeDataSetRegistrations.length) * 100)  | number : 2}}%
+                        </td>
+                    </tr>
+                </table>
                 <table ng-if="!sourceDataSet.isReport && sourceDataSet.completeDataSetRegistrations" class="table table-bordered">
                     <tr>
                         <th>Administrative Unit</th>
                         <th>Period</th>
                         <th>Data Entry Status</th>
                     </tr>
-                    <tbody ng-repeat="orgUnit in data.organisationUnit.children">
+                    <tbody ng-if="sourceDataSet.orgUnitLevel != data.organisationUnit.level" ng-repeat="orgUnit in data.organisationUnit.children">
                     <tr>
                         <td rowspan="{{sourceDataSet.periodTypeValue/dataSet.periodTypeValue}}">{{orgUnit.name}}</td>
                         <td ng-repeat-start="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)" ng-if="$first">{{getPeriodName(organisationUnitPeriod)}}</td>
@@ -143,6 +167,20 @@
                     <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
                         <td >{{getPeriodName(organisationUnitPeriod)}}</td>
                         <td ng-class="{red:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)=='Incomplete',green:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)=='Complete'}">
+                            {{getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)}}
+                        </td>
+                    </tr>
+                    <tbody ng-if="sourceDataSet.orgUnitLevel == data.organisationUnit.level">
+                    <tr>
+                        <td rowspan="{{sourceDataSet.periodTypeValue/dataSet.periodTypeValue}}">{{data.organisationUnit.name}}</td>
+                        <td ng-repeat-start="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)" ng-if="$first">{{getPeriodName(organisationUnitPeriod)}}</td>
+                        <td ng-repeat-end ng-if="$first" ng-class="{red:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,data.organisationUnit.id,organisationUnitPeriod)=='Incomplete',green:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,data.organisationUnit.id,organisationUnitPeriod)=='Complete'}">
+                            {{getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)}}
+                        </td>
+                    </tr>
+                    <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
+                        <td >{{getPeriodName(organisationUnitPeriod)}}</td>
+                        <td ng-class="{red:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,data.organisationUnit.id,organisationUnitPeriod)=='Incomplete',green:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,data.organisationUnit.id,organisationUnitPeriod)=='Complete'}">
                             {{getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)}}
                         </td>
                     </tr>
