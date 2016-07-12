@@ -255,6 +255,7 @@ var appDirectives = angular.module('appDirectives', [])
                             if (object.indexOf(".") > -1) {
                                 object = object.substr(0, object.indexOf("."));
                             }
+
                             $scope.getFormulaDescription = function (formular) {
                                 var value = formular;
                                 if (formular.match(/#\{.+?\}/g) != null)
@@ -506,6 +507,16 @@ var appDirectives = angular.module('appDirectives', [])
                                             })
                                             return returnVal;
                                         }
+                                        var combos = dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos;
+                                        combos.sort(function(a,b){
+                                            return a - b;
+                                        });
+                                        dataSet.matcher = [];
+                                        /*$scope.matcher.forEach(function(mat){
+                                            combos.forEach(function(combo){
+                                                dataSet.matcher.push(combo);
+                                            })
+                                        })*/
                                         if (dataSet.name.indexOf("DR01") > -1) {
                                             $scope.TOR = DebugService["DR01"][parentScope.dgId]
                                         }
