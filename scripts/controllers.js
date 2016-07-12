@@ -288,6 +288,10 @@ var appControllers = angular.module('appControllers', [])
             $location.path("/dataSetReport/report/dataSet/" + $routeParams.dataSet + "/orgUnit/" + $routeParams.orgUnit + "/period/" + $routeParams.period + "/preview");
 
         };
+        $scope.generateDataSetReportInDebug = function () {
+            $location.path("/dataSetReport/report/dataSet/" + $routeParams.dataSet + "/orgUnit/" + $routeParams.orgUnit + "/period/" + $routeParams.period + "/debug");
+
+        };
         $scope.getOrgUnitStatus = function (completeDataSetRegistrations,id,period) {
             var returnVal = "Incomplete";
             completeDataSetRegistrations.forEach(function (dataSet) {

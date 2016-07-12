@@ -82,6 +82,7 @@
                     <td>Estimation Method</td>
                     <td>{{estimation}} {{parentScope.aDebug}}</td>
                 </tr>
+
                 <tr>
                     <td>Source Values</td>
                     <td>
@@ -94,7 +95,7 @@
                                     <td>District</td>
                                     <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'"
                                         ng-if="objectType == 'dataElement' && !parentScope.aDebug">
-                                        {{categoryOptionCombo.name}}({{categoryOption.id}})
+                                        {{categoryOptionCombo.name}}
                                     </td>
                                     <td ng-if="objectType == 'indicator' && !parentScope.aDebug"
                                         ng-repeat="dx in matcher">
@@ -104,21 +105,28 @@
                                 </thead>
                                 <thead ng-if="organisationUnitLevels == 1">
                                 <tr>
-                                    <td>#</td>
-                                    <td>Name</td>
+                                    <td rowspan="{{ objectType == 'indicator' ? '2' : '1'}}">#</td>
+                                    <td rowspan="{{ objectType == 'indicator' ? '2' : '1'}}">Name</td>
                                     <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'"
                                         ng-if="objectType == 'dataElement' && !parentScope.aDebug">
-                                        {{categoryOptionCombo.name}}({{categoryOptionCombo.categoryOptions[0].id}})
+                                        {{categoryOptionCombo.name}}
                                     </td>
-                                    <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{getDXName(dx)}}
+                                    <td ng-if="objectType == 'indicator'" colspan="{{dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos.length}}" ng-repeat="dx in matcher">{{getDXName(dx)}}
                                     </td>
                                 </tr>
+                                <tr ng-if="objectType == 'indicator'">
+                                    <td ng-repeat="dx in matcher" ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'"
+                                            ng-if="objectType == 'dataElement' && !parentScope.aDebug">
+                                            {{categoryOptionCombo.name}}
+                                    </td>
+                                </tr>
+                                </thead>
                                 <thead ng-if="organisationUnitLevels <= 0">
                                 <tr>
                                     <td>Name</td>
                                     <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'"
                                         ng-if="objectType == 'dataElement' && !parentScope.aDebug">
-                                        {{categoryOptionCombo.name}}({{categoryOption.id}})
+                                        {{categoryOptionCombo.name}}
                                     </td>
                                     <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{getDXName(dx)}}
                                     </td>
@@ -132,7 +140,7 @@
                                     <span class="label label-success"
                                           ng-if="child.completeDataSetRegistrations.length > 0"> Complete</span></td>
                                     <td ng-if="$first" ng-repeat="child1 in child.children | orderBy:'name'">
-                                        {{child1.name}}({{child1.id}})
+                                        {{child1.name}}
                                     </td>
                                     <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'"
                                         ng-if="objectType == 'dataElement'">
@@ -157,7 +165,7 @@
                                     </td>
                                 </tr>
                                 <tr ng-if="$index != 0" ng-repeat="child1 in child.children | orderBy:'name'">
-                                    <td>{{child1.name}}({{child1.id}})<span
+                                    <td>{{child1.name}}<span
                                             ng-if="child1.completeDataSetRegistrations.length == 0"
                                             class="label label-danger"> Incomplete</span>
                                     <span class="label label-success"
@@ -188,7 +196,7 @@
                                 <tbody ng-if="organisationUnitLevels == 1">
                                 <tr ng-repeat="child in orgUnit.children | orderBy:'name'">
                                     <td>{{$index + 1}}</td>
-                                    <td>{{child.name}}({{child.id}})
+                                    <td>{{child.name}}
                                     <span ng-if="child.completeDataSetRegistrations.length == 0"
                                           class="label label-danger"> Incomplete</span>
                                     <span class="label label-success"
@@ -211,10 +219,11 @@
                                     <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}
                                     </td>
                                 </tr>
+                                <tr><td colspan="4">{{dataSet.estimation[parentScope.dgId.replace("_",".")]}}</td></tr>
                                 </tbody>
                                 <tbody ng-if="organisationUnitLevels <= 0">
                                 <tr>
-                                    <td>{{orgUnit.name}}({{orgUnit.id}})<span
+                                    <td>{{orgUnit.name}}<span
                                             ng-if="orgUnit.completeDataSetRegistrations.length == 0"
                                             class="label label-danger"> Incomplete</span>
                                     <span class="label label-success"

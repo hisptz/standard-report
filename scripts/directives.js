@@ -298,13 +298,14 @@ var appDirectives = angular.module('appDirectives', [])
                                             periodIndex = index;
                                         }
                                     })
+                                    if (!orgUnit.data[objectId][dataSet.id]) {
+                                        orgUnit.data[objectId][dataSet.id] = {}
+                                    }
                                     results.data.rows.forEach(function (row) {
                                         dataSet.categoryCombo.categories[0].categoryCombos.forEach(function (categoryCombo) {
                                             categoryCombo.categoryOptionCombos.forEach(function (categoryOptionCombo, index) {
+
                                                 if (categoryOptionCombo.categoryOptions[0].id == row[categoryOptionIndex]) {
-                                                    if (!orgUnit.data[objectId][dataSet.id]) {
-                                                        orgUnit.data[objectId][dataSet.id] = {}
-                                                    }
                                                     if ($scope.parentScope.special) {
                                                         if (orgUnit.data[objectId][dataSet.id][categoryOptionCombo.name]) {
                                                             orgUnit.data[objectId][dataSet.id][categoryOptionCombo.name].push({
@@ -320,6 +321,8 @@ var appDirectives = angular.module('appDirectives', [])
                                                     } else {
                                                         orgUnit.data[objectId][dataSet.id][categoryOptionCombo.name] = row[dataIndex];
                                                     }
+                                                }else{
+                                                    orgUnit.data[objectId][dataSet.id]["default"] = row[dataIndex];
                                                 }
 
                                             })
@@ -395,18 +398,20 @@ var appDirectives = angular.module('appDirectives', [])
                                             } else {
                                                 objectRequest = "de=" + objectId;
                                             }
-                                            var url = DHIS2URL + "api/analytics.json?dimension=dx:" + objectId + "&dimension=pe:" + calculatedPeriod + "&filter=ou:" + orgUnit.id + "&displayProperty=NAME&dimension=";
+                                            var url = DHIS2URL + "api/analytics.json?dimension=dx:" + objectId + "&dimension=pe:" + calculatedPeriod + "&filter=ou:" + orgUnit.id + "&displayProperty=NAME";
                                             dataSet.categoryCombo.categories.forEach(function (category) {
-                                                category.categoryCombos.forEach(function (categoryCombo) {
-                                                    url += category.id + ":";
-                                                    categoryCombo.categoryOptionCombos.forEach(function (categoryOptionCombo, index) {
-                                                        if (index != 0) {
-                                                            url += ";"
-                                                        }
-                                                        url += categoryOptionCombo.categoryOptions[0].id;
+                                                if(category.name == "default"){
+                                                    category.categoryCombos.forEach(function (categoryCombo) {
+                                                        url += "&dimension=" + category.id + ":";
+                                                        categoryCombo.categoryOptionCombos.forEach(function (categoryOptionCombo, index) {
+                                                            if (index != 0) {
+                                                                url += ";"
+                                                            }
+                                                            url += categoryOptionCombo.categoryOptions[0].id;
 
+                                                        })
                                                     })
-                                                })
+                                                }
                                             })
                                             $scope.getDataValueData(url, objectId, orgUnit, dataSet);
                                         }
@@ -524,7 +529,7 @@ var appDirectives = angular.module('appDirectives', [])
                                             if (!dataSet.isReport()) {
                                                 $scope.fetchOrgUnitData(parentScope.dgId, $scope.orgUnit, parentScope.type, dataSet);
                                                 if($scope.data.object.domainType == "AGGREGATE"){
-
+                                                    getEstimation(dataSet);
                                                 }
                                             }
                                         });
