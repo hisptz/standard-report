@@ -1478,22 +1478,43 @@ var appServices = angular.module('appServices', ['ngResource'])
                     })
                 }
             },
+            getLastDateOfMonth:function(year,month){
+                var date = new Date(parseInt(year),parseInt(month),1);
+                console.log(date);
+                date.setTime(date.getTime() - 1000*60*60*24*1);
+                var monthString = (date.getMonth() + 1);
+                if(monthString < 10){
+                    monthString = "0" + monthString;
+                }
+                var dayString = date.getDay();
+                if(dayString < 10){
+                    dayString = "0" + dayString;
+                }
+                console.log(date);
+                return date.getFullYear() +"-" + monthString + "-" + dayString;
+            },
             getPeriodDate: function (period) {
                 var returnDate = {};
                 if (period.indexOf("July") != -1) {
                     returnDate.startDate = period.substr(0, 4) + "-07-01";
-                    returnDate.endDate = (parseInt(period.substr(0, 4)) + 1) + "-06-30";
+                    returnDate.endDate = this.getLastDateOfMonth(parseInt(period.substr(0, 4) + 1),"6");
                 } else if (period.indexOf("Q") != -1) {
-                    returnDate.startDate = period.substr(0, 4) + "-07-01";
-                    returnDate.endDate = (parseInt(period.substr(0, 4)) + 1) + "-06-30";
+                    var lastMonth = parseInt(period.substr(5)) * 3;
+                    var firstMonthString = lastMonth - 2;
+                    if(firstMonthString < 10){
+                        firstMonthString = "0" + firstMonthString;
+                    }
+                    returnDate.startDate = period.substr(0, 4) + "-" + firstMonthString +"-01";
+                    returnDate.endDate = this.getLastDateOfMonth(period.substr(0, 4),lastMonth);
                 } else {
                     /*var monthVal = parseInt(period.substr(5));
                      if(monthVal < 10){
                      monthVal = "0" + monthVal;
                      }*/
                     returnDate.startDate = period.substr(0, 4) + "-" + period.substr(4) + "-01";
-                    returnDate.endDate = period.substr(0, 4) + "-" + period.substr(4) + "-31";
+                    returnDate.endDate = this.getLastDateOfMonth(period.substr(0, 4),period.substr(4));
                 }
+                console.log("Quarter:",returnDate);
                 return returnDate;
             },
             createDataSetReport: function (data) {
