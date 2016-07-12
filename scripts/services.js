@@ -1480,7 +1480,6 @@ var appServices = angular.module('appServices', ['ngResource'])
             },
             getLastDateOfMonth:function(year,month){
                 var date = new Date(parseInt(year),parseInt(month),1);
-                console.log(date);
                 date.setTime(date.getTime() - 1000*60*60*24*1);
                 var monthString = (date.getMonth() + 1);
                 if(monthString < 10){
@@ -1490,14 +1489,13 @@ var appServices = angular.module('appServices', ['ngResource'])
                 if(dayString < 10){
                     dayString = "0" + dayString;
                 }
-                console.log(date);
                 return date.getFullYear() +"-" + monthString + "-" + dayString;
             },
             getPeriodDate: function (period) {
                 var returnDate = {};
                 if (period.indexOf("July") != -1) {
                     returnDate.startDate = period.substr(0, 4) + "-07-01";
-                    returnDate.endDate = this.getLastDateOfMonth(parseInt(period.substr(0, 4) + 1),"6");
+                    returnDate.endDate = this.getLastDateOfMonth(parseInt(period.substr(0, 4)) + 1,"6");
                 } else if (period.indexOf("Q") != -1) {
                     var lastMonth = parseInt(period.substr(5)) * 3;
                     var firstMonthString = lastMonth - 2;
@@ -1514,7 +1512,6 @@ var appServices = angular.module('appServices', ['ngResource'])
                     returnDate.startDate = period.substr(0, 4) + "-" + period.substr(4) + "-01";
                     returnDate.endDate = this.getLastDateOfMonth(period.substr(0, 4),period.substr(4));
                 }
-                console.log("Quarter:",returnDate);
                 return returnDate;
             },
             createDataSetReport: function (data) {

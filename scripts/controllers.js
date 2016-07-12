@@ -81,7 +81,6 @@ var appControllers = angular.module('appControllers', [])
                                 return;
                             }
                             if(!(Math.ceil(((new Date()).getMonth() + 1)/3) == quarterVal && testDate.getFullYear() == year)){
-                                console.log(((new Date()).getMonth() + 1),Math.ceil(((new Date()).getMonth() + 1)/3),testDate.getFullYear())
                                 that.list.unshift({
                                     name: quarter + " " + year,
                                     value: year + "Q" + quarterVal
@@ -375,7 +374,6 @@ var appControllers = angular.module('appControllers', [])
         }
         $scope.getOrganisationUnitPeriods = function(dataSet){
             var returnValue = [];
-            console.log(dataSet.periodType);
             if(dataSet.periodType == "Quarterly"){
 
                 if($routeParams.period.endsWith("July")){
@@ -494,8 +492,6 @@ var appControllers = angular.module('appControllers', [])
 
                                                                 $scope.fetchCompleteness(dataSet,sourceLevels);
                                                             })
-
-                                                            console.log(results.data.dataSets);
                                                         }, function (error) {
                                                             $scope.error = "heye";
                                                             $scope.completeDataSetRegistrationsLoading = false;
