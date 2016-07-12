@@ -50,34 +50,57 @@
             <criteria class="criteria" ng-show="dataCriteria"></criteria>
             <div class="col-sm-12" ng-repeat="sourceDataSet in sourceDataSets">
                 <br/>
-                <h4>{{sourceDataSet.displayName}} Report Status </h4>
+                <h4>{{sourceDataSet.displayName}} <span ng-if="sourceDataSet.isReport">Report</span><span ng-if="!sourceDataSet.isReport">Completeness</span> Status </h4>
                 <table ng-if="sourceDataSet.isReport" class="table table-bordered">
                     <tr>
-                        <th>Administrative Unit</th><!--<th>Period</th>--><th>Report Status</th>
+                        <th>Administrative Unit</th><th>Period</th><th>Report Status</th>
                     </tr>
                     <tr ng-if="sourceDataSet.orgUnitLevel == data.organisationUnit.level">
-                        <td>{{data.organisationUnit.name}}</td>
-                        <!--<td >{{sourceDataSet.periodType}} - {{getPeriodName(sourceDataSet.periodType)}}</td>-->
-                        <td ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) > -1}">
-                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) == -1)">Not Created</span>
-                            <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) > -1">Created</span>
-                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+params.period) > -1">In Progress</span>
+                        <td rowspan="{{getOrganisationUnitPeriods(sourceDataSet).length}}">{{data.organisationUnit.name}}</td>
+                        <td ng-if="$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
+                            {{getPeriodName(organisationUnitPeriod)}}
+                        </td>
+                        <td ng-if="$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)"
+                            ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1}">
+                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1)">Not Created</span>
+                            <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1">Created</span>
+                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1">In Progress</span>
                         </td>
                     </tr>
-                    <!--<tr ng-if="!$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
-                        <td >{{getPeriodName(organisationUnitPeriod)}}</td>
-                        <td ng-class="{red:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)=='Incomplete',green:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)=='Complete'}">
-                            {{getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)}}
+                    <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
+                        <td>
+                            {{getPeriodName(organisationUnitPeriod)}}
                         </td>
-                    </tr>-->
-                    <tr ng-if="sourceDataSet.orgUnitLevel != data.organisationUnit.level" ng-repeat="child in data.organisationUnit.children">
-                        <td>{{child.name}}</td>
-                        <td ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) > -1}">
-                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) == -1)">Not Created</span>
-                            <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) > -1">Created</span>
-                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+params.period) > -1">In Progress</span>
+                        <td ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1}">
+                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1)">Not Created</span>
+                            <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1">Created</span>
+                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1">In Progress</span>
                         </td>
                     </tr>
+                    <tbody ng-if="sourceDataSet.orgUnitLevel != data.organisationUnit.level" ng-repeat="child in data.organisationUnit.children">
+                    <tr>
+                        <td rowspan="{{getOrganisationUnitPeriods(sourceDataSet).length}}">{{child.name}}</td>
+                        <td ng-if="$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
+                            {{getPeriodName(organisationUnitPeriod)}}
+                        </td>
+                        <td ng-if="$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)"
+                            ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) > -1}">
+                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1)">Not Created</span>
+                            <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) > -1">Created</span>
+                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) > -1">In Progress</span>
+                        </td>
+                    </tr>
+                    <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
+                        <td>
+                            {{getPeriodName(organisationUnitPeriod)}}
+                        </td>
+                        <td ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) > -1}">
+                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1)">Not Created</span>
+                            <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) > -1">Created</span>
+                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) > -1">In Progress</span>
+                        </td>
+                    </tr>
+                    </tbody>
                 </table>
                 <table ng-if="!sourceDataSet.isReport" class="table table-bordered">
                     <tr>
