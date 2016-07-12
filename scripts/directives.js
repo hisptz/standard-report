@@ -185,16 +185,31 @@ var appDirectives = angular.module('appDirectives', [])
         return {
             scope: {
                 listByWard: '=',
-                orgUnit: '='
+                orgUnit: '=',
+                count:'='
             },
             replace: true,
             controller: function ($scope) {
-                $scope.data = [];
+                console.log($scope.count);
+                if($scope.count){
+                    $scope.data = {};
+                }else{
+                    $scope.data = [];
+                }
                 $scope.listByWard.forEach(function (value) {
                     //value[]
                     $scope.orgUnit.children.forEach(function (orgUnit) {
                         if (orgUnit.id == value.orgUnit) {
-                            $scope.data.push({name: orgUnit.name, value: value.value});
+                            if($scope.count){
+                                if($scope.data[value.value]){
+                                    $scope.data[value.value]++;
+                                }else{
+                                    $scope.data[value.value] = 1;
+                                }
+                            }else{
+                                $scope.data.push({name: orgUnit.name, value: value.value});
+                            }
+
                         }
                     })
                 })

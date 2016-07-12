@@ -974,6 +974,10 @@ var appControllers = angular.module('appControllers', [])
                     } else {
                         if (isDate) {
                             $scope.nonAggregatedDataElementsDate.push(idMacth[1] + "." + idMacth[2]);
+                        }else if (match[0].indexOf("list-by-ward") > -1) {//If it is last month of quarter
+                            var label = "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' org-unit='orgUnit'>";
+                            newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' count='true' org-unit='orgUnit'>");
+                            $scope.listByWard.push(idMacth[1] + "." + idMacth[2]);
                         } else {
                             $scope.nonAggregatedDataElements.push(idMacth[1] + "." + idMacth[2]);
                         }
@@ -1053,7 +1057,6 @@ var appControllers = angular.module('appControllers', [])
         }
         $http.get(DHIS2URL + "api/dataSets/" + $routeParams.dataSet + ".json?fields=name,attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
             $scope.dataSet = results.data;
-            console.log($scope.dataSet);
             //Load organisation Unit data
             $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,children[id,name]").then(function (results) {
                 $scope.orgUnit = results.data;

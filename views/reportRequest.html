@@ -175,13 +175,13 @@
                         <td rowspan="{{sourceDataSet.periodTypeValue/dataSet.periodTypeValue}}">{{data.organisationUnit.name}}</td>
                         <td ng-repeat-start="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)" ng-if="$first">{{getPeriodName(organisationUnitPeriod)}}</td>
                         <td ng-repeat-end ng-if="$first" ng-class="{red:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,data.organisationUnit.id,organisationUnitPeriod)=='Incomplete',green:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,data.organisationUnit.id,organisationUnitPeriod)=='Complete'}">
-                            {{getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)}}
+                            {{getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,data.organisationUnit.id,organisationUnitPeriod)}}
                         </td>
                     </tr>
                     <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
                         <td >{{getPeriodName(organisationUnitPeriod)}}</td>
                         <td ng-class="{red:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,data.organisationUnit.id,organisationUnitPeriod)=='Incomplete',green:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,data.organisationUnit.id,organisationUnitPeriod)=='Complete'}">
-                            {{getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)}}
+                            {{getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,data.organisationUnit.id,organisationUnitPeriod)}}
                         </td>
                     </tr>
                     </tbody>

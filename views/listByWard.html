@@ -1,7 +1,11 @@
-<table style="width:800px">
+<table style="min-width:100px">
     <!--<thead style="border:1px solid lightgrey"><tr><td>Administrative Unit</td><td></td></tr></thead>-->
     <tbody>
-    <tr ng-repeat="row in data">
+    <tr ng-if="!count" ng-repeat="row in data">
         <td style="border:1px solid lightgrey;width:20%">{{row.name}}</td><td style="border:1px solid lightgrey;width:80%">{{row.value}}</td>
-    </tr></tbody>
+    </tr>
+    <tr ng-if="count" ng-repeat="(key,value) in data">
+        <td style="border:1px solid lightgrey;width:20%">{{key}}</td><td style="border:1px solid lightgrey;width:80%">{{value}}</td>
+    </tr>
+    </tbody>
 </table>

@@ -1489,7 +1489,6 @@ var appServices = angular.module('appServices', ['ngResource'])
                 if(dayString < 10){
                     dayString = "0" + dayString;
                 }
-                console.log(date.getFullYear() +"-" + monthString + "-" + dayString);
                 return date.getFullYear() +"-" + monthString + "-" + dayString;
             },
             getPeriodDate: function (period) {
