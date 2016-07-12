@@ -103,6 +103,17 @@
                                     </td>
                                     <td ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')]">Estimated Value</td>
                                 </tr>
+                                <tr ng-if="objectType == 'indicator'">
+                                    <!--<td ng-repeat="categoryOptionCombo in dataSet.matcher track by $index">
+                                            {{categoryOptionCombo.name}}
+                                    </td>-->
+                                    <td ng-if="objectType == 'indicator'" ng-repeat-start="dx in matcher" style="display: none;">
+                                    </td>
+                                    <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'">
+                                        {{categoryOptionCombo.name}}
+                                    </td>
+                                    <td ng-repeat-end  style="display: none;"></td>
+                                </tr>
                                 </thead>
                                 <thead ng-if="organisationUnitLevels == 1">
                                 <tr>
@@ -117,10 +128,15 @@
                                     <td ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')]">Estimated Value</td>
                                 </tr>
                                 <tr ng-if="objectType == 'indicator'">
-                                    <td ng-repeat="categoryOptionCombo in dataSet.matcher">
+                                    <!--<td ng-repeat="categoryOptionCombo in dataSet.matcher track by $index">
                                             {{categoryOptionCombo.name}}
+                                    </td>-->
+                                    <td ng-if="objectType == 'indicator'" ng-repeat-start="dx in matcher" style="display: none;">
                                     </td>
-                                    <td>{{dataSet.matcher}}</td>
+                                    <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'">
+                                        {{categoryOptionCombo.name}}
+                                    </td>
+                                    <td ng-repeat-end  style="display: none;"></td>
                                 </tr>
                                 </thead>
                                 <thead ng-if="organisationUnitLevels <= 0">
@@ -130,8 +146,12 @@
                                         ng-if="objectType == 'dataElement' && !parentScope.aDebug">
                                         {{categoryOptionCombo.name}}
                                     </td>
-                                    <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{getDXName(dx)}}
+                                    <td ng-if="objectType == 'indicator'" ng-repeat-start="dx in matcher" style="display: none;">
                                     </td>
+                                    <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'">
+                                        {{getDXName(dx)}}
+                                    </td>
+                                    <td ng-repeat-end  style="display: none;"></td>
                                     <td ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')]">Estimated Value</td>
                                 </tr>
                                 </thead>
@@ -168,8 +188,12 @@
                                     </td>
                                     <!--<td ng-repeat="child1 in child.children | orderBy:'name'" ng-if="objectType == 'dataElement' && $first">{{child1.data[id].actual.join(",")}}</td>
                                     <td ng-repeat="child1 in child.children | orderBy:'name'" ng-if="objectType == 'dataElement' && $first">{{child1.data[id].estimate.join(",")}}</td>-->
-                                    <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}
+                                    <td ng-if="objectType == 'indicator'" ng-repeat-start="dx in matcher" style="display: none;">
                                     </td>
+                                    <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'">
+                                        {{child.data[dx][dataSet.id][categoryOptionCombo.name]}}
+                                    </td>
+                                    <td ng-repeat-end  style="display: none;"></td>
                                     <td ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')]">{{dataSet.estimation[parentScope.dgId.replace(".","_")].data[child.id].value}}</td>
                                 </tr>
                                 <tr ng-if="$index != 0" ng-repeat="child1 in child.children | orderBy:'name'">
@@ -195,9 +219,12 @@
                                     </td>
                                     <!--<td ng-if="objectType == 'dataElement'">{{child1.data[id].actual.join(",")}}</td>
                                     <td ng-if="objectType == 'dataElement'">{{child1.data[id].estimate.join(",")}}</td>-->
-                                    <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">
-                                        {{child1.data[dx]}}
+                                    <td ng-if="objectType == 'indicator'" ng-repeat-start="dx in matcher" style="display: none;">
                                     </td>
+                                    <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'">
+                                        {{child1.data[dx][dataSet.id][categoryOptionCombo.name]}}
+                                    </td>
+                                    <td ng-repeat-end  style="display: none;"></td>
                                     <td ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')]">{{dataSet.estimation[parentScope.dgId.replace(".","_")].data[child1.id].value}}</td>
                                 </tr>
                                 <tr ng-repeat-end></tr>
@@ -225,8 +252,11 @@
                                             </tr>
                                         </table>
                                     </td>
-                                    <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}
+                                    <td ng-if="objectType == 'indicator'" ng-repeat-start="dx in matcher" style="display: none;"></td>
+                                    <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'">
+                                        {{child.data[dx][dataSet.id][categoryOptionCombo.name]}}
                                     </td>
+                                    <td ng-repeat-end  style="display: none;"></td>
                                     <td ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')]">{{dataSet.estimation[parentScope.dgId.replace(".","_")].data[child.id].value}}</td>
                                 </tr>
                                 </tbody>
@@ -253,9 +283,12 @@
                                             </tr>
                                         </table>
                                     </td>
-                                    <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">
-                                        {{data.data.join(",")}}
+                                    <td ng-if="objectType == 'indicator'" ng-repeat-start="dx in matcher" style="display: none;">
                                     </td>
+                                    <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'">
+                                        {{orgUnit.data[dx][dataSet.id][categoryOptionCombo.name]}}
+                                    </td>
+                                    <td ng-repeat-end  style="display: none;"></td>
                                     <td ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')]">{{dataSet.estimation[parentScope.dgId.replace(".","_")].data[orgUnit.id].value}}</td>
                                 </tr>
                                 </tbody>

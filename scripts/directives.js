@@ -507,16 +507,25 @@ var appDirectives = angular.module('appDirectives', [])
                                             })
                                             return returnVal;
                                         }
-                                        var combos = dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos;
-                                        combos.sort(function(a,b){
-                                            return a - b;
-                                        });
-                                        dataSet.matcher = [];
-                                        /*$scope.matcher.forEach(function(mat){
-                                            combos.forEach(function(combo){
-                                                dataSet.matcher.push(combo);
+
+                                        if($scope.matcher){
+                                            dataSet.matcher = [];
+                                            var combos = dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos;
+                                            combos.sort(function(a,b){
+                                                if (a.name < b.name) {
+                                                    return -1;
+                                                }
+                                                if (a.name > b.name) {
+                                                    return 1;
+                                                }
+                                            });
+                                            console.log("Combos:",combos);
+                                            $scope.matcher.forEach(function(mat){
+                                                combos.forEach(function(combo){
+                                                    dataSet.matcher.push(combo);
+                                                })
                                             })
-                                        })*/
+                                        }
                                         if (dataSet.name.indexOf("DR01") > -1) {
                                             $scope.TOR = DebugService["DR01"][parentScope.dgId]
                                         }
