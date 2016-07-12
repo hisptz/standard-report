@@ -28,11 +28,11 @@
                 <tr>
                     <td style="width: 20%;">Name of <span ng-if="objectType == 'dataElement'">Data Element </span><span
                             ng-if="objectType == 'indicator'">Computed Values </span></td>
-                    <td>{{data.object.name}}</td>
+                    <td>{{data.object.name}}({{data.object.id}})</td>
                 </tr>
                 <tr ng-if="parentScope.dgId.indexOf(categoryOptionCombo.id) > -1" ng-repeat="categoryOptionCombo in data.object.categoryCombo.categoryOptionCombos">
                     <td style="width: 20%;">Category</td>
-                    <td>{{categoryOptionCombo.name}}</td>
+                    <td>{{categoryOptionCombo.name}}({{categoryOptionCombo.id}})</td>
                 </tr>
                 <tr>
                     <td style="width: 20%;">Name of Report Name</td>
@@ -101,6 +101,7 @@
                                         ng-repeat="dx in matcher">
                                         {{getDXName(dx)}}
                                     </td>
+                                    <td ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')]">Estimated Value</td>
                                 </tr>
                                 </thead>
                                 <thead ng-if="organisationUnitLevels == 1">
@@ -113,6 +114,7 @@
                                     </td>
                                     <td ng-if="objectType == 'indicator'" colspan="{{dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos.length}}" ng-repeat="dx in matcher">{{getDXName(dx)}}
                                     </td>
+                                    <td ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')]">Estimated Value</td>
                                 </tr>
                                 <tr ng-if="objectType == 'indicator'">
                                     <td ng-repeat="dx in matcher" ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'"
@@ -130,6 +132,7 @@
                                     </td>
                                     <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{getDXName(dx)}}
                                     </td>
+                                    <td ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')]">Estimated Value</td>
                                 </tr>
                                 </thead>
                                 <tbody ng-if="organisationUnitLevels == 2">
@@ -163,6 +166,7 @@
                                     <td ng-repeat="child1 in child.children | orderBy:'name'" ng-if="objectType == 'dataElement' && $first">{{child1.data[id].estimate.join(",")}}</td>-->
                                     <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}
                                     </td>
+                                    <td ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')]">{{dataSet.estimation[parentScope.dgId.replace(".","_")].data[child.id].value}}</td>
                                 </tr>
                                 <tr ng-if="$index != 0" ng-repeat="child1 in child.children | orderBy:'name'">
                                     <td>{{child1.name}}<span
@@ -190,6 +194,7 @@
                                     <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">
                                         {{child1.data[dx]}}
                                     </td>
+                                    <td ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')]">{{dataSet.estimation[parentScope.dgId.replace(".","_")].data[child1.id].value}}</td>
                                 </tr>
                                 <tr ng-repeat-end></tr>
                                 </tbody>
@@ -218,8 +223,8 @@
                                     </td>
                                     <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">{{child.data[dx]}}
                                     </td>
+                                    <td ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')]">{{dataSet.estimation[parentScope.dgId.replace(".","_")].data[child.id].value}}</td>
                                 </tr>
-                                <tr><td colspan="4">{{dataSet.estimation[parentScope.dgId.replace("_",".")]}}</td></tr>
                                 </tbody>
                                 <tbody ng-if="organisationUnitLevels <= 0">
                                 <tr>
@@ -247,6 +252,7 @@
                                     <td ng-if="objectType == 'indicator'" ng-repeat="dx in matcher">
                                         {{data.data.join(",")}}
                                     </td>
+                                    <td ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')]">{{dataSet.estimation[parentScope.dgId.replace(".","_")].data[orgUnit.id].value}}</td>
                                 </tr>
                                 </tbody>
                             </table>

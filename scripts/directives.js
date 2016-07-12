@@ -426,8 +426,9 @@ var appDirectives = angular.module('appDirectives', [])
                             };
                             $http.get(DHIS2URL + "api/categories.json?fields=:all,categoryOptions[:all]&filter=name:eq:Data Dimension").then(function (result) {
                                 $scope.category = result.data.categories[0];
-                                var url = DHIS2URL + "api/" + parentScope.type + "s/" + object + ".json?fields=:all,categoryCombo[categoryOptionCombos[id,name]],dataSets[categoryCombo[categories[id,categoryCombos[id,name,categoryOptionCombos[id,name,categoryOptions]]]],organisationUnits[id,path,level],id,name,attributeValues[:all,attribute[:all],periodType,dataEntryForm],attributeValues[:all,attribute[:all]]";
+                                var url = DHIS2URL + "api/" + parentScope.type + "s/" + object + ".json?fields=:all,attributeValues[:all,attribute[id,name]],categoryCombo[categoryOptionCombos[id,name]],dataSets[categoryCombo[categories[id,categoryCombos[id,name,categoryOptionCombos[id,name,categoryOptions]]]],organisationUnits[id,path,level],id,name,attributeValues[:all,attribute[:all],periodType,dataEntryForm]";
                                 $http.get(url).then(function (results) {
+                                    console.log(results);
 
                                     $scope.data.object = results.data;
 
