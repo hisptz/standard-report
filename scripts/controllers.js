@@ -12,17 +12,27 @@ var appControllers = angular.module('appControllers', [])
             dataSets: [],
             period: "",
             periodTypes: {
+
                 "Monthly": {
+                    currentDate:new Date(),
+                    next:function(){
+                        this.currentDate = new Date(this.currentDate.getFullYear() + 1, this.currentDate.getMonth(), this.currentDate.getDate());
+                        this.populateList();
+                    },
+                    previous:function(){
+                        this.currentDate = new Date(this.currentDate.getFullYear() - 1, this.currentDate.getMonth(), this.currentDate.getDate());
+                        this.populateList();
+                    },
                     name: "Monthly", value: "Monthly", allowNext:true, allowPrevious:true, list: [],
-                    populateList: function (date) {
+                    populateList: function () {
                         //this.allowNext = true;
                         var monthNames = ["July", "August", "September", "October", "November", "December", "January", "February", "March", "April", "May", "June"];
-                        if (!date) {
+                        /*if (!date) {
                             date = new Date();
-                        }
+                        }*/
                         this.list = [];
                         var that = this;
-                        var year = date.getFullYear();
+                        var year = this.currentDate.getFullYear();
                         monthNames.forEach(function (monthName, index) {
                             var monthVal = index + 7;
 
@@ -50,21 +60,28 @@ var appControllers = angular.module('appControllers', [])
 
                         });
                         if (this.list.length == 0) {
-                            this.populateList(new Date(date.getFullYear() - 1, date.getMonth() + 1, date.getDate()));
+                            this.currentDate = new Date(this.currentDate.getFullYear() - 1, this.currentDate.getMonth(), this.currentDate.getDate());
+                            this.populateList();
                             that.allowNext = false;
                         }
                     }
                 },
                 "Quarterly": {
+                    currentDate:new Date(),
+                    next:function(){
+                        this.currentDate = new Date(this.currentDate.getFullYear() + 1, this.currentDate.getMonth(), this.currentDate.getDate());
+                        this.populateList();
+                    },
+                    previous:function(){
+                        this.currentDate = new Date(this.currentDate.getFullYear() - 1, this.currentDate.getMonth(), this.currentDate.getDate());
+                        this.populateList();
+                    },
                     name: "Quarterly", value: "Quarterly", allowNext:true, allowPrevious:true,list: [],
-                    populateList: function (date) {
+                    populateList: function () {
                         var quarters = ["July - September", "October - December", "January - March", "April - June"];
-                        if (!date) {
-                            date = new Date();
-                        }
                         this.list = [];
                         var that = this;
-                        var year = date.getFullYear();
+                        var year = this.currentDate.getFullYear();
                         quarters.forEach(function (quarter, index) {
                             var quarterVal = index + 3;
                             if (quarterVal == 5) {
@@ -89,7 +106,8 @@ var appControllers = angular.module('appControllers', [])
                             }
                         });
                         if (this.list.length == 0) {
-                            this.populateList(new Date(date.getFullYear() - 1, date.getMonth() + 1, date.getDate()));
+                            this.currentDate = new Date(this.currentDate.getFullYear() - 1, this.currentDate.getMonth(), this.currentDate.getDate());
+                            this.populateList();
                             that.allowNext = false;
                         }
                     }
@@ -105,6 +123,7 @@ var appControllers = angular.module('appControllers', [])
                     }
                 },
                 "FinancialJuly": {
+
                     name: "Financial-July", value: "FinancialJuly", allowNext:false, allowPrevious:false, list: [],
                     populateList: function () {
                         var date = new Date();
@@ -127,15 +146,11 @@ var appControllers = angular.module('appControllers', [])
                 }
             }
         };
-
-        $scope.currentDate = new Date();
         $scope.displayPreviousPeriods = function () {
-            $scope.currentDate = new Date($scope.currentDate.getFullYear() - 1, $scope.currentDate.getMonth(), $scope.currentDate.getDate());
-            $scope.data.periodTypes[$scope.data.dataSet.periodType].populateList($scope.currentDate);
+            $scope.data.periodTypes[$scope.data.dataSet.periodType].previous();
         };
         $scope.displayNextPeriods = function () {
-            $scope.currentDate = new Date($scope.currentDate.getFullYear() + 1, $scope.currentDate.getMonth(), $scope.currentDate.getDate());
-            $scope.data.periodTypes[$scope.data.dataSet.periodType].populateList($scope.currentDate);
+            $scope.data.periodTypes[$scope.data.dataSet.periodType].next();
         };
         $scope.getPeriodType = function (name) {
             var retPeriodType;
@@ -148,7 +163,6 @@ var appControllers = angular.module('appControllers', [])
         }
         $scope.$watch("data.dataSet", function (value) {
             if (value) {
-                $scope.currentDate = new Date();
                 $scope.data.period = "";
                 $scope.data.periodTypes[value.periodType].populateList();
             }
