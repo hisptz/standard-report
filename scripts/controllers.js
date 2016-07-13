@@ -12,7 +12,6 @@ var appControllers = angular.module('appControllers', [])
             dataSets: [],
             period: "",
             periodTypes: {
-
                 "Monthly": {
                     currentDate:new Date(),
                     next:function(){
@@ -243,12 +242,10 @@ var appControllers = angular.module('appControllers', [])
                                 }
                             })
                             var date = new Date();
-
-                            do{
-                                $scope.data.periodTypes[$scope.data.dataSet.periodType].populateList(date);
-                                date.setTime(date.getTime() - (1000*60*60*24*365));
+                            while(!$scope.doesValueExist($routeParams.period)){
+                                $scope.data.periodTypes[$scope.data.dataSet.periodType].previous(date);
                             }
-                            while(!$scope.doesValueExist($routeParams.period));
+
                             $timeout(function(){
                                 $scope.data.period = $routeParams.period;
                             })
