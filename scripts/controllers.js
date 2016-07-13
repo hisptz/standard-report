@@ -888,7 +888,7 @@ var appControllers = angular.module('appControllers', [])
                 })
         }
         $scope.back = function () {
-            $location.path("/dataSetReport");
+            $location.path("/dataSetReport/reportRequest/dataSet/" + $routeParams.dataSet + "/orgUnit/" + $routeParams.orgUnit + "/period/" + $routeParams.period);
         }
         $scope.dataElements = [];
         $scope.lastMonthOfQuarter = [];

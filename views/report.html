@@ -31,6 +31,7 @@
         <input type="button" ng-if="preview" ng-disabled="isNotAuthorized() || reportStatus == 'Executed' || reportStatus == 'Not Executed'" value="Create Report" style="width:120px" ng-click="createDataSetReport()" html-link="">
         <input ng-if="state == 'preview'" type="button" value="Debug On" style="width:140px" ng-click="showDebug()">
         <input ng-if="state == 'debug'" type="button" value="Debug Off" style="width:140px" ng-click="showPreview()">
+        <input type="button" value="Back" style="width:140px" ng-click="back()">
     </div>
     <br />
     <criteria class="criteria" ng-show="dataCriteria"></criteria>
