@@ -86,7 +86,12 @@
                 <tr>
                     <td>Source Values</td>
                     <td>
-                        <div ng-if="!dataSet.isReport()" ng-repeat="dataSet in data.object.dataSets">
+                        <div ng-if="parentScope.listWard">
+                            <table class="table table-bordered">
+                                <tr ng-repeat="ward in parentScope.listWard"><td ng-if="child.id == ward.orgUnit" ng-repeat="child in orgUnit.children">{{child.name}}</td><td>{{ward.value}}</td></tr>
+                            </table>
+                        </div>
+                        <div ng-if="!dataSet.isReport() && !parentScope.listWard" ng-repeat="dataSet in data.object.dataSets">
                             {{dataSet.name}}
                             <table ng-if="data.object.domainType != 'TRACKER'" class="table table-bordered">
                                 <thead ng-if="organisationUnitLevels == 2">

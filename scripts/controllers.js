@@ -899,7 +899,7 @@ var appControllers = angular.module('appControllers', [])
         $scope.nonAggregatedDataElementsDate = [];
         $scope.autogrowingPrograms = {};
         $scope.getElementReplacment = function (content, type) {
-            var processed = content.replace("dataElementsData['","").replace("dataElementsData['","").replace("lastMonthOfQuarterData['","").replace("cumulativeToDateData['","").replace("fourthQuarterData['","").replace("']","");
+            var processed = content.replace("dataElementsData['","").replace("list-by-ward='listByWardData['","").replace("dataElementsData['","").replace("lastMonthOfQuarterData['","").replace("cumulativeToDateData['","").replace("fourthQuarterData['","").replace("']","");
             if(content.indexOf("dataElementsData['") == -1 && content.indexOf("fourthQuarterData['") == -1  && content.indexOf("lastMonthOfQuarterData['") == -1 && content.indexOf("cumulativeToDateData['") == -1){
                 console.log(type,":Outside:",content)
             }
@@ -912,6 +912,8 @@ var appControllers = angular.module('appControllers', [])
                     addition = "type='" +type +"' special='lastMonthOfQuarter'";
                 }else if(content.indexOf("cumulativeToDateData['") > -1){
                     addition = "type='" +type +"' special='cumulativeToDate'";
+                }else if(content.indexOf("fourthQuarterData['") > -1){
+                    addition = "type='" +type +"' special='fourthQuarter'";
                 }else if(content.indexOf("fourthQuarterData['") > -1){
                     addition = "type='" +type +"' special='fourthQuarter'";
                 }else{
@@ -976,7 +978,12 @@ var appControllers = angular.module('appControllers', [])
                             $scope.nonAggregatedDataElementsDate.push(idMacth[1] + "." + idMacth[2]);
                         }else if (match[0].indexOf("list-by-ward") > -1) {//If it is last month of quarter
                             var label = "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' org-unit='orgUnit'>";
-                            newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' count='true' org-unit='orgUnit'>");
+                            //
+                            if ($routeParams.preview == "debug") {
+                                newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' count='true' org-unit='orgUnit'></div><debug report='dataSet' list-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' dg-id='"+idMacth[1] + "." + idMacth[2]+"' type='dataElement'></debug><div>");
+                            }else{
+                                newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' count='true' org-unit='orgUnit'>");
+                            }
                             $scope.listByWard.push(idMacth[1] + "." + idMacth[2]);
                         } else {
                             $scope.nonAggregatedDataElements.push(idMacth[1] + "." + idMacth[2]);

@@ -189,8 +189,9 @@ var appDirectives = angular.module('appDirectives', [])
                 count:'='
             },
             replace: true,
-            controller: function ($scope) {
-                console.log($scope.count);
+            controller: function ($scope,$routeParams) {
+                $scope.params = $routeParams;
+                console.log($routeParams);
                 if($scope.count){
                     $scope.data = {};
                 }else{
@@ -220,6 +221,7 @@ var appDirectives = angular.module('appDirectives', [])
     .directive("debug", function () {
         return {
             scope: {
+                listWard:"=",
                 config: "=",
                 aDebug: "=",
                 dgId: "@",
