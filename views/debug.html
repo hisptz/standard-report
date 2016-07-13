@@ -106,7 +106,6 @@
                                         ng-repeat="dx in matcher">
                                         {{getDXName(dx)}}
                                     </td>
-                                    <td ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')]">Estimated Value</td>
                                 </tr>
                                 <tr ng-if="objectType == 'indicator'">
                                     <!--<td ng-repeat="categoryOptionCombo in dataSet.matcher track by $index">
@@ -130,7 +129,6 @@
                                     </td>
                                     <td ng-if="objectType == 'indicator'" colspan="{{dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos.length}}" ng-repeat="dx in matcher">{{getDXName(dx)}}
                                     </td>
-                                    <td ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')]">Estimated Value</td>
                                 </tr>
                                 <tr ng-if="objectType == 'indicator'">
                                     <!--<td ng-repeat="categoryOptionCombo in dataSet.matcher track by $index">
@@ -189,9 +187,19 @@
                                             <td>{{data.value}}</td>
                                         </tr>
                                     </table>
+
                                         <table class="table table-bordered" ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')] && categoryOptionCombo.name =='Estimated Figure'">
                                             <tr ng-if="key == 'value' || key == 'target_dataelement' || key == 'target' || key == 'target_period' " ng-repeat="(key,value) in dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id]">
-                                                <td>{{key | estimationConvertor}}</td><td>{{value}}</td>
+                                                <td>{{key | estimationConvertor}}</td>
+                                                <td>
+                                                    <span ng-if="key == 'target_dataelement'">
+                                                        {{estimateDataElement[value.substr(0,value.indexOf("."))].name}}
+                                                        <span ng-if="categoryOptionCombo.id == value.substr(value.indexOf('.') + 1)" ng-repeat="categoryOptionCombo in estimateDataElement[value.substr(0,value.indexOf('.'))].categoryCombo.categoryOptionCombos">
+                                                            {{categoryOptionCombo.name}}
+                                                        </span>
+                                                    </span>
+                                                    <span ng-if="key != 'target_dataelement'">{{value}}</span>
+                                                </td>
                                             </tr>
                                         </table>
                                     </span>
@@ -228,7 +236,16 @@
                                         </table>
                                         <table class="table table-bordered" ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')] && categoryOptionCombo.name =='Estimated Figure'">
                                             <tr ng-if="key == 'value' || key == 'target_dataelement' || key == 'target' || key == 'target_period' " ng-repeat="(key,value) in dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id]">
-                                                <td>{{key | estimationConvertor}}</td><td>{{value}}</td>
+                                                <td>{{key | estimationConvertor}}</td>
+                                                <td>
+                                                    <span ng-if="key == 'target_dataelement'">
+                                                        {{estimateDataElement[value.substr(0,value.indexOf("."))].name}}
+                                                        <span ng-if="categoryOptionCombo.id == value.substr(value.indexOf('.') + 1)" ng-repeat="categoryOptionCombo in estimateDataElement[value.substr(0,value.indexOf('.'))].categoryCombo.categoryOptionCombos">
+                                                            {{categoryOptionCombo.name}}
+                                                        </span>
+                                                    </span>
+                                                    <span ng-if="key != 'target_dataelement'">{{value}}</span>
+                                                </td>
                                             </tr>
                                         </table>
                                     </td>
@@ -266,9 +283,19 @@
                                                 <td>{{data.value}}</td>
                                             </tr>
                                         </table>
+
                                         <table class="table table-bordered" ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')] && categoryOptionCombo.name =='Estimated Figure'">
-                                            <tr ng-if="key == 'value' || key == 'target_dataelement' || key == 'target' || key == 'target_period' " ng-repeat="(key,value) in dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id]">
-                                                <td>{{key | estimationConvertor}}</td><td>{{value}}</td>
+                                            <tr ng-if="key == 'value' || key == 'old_value' || key == 'old_value_period' || key == 'target_dataelement' || key == 'target' || key == 'target_period' " ng-repeat="(key,value) in dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id]">
+                                                <td>{{key | estimationConvertor}}</td>
+                                                <td>
+                                                    <span ng-if="key == 'target_dataelement'">
+                                                        {{estimateDataElement[value.substr(0,value.indexOf("."))].name}}
+                                                        <span ng-if="categoryOptionCombo.id == value.substr(value.indexOf('.') + 1)" ng-repeat="categoryOptionCombo in estimateDataElement[value.substr(0,value.indexOf('.'))].categoryCombo.categoryOptionCombos">
+                                                            {{categoryOptionCombo.name}}
+                                                        </span>
+                                                    </span>
+                                                    <span ng-if="key != 'target_dataelement'">{{value}}</span>
+                                                </td>
                                             </tr>
                                         </table>
                                     </td>
@@ -305,7 +332,16 @@
                                         </table>
                                         <table class="table table-bordered" ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')] && categoryOptionCombo.name =='Estimated Figure'">
                                             <tr ng-if="key == 'value' || key == 'target_dataelement' || key == 'target' || key == 'target_period' " ng-repeat="(key,value) in dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id]">
-                                                <td>{{key | estimationConvertor}}</td><td>{{value}}</td>
+                                                <td>{{key | estimationConvertor}}</td>
+                                                <td>
+                                                    <span ng-if="key == 'target_dataelement'">
+                                                        {{estimateDataElement[value.substr(0,value.indexOf("."))].name}}
+                                                        <span ng-if="categoryOptionCombo.id == value.substr(value.indexOf('.') + 1)" ng-repeat="categoryOptionCombo in estimateDataElement[value.substr(0,value.indexOf('.'))].categoryCombo.categoryOptionCombos">
+                                                            {{categoryOptionCombo.name}}
+                                                        </span>
+                                                    </span>
+                                                    <span ng-if="key != 'target_dataelement'">{{value}}</span>
+                                                </td>
                                             </tr>
                                         </table>
                                     </td>
