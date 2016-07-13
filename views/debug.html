@@ -28,11 +28,11 @@
                 <tr>
                     <td style="width: 20%;">Name of <span ng-if="objectType == 'dataElement'">Data Element </span><span
                             ng-if="objectType == 'indicator'">Computed Values </span></td>
-                    <td>{{data.object.name}}({{data.object.id}})</td>
+                    <td>{{data.object.name}}</td>
                 </tr>
                 <tr ng-if="parentScope.dgId.indexOf(categoryOptionCombo.id) > -1" ng-repeat="categoryOptionCombo in data.object.categoryCombo.categoryOptionCombos">
                     <td style="width: 20%;">Category</td>
-                    <td>{{categoryOptionCombo.name}}({{categoryOptionCombo.id}})</td>
+                    <td>{{categoryOptionCombo.name}}</td>
                 </tr>
                 <tr>
                     <td style="width: 20%;">Name of Report Name</td>
@@ -80,7 +80,7 @@
                 </tr>
                 <tr ng-if="objectType == 'dataElement' && data.object.domainType != 'TRACKER'">
                     <td>Estimation Method</td>
-                    <td>{{estimation}} {{parentScope.aDebug}}</td>
+                    <td>{{estimation}}</td>
                 </tr>
 
                 <tr>
@@ -157,22 +157,22 @@
                                         {{getDXName(dx)}}
                                     </td>
                                     <td ng-repeat-end  style="display: none;"></td>
-                                    <td ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')]">Estimated Value</td>
                                 </tr>
                                 </thead>
                                 <tbody ng-if="organisationUnitLevels == 2">
                                 <tr ng-repeat-start="child in orgUnit.children | orderBy:'name'">
-                                    <td rowspan="{{child.children.length}}">{{child.name}}<span
-                                            ng-if="!dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id].completed"
-                                            class="label label-danger"> Incomplete</span>
+                                    <td rowspan="{{child.children.length}}">{{child.name}}
+                                        <span
+                                                ng-if="child[dataSet.id].completeDataSetRegistrations.length == 0"
+                                                class="label label-danger"> Incomplete</span>
                                     <span class="label label-success"
-                                          ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id].completed"> Complete</span></td>
+                                          ng-if="child[dataSet.id].completeDataSetRegistrations.length > 0"> Complete</span></td>
                                     <td ng-if="$first" ng-repeat="child1 in child.children | orderBy:'name'">
                                         {{child1.name}}<span
-                                            ng-if="!dataSet.estimation[parentScope.dgId.replace('.','_')].data[child1.id].completed"
+                                            ng-if="child1[dataSet.id].completeDataSetRegistrations.length == 0"
                                             class="label label-danger"> Incomplete</span>
                                     <span class="label label-success"
-                                          ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')].data[child1.id].completed"> Complete</span>
+                                          ng-if="child1[dataSet.id].completeDataSetRegistrations.length > 0"> Incomplete</span>
                                     </td>
                                     <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'"
                                         ng-if="objectType == 'dataElement'">
@@ -189,6 +189,11 @@
                                             <td>{{data.value}}</td>
                                         </tr>
                                     </table>
+                                        <table class="table table-bordered" ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')] && categoryOptionCombo.name =='Estimated Figure'">
+                                            <tr ng-if="key == 'value' || key == 'target_dataelement' || key == 'target' || key == 'target_period' " ng-repeat="(key,value) in dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id]">
+                                                <td>{{key | estimationConvertor}}</td><td>{{value}}</td>
+                                            </tr>
+                                        </table>
                                     </span>
                                     </td>
                                     <!--<td ng-repeat="child1 in child.children | orderBy:'name'" ng-if="objectType == 'dataElement' && $first">{{child1.data[id].actual.join(",")}}</td>
@@ -203,10 +208,10 @@
                                 </tr>
                                 <tr ng-if="$index != 0" ng-repeat="child1 in child.children | orderBy:'name'">
                                     <td>{{child1.name}}<span
-                                            ng-if="!dataSet.estimation[parentScope.dgId.replace('.','_')].data[child1.id].completed"
+                                            ng-if="child1[dataSet.id].completeDataSetRegistrations.length == 0"
                                             class="label label-danger"> Incomplete</span>
                                     <span class="label label-success"
-                                          ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id1].completed"> Complete</span></td>
+                                          ng-if="child1[dataSet.id].completeDataSetRegistrations.length > 0"> Incomplete</span></td>
                                     <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'"
                                         ng-if="objectType == 'dataElement'">
 
@@ -219,6 +224,11 @@
                                             <tr ng-repeat="data in child1.data[id][dataSet.id][categoryOptionCombo.name]">
                                                 <td>{{data.period}}</td>
                                                 <td>{{data.value}}</td>
+                                            </tr>
+                                        </table>
+                                        <table class="table table-bordered" ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')] && categoryOptionCombo.name =='Estimated Figure'">
+                                            <tr ng-if="key == 'value' || key == 'target_dataelement' || key == 'target' || key == 'target_period' " ng-repeat="(key,value) in dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id]">
+                                                <td>{{key | estimationConvertor}}</td><td>{{value}}</td>
                                             </tr>
                                         </table>
                                     </td>
@@ -237,11 +247,11 @@
                                 <tbody ng-if="organisationUnitLevels == 1">
                                 <tr ng-repeat="child in orgUnit.children | orderBy:'name'">
                                     <td>{{$index + 1}}</td>
-                                    <td>{{child.name}}<span
-                                            ng-if="!dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id].completed"
-                                            class="label label-danger"> Incomplete</span>
+                                    <td>{{child.name}}
+                                        <span ng-if="child[dataSet.id].completeDataSetRegistrations.length == 0"
+                                              class="label label-danger"> Incomplete</span>
                                     <span class="label label-success"
-                                          ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id].completed"> Complete</span>
+                                          ng-if="child[dataSet.id].completeDataSetRegistrations.length > 0"> Incomplete</span>
                                     </td>
                                     <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'"
                                         ng-if="objectType == 'dataElement'">
@@ -256,22 +266,28 @@
                                                 <td>{{data.value}}</td>
                                             </tr>
                                         </table>
+                                        <table class="table table-bordered" ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')] && categoryOptionCombo.name =='Estimated Figure'">
+                                            <tr ng-if="key == 'value' || key == 'target_dataelement' || key == 'target' || key == 'target_period' " ng-repeat="(key,value) in dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id]">
+                                                <td>{{key | estimationConvertor}}</td><td>{{value}}</td>
+                                            </tr>
+                                        </table>
                                     </td>
                                     <td ng-if="objectType == 'indicator'" ng-repeat-start="dx in matcher" style="display: none;"></td>
                                     <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'">
                                         {{child.data[dx][dataSet.id][categoryOptionCombo.name]}}
+
                                     </td>
                                     <td ng-repeat-end  style="display: none;"></td>
-                                    <td ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')]">{{dataSet.estimation[parentScope.dgId.replace(".","_")].data[child.id].value}}</td>
                                 </tr>
                                 </tbody>
                                 <tbody ng-if="organisationUnitLevels <= 0">
                                 <tr>
-                                    <td>{{orgUnit.name}}<span
-                                            ng-if="!dataSet.estimation[parentScope.dgId.replace('.','_')].data[orgUnit.id].completed"
-                                            class="label label-danger"> Incomplete</span>
+                                    <td>{{orgUnit.name}}
+                                        <span
+                                                ng-if="orgUnit[dataSet.id].completeDataSetRegistrations.length == 0"
+                                                class="label label-danger"> Incomplete</span>
                                     <span class="label label-success"
-                                          ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')].data[orgUnit.id].completed"> Complete</span>
+                                          ng-if="orgUnit[dataSet.id].completeDataSetRegistrations.length > 0"> Incomplete</span>
                                     </td>
                                     <td ng-repeat="categoryOptionCombo in dataSet.categoryCombo.categories[0].categoryCombos[0].categoryOptionCombos | orderBy:'name'"
                                         ng-if="objectType == 'dataElement'">
@@ -287,6 +303,11 @@
                                                 <td>{{data.value}}</td>
                                             </tr>
                                         </table>
+                                        <table class="table table-bordered" ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')] && categoryOptionCombo.name =='Estimated Figure'">
+                                            <tr ng-if="key == 'value' || key == 'target_dataelement' || key == 'target' || key == 'target_period' " ng-repeat="(key,value) in dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id]">
+                                                <td>{{key | estimationConvertor}}</td><td>{{value}}</td>
+                                            </tr>
+                                        </table>
                                     </td>
                                     <td ng-if="objectType == 'indicator'" ng-repeat-start="dx in matcher" style="display: none;">
                                     </td>
@@ -294,7 +315,6 @@
                                         {{orgUnit.data[dx][dataSet.id][categoryOptionCombo.name]}}
                                     </td>
                                     <td ng-repeat-end  style="display: none;"></td>
-                                    <td ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')]">{{dataSet.estimation[parentScope.dgId.replace(".","_")].data[orgUnit.id].value}}</td>
                                 </tr>
                                 </tbody>
                             </table>

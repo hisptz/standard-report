@@ -21,3 +21,20 @@ var appFilters = angular.module('appFilters', [])
         return output;
     };
 })
+    .filter('estimationConvertor', function() {
+        return function(input) {
+            var output = [];
+            console.log("Input:",input);
+            if(input == "value"){
+                return "Value"
+            }else if(input == "target_dataelement"){
+                return "Target Data Element"
+            }
+            else if(input == "target"){
+                return "Target"
+            }else if(input == "target_period"){
+                return "Target Period"
+            }
+            return input;
+        };
+    })

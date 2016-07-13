@@ -191,7 +191,6 @@ var appDirectives = angular.module('appDirectives', [])
             replace: true,
             controller: function ($scope,$routeParams) {
                 $scope.params = $routeParams;
-                console.log($routeParams);
                 if($scope.count){
                     $scope.data = {};
                 }else{
@@ -352,6 +351,7 @@ var appDirectives = angular.module('appDirectives', [])
                                 }));
                                 promises.push($http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + dataSet.id + "&orgUnit=" + orgUnit.id + "&startDate=" + periodDate.startDate + "&endDate=" + periodDate.endDate).then(function (results) {
                                     orgUnit[dataSet.id] = {};
+
                                     if (results.data.completeDataSetRegistrations) {
                                         orgUnit[dataSet.id].completeDataSetRegistrations = results.data.completeDataSetRegistrations;
                                     } else {
@@ -418,7 +418,7 @@ var appDirectives = angular.module('appDirectives', [])
                                             }
                                             var url = DHIS2URL + "api/analytics.json?dimension=dx:" + objectId + "&dimension=pe:" + calculatedPeriod + "&filter=ou:" + orgUnit.id + "&displayProperty=NAME";
                                             dataSet.categoryCombo.categories.forEach(function (category) {
-                                                if(category.name == "default"){
+                                                if(category.name != "default"){
                                                     category.categoryCombos.forEach(function (categoryCombo) {
                                                         url += "&dimension=" + category.id + ":";
                                                         categoryCombo.categoryOptionCombos.forEach(function (categoryOptionCombo, index) {
@@ -446,8 +446,6 @@ var appDirectives = angular.module('appDirectives', [])
                                 $scope.category = result.data.categories[0];
                                 var url = DHIS2URL + "api/" + parentScope.type + "s/" + object + ".json?fields=:all,attributeValues[:all,attribute[id,name]],categoryCombo[categoryOptionCombos[id,name]],dataSets[categoryCombo[categories[id,categoryCombos[id,name,categoryOptionCombos[id,name,categoryOptions]]]],organisationUnits[id,path,level],id,name,attributeValues[:all,attribute[:all],periodType,dataEntryForm]";
                                 $http.get(url).then(function (results) {
-                                    console.log(results);
-
                                     $scope.data.object = results.data;
 
                                     $scope.loaded = true;
@@ -456,7 +454,6 @@ var appDirectives = angular.module('appDirectives', [])
                                             $scope.estimation = attributeValue.value;
                                         }
                                     });
-                                    console.log($scope.data.object.dataSets);
                                     if ($scope.parentScope.special) {
                                         if ($scope.parentScope.special == "cumulativeToDate") {
                                             $scope.data.object.aggregationType = "CUMULATIVE TO DATE";
