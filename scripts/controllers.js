@@ -1600,7 +1600,7 @@ var appControllers = angular.module('appControllers', [])
     .controller('AggregationController', function ($scope, $interval, DHIS2URL, $http, $sce, $timeout, $location, ReportService, toaster) {
         //get the data estimation status
         $scope.show_estimation_box = false;
-        $scope.pull_updates = false;
+        $scope.pull_updates = true;
         //$http.get(DHIS2URL + 'api/dataStore/estimation/status').success(function(analytics_response){
         //    if(analytics_response.is_running = "Yes"){
         //        $scope.show_estimation_box = true;
