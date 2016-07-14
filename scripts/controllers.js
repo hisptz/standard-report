@@ -1646,7 +1646,6 @@ var appControllers = angular.module('appControllers', [])
                         $scope.activities = analytics_response;
                     });
                     $interval(function() {
-                        if($scope.pull_updates){
                             $http.get(DHIS2URL + 'api/dataStore/estimation/status').success(function(analytics_response){
                                 $scope.activities = analytics_response;
                                 if(analytics_response.is_running = "No"){
@@ -1657,7 +1656,6 @@ var appControllers = angular.module('appControllers', [])
                             $http.get(DHIS2URL + 'api/system/tasks/ANALYTICSTABLE_UPDATE').success(function(analytics_status){
                                 $scope.analytics_activities = analytics_status;
                             })
-                        }
                     }, 2000);
 
                 });
