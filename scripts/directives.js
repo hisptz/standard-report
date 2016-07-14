@@ -234,6 +234,7 @@ var appDirectives = angular.module('appDirectives', [])
             },
             replace: true,
             controller: function ($scope, $modal, DHIS2URL, $http, $routeParams) {
+
                 $scope.show = function () {
                     var modalInstance = $modal.open({
                         animation: true,
@@ -618,6 +619,13 @@ var appDirectives = angular.module('appDirectives', [])
                             }
                         }
                     });
+                }
+                if($routeParams.objectId){
+                    if($routeParams.objectId == $scope.dgId){
+                        console.log($routeParams.objectId == $scope.dgId);
+                        console.log(angular.element( ( '#myModalContent.html' ) ));
+                        $scope.show();
+                    }
                 }
             },
             templateUrl: 'views/debug.html'

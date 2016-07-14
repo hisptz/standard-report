@@ -1090,7 +1090,6 @@ var appControllers = angular.module('appControllers', [])
                         $scope.progressValue = 100;
                         $scope.loadingReport = false;
                         $window.document.title = "Report Loaded";
-
                     });
                 }, function (error) {
                     $scope.error = "Hey";
@@ -1200,7 +1199,7 @@ var appControllers = angular.module('appControllers', [])
             });
         };
     })
-    .controller("CoverController", function ($scope, $location, $http, DHIS2URL) {
+    .controller("CoverController", function ($scope, $location, $http, DHIS2URL,ReportService) {
         var url = $location.$$url.replace("/dataSetReport", "").replace("/report/", "").replace("dataSet/", "").replace("/orgUnit/", "/").replace("/period/", "/").split("/");
         $scope.dataSet = url[0];
         $scope.orgUnit = url[1];
@@ -1225,7 +1224,7 @@ var appControllers = angular.module('appControllers', [])
             }else if($scope.dataSetDetails.periodType == 'Quarterly'){
                 $scope.periodString = parseInt($scope.period.substr(0, 4));
             }else if($scope.dataSetDetails.periodType == 'Monthly'){
-                $scope.periodString = $scope.period.substr(4, 6) + " " + $scope.period.substr(0, 4);
+                $scope.periodString = ReportService.getPeriodName($scope.period);
             }
         });
         $scope.organisationUnit = {};

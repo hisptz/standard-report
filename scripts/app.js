@@ -49,6 +49,9 @@ angular.module('app',
         }).when('/dataSetReport/report/dataSet/:dataSet/orgUnit/:orgUnit/period/:period/:preview', {
             controller: 'ReportController',
             templateUrl: 'views/report.html'
+        }).when('/dataSetReport/report/dataSet/:dataSet/orgUnit/:orgUnit/period/:period/:preview/:objectId', {
+            controller: 'ReportController',
+            templateUrl: 'views/report.html'
         }).when('/dataSetReport/reportRequest/dataSet/:dataSet/orgUnit/:orgUnit/period/:period', {
             controller: 'ReportRequestController',
             templateUrl: 'views/reportRequest.html'
