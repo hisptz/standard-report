@@ -1206,6 +1206,15 @@ var appControllers = angular.module('appControllers', [])
         $scope.orgUnit = url[1];
         $scope.period = url[2];
         $scope.dataSetDetails = {};
+        $scope.getPeriodName = function(){
+            if($scope.period.indexOf("July") > -1){
+                return "ANNUAL";
+            }else if($scope.period.indexOf("Q") > -1){
+                return "QUARTER";
+            }else{
+                return "MONTHLY";
+            }
+        }
         $http.get(DHIS2URL + "api/dataSets/" + $scope.dataSet + ".json").then(function (result) {
             console.log(result);
             $scope.dataSetDetails = result.data;
@@ -1219,14 +1228,13 @@ var appControllers = angular.module('appControllers', [])
                 $scope.periodString = $scope.period.substr(4, 6) + " " + $scope.period.substr(0, 4);
             }
         });
+        $scope.organisationUnit = {};
         $http.get(DHIS2URL + "api/organisationUnits/" + $scope.orgUnit + ".json?fields=name,level,parent[name,level]").then(function (result) {
-            console.log(result.data.level);
-            if (result.data.level == 3) {
-                $scope.district = result.data.name;
-                $scope.region = result.data.parent.name;
-            }else if (result.data.level == 2) {
-                $scope.region = result.data.parent.name;
-            }
+            $scope.organisationUnits = result.data;
+            $http.get(DHIS2URL + "api/organisationUnitLevels.json?filter=level:eq:" + result.data.level).then(function (result) {
+                $scope.organisationUnit.organisationUnitLevel = result.data.organisationUnitLevels[0];
+
+            });
         });
         $scope.periodString = ""
     })
