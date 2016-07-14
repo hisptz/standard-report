@@ -1599,6 +1599,33 @@ var appControllers = angular.module('appControllers', [])
 
     })
     .controller('AggregationController', function ($scope, $interval, DHIS2URL, $http, $sce, $timeout, $location, ReportService, toaster) {
+        //get the data estimation status
+        $scope.show_estimation_box = false;
+        $scope.pull_updates = false;
+        $http.get(DHIS2URL + 'api/dataStore/estimation/status').success(function(analytics_response){
+            if(analytics_response.is_running = "Yes"){
+                $scope.show_estimation_box = true;
+                $scope.pull_updates = true;
+                $interval(function() {
+                    if($scope.pull_updates) {
+                        $http.get(DHIS2URL + 'api/dataStore/estimation/status').success(function (analytics_result) {
+                            $scope.activities = analytics_result;
+                            if(analytics_result.is_running = "No"){
+                                $scope.pull_updates = false;
+                            }
+                        })
+
+                        $http.get(DHIS2URL + 'api/system/tasks/ANALYTICSTABLE_UPDATE').success(function (analytics_status) {
+                            $scope.analytics_activities = analytics_status;
+                        })
+                    }
+                }, 2000);
+            }else{
+                $scope.show_estimation_box = false;
+                $scope.pull_updates = false;
+            }
+        });
+
         $scope.startAggregation = function(){
             var today = new Date();
             var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
@@ -1610,22 +1637,32 @@ var appControllers = angular.module('appControllers', [])
                 'activities':
                     [{date: dateTime, 'action': 'Starting Agregation process'}]
             };
-            $http.put(DHIS2URL + "api/dataStore/estimation/status", status_response )
-                .then(function (results) {
-                    $http.get(DHIS2URL + 'api/dataStore/estimation/status').success(function(analytics_response){
-                        $scope.activities = analytics_response;
-                    })
-                    $interval(function() {
+
+            if($scope.show_estimation_box){
+
+            }else{
+                $http.put(DHIS2URL + "api/dataStore/estimation/status", status_response )
+                    .then(function (results) {
                         $http.get(DHIS2URL + 'api/dataStore/estimation/status').success(function(analytics_response){
                             $scope.activities = analytics_response;
-                        })
+                        });
+                        $interval(function() {
+                            if($scope.pull_updates){
+                                $http.get(DHIS2URL + 'api/dataStore/estimation/status').success(function(analytics_response){
+                                    $scope.activities = analytics_response;
+                                    if(analytics_response.is_running = "No"){
+                                        $scope.pull_updates = false;
+                                    }
+                                })
 
-                        $http.get(DHIS2URL + 'api/system/tasks/ANALYTICSTABLE_UPDATE').success(function(analytics_status){
-                            $scope.analytics_activities = analytics_status;
-                        })
-                    }, 2000);
+                                $http.get(DHIS2URL + 'api/system/tasks/ANALYTICSTABLE_UPDATE').success(function(analytics_status){
+                                    $scope.analytics_activities = analytics_status;
+                                })
+                            }
+                        }, 2000);
 
-                });
-            $http.get(DHIS2URL + 'api/dataStore/estimation/status')
+                    });
+            }
+
         }
     });
