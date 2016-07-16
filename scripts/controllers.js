@@ -509,6 +509,11 @@ var appControllers = angular.module('appControllers', [])
                                                                         }
                                                                     });
                                                                 });
+                                                                $scope.user.userCredentials.userRoles.forEach(function(userRole){
+                                                                    if(userRole.authorities.indexOf("ALL") > -1 || userRole.name == "Superuser"){
+                                                                        returnValue = false;
+                                                                    }
+                                                                })
                                                                 return returnValue;
                                                             }
                                                         }, function (error) {
@@ -573,7 +578,7 @@ var appControllers = angular.module('appControllers', [])
             }
 
         }
-        $http.get(DHIS2URL + "api/me.json?fields=:all,organisationUnits[id,level]").then(function (results) {
+        $http.get(DHIS2URL + "api/me.json?fields=:all,organisationUnits[id,level],userCredentials[userRoles[:all]]").then(function (results) {
             $scope.user = results.data;
             $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,level,parent,children[id,name]")
                 .then(function (results) {
