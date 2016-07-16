@@ -335,18 +335,8 @@ var appControllers = angular.module('appControllers', [])
         $scope.dataStore = {};
         var periodDate = ReportService.getPeriodDate($routeParams.period);
         $scope.fetchCompleteness = function(dataSet,sourceLevels){
-            var isReport = false;
-            dataSet.attributeValues.forEach(function (attributeValue) {
-                if(attributeValue.attribute.name == "Is Report"){
-                    if(attributeValue.value == "true"){
-                        isReport = true;
-                    }
-                }
-            })
-            dataSet.isReport = isReport;
-            if(!isReport){
+            if(!dataSet.isReport){
                 dataSet.orgUnitLevel = dataSet.organisationUnits[0].level;
-                console.log(dataSet.orgUnitLevel);
                 $http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + dataSet.id + "&orgUnit=" + $routeParams.orgUnit + "&startDate=" + periodDate.startDate + "&endDate=" + periodDate.endDate + "&children=true").then(function (results) {
                     if (results.data.completeDataSetRegistrations) {
                         dataSet.completeDataSetRegistrations = results.data.completeDataSetRegistrations;
@@ -475,17 +465,6 @@ var appControllers = angular.module('appControllers', [])
                                 $http.get(DHIS2URL + "api/dataSets/" + $routeParams.dataSet + ".json?fields=name,periodType,attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
                                     $scope.dataSet = results.data;
                                     $scope.setPeriodTypeValues($scope.dataSet);
-                                    $scope.isNotAuthorized = function () {
-                                        var returnValue = true;
-                                        $scope.dataSet.organisationUnits.forEach(function (dataSetOrgUnit) {
-                                            $scope.user.organisationUnits.forEach(function (userOrgUnit) {
-                                                if (dataSetOrgUnit.id == userOrgUnit.id && userOrgUnit.level == "3") {
-                                                    returnValue = false;
-                                                }
-                                            });
-                                        });
-                                        return returnValue;
-                                    }
                                     if (results.data.attributeValues.length > 0) {
                                         var dataSetFound = false;
                                         results.data.attributeValues.forEach(function (attributeValue) {
@@ -503,13 +482,35 @@ var appControllers = angular.module('appControllers', [])
 
                                                         $http.get(DHIS2URL + "api/dataSets.json?filter=id:in:[" +sourceIds+"]&fields=id,periodType,displayName,attributeValues[value,attribute[name]],organisationUnits[id,level]").then(function (results) {
                                                             $scope.sourceDataSets = results.data.dataSets;
+                                                            $scope.consistsOfReport = false;
                                                             $scope.sourceDataSets.forEach(function(dataSet){
                                                                 dataSet.orgUnitLevel = sourceLevels[dataSet.id];
 
                                                                 $scope.setPeriodTypeValues(dataSet);
-
+                                                                var isReport = false;
+                                                                dataSet.attributeValues.forEach(function (attributeValue) {
+                                                                    if(attributeValue.attribute.name == "Is Report"){
+                                                                        if(attributeValue.value == "true"){
+                                                                            isReport = true;
+                                                                            $scope.consistsOfReport = true;
+                                                                        }
+                                                                    }
+                                                                })
+                                                                dataSet.isReport = isReport;
                                                                 $scope.fetchCompleteness(dataSet,sourceLevels);
+
                                                             })
+                                                            $scope.isNotAuthorized = function () {
+                                                                var returnValue = true;
+                                                                $scope.dataSet.organisationUnits.forEach(function (dataSetOrgUnit) {
+                                                                    $scope.user.organisationUnits.forEach(function (userOrgUnit) {
+                                                                        if (dataSetOrgUnit.id == userOrgUnit.id && userOrgUnit.level == "3") {
+                                                                            returnValue = false;
+                                                                        }
+                                                                    });
+                                                                });
+                                                                return returnValue;
+                                                            }
                                                         }, function (error) {
                                                             $scope.error = "heye";
                                                             $scope.completeDataSetRegistrationsLoading = false;
@@ -1102,7 +1103,7 @@ var appControllers = angular.module('appControllers', [])
             toaster.pop('error', "Error" + error.status, "Error Loading Data Set. Please try again");
         });
         $scope.user = {};
-        $http.get(DHIS2URL + "api/me.json?fields=:all,organisationUnits[id,level]").then(function (results) {
+        $http.get(DHIS2URL + "api/me.json?fields=:all,organisationUnits[id,level],userCredentials[userRoles[:all]]").then(function (results) {
 
             $scope.user = results.data;
         $http.get(DHIS2URL + "api/dataStore/notExecuted/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
@@ -1136,6 +1137,11 @@ var appControllers = angular.module('appControllers', [])
                                             }
                                         });
                                     });
+                                    $scope.user.userCredentials.userRoles.forEach(function(userRole){
+                                        if(userRole.authorities.indexOf("ALL") > -1 || userRole.name == "Superuser"){
+                                            returnValue = false;
+                                        }
+                                    })
                                     return returnValue;
                                 }
                                 if (results.data.attributeValues.length > 0) {
