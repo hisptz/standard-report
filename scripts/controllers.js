@@ -568,6 +568,11 @@ var appControllers = angular.module('appControllers', [])
                 }
 
             })
+            $scope.user.userCredentials.userRoles.forEach(function(userRole){
+                if(userRole.authorities.indexOf("ALL") > -1 || userRole.name == "Superuser"){
+                    returnValue = false;
+                }
+            })
             return returnValue;
         }
         $scope.getPeriodName = function(period){

@@ -35,9 +35,9 @@ var appFilters = angular.module('appFilters', [])
             }else if(input == "target_period"){
                 return "Target Period"
             }else if(input == "old_value"){
-                return "Old Value"
+                return "Previous Value"
             }else if(input == "old_value_period"){
-                return "Old Value Period"
+                return "Period Previous Value"
             }
             return input;
         };

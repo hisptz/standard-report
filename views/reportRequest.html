@@ -251,6 +251,7 @@
     <div  ng-if="reportStatus == 'Not Executed'">
         Report creation has been scheduled. <br /><br />
         <input type="button" value="Preview" ng-click="generateDataSetReport()">
+        <input type="button" ng-disabled="isNotAuthorized()" value="Preview in Debug Mode" ng-click="generateDataSetReportInDebug()">
         <input type="button" value="Change Criteria" ng-click="dataCriteria = !dataCriteria">
         <criteria class="criteria" ng-show="dataCriteria"></criteria>
     </div>
