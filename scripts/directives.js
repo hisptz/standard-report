@@ -196,7 +196,8 @@ var appDirectives = angular.module('appDirectives', [])
                 }else{
                     $scope.data = [];
                 }
-                $scope.listByWard.forEach(function (value) {
+                console.log($scope);
+                $scope.listByWard.values.forEach(function (value) {
                     //value[]
                     $scope.orgUnit.children.forEach(function (orgUnit) {
                         if (orgUnit.id == value.orgUnit) {

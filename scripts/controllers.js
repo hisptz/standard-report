@@ -96,7 +96,7 @@ var appControllers = angular.module('appControllers', [])
                             if ((year == testDate.getFullYear() && quarterVal > ((testDate.getMonth() + 1) % 4)) || year > testDate.getFullYear()) {
                                 return;
                             }
-                            if (!(Math.ceil(((new Date()).getMonth() + 1) / 3) == quarterVal && testDate.getFullYear() == year)) {
+                            if (!(Math.ceil((testDate.getMonth() + 1) / 3) == quarterVal && testDate.getFullYear() == year)) {
                                 that.list.unshift({
                                     name: quarter + " " + year,
                                     value: year + "Q" + quarterVal
@@ -241,9 +241,12 @@ var appControllers = angular.module('appControllers', [])
 
                                 }
                             })
-                            var date = new Date();
                             while (!$scope.doesValueExist($routeParams.period)) {
-                                $scope.data.periodTypes[$scope.data.dataSet.periodType].previous(date);
+                                console.log($scope.data.periodTypes[$scope.data.dataSet.periodType].currentDate.getFullYear());
+                                if ($scope.data.periodTypes[$scope.data.dataSet.periodType].currentDate.getFullYear() < 2011) {
+                                    break;
+                                }
+                                $scope.data.periodTypes[$scope.data.dataSet.periodType].previous();
                             }
 
                             $timeout(function () {
@@ -735,8 +738,8 @@ var appControllers = angular.module('appControllers', [])
             });
             $scope.progressValue = 10;
             $scope.loadingStatus = "Loading Data Set";
-            $http.get(DHIS2URL + "api/dataSets/" + $routeParams.dataSet + ".json?fields=:all,dataEntryForm[htmlCode],dataElements[id,aggregationType,avalueType]").then(function (results) {
-                console.log("Here2");
+            $http.get(DHIS2URL + "api/dataSets/" + $routeParams.dataSet + ".json?fields=:all,dataEntryForm[htmlCode],dataElements[id,name,aggregationType,valueType],attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
+                $scope.dataSet = results.data;
                 $scope.data.dataSetForm = results.data;
 
                 var trustedHtml = $scope.renderHtml(results.data.dataEntryForm.htmlCode, results.data.dataElements);
@@ -776,14 +779,27 @@ var appControllers = angular.module('appControllers', [])
                                 promises.push($http.get(DHIS2URL + "api/dataValueSets.json?dataSet=" + attributeValue.value + "&orgUnit=" + $routeParams.orgUnit + "&children=true&period=" + $routeParams.period)
                                     .then(function (dataSetResults) {
                                         $scope.listByWard.forEach(function (dx) {
-                                            $scope.listByWardData[dx] = [];
+                                            $scope.listByWardData[dx] = {values: []};
                                         });
-                                        if (dataSetResults.data.dataValues)
+                                        if (dataSetResults.data.dataValues) {
                                             dataSetResults.data.dataValues.forEach(function (value) {
                                                 if ($scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo]) {
-                                                    $scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo].push(value);
+                                                    $scope.data.dataSetForm.dataElements.forEach(function (dataElement) {
+                                                        console.log(dataElement)
+                                                        if (dataElement.id == value.dataElement) {
+                                                            $scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo].name = dataElement.name;
+                                                        }
+                                                    })
                                                 }
                                             });
+                                            dataSetResults.data.dataValues.forEach(function (value) {
+                                                if ($scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo]) {
+
+                                                    $scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo].values.push(value);
+                                                }
+                                            });
+                                        }
+
                                     }));
                             }
                         });
@@ -907,6 +923,8 @@ var appControllers = angular.module('appControllers', [])
                     $scope.error = "Hey";
                     toaster.pop('error', "Error" + error.status, "Error Loading Data from Server. Please try again");
                 });
+            }, function (error) {
+                alert("Alert");
             });
             return deffered.promise;
         }
@@ -1109,28 +1127,22 @@ var appControllers = angular.module('appControllers', [])
         $http.get(DHIS2URL + "api/me.json?fields=:all,organisationUnits[id,level],userCredentials[userRoles[:all]]").then(function (results) {
 
             $scope.user = results.data;
-            $http.get(DHIS2URL + "api/dataSets/" + $routeParams.dataSet + ".json?fields=name,attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
-                $scope.dataSet = results.data;
-                //Load organisation Unit data
-                $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,children[id,name]").then(function (results) {
-                    $scope.orgUnit = results.data;
-                    $scope.getReport().then(function () {
-                        var reportElement = document.getElementById("report");
-                        $compile(reportElement.children)($scope);
-                        $timeout(function () {
-                            $scope.progressValue = 100;
-                            $scope.loadingReport = false;
-                            $window.document.title = "Report Loaded";
-                        });
-                    }, function (error) {
-                        $scope.error = "Hey";
-                        toaster.pop('error', "Error", "Error Loading Data. Please try again.");
+            $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,children[id,name]").then(function (results) {
+                $scope.orgUnit = results.data;
+                $scope.getReport().then(function () {
+                    var reportElement = document.getElementById("report");
+                    $compile(reportElement.children)($scope);
+                    $timeout(function () {
+                        $scope.progressValue = 100;
+                        $scope.loadingReport = false;
+                        $window.document.title = "Report Loaded";
                     });
                 }, function (error) {
-                    toaster.pop('error', "Error" + error.status, "Error Loading Organisation Unit.");
+                    $scope.error = "Hey";
+                    toaster.pop('error', "Error", "Error Loading Data. Please try again.");
                 });
             }, function (error) {
-                toaster.pop('error', "Error" + error.status, "Error Loading Data Set. Please try again");
+                toaster.pop('error', "Error" + error.status, "Error Loading Organisation Unit.");
             });
         });
         $scope.createDataSetReport = function () {
