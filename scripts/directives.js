@@ -845,19 +845,31 @@ var appDirectives = angular.module('appDirectives', [])
                 //Evaluate indicators if there calculations that need to be made
                 if ($scope.config.indicators) {
                     $scope.config.indicators.forEach(function (indicator, index) {
-
-                        $scope.data.dataElements.push({name: "Inidicator" + index});
+                        $scope.data.dataElements.splice(indicator.position, 0, "Inidicator" + index);
+                        //$scope.data.dataElements.push({name: "Inidicator" + index});
                         $scope.data.events.forEach(function (event) {
                             var eventIndicator = "(" + indicator.numerator + ")/(" + indicator.denominator + ")";
                             //Get indcator dataelements
                             $scope.data.dataElements.forEach(function (dataElement) {
                                 if (eventIndicator.indexOf(dataElement.id) > -1) {
                                     //Replace formula with data value
-                                    eventIndicator = eventIndicator.replace("#{" + dataElement.id + "}", event[dataElement.name]);
+                                    var value = "0";
+                                    if(event[dataElement.name]){
+                                        value = event[dataElement.name];
+                                    }
+                                    eventIndicator = eventIndicator.replace("#{" + dataElement.id + "}", value);
                                 }
                             });
                             //Evaluate Indicator
-                            event["Inidicator" + index] = eval('(' + eventIndicator + ')');
+
+                            try{
+                                if(indicator.position == 3){
+                                    console.log(eventIndicator);
+                                }
+                                event["Inidicator" + index] = eval('(' + eventIndicator + ')');
+                            }catch(e){
+
+                            }
                         })
                     });
 
