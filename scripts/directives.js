@@ -241,7 +241,7 @@ var appDirectives = angular.module('appDirectives', [])
                         animation: true,
                         size: 'lg',
                         templateUrl: 'myModalContent.html',
-                        controller: function ($scope, parentScope, $modalInstance, DebugService, ReportService, $q) {
+                        controller: function ($scope, parentScope, $modalInstance, DebugService, ReportService, $q,toaster) {
 
                             $scope.param = $routeParams;
                             $scope.data = {
@@ -567,6 +567,8 @@ var appDirectives = angular.module('appDirectives', [])
                                                     $scope.estimateDataElement[dataElement.id] = dataElement;
                                                 });
                                             });
+                                        },function(error){
+                                            toaster.pop('error', "Error", "There is no estimation data.");
                                         });
                                     }
                                     $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=:all" + childrenUrl).then(function (results) {
