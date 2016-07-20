@@ -308,14 +308,7 @@ function monitorLoadedReport(){
     var period = null;
     var html_link = "";
     $("input[value='Get report']").bind("click",function(){
-
-        objectName = $("select#dataSetId").find("option[value='"+dhis2.dsr.currentDataSetReport['ds']+"']").text();
-        period = dhis2.dsr.currentDataSetReport['pe'];
-        orgUnitDimension = dhis2.dsr.currentDataSetReport['ou'];
-        theObject = "Report View";
-
-        sendEvent(theObject,objectName,objectUrl,orgUnitDimension,period,html_link);
-
+        sendGetReportEvent();
     });
     $("input[value='Print'],input[value='Download as PDF']").bind("click",function(){
 
@@ -329,6 +322,15 @@ function monitorLoadedReport(){
     });
 
 
+}
+function sendGetReportEvent(){
+    console.log("Sending Report Event");
+    objectName = $("select#dataSetId").find("option[value='"+dhis2.dsr.currentDataSetReport['ds']+"']").text();
+    period = dhis2.dsr.currentDataSetReport['pe'];
+    orgUnitDimension = dhis2.dsr.currentDataSetReport['ou'];
+    theObject = "Report View";
+
+    sendEvent(theObject,objectName,objectUrl,orgUnitDimension,period,html_link);
 }
 function monitorDataEntry(){
     var theObject = null;

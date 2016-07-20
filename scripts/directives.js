@@ -196,7 +196,7 @@ var appDirectives = angular.module('appDirectives', [])
                 }else{
                     $scope.data = [];
                 }
-                console.log($scope);
+                if($scope.listByWard)
                 $scope.listByWard.values.forEach(function (value) {
                     //value[]
                     $scope.orgUnit.children.forEach(function (orgUnit) {
@@ -595,7 +595,16 @@ var appDirectives = angular.module('appDirectives', [])
                             $scope.ok = function () {
                                 $modalInstance.close();
                             };
-
+                            $scope.conforms2PreviousColumns = function(columnIndex,event){
+                                var index = columnIndex - 1;
+                                while(index >= 0){
+                                    if(event[$scope.parentScope.autoData.dataElements[index].name] != $scope.parentScope.event[$scope.parentScope.autoData.dataElements[index].name]){
+                                        return false;
+                                    }
+                                    index--;
+                                }
+                                return true;
+                            }
                             $scope.cancel = function () {
                                 $modalInstance.dismiss('cancel');
                             };

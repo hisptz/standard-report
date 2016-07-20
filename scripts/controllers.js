@@ -242,7 +242,6 @@ var appControllers = angular.module('appControllers', [])
                                 }
                             })
                             while (!$scope.doesValueExist($routeParams.period)) {
-                                console.log($scope.data.periodTypes[$scope.data.dataSet.periodType].currentDate.getFullYear());
                                 if ($scope.data.periodTypes[$scope.data.dataSet.periodType].currentDate.getFullYear() < 2011) {
                                     break;
                                 }
@@ -268,6 +267,7 @@ var appControllers = angular.module('appControllers', [])
             $scope.trustedHtml = false;
         }
         $scope.generateDataSetReport = function () {
+            sendEvent("Report Download",$scope.data.dataSet.name,$location.$$absUrl.replace($location.$$protocol + "://","").replace($location.$$host,"").replace(":" + $location.$$port,"").replace("#"+$location.$$path,""),$scope.data.selectedOrgUnit.id ,$scope.data.period,"");
             $location.path("/dataSetReport/reportRequest/dataSet/" + $scope.data.dataSet.id + "/orgUnit/" + $scope.data.selectedOrgUnit.id + "/period/" + $scope.data.period);
 
         };
@@ -294,6 +294,7 @@ var appControllers = angular.module('appControllers', [])
             $location.path(url);
         };
         $scope.download = function (url) {
+            sendEvent("Report Download",$scope.dataSet.name,$location.$$absUrl.replace($location.$$protocol + "://","").replace($location.$$host,"").replace(":" + $location.$$port,"").replace("#"+$location.$$path,""),$routeParams.orgUnit ,$routeParams.period,"");
             window.open('../archive/' + $routeParams.dataSet + '_' + $routeParams.orgUnit + '_' + $routeParams.period + '.pdf', '_blank');
         };
 
@@ -447,7 +448,6 @@ var appControllers = angular.module('appControllers', [])
 
                         }, function (error) {
                             $scope.loadFile = true;
-                            console.log(error);
                             if (error.status) {
                                 if (error.status == 404) {
                                     toaster.pop('error', "Error" + error.status, "Archive not available.");
@@ -620,7 +620,6 @@ var appControllers = angular.module('appControllers', [])
         });
         $scope.showComment = function () {
             $scope.saveComment = function () {
-                console.log(JSON.stringify($scope.commentData));
                 $scope.savingComment = "savingLoad";
                 if ($scope.commentData.lastCommenter) {
                     $scope.commentData.lastUpdated = new Date();
@@ -729,7 +728,6 @@ var appControllers = angular.module('appControllers', [])
             $scope.fourthQuarterData = {};
             $scope.listByWardData = {};
             $scope.loadingStatus = "Loading Organisation Units";
-            console.log("Here");
 
             var organisationUnit = $scope.orgUnit;
             var children = [];
@@ -785,7 +783,6 @@ var appControllers = angular.module('appControllers', [])
                                             dataSetResults.data.dataValues.forEach(function (value) {
                                                 if ($scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo]) {
                                                     $scope.data.dataSetForm.dataElements.forEach(function (dataElement) {
-                                                        console.log(dataElement)
                                                         if (dataElement.id == value.dataElement) {
                                                             $scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo].name = dataElement.name;
                                                         }

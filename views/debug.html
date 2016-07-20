@@ -364,7 +364,7 @@
 
                             <tr ng-repeat="event in parentScope.autoData.events | orderBy:'\u0022Organisation unit name\u0022'">
                                 <td>{{event["Organisation unit name"]}}</td>
-                                <td ng-class="{orange:dataElement.id == data.object.id && parentScope.innerHtml == event[dataElement.name]}"
+                                <td ng-class="{orange:($index == 0)?dataElement.id == data.object.id && parentScope.innerHtml == event[dataElement.name] : dataElement.id == data.object.id && parentScope.innerHtml == event[dataElement.name] && conforms2PreviousColumns($index,event)}"
                                     ng-if="event[dataElement.name] != undefined"
                                     ng-repeat="dataElement in parentScope.autoData.dataElements">
                                     {{event[dataElement.name]}}
