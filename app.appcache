@@ -107,9 +107,3 @@ styles/style.css
 ../../../dhis-web-commons/paging/serverside-pagination.html
 ../../../dhis-web-commons/customform/custom-form.html
 
-scripts/app.js
-scripts/services.js
-scripts/filters.js
-scripts/directives.js
-scripts/controllers.js
-
