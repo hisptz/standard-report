@@ -1,11 +1,10 @@
-
 <tbody>
 <tr ng-if="!config.groupBy" event="{{event.Event}}" ng-repeat="event in data.events">
     <!--<td ng-repeat="dataElement in data.dataElements">{{dataElement.event[dataElement.name]}}</td>-->
-    <td ng-repeat="dataElement in data.dataElements"><span>{{event[dataElement.name]}}</span><debug a-debug='aDebug' inner-html='event[dataElement.name]' report='dataSet' auto-data='data' event='event' dg-id='{{dataElement.id}}' type='dataElement'></debug></td>
+    <td ng-repeat="dataElement in data.dataElements track by $index"><span>{{event[dataElement.name]}}</span><debug a-debug='aDebug' inner-html='event[dataElement.name]' report='dataSet' auto-data='data' event='event' dg-id='{{dataElement.id}}' type='dataElement'></debug></td>
 </tr>
 <tr  ng-if="config.groupBy" event="{{event.Event}}" ng-repeat="event in data.events">
     <!--<td ng-repeat="dataElement in data.dataElements">{{dataElement.event[dataElement.name]}}</td>-->
-    <td style="border:1px solid lightgrey" ng-if="event[dataElement.name] != undefined" ng-repeat="dataElement in data.dataElements"><span>{{event[dataElement.name]}}</span><debug a-debug='aDebug' inner-html='{{event[dataElement.name]}}' report='dataSet' auto-data='data' event='event' dg-id='{{dataElement.id}}' type='dataElement'></debug></td>
+    <td style="border:1px solid lightgrey" ng-if="event[dataElement.name] != undefined" ng-repeat="dataElement in data.dataElements track by $index"><span>{{event[dataElement.name]}}</span><debug a-debug='aDebug' inner-html='{{event[dataElement.name]}}' report='dataSet' auto-data='data' event='event' dg-id='{{dataElement.id}}' type='dataElement'></debug></td>
 </tr>
 </tbody>
