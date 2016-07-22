@@ -1221,7 +1221,7 @@ var appControllers = angular.module('appControllers', [])
                     $scope.periodString = "July " + $scope.period.substr(0, 4) + " - June " + (parseInt($scope.period.substr(0, 4)) + 1);
                 }
             } else if ($scope.dataSetDetails.periodType == 'Quarterly') {
-                $scope.periodString = parseInt($scope.period.substr(0, 4));
+                $scope.periodString = ReportService.getPeriodName($scope.period);
             } else if ($scope.dataSetDetails.periodType == 'Monthly') {
                 $scope.periodString = ReportService.getPeriodName($scope.period);
             }

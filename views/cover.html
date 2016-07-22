@@ -55,13 +55,8 @@
             <tr ng-if="dataSetDetails.periodType == 'FinancialJuly'"><td>Financial Year:</td><td class="underline">{{periodString}}</td></tr>
             <tr ng-if="dataSetDetails.periodType == 'Monthly'"><td>Month:</td><td class="underline">{{periodString}}</td></tr>
             <tr ng-if="dataSetDetails.periodType == 'Quarterly'"><td>Quartely:</td>
-                <td>
-                    <table>
-                        <tr><td>First Quarter:</td><td>(July - September {{periodString}})</td></tr>
-                        <tr><td>Second Quarter:</td><td>(October - December {{periodString}})</td></tr>
-                        <tr><td>Third Quarter:</td><td>(January - March {{periodString + 1}})</td></tr>
-                        <tr><td>Fourth Quarter:</td><td>(April - June {{periodString + 1}})</td></tr>
-                    </table>
+                <td class="underline">
+                    {{periodString}}
                 </td>
             </tr>
             <tr><td>Name (contact person)</td><td class="underline"></td></tr>
