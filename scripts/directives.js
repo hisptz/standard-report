@@ -365,7 +365,6 @@ var appDirectives = angular.module('appDirectives', [])
             },
             replace: true,
             controller: function ($scope, $routeParams) {
-                console.log($scope);
                 $scope.params = $routeParams;
                 if ($scope.count) {
                     $scope.data = {};

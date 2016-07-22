@@ -439,7 +439,7 @@ var appControllers = angular.module('appControllers', [])
                     $http.get(DHIS2URL + "api/dataStore/executed/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
 
                         $scope.reportStatus = "Executed";
-                        $http.get('../archive/' + $routeParams.dataSet + '_' + $routeParams.orgUnit + '_' + $routeParams.period + '.html').then(function (result) {
+                        $http.get('../archive/' + $routeParams.dataSet + '_' + $routeParams.orgUnit + '_' + $routeParams.period + '.html', { headers: { 'Cache-Control' : 'no-cache' } } ).then(function (result) {
                             $scope.file = $sce.trustAsHtml(result.data);
                             $scope.loadFile = true;
 
@@ -792,7 +792,6 @@ var appControllers = angular.module('appControllers', [])
                         var dataSetFound = false;
                         $scope.dataSet.attributeValues.forEach(function (attributeValue) {
                             if (attributeValue.attribute.name == "Source") {
-                                console.log(attributeValue.value);
                                 var sources = eval("(" + attributeValue.value + ")");
                                 sources.forEach(function(source){
                                     source.sources.forEach(function(source2){
