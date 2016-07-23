@@ -1094,7 +1094,7 @@ var appControllers = angular.module('appControllers', [])
                         }
                         newHtml = newHtml.replace(match[0], $scope.getElementReplacment("dataElementsData['" + idMacth[1] + "." + idMacth[2] + "']", "dataElement"));
                     }
-                } else if ((idMacth = /id="indicator(.*?)"/.exec(match[0])) !== null) {
+                } else if ((idMacth = /id="indicator(.*?)"/.exec(match[0])) !== null || (idMacth = /id="(.*?)-val"/.exec(match[0])) !== null) {
                     if (match[0].indexOf("fourthQuarter") > -1) {//If it is last month of quarter
                         var label = "<div>";
                         if (match[0].indexOf("integer") > -1) {

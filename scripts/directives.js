@@ -898,7 +898,22 @@ var appDirectives = angular.module('appDirectives', [])
                                                     if (dataElementIndexes.indexOf(i) > -1 || !child.children[i]) {
                                                         break;
                                                     }
-                                                    if (isInt(child.children[i].innerHTML)) {
+                                                    if(scope.config.dataElementsDetails[i].valueType == "INTEGER_ZERO_OR_POSITIVE"){
+                                                        var secondValue = parseInt(elem[0].children[loopIndex].children[i].innerHTML);
+                                                        if (elem[0].children[loopIndex].children[i].innerHTML == "") {
+                                                            secondValue = 0.0;
+                                                        }
+                                                        child.children[i].innerHTML = (parseFloat(child.children[i].innerHTML) + secondValue).toFixed(1);
+                                                        elementsToDelete.push(elem[0].children[loopIndex].children[i]);
+                                                        if (child.children[i].toRowSpan) {
+                                                            child.children[i].toRowSpan++;
+                                                        } else {
+                                                            child.children[i].toRowSpan = 2;
+                                                        }
+                                                    }else{
+                                                        console.log(scope.config.dataElementsDetails[i].valueType,elem[0].children[loopIndex].children[i].innerHTML);
+                                                    }
+                                                    /*if (isInt(child.children[i].innerHTML)) {
                                                         var secondValue = parseInt(elem[0].children[loopIndex].children[i].innerHTML);
                                                         if (elem[0].children[loopIndex].children[i].innerHTML == "") {
                                                             secondValue = 0;
@@ -935,7 +950,7 @@ var appDirectives = angular.module('appDirectives', [])
                                                         } else {
                                                             child.children[i].toRowSpan = 2;
                                                         }
-                                                    }
+                                                    }*/
 
                                                 }
                                                 i1 = loopIndex;
@@ -1011,7 +1026,6 @@ var appDirectives = angular.module('appDirectives', [])
                 };
                 $scope.getDataElementName = function (id) {
                     var name = "";
-                    //console.log("dataElementsDetails:",$scope.config.dataElementsDetails);
                     $scope.config.dataElementsDetails.forEach(function (dataElement) {
                         if (dataElement.id == id) {
                             name = dataElement.name;
