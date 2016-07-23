@@ -1055,12 +1055,30 @@ var appDirectives = angular.module('appDirectives', [])
                         $scope.config.dataElements.splice(addDataElements.index, 0, addDataElements.dataElement.id);
                     })
                 }
-
+                var averagingOccurences = {}
                 $scope.config.dataElements.forEach(function (dataElementId) {
                     if ($scope.config.dataElementsDetails) {
                         $scope.config.dataElementsDetails.forEach(function (dataElement, index) {
                             if (dataElement.id == dataElementId) {
                                 $scope.data.dataElements.push(dataElement);
+                                if(dataElement.aggregationType == "AVERAGE"){
+                                    $scope.config.data.forEach(function (eventData) {
+                                        if(averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]]){
+                                            averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]]++;
+                                        }else{
+                                            averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] = 1;
+                                        }
+                                    });
+                                    $scope.config.data.forEach(function (eventData) {
+                                        if(averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] > 1){
+                                            console.log(dataElement.name,eventData[dataElement.name],"/",averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]]);
+                                        }
+                                        eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] +")").toFixed(1);
+                                        if(averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] > 1){
+                                            console.log(eventData[dataElement.name]);
+                                        }
+                                    })
+                                }
                             }
                         });
                     }
@@ -1112,44 +1130,6 @@ var appDirectives = angular.module('appDirectives', [])
                         $scope.data.events.push(eventData);
                     })
                 }
-                /*if($scope.config.cumulativeToDate){
-                 $scope.config.cumulativeToDate.forEach(function(cDataElementId){
-                 $scope.config.dataElementsDetails.forEach(function(dataElement,index){
-                 if(dataElement.id == cDataElementId && $scope.config.dataElements[index + 1] == cDataElementId){
-                 $scope.config.dataElements[index + 1] = $scope.config.dataElements[index + 1] + index;
-                 dataElement.id = $scope.config.dataElements[index + 1];
-                 dataElement.name = dataElement.name + index;
-                 }
-                 })
-                 })
-                 $scope.config.otherData.forEach(function (eventData) {
-                 $scope.data.events.some(function(event){
-                 var returnValue = false;
-                 var eventName = $scope.getDataElementName($scope.config.dataElements[0]);
-                 if(event[eventName] == eventData[eventName]){
-                 $scope.config.cumulativeToDate.forEach(function(cDataElementId){
-                 $scope.config.dataElements.forEach(function(dataElementId,index){
-                 if(index + 1 < $scope.config.dataElements.length)
-                 if(dataElementId == cDataElementId && $scope.config.dataElements[index + 1].indexOf(cDataElementId) > -1){
-                 //console.log("dataElements:",$scope.config.dataElements,index);
-                 var otherDataEventName = $scope.getDataElementName($scope.config.dataElements[index + 1]);
-                 var initialOtherDataEventName = $scope.getDataElementName($scope.config.dataElements[index]);
-                 //console.log(otherDataEventName,event,eventData);
-                 if(event[otherDataEventName]){
-                 event[otherDataEventName] = event[otherDataEventName] + "+" +eventData[initialOtherDataEventName];
-                 }else{
-                 event[otherDataEventName] = eventData[initialOtherDataEventName];
-                 }
-                 //console.log(event[otherDataEventName]);
-                 returnValue = true;
-                 }
-                 })
-                 })
-                 }
-                 return returnValue;
-                 })
-                 })
-                 }*/
                 //Evaluate indicators if there calculations that need to be made
                 if ($scope.config.indicators) {
                     $scope.config.indicators.forEach(function (indicator, index) {
