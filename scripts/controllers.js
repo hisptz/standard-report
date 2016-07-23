@@ -280,7 +280,7 @@ var appControllers = angular.module('appControllers', [])
             })
         });
     })
-    .controller("ReportRequestController", function ($scope, $routeParams, $http, DHIS2URL, ReportService, $location, $sce, toaster, $timeout) {
+    .controller("ReportRequestController", function ($scope, $routeParams, $http, DHIS2URL, ReportService, $location, $sce, toaster, $route) {
         $scope.reloadPage = function () {
             window.location.reload();
         }
@@ -329,7 +329,7 @@ var appControllers = angular.module('appControllers', [])
                 dataSet: $routeParams.dataSet
             }).then(function () {
                 toaster.pop('success', "Report Undone", "Report was undone successfully.");
-                $scope.reloadPage();
+                $route.reload();
             });
         };
         $scope.params = $routeParams;
