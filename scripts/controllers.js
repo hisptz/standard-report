@@ -7,8 +7,7 @@ var appControllers = angular.module('appControllers', [])
 
         $scope.data = {
             selectedOrgUnit: undefined,
-            config: {
-            },
+            config: {},
             archive: undefined,
             dataSets: [],
             period: "",
@@ -195,7 +194,7 @@ var appControllers = angular.module('appControllers', [])
         $scope.setOrganisationUnitSelection = function (orgUnit) {
             if (orgUnit.id == $routeParams.orgUnit) {
                 $scope.data.config.toggleSelection(orgUnit);
-            }else if (orgUnit.children) {
+            } else if (orgUnit.children) {
                 orgUnit.children.forEach(function (child) {
                     $scope.setOrganisationUnitSelection(child);
                 })
@@ -233,7 +232,7 @@ var appControllers = angular.module('appControllers', [])
                             ReportService.sortOrganisationUnits(orgUnit);
                         });
                         if ($routeParams.dataSet) {
-                            $timeout(function(){
+                            $timeout(function () {
                                 $scope.data.organisationUnits.forEach(function (orgUnit) {
                                     $scope.setOrganisationUnitSelection(orgUnit);
                                 })
@@ -264,7 +263,7 @@ var appControllers = angular.module('appControllers', [])
             $scope.trustedHtml = false;
         }
         $scope.generateDataSetReport = function () {
-            sendEvent("Report Download",$scope.data.dataSet.name,$location.$$absUrl.replace($location.$$protocol + "://","").replace($location.$$host,"").replace(":" + $location.$$port,"").replace("#"+$location.$$path,""),$scope.data.selectedOrgUnit.id ,$scope.data.period,"");
+            sendEvent("Report Download", $scope.data.dataSet.name, $location.$$absUrl.replace($location.$$protocol + "://", "").replace($location.$$host, "").replace(":" + $location.$$port, "").replace("#" + $location.$$path, ""), $scope.data.selectedOrgUnit.id, $scope.data.period, "");
             $location.path("/dataSetReport/reportRequest/dataSet/" + $scope.data.dataSet.id + "/orgUnit/" + $scope.data.selectedOrgUnit.id + "/period/" + $scope.data.period);
 
         };
@@ -291,7 +290,7 @@ var appControllers = angular.module('appControllers', [])
             $location.path(url);
         };
         $scope.download = function (url) {
-            sendEvent("Report Download",$scope.dataSet.name,$location.$$absUrl.replace($location.$$protocol + "://","").replace($location.$$host,"").replace(":" + $location.$$port,"").replace("#"+$location.$$path,""),$routeParams.orgUnit ,$routeParams.period,"");
+            sendEvent("Report Download", $scope.dataSet.name, $location.$$absUrl.replace($location.$$protocol + "://", "").replace($location.$$host, "").replace(":" + $location.$$port, "").replace("#" + $location.$$path, ""), $routeParams.orgUnit, $routeParams.period, "");
             window.open('../archive/' + $routeParams.dataSet + '_' + $routeParams.orgUnit + '_' + $routeParams.period + '.pdf', '_blank');
         };
 
@@ -439,7 +438,7 @@ var appControllers = angular.module('appControllers', [])
                     $http.get(DHIS2URL + "api/dataStore/executed/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
 
                         $scope.reportStatus = "Executed";
-                        $http.get('../archive/' + $routeParams.dataSet + '_' + $routeParams.orgUnit + '_' + $routeParams.period + '.html', { headers: { 'Cache-Control' : 'no-cache' } } ).then(function (result) {
+                        $http.get('../archive/' + $routeParams.dataSet + '_' + $routeParams.orgUnit + '_' + $routeParams.period + '.html', {headers: {'Cache-Control': 'no-cache'}}).then(function (result) {
                             $scope.file = $sce.trustAsHtml(result.data);
                             $scope.loadFile = true;
 
@@ -711,7 +710,7 @@ var appControllers = angular.module('appControllers', [])
         $scope.trustedHtml = undefined;
         $scope.loadingReport = false;
         $scope.preview = $routeParams.preview;
-        $scope.getCumulativeToDatePeriod = function(){
+        $scope.getCumulativeToDatePeriod = function () {
             var str = $routeParams.period.split("Q");
             var quarter = parseInt(str[1]);
             var periods = [];
@@ -734,6 +733,7 @@ var appControllers = angular.module('appControllers', [])
             var deffered = $q.defer();
             var promises = [];
             $scope.dataElementsData = {};
+            $scope.lastDataElementsData = {};
             $scope.lastMonthOfQuarterData = {};
             $scope.cumulativeToDateData = {};
             $scope.fourthQuarterData = {};
@@ -787,14 +787,34 @@ var appControllers = angular.module('appControllers', [])
                         }));
 
                 }
+                for (var i = 0; i < $scope.lastDataElements.length; i += common) {
+                    promises.push($http.get(DHIS2URL + "api/analytics.json?last&dimension=dx:" + $scope.lastDataElements.slice(i, i + common).join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:LEVEL-4;" + $routeParams.orgUnit + "&displayProperty=NAME")
+                        .then(function (analyticsResults) {
+                            analyticsResults.data.rows.forEach(function (row) {
+                                //console.log(row[0]);
+                                if(row[0].indexOf("xBxqNNV8jLR.BktmzfgqCjX") > -1){
+                                    console.log("Adding",row[3]);
+                                }
+                                if ($scope.lastDataElementsData[row[0]]) {
+
+                                    $scope.lastDataElementsData[row[0]] = "" + (parseFloat($scope.lastDataElementsData[row[0]]) + parseFloat(row[3])).toFixed(1);
+
+                                } else {
+                                    $scope.lastDataElementsData[row[0]] = row[3];
+                                }
+                                $scope.progressValue = $scope.progressValue + progressFactor;
+                            });
+                        }));
+
+                }
                 if ($scope.listByWard.length > 0) {
                     if ($scope.dataSet.attributeValues.length > 0) {
                         var dataSetFound = false;
                         $scope.dataSet.attributeValues.forEach(function (attributeValue) {
                             if (attributeValue.attribute.name == "Source") {
                                 var sources = eval("(" + attributeValue.value + ")");
-                                sources.forEach(function(source){
-                                    source.sources.forEach(function(source2){
+                                sources.forEach(function (source) {
+                                    source.sources.forEach(function (source2) {
                                         promises.push($http.get(DHIS2URL + "api/dataValueSets.json?dataSet=" + source2.dataSet + "&orgUnit=" + $routeParams.orgUnit + "&children=true&period=" + $routeParams.period)
                                             .then(function (dataSetResults) {
                                                 $scope.listByWard.forEach(function (dx) {
@@ -828,17 +848,17 @@ var appControllers = angular.module('appControllers', [])
 
                     }
                     /*for (var i = 0; i < $scope.listByWard.length; i += common) {
-                        alert("");
-                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.listByWard.slice(i, i + common).join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:" + $routeParams.orgUnit + "&displayProperty=NAME")
-                            .then(function (analyticsResults) {
-                                console.log("List By Ward",analyticsResults);
-                                analyticsResults.data.rows.forEach(function (row) {
-                                    $scope.lastMonthOfQuarterData[row[0]] = row[2];
-                                });
-                                $scope.progressValue = $scope.progressValue + progressFactor;
-                            }));
+                     alert("");
+                     promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.listByWard.slice(i, i + common).join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:" + $routeParams.orgUnit + "&displayProperty=NAME")
+                     .then(function (analyticsResults) {
+                     console.log("List By Ward",analyticsResults);
+                     analyticsResults.data.rows.forEach(function (row) {
+                     $scope.lastMonthOfQuarterData[row[0]] = row[2];
+                     });
+                     $scope.progressValue = $scope.progressValue + progressFactor;
+                     }));
 
-                    }*/
+                     }*/
                 }
                 if ($scope.lastMonthOfQuarter.length > 0) {
                     var str = $routeParams.period.split("Q");
@@ -916,19 +936,19 @@ var appControllers = angular.module('appControllers', [])
                     promises = [];
                     $scope.loadingStatus = "Loading Autogrowing";
                     var programIds = [];
-                    if(Object.keys($scope.autogrowingPrograms).length == 0){
+                    if (Object.keys($scope.autogrowingPrograms).length == 0) {
                         $scope.progressValue = $scope.progressValue + 20;
                     }
                     for (var programId in $scope.autogrowingPrograms) {
                         programIds.push(programId);
-                        if($scope.autogrowingPrograms[programId].cumulativeToDate){
+                        if ($scope.autogrowingPrograms[programId].cumulativeToDate) {
                             //console.log("Program:",$scope.autogrowingPrograms);
-                            $scope.getCumulativeToDatePeriod().forEach(function(period){
+                            $scope.getCumulativeToDatePeriod().forEach(function (period) {
 
-                                promises.push($scope.fetchEventAnalytics(programId,Object.keys($scope.autogrowingPrograms).length,$routeParams.period,true));
+                                promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, $routeParams.period, true));
                             })
                         }
-                        promises.push($scope.fetchEventAnalytics(programId,Object.keys($scope.autogrowingPrograms).length,$routeParams.period));
+                        promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, $routeParams.period));
                     }
                     $q.all(promises).then(function () {
 
@@ -965,7 +985,7 @@ var appControllers = angular.module('appControllers', [])
             return deffered.promise;
         }
         var periodDate = ReportService.getPeriodDate($routeParams.period);
-        $scope.fetchEventAnalytics = function (programId,length,period,other) {
+        $scope.fetchEventAnalytics = function (programId, length, period, other) {
             return $http.get(DHIS2URL + "api/analytics/events/query/" + programId + "?dimension=pe:" + period + "&dimension=ou:" + $routeParams.orgUnit + "&dimension=" + $scope.autogrowingPrograms[programId].dataElements.join("&dimension="))
                 .then(function (analyticsResults) {
                     analyticsResults.data.rows.forEach(function (row) {
@@ -973,14 +993,14 @@ var appControllers = angular.module('appControllers', [])
                         analyticsResults.data.headers.forEach(function (header, index) {
                             object[header.column] = row[index];
                         });
-                        if(other){
+                        if (other) {
                             $scope.autogrowingPrograms[programId].otherData.push(object);
-                        }else{
+                        } else {
                             $scope.autogrowingPrograms[programId].data.push(object);
                         }
 
                     });
-                    $scope.progressValue = $scope.progressValue + (20/length);
+                    $scope.progressValue = $scope.progressValue + (20 / length);
                 }, function (error) {
                     $scope.error = "Hey";
                     toaster.pop('error', "Error" + error.status, "Error Loading Data Set. Please try again");
@@ -990,6 +1010,7 @@ var appControllers = angular.module('appControllers', [])
             $location.path("/dataSetReport/reportRequest/dataSet/" + $routeParams.dataSet + "/orgUnit/" + $routeParams.orgUnit + "/period/" + $routeParams.period);
         }
         $scope.dataElements = [];
+        $scope.lastDataElements = [];
         $scope.lastMonthOfQuarter = [];
         $scope.cumulativeToDate = [];
         $scope.listByWard = [];
@@ -998,8 +1019,8 @@ var appControllers = angular.module('appControllers', [])
         $scope.nonAggregatedDataElementsDate = [];
         $scope.autogrowingPrograms = {};
         $scope.getElementReplacment = function (content, type) {
-            var processed = content.replace("dataElementsData['", "").replace("list-by-ward='listByWardData['", "").replace("dataElementsData['", "").replace("lastMonthOfQuarterData['", "").replace("cumulativeToDateData['", "").replace("fourthQuarterData['", "").replace("']", "");
-            if (content.indexOf("dataElementsData['") == -1 && content.indexOf("fourthQuarterData['") == -1 && content.indexOf("lastMonthOfQuarterData['") == -1 && content.indexOf("cumulativeToDateData['") == -1) {
+            var processed = content.replace("lastDataElementsData['","").replace("dataElementsData['", "").replace("list-by-ward='listByWardData['", "").replace("dataElementsData['", "").replace("lastMonthOfQuarterData['", "").replace("cumulativeToDateData['", "").replace("fourthQuarterData['", "").replace("']", "");
+            if (content.indexOf("lastDataElementsData['") == -1 && content.indexOf("dataElementsData['") == -1 && content.indexOf("fourthQuarterData['") == -1 && content.indexOf("lastMonthOfQuarterData['") == -1 && content.indexOf("cumulativeToDateData['") == -1) {
                 console.log(type, ":Outside:", content)
             }
             var div = "<div gid='" + processed + "'>{{" + content + "}}";
@@ -1039,12 +1060,15 @@ var appControllers = angular.module('appControllers', [])
                 if ((idMacth = /id="(.*?)-(.*?)-val"/.exec(match[0])) !== null) {
                     var isValidAggregate = true;
                     var isDate = false;
+                    var isLast = false;
 
                     dataElements.forEach(function (dataElement) {
-                        if (dataElement.id == idMacth[1] && (dataElement.valueType == "DATE" || dataElement.valueType == "TEXT")) {
+                        if (dataElement.id == idMacth[1] && (dataElement.valueType == "DATE" || dataElement.valueType == "TEXT" || dataElement.aggregationType == "LAST")) {
                             isValidAggregate = false;
                             if (dataElement.valueType == "DATE") {
                                 isDate = true;
+                            } else if (dataElement.aggregationType == "LAST") {
+                                isLast = true;
                             }
                         }
                     });
@@ -1080,6 +1104,9 @@ var appControllers = angular.module('appControllers', [])
                     } else {
                         if (isDate) {
                             $scope.nonAggregatedDataElementsDate.push(idMacth[1] + "." + idMacth[2]);
+                        } else if (isLast) {
+                            $scope.lastDataElements.push(idMacth[1] + "." + idMacth[2]);
+                            newHtml = newHtml.replace(match[0], $scope.getElementReplacment("lastDataElementsData['" + idMacth[1] + "." + idMacth[2] + "']", "dataElement"));
                         } else if (match[0].indexOf("list-by-ward") > -1) {//If it is last month of quarter
                             var label = "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' org-unit='orgUnit'>";
                             //
@@ -1139,7 +1166,7 @@ var appControllers = angular.module('appControllers', [])
                         $scope.autogrowingPrograms[config.programId].dataElementsDetails = [];
                         $scope.autogrowingPrograms[config.programId].data = [];
                     }
-                    if(config.cumulativeToDate){
+                    if (config.cumulativeToDate) {
                         $scope.autogrowingPrograms[config.programId].otherData = [];
                     }
                     var directive = "autogrowing";
