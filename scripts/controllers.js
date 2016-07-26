@@ -791,10 +791,6 @@ var appControllers = angular.module('appControllers', [])
                     promises.push($http.get(DHIS2URL + "api/analytics.json?last&dimension=dx:" + $scope.lastDataElements.slice(i, i + common).join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:LEVEL-4;" + $routeParams.orgUnit + "&displayProperty=NAME")
                         .then(function (analyticsResults) {
                             analyticsResults.data.rows.forEach(function (row) {
-                                //console.log(row[0]);
-                                if(row[0].indexOf("xBxqNNV8jLR.BktmzfgqCjX") > -1){
-                                    console.log("Adding",row[3]);
-                                }
                                 if ($scope.lastDataElementsData[row[0]]) {
 
                                     $scope.lastDataElementsData[row[0]] = "" + (parseFloat($scope.lastDataElementsData[row[0]]) + parseFloat(row[3])).toFixed(1);

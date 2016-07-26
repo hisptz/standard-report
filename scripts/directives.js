@@ -871,192 +871,57 @@ var appDirectives = angular.module('appDirectives', [])
                         }
 
                         elem[0].children.sort(dynamicSortMultiple(dataElementIndexes));
-                        var elementsToDelete = [];
-                        //Merge number values depending on group
-                        dataElementIndexes.forEach(function (group, index) {
-                            if(scope.config.programId == "SefQmQrUQjQ")
-                            {
-                                console.log(group);
-                            }
-                            for (var i1 = 0; i1 < elem[0].children.length; i1++) {
-                                var checkingIndex = i1;
-                                var child = elem[0].children[i1];
-                                var loopIndex = checkingIndex + 1;
-                                if (elem[0].children[loopIndex]) {
 
-                                    if (child.children[group].innerHTML == elem[0].children[loopIndex].children[group].innerHTML) {
-                                        var isInTheSameRow = true;
-                                        while (isInTheSameRow) {
-                                            dataElementIndexes.forEach(function (dataElementIndex, index3) {
-                                                if (elem[0].children[loopIndex]) {
-                                                    if (index >= index3 && child.children[dataElementIndex].innerHTML != elem[0].children[loopIndex].children[dataElementIndex].innerHTML) {
-                                                        isInTheSameRow = false;
-                                                    }else if(index >= index3 && child.children[dataElementIndex].innerHTML == elem[0].children[loopIndex].children[dataElementIndex].innerHTML){
-                                                        var lastIndex = group;
-                                                        if(index == dataElementIndexes.length -1){
-                                                            lastIndex = dataElementIndexes.length;
-                                                            console.log("Got Last Index");
-                                                        }
-                                                        for (var i = dataElementIndex + 1; i < lastIndex; i++) {
-                                                            if(scope.config.dataElements[i].valueType != "TEXT" &&
-                                                                elem[0].children[loopIndex].children[group].innerHTML == child.children[group].innerHTML)
-                                                            {
-                                                                var firstValue = parseFloat(child.children[i].innerHTML);
-                                                                if (child.children[i].innerHTML == "") {
-                                                                    firstValue = 0.0;
-                                                                }
-                                                                var secondValue = parseInt(elem[0].children[loopIndex].children[i].innerHTML);
-                                                                if (elem[0].children[loopIndex].children[i].innerHTML == "") {
-                                                                    secondValue = 0.0;
-                                                                }
-                                                                child.children[i].innerHTML = (firstValue + secondValue).toFixed(1);
-                                                                elementsToDelete.push(elem[0].children[loopIndex].children[i]);
-                                                                if (child.children[i].toRowSpan) {
-                                                                    child.children[i].toRowSpan++;
-                                                                } else {
-                                                                    child.children[i].toRowSpan = 2;
-                                                                }
-                                                            }
-
-                                                        }
-                                                    }
-                                                } else {
-                                                    isInTheSameRow = false;
-                                                }
-
-                                            });
-                                            if (isInTheSameRow) {
-                                                for (var i = group + 1; i < scope.data.dataElements.length; i++) {
-                                                    if(index != dataElementIndexes.length -1){
-
-                                                    }
-                                                    if (dataElementIndexes.indexOf(i) > -1 || !child.children[i]) {
-                                                        break;
-                                                    }
-                                                    if(scope.config.dataElementsDetails[i].valueType != "TEXT")
-                                                    {
-                                                        if(scope.config.dataElementsDetails[i].id == "ymgkLxUIXec"){
-                                                            console.log("Previous Row:",checkingIndex,"Row:",loopIndex,"Column:",i,elem[0].children[checkingIndex].children[i].innerHTML,elem[0].children[loopIndex].children[i].innerHTML,child.children[i].innerHTML)
-                                                        }
-                                                        var firstValue = parseFloat(child.children[i].innerHTML);
-                                                        if (child.children[i].innerHTML == "") {
-                                                            firstValue = 0.0;
-                                                        }
-                                                        var secondValue = parseInt(elem[0].children[loopIndex].children[i].innerHTML);
-                                                        if (elem[0].children[loopIndex].children[i].innerHTML == "") {
-                                                            secondValue = 0.0;
-                                                        }
-                                                        //child.children[i].innerHTML = (firstValue + secondValue).toFixed(1);
-                                                        elem[0].children[checkingIndex].children[i].innerHTML = (firstValue + secondValue).toFixed(1);
-                                                        elementsToDelete.push(elem[0].children[loopIndex].children[i]);
-                                                        if (child.children[i].toRowSpan) {
-                                                            child.children[i].toRowSpan++;
-                                                        } else {
-                                                            child.children[i].toRowSpan = 2;
-                                                        }
-                                                    }
-                                                }
-                                                /*if(index == dataElementIndexes.length -1){
-                                                    for (var i = group + 1; i < scope.data.dataElements.length; i++)
-                                                    {
-                                                        //var i = scope.data.dataElements.length - 1;
-                                                        if(scope.config.programId == "c70KA3Ki6Ct"){
-                                                            console.log("Previous Row:",checkingIndex,"Row:",loopIndex," Column:",i,child.children[i].innerHTML);
-                                                            console.log(elem[0].children[i1].children[group].innerHTML,":", elem[0].children[loopIndex].children[group].innerHTML);
-                                                        }
-                                                        if(scope.data.dataElements[i].valueType != "TEXT" &&
-                                                            elem[0].children[loopIndex].children[group].innerHTML == child.children[group].innerHTML){
-                                                            var firstValue = parseFloat(child.children[i].innerHTML);
-                                                            if (child.children[i].innerHTML == "") {
-                                                                firstValue = 0.0;
-                                                            }
-                                                            var secondValue = parseInt(elem[0].children[loopIndex].children[i].innerHTML);
-                                                            if (elem[0].children[loopIndex].children[i].innerHTML == "") {
-                                                                secondValue = 0.0;
-                                                            }
-                                                            child.children[i].innerHTML = (firstValue + secondValue).toFixed(1);
-                                                            elementsToDelete.push(elem[0].children[loopIndex].children[i]);
-                                                            if (child.children[i].toRowSpan) {
-                                                                child.children[i].toRowSpan++;
-                                                            } else {
-                                                                child.children[i].toRowSpan = 2;
-                                                            }
-                                                        }else if(elem[0].children[loopIndex].children[group].innerHTML == child.children[group].innerHTML &&
-                                                            elem[0].children[loopIndex].children[i].innerHTML == child.children[i].innerHTML){
-                                                            elementsToDelete.push(elem[0].children[loopIndex].children[i]);
-                                                            if (child.children[i].toRowSpan) {
-                                                                child.children[i].toRowSpan++;
-                                                            } else {
-                                                                child.children[i].toRowSpan = 2;
-                                                            }
-                                                        }
-                                                    }
-                                                }*/
-                                                i1 = loopIndex;
-
-                                            }
-                                            loopIndex++;
+                        var firstColumnBrakes = [];
+                        function adjacentToGroup(row, column) {
+                            var adjacentString = "";
+                            dataElementIndexes.forEach(function (dataElementIndex) {
+                                if (column > (dataElementIndex + 1)) {
+                                    elem.find("td:nth-child(" + (dataElementIndex + 1) + ")").each(function (index, el) {
+                                        if (row == index) {
+                                            adjacentString += $(el).html();
                                         }
-                                    }
-                                }
-                            }
-                        });
-
-                        var elementsWithRowSpan = {};
-                        //Look for cells to row span
-                        dataElementIndexes.forEach(function (group, index) {
-                            for (var i1 = 0; i1 < elem[0].children.length; i1++) {
-                                var checkingIndex = i1;
-                                var child = elem[0].children[i1];
-                                if (elem[0].children[checkingIndex + 1]) {
-                                    if (child.children[group].innerHTML == elem[0].children[checkingIndex + 1].children[group].innerHTML) {
-                                        var isInTheSameRow = true;
-                                        var loopIndex = checkingIndex + 1;
-                                        while (isInTheSameRow) {
-                                            //Check whether the cell is valid for grouping
-                                            dataElementIndexes.forEach(function (dataElementIndex, index3) {
-                                                if (elem[0].children[loopIndex]) {
-                                                    if (index3 <= index && child.children[dataElementIndex].innerHTML != elem[0].children[loopIndex].children[dataElementIndex].innerHTML) {
-                                                        isInTheSameRow = false;
-                                                    }
-                                                } else {
-                                                    isInTheSameRow = false;
-                                                }
-
-                                            });
-                                            if (isInTheSameRow) {
-                                                //console.log("valueType:",scope.config.dataElementsDetails[group].valueType)
-                                                //Set the rows to span
-                                                if (child.children[group].toRowSpan) {
-                                                    child.children[group].toRowSpan++;
-                                                } else {
-                                                    child.children[group].toRowSpan = 2;
-                                                }
-                                                //Add for deletion later
-                                                elementsToDelete.push(elem[0].children[loopIndex].children[group]);
-                                                i1 = loopIndex;
-                                                loopIndex++;
-                                            }else{
-                                                //console.log("valueType:",scope.config.dataElementsDetails[group].valueType)
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                        //Set row span to the required cells.
-                        elem[0].children.forEach(function (child, rowIndex) {
-                            child.children.forEach(function (child2, colIndex) {
-                                if (child2.toRowSpan) {
-                                    child2.rowSpan = child2.toRowSpan;
+                                    })
                                 }
                             });
-                        });
-                        //Delete unrequired cells
-                        elementsToDelete.forEach(function (element) {
-                            element.remove();
-                        })
+                            return adjacentString;
+                        }
 
+                        for (var i = 1; i <= scope.data.dataElements.length; i++) {
+                            var dataIndex = i - 1;
+                            var previous = null, cellToExtend = null, rowspan = 1;
+                            if (scope.data.dataElements[dataIndex].valueType == "TEXT" || scope.data.dataElements[dataIndex].valueType == "LONG_TEXT") {
+                                elem.find("td:nth-child(" + i + ")").each(function (index, el) {
+                                    if (previous == $(el).text() && $.inArray(index, firstColumnBrakes) === -1) {
+                                        $(el).addClass('hidden');
+                                        cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
+                                    } else {
+                                        if ($.inArray(index, firstColumnBrakes) === -1) {
+                                            firstColumnBrakes.push(index);
+                                        }
+                                        rowspan = 1;
+                                        previous = $(el).text();
+                                        cellToExtend = $(el);
+                                    }
+                                })
+                            } else {
+                                elem.find("td:nth-child(" + i + ")").each(function (index, el) {
+                                    if (previous == adjacentToGroup(index, i)) {
+                                        $(el).addClass('hidden');
+                                        cellToExtend.html(cellToExtend.html() + " + " + $(el).html());
+                                        cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
+                                    } else {
+                                        /*if ($.inArray(index, firstColumnBrakes) === -1) {
+                                            firstColumnBrakes.push(index);
+                                        }*/
+                                        rowspan = 1;
+                                        //previous = $(el).text();
+                                        previous = adjacentToGroup(index, i);
+                                        cellToExtend = $(el);
+                                    }
+                                })
+                            }
+                        }
                     });
 
                 }
@@ -1105,16 +970,16 @@ var appDirectives = angular.module('appDirectives', [])
                         $scope.config.dataElementsDetails.forEach(function (dataElement, index) {
                             if (dataElement.id == dataElementId) {
                                 $scope.data.dataElements.push(dataElement);
-                                if(dataElement.aggregationType == "AVERAGE"){
+                                if (dataElement.aggregationType == "AVERAGE") {
                                     $scope.config.data.forEach(function (eventData) {
-                                        if(averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]]){
+                                        if (averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]]) {
                                             averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]]++;
-                                        }else{
+                                        } else {
                                             averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] = 1;
                                         }
                                     });
                                     $scope.config.data.forEach(function (eventData) {
-                                        eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] +")").toFixed(1);
+                                        eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] + ")").toFixed(1);
                                     })
                                 }
                             }
@@ -1144,15 +1009,11 @@ var appDirectives = angular.module('appDirectives', [])
                                 if (otherEvent[eventName] == eventData[eventName]) {
                                     $scope.config.cumulativeToDate.forEach(function (cDataElement) {
                                         $scope.config.dataElements.forEach(function (dataElementId, index) {
-                                            console.log(cDataElement.dataElement,dataElementId,dataElementId.length);
                                             if (dataElementId.indexOf(cDataElement.dataElement) != -1 && cDataElement.dataElement.length < dataElementId.length) {
-                                                console.log("Awesoem:");
                                                 var otherDataEventName = $scope.getDataElementName(dataElementId);
-                                                console.log(otherDataEventName);
                                                 var initialOtherDataEventName = $scope.getDataElementName(cDataElement.dataElement);
-                                                console.log(initialOtherDataEventName);
                                                 if (eventData[otherDataEventName]) {
-                                                    eventData[otherDataEventName] = eval("(" + eventData[otherDataEventName] + "+" + otherEvent[initialOtherDataEventName] +")").toFixed(1) + "";
+                                                    eventData[otherDataEventName] = eval("(" + eventData[otherDataEventName] + "+" + otherEvent[initialOtherDataEventName] + ")").toFixed(1) + "";
                                                 } else {
                                                     eventData[otherDataEventName] = otherEvent[initialOtherDataEventName];
                                                 }
