@@ -889,10 +889,10 @@ var appDirectives = angular.module('appDirectives', [])
 
                         for (var i = 1; i <= scope.data.dataElements.length; i++) {
                             var dataIndex = i - 1;
-                            var previous = null, cellToExtend = null, rowspan = 1;
+                            var previous = null, previousFromFirst = null, cellToExtend = null, rowspan = 1;
                             if (scope.data.dataElements[dataIndex].valueType == "TEXT" || scope.data.dataElements[dataIndex].valueType == "LONG_TEXT") {
                                 elem.find("td:nth-child(" + i + ")").each(function (index, el) {
-                                    if (previous == $(el).text() && $.inArray(index, firstColumnBrakes) === -1) {
+                                    if ((previous == $(el).text() && $.inArray(index, firstColumnBrakes) === -1)) {
                                         $(el).addClass('hidden');
                                         cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
                                     } else {
@@ -901,6 +901,7 @@ var appDirectives = angular.module('appDirectives', [])
                                         }
                                         rowspan = 1;
                                         previous = $(el).text();
+                                        previousFromFirst = adjacentToGroup(index, i);
                                         cellToExtend = $(el);
                                     }
                                 })
@@ -908,7 +909,19 @@ var appDirectives = angular.module('appDirectives', [])
                                 elem.find("td:nth-child(" + i + ")").each(function (index, el) {
                                     if (previous == adjacentToGroup(index, i)) {
                                         $(el).addClass('hidden');
-                                        cellToExtend.html(cellToExtend.html() + " + " + $(el).html());
+                                        var firstValue = cellToExtend.html(),secondValue = $(el).html();
+                                        if(firstValue == ""){
+                                            firstValue = 0.0;
+                                        }
+                                        if(secondValue == ""){
+                                            secondValue = 0.0;
+                                        }
+                                        try{
+                                            cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")").toFixed(1));
+                                        }catch(e){
+                                            console.log("Data Element",scope.data.dataElements[dataIndex].name,"(",scope.data.dataElements[dataIndex].id,")", "Type:",scope.data.dataElements[dataIndex].valueType," should be changed type.")
+                                        }
+
                                         cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
                                     } else {
                                         /*if ($.inArray(index, firstColumnBrakes) === -1) {
