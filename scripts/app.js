@@ -18,7 +18,7 @@ angular.module('app',
     ])
 
     .value('DHIS2URL', '../../../')
-    .config(function ($translateProvider, $routeProvider, fileManagerConfigProvider) {
+    .config(function ($translateProvider, $routeProvider, fileManagerConfigProvider,$httpProvider) {
         var defaults = fileManagerConfigProvider.$get();
         fileManagerConfigProvider.set({
             appName: 'Report Archive Manager',
@@ -82,4 +82,5 @@ angular.module('app',
         $translateProvider.preferredLanguage('en');
         $translateProvider.useSanitizeValueStrategy('escaped');
         $translateProvider.useLoader('i18nLoader');
+        $httpProvider.interceptors.push('myHttpInterceptor');
     });

@@ -1690,4 +1690,23 @@ var appServices = angular.module('appServices', ['ngResource'])
             }
         }
     })
+    .factory('myHttpInterceptor', function ($q, $window) {
+        return {
+            response: function (response) {
+                // do something on success
+                if (response.headers()['content-type'] === "text/html;charset=UTF-8") {
+
+                    if (response.data.indexOf("loginPage") != -1) {
+                        $window.location.href = "../../../"
+                        return $q.reject(response);
+                    }
+                }
+                return response;
+            },
+            responseError: function (response) {
+                // do something on error
+                return $q.reject(response);
+            }
+        };
+    });
 

@@ -919,7 +919,8 @@ var appDirectives = angular.module('appDirectives', [])
                                         try{
                                             cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")").toFixed(1));
                                         }catch(e){
-                                            console.log("Data Element",scope.data.dataElements[dataIndex].name,"(",scope.data.dataElements[dataIndex].id,")", "Type:",scope.data.dataElements[dataIndex].valueType," should be changed type.")
+                                            console.log(dataIndex,scope.data)
+                                            console.log(scope.data.dataElements[dataIndex].name,"(",scope.data.dataElements[dataIndex].id,")",scope.data.dataElements[dataIndex].valueType," should checked.")
                                         }
 
                                         cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
