@@ -418,6 +418,14 @@ var appDirectives = angular.module('appDirectives', [])
                         templateUrl: 'myModalContent.html',
                         controller: function ($scope, parentScope, $modalInstance, DebugService, ReportService, $q, toaster) {
 
+                            $scope.undefined = function(data){
+                                if(data == undefined){
+                                    return true;
+                                }else if(data == ""){
+                                    return true;
+                                }
+                                return false;
+                            }
                             $scope.param = $routeParams;
                             $scope.data = {
                                 data: []
