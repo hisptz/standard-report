@@ -686,7 +686,7 @@ var appControllers = angular.module('appControllers', [])
         $scope.changeCriteria = function () {
             $scope.dataCriteria = !$scope.dataCriteria;
         }
-        var common = 50;
+        var common = 10;
         $scope.state = $routeParams.preview;
         $scope.showDebug = function () {
             $location.path("/dataSetReport/report/dataSet/" + $routeParams.dataSet + "/orgUnit/" + $routeParams.orgUnit + "/period/" + $routeParams.period + "/debug");
