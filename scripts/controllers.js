@@ -93,10 +93,12 @@ var appControllers = angular.module('appControllers', [])
                                 year++;
                             }
                             var testDate = new Date();
-                            if ((year == testDate.getFullYear() && quarterVal > ((testDate.getMonth() + 1) % 4)) || year > testDate.getFullYear()) {
+                            if (year > testDate.getFullYear() || (Math.ceil((testDate.getMonth() + 1) / 3) <= quarterVal && year == testDate.getFullYear())) {
                                 return;
                             }
-                            if (!(Math.ceil((testDate.getMonth() + 1) / 3) == quarterVal && testDate.getFullYear() == year)) {
+                            console.log();
+                            //if (!(Math.ceil((testDate.getMonth() + 1) / 3) < quarterVal && testDate.getFullYear() == year))
+                            {
                                 that.list.unshift({
                                     name: quarter + " " + year,
                                     value: year + "Q" + quarterVal
