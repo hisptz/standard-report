@@ -927,8 +927,7 @@ var appDirectives = angular.module('appDirectives', [])
                                         try{
                                             cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")").toFixed(1));
                                         }catch(e){
-                                            console.log(dataIndex,scope.data)
-                                            console.log(scope.data.dataElements[dataIndex].name,"(",scope.data.dataElements[dataIndex].id,")",scope.data.dataElements[dataIndex].valueType," should checked.")
+
                                         }
 
                                         cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
@@ -1039,8 +1038,6 @@ var appDirectives = angular.module('appDirectives', [])
                                                 } else {
                                                     eventData[otherDataEventName] = otherEvent[initialOtherDataEventName];
                                                 }
-                                                //console.log(event[otherDataEventName]);
-                                                //returnValue = true;
                                             }
                                         })
                                     })
