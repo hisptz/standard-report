@@ -3,6 +3,15 @@
 /* Filters */
 
 var appFilters = angular.module('appFilters', [])
+    .filter('removeNaN', function() {
+        return function(input) {
+            if(input == "NaN"){
+                return "";
+            }
+
+            return input;
+        };
+    })
 .filter('dataEntryForm', function() {
     return function(input,formSource) {
         var output = [];

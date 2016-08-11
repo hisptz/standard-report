@@ -20,7 +20,7 @@
 <div ng-if="error" class="alert alert-danger" role="alert">
     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
     <span class="sr-only">Error:</span>
-    Some of the request have failed please try again later.
+    Some of the request have failed please try to <a ng-click="reloadPage()">Reload</a>.
 </div>
 <div ng-if="!error">
     <progressbar ng-if="loadingReport && notArchive" class="progress-striped active" animate="true" max="100" value="progressValue" type="success">
