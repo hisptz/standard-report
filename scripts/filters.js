@@ -47,6 +47,10 @@ var appFilters = angular.module('appFilters', [])
                 return "Previous Value"
             }else if(input == "old_value_period"){
                 return "Period Previous Value"
+            }else if(input == "prio_estimate"){
+                return "Prio Estimate"
+            }else if(input == "prio_estimate_period"){
+                return "Prio Estimate Period"
             }
             return input;
         };
