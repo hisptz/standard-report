@@ -1,5 +1,5 @@
 /**
- * Created by leo on 5/1/15.
+ * Created by leo on 5/1/15.modified 8/17/16
  */
 
 
@@ -25,7 +25,7 @@ var sendEvent = function (theObjects,ObjectNames,ObjectUrls,OrgUnitDimensions,Pe
 
         var d = new Date();
         var curr_date	= d.getDate();
-        var curr_month	= d.getMonth();
+        var curr_month	= d.getMonth()+1;
         var curr_year 	= d.getFullYear();
         if(curr_month<10){
             curr_month="0"+curr_month;
@@ -348,4 +348,3 @@ function monitorDataEntry(){
     });
 
 }
-
