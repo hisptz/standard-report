@@ -605,7 +605,7 @@ var appDirectives = angular.module('appDirectives', [])
                                             } else {
                                                 objectRequest = "de=" + objectId;
                                             }
-                                            var url = DHIS2URL + "api/analytics.json?dimension=dx:" + objectId + "&dimension=pe:" + calculatedPeriod + "&filter=ou:" + orgUnit.id + "&displayProperty=NAME";
+                                            var url = DHIS2URL + "api/analytics.json?dimension=dx:" + objectId + "&dimension=pe:" + calculatedPeriod + "&filter=ou:" + orgUnit.id;
                                             dataSet.categoryCombo.categories.forEach(function (category) {
                                                 if (category.name != "default") {
                                                     category.categoryCombos.forEach(function (categoryCombo) {
@@ -925,7 +925,12 @@ var appDirectives = angular.module('appDirectives', [])
                                             secondValue = 0.0;
                                         }
                                         try{
-                                            cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")").toFixed(1));
+                                            if(scope.config.valueTypes){
+                                                cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")"));
+                                            }else
+                                            {
+                                                cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")").toFixed(1));
+                                            }
                                         }catch(e){
 
                                         }
@@ -985,7 +990,20 @@ var appDirectives = angular.module('appDirectives', [])
                         $scope.config.dataElements.splice(addDataElements.index, 0, addDataElements.dataElement.id);
                     })
                 }
-                var averagingOccurences = {}
+                var averagingOccurences = {};
+                if ($scope.config.valueTypes) {
+                    $scope.config.dataElementsDetails.forEach(function (dataElement) {
+                        if ($scope.config.valueTypes[dataElement.id]) {
+                            $scope.config.data.forEach(function (eventData) {
+                                var value = parseInt(eventData[dataElement.name]);
+                                if(isNaN(value)){
+                                    value = 0;
+                                }
+                                eventData[dataElement.name] = value + "";
+                            });
+                        }
+                    });
+                }
                 $scope.config.dataElements.forEach(function (dataElementId) {
                     if ($scope.config.dataElementsDetails) {
                         $scope.config.dataElementsDetails.forEach(function (dataElement, index) {
