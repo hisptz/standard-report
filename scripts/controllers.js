@@ -548,7 +548,7 @@ var appControllers = angular.module('appControllers', [])
                     }
                 });
             }, function (error) {
-                $scope.error = "heye";
+                $scope.error = "error";
                 $scope.completeDataSetRegistrationsLoading = false;
                 toaster.pop('error', "Error" + error.status, "Error Loading Data Set. Please try again");
             });
@@ -968,15 +968,18 @@ var appControllers = angular.module('appControllers', [])
                                     deffered.resolve();
                                 });
                             }, function (error) {
-                                toaster.pop('error', "Error" + error.status, "Error Loading Data Set. Please try again");
+                                $scope.error = true;
+                                toaster.pop('error', "Error", "Error Loading Data Set. Please try again");
                             })
                         //$scope.loadingReport = false;
 
                     });
                 }, function (error) {
+                    $scope.error = true;
                     toaster.pop('error', "Error" + error.status, "Error Loading Data from Server. Please try again");
                 });
             }, function (error) {
+                $scope.error = true;
                 toaster.pop('error', "Error" + error.status, "Error Loading Data from Server. Please try again");
             });
             return deffered.promise;
