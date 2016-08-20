@@ -739,6 +739,7 @@ var appControllers = angular.module('appControllers', [])
             $scope.cumulativeToDateData = {};
             $scope.fourthQuarterData = {};
             $scope.listByWardData = {};
+            $scope.lastIndicatorData = {};
             $scope.loadingStatus = "Loading Organisation Units";
 
             var organisationUnit = $scope.orgUnit;
@@ -752,6 +753,11 @@ var appControllers = angular.module('appControllers', [])
                 $scope.data.dataSetForm = results.data;
 
                 var trustedHtml = $scope.renderHtml(results.data.dataEntryForm.htmlCode, results.data.dataElements);
+                if($scope.lastIndicator.length > 0){
+                    $scope.orgUnit.children.forEach(function(child){
+                        $scope.lastIndicatorData[child.id] = {};
+                    })
+                }
                 $scope.loadingStatus = "Loading Data Values";
                 $scope.progressValue = 10;
                 var progressFactor = 60 / ((
@@ -799,6 +805,7 @@ var appControllers = angular.module('appControllers', [])
                                 } else {
                                     $scope.lastDataElementsData[row[0]] = row[3];
                                 }
+                                $scope.lastIndicatorData[row[2]][row[0]] = row[3];
                                 $scope.progressValue = $scope.progressValue + progressFactor;
                             });
                         }));
@@ -950,8 +957,30 @@ var appControllers = angular.module('appControllers', [])
                         }
                         promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, $routeParams.period));
                     }
-                    $q.all(promises).then(function () {
+                    if($scope.lastIndicator.length > 0){
+                        $scope.orgUnit.children.forEach(function(child){
+                            $scope.lastIndicator.forEach(function(indicator){
+                                $scope.lastIndicatorData[child.id][indicator] = indicator;
+                                Object.keys($scope.lastIndicatorData[child.id]).forEach(function(indicatorInObject){
+                                    $scope.lastIndicatorData[child.id][indicator] = $scope.lastIndicatorData[child.id][indicator].replace(indicatorInObject,$scope.lastIndicatorData[child.id][indicatorInObject])
+                                })
+                                try{
+                                    $scope.lastIndicatorData[child.id][indicator] = eval("(" + $scope.lastIndicatorData[child.id][indicator] +")");
+                                }catch(e){
+                                    $scope.lastIndicatorData[child.id][indicator] = 0;
+                                }
+                            })
 
+                        })
+                        $scope.lastIndicator.forEach(function(indicator){
+                            $scope.lastIndicatorData[indicator] = 0;
+                            $scope.orgUnit.children.forEach(function(child){
+                                $scope.lastIndicatorData[indicator] += $scope.lastIndicatorData[child.id][indicator];
+                            })
+                        })
+                    }
+                    $q.all(promises).then(function () {
+                        console.log($scope.dataElementsData);
                         $http.get(DHIS2URL + "api/programs.json?fields=id,programIndicators[:all],programStages[programStageDataElements[sortOrder,dataElement[:all]]]&filter=id:in:[" + programIds + "]")
                             .then(function (results) {
                                 results.data.programs.forEach(function (program) {
@@ -1015,6 +1044,7 @@ var appControllers = angular.module('appControllers', [])
         $scope.nonAggregatedDataElements = [];
         $scope.nonAggregatedDataElementsDate = [];
         $scope.autogrowingPrograms = {};
+        $scope.lastIndicator = [];
         $scope.getElementReplacment = function (content, type) {
             var processed = content.replace("lastDataElementsData['", "").replace("dataElementsData['", "").replace("list-by-ward='listByWardData['", "").replace("dataElementsData['", "").replace("lastMonthOfQuarterData['", "").replace("cumulativeToDateData['", "").replace("fourthQuarterData['", "").replace("']", "");
             if (content.indexOf("lastDataElementsData['") == -1 && content.indexOf("dataElementsData['") == -1 && content.indexOf("fourthQuarterData['") == -1 && content.indexOf("lastMonthOfQuarterData['") == -1 && content.indexOf("cumulativeToDateData['") == -1) {
@@ -1145,6 +1175,10 @@ var appControllers = angular.module('appControllers', [])
                         newHtml = newHtml.replace(match[0], $scope.getElementReplacment("dataElementsData['" + idMacth[1] + "']", "dataElement"));
                         $scope.dataElements.push(idMacth[1]);
                     }
+                }else if ((idMacth = /lastindicator="(.*?)"/.exec(match[0])) !== null) {
+                    console.log("Last Indicator:" + idMacth);
+                    $scope.lastIndicator.push(idMacth[1]);
+                    newHtml = newHtml.replace(match[0], "{{lastIndicatorData['" + idMacth[1] + "']}}");
                 } else {
                     console.log(match);
                 }
