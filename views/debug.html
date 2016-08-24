@@ -189,7 +189,7 @@
                                     </table>
 
                                         <table class="table table-bordered" ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')] && categoryOptionCombo.name =='Estimated Figure'">
-                                            <tr ng-if="key == 'value' || key == 'target_dataelement' || key == 'target' || key == 'target_period' " ng-repeat="(key,value) in dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id]">
+                                            <tr ng-repeat="(key,value) in dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id]">
                                                 <td>{{key | estimationConvertor}}</td>
                                                 <td>
                                                     <span ng-if="key == 'target_dataelement'">
@@ -234,7 +234,6 @@
                                                 <td>{{data.value}}</td>
                                             </tr>
                                         </table>
-                                        {{dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id]}}
                                         <table class="table table-bordered" ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')] && categoryOptionCombo.name =='Estimated Figure'">
                                             <tr ng-repeat="(key,value) in dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id]">
                                                 <td>{{key | estimationConvertor}}</td>
@@ -285,7 +284,7 @@
                                             </tr>
                                         </table>
                                         <table class="table table-bordered" ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')] && categoryOptionCombo.name =='Estimated Figure' && !child.data[id][dataSet.id]['Actual Figure']">
-                                            <tr ng-if="key == 'value' || key == 'old_value' || key == 'old_value_period' || key == 'target_dataelement' || key == 'target' || key == 'target_period' " ng-repeat="(key,value) in dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id]">
+                                            <tr ng-repeat="(key,value) in dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id]">
                                                 <td>{{key | estimationConvertor}} - </td>
                                                 <td>
                                                     <span ng-if="key == 'target_dataelement'">
@@ -331,7 +330,7 @@
                                             </tr>
                                         </table>
                                         <table class="table table-bordered" ng-if="dataSet.estimation[parentScope.dgId.replace('.','_')] && categoryOptionCombo.name =='Estimated Figure'">
-                                            <tr ng-if="key == 'value' || key == 'target_dataelement' || key == 'target' || key == 'target_period' " ng-repeat="(key,value) in dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id]">
+                                            <tr ng-repeat="(key,value) in dataSet.estimation[parentScope.dgId.replace('.','_')].data[child.id]">
                                                 <td>{{key | estimationConvertor}}</td>
                                                 <td>
                                                     <span ng-if="key == 'target_dataelement'">
