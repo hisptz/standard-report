@@ -36,6 +36,6 @@ var appFilters = angular.module('appFilters', [])
             return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
         }
         return function(input) {
-            return toTitleCase(input.replaceAll("_"," "));
+            return toTitleCase(input.split("_").join(" "));
         };
     })
