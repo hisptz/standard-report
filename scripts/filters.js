@@ -31,27 +31,11 @@ var appFilters = angular.module('appFilters', [])
     };
 })
     .filter('estimationConvertor', function() {
+        function toTitleCase(str)
+        {
+            return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+        }
         return function(input) {
-            var output = [];
-            console.log("Input:",input);
-            if(input == "value"){
-                return "Value"
-            }else if(input == "target_dataelement"){
-                return "Target Data Element"
-            }
-            else if(input == "target"){
-                return "Target"
-            }else if(input == "target_period"){
-                return "Target Period"
-            }else if(input == "old_value"){
-                return "Previous Value"
-            }else if(input == "old_value_period"){
-                return "Period Previous Value"
-            }else if(input == "prio_estimate"){
-                return "Prio Estimate"
-            }else if(input == "prio_estimate_period"){
-                return "Prio Estimate Period"
-            }
-            return input;
+            return toTitleCase(input.replaceAll("_"," "));
         };
     })

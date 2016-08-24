@@ -96,7 +96,6 @@ var appControllers = angular.module('appControllers', [])
                             if (year > testDate.getFullYear() || (Math.ceil((testDate.getMonth() + 1) / 3) <= quarterVal && year == testDate.getFullYear())) {
                                 return;
                             }
-                            console.log();
                             //if (!(Math.ceil((testDate.getMonth() + 1) / 3) < quarterVal && testDate.getFullYear() == year))
                             {
                                 that.list.unshift({
@@ -820,8 +819,6 @@ var appControllers = angular.module('appControllers', [])
                                 sources.forEach(function (source) {
                                     source.sources.forEach(function (source2) {
                                         //hLCbwDwbNYr
-                                        console.log($scope.listByWard);
-                                        console.log(DHIS2URL + "api/dataValueSets.json?dataSet=" + source2.dataSet + "&orgUnit=" + $routeParams.orgUnit + "&children=true&period=" + $routeParams.period);
                                         promises.push($http.get(DHIS2URL + "api/dataValueSets.json?dataSet=" + source2.dataSet + "&orgUnit=" + $routeParams.orgUnit + "&children=true&period=" + $routeParams.period)
                                             .then(function (dataSetResults) {
                                                 $scope.listByWard.forEach(function (dx) {
@@ -854,18 +851,6 @@ var appControllers = angular.module('appControllers', [])
                         });
 
                     }
-                    /*for (var i = 0; i < $scope.listByWard.length; i += common) {
-                     alert("");
-                     promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.listByWard.slice(i, i + common).join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:" + $routeParams.orgUnit + "&displayProperty=NAME")
-                     .then(function (analyticsResults) {
-                     console.log("List By Ward",analyticsResults);
-                     analyticsResults.data.rows.forEach(function (row) {
-                     $scope.lastMonthOfQuarterData[row[0]] = row[2];
-                     });
-                     $scope.progressValue = $scope.progressValue + progressFactor;
-                     }));
-
-                     }*/
                 }
                 if ($scope.lastMonthOfQuarter.length > 0) {
                     var str = $routeParams.period.split("Q");
@@ -922,8 +907,6 @@ var appControllers = angular.module('appControllers', [])
                                 $scope.dataElementsData[row[0]] = row[2];
                             });
                             $scope.progressValue = $scope.progressValue + progressFactor;
-                        }, function (error) {
-                            console.log(error);
                         }));
                 }
                 for (var i = 0; i < $scope.nonAggregatedDataElementsDate.length; i += common) {
@@ -933,8 +916,6 @@ var appControllers = angular.module('appControllers', [])
                                 $scope.dataElementsData[row[0]] = row[2];
                             });
                             $scope.progressValue = $scope.progressValue + progressFactor;
-                        }, function (error) {
-                            //console.log(error);
                         }));
                 }
                 $q.all(promises).then(function () {
@@ -980,7 +961,6 @@ var appControllers = angular.module('appControllers', [])
                         })
                     }
                     $q.all(promises).then(function () {
-                        console.log($scope.dataElementsData);
                         $http.get(DHIS2URL + "api/programs.json?fields=id,programIndicators[:all],programStages[programStageDataElements[sortOrder,dataElement[:all]]]&filter=id:in:[" + programIds + "]")
                             .then(function (results) {
                                 results.data.programs.forEach(function (program) {
@@ -1148,6 +1128,9 @@ var appControllers = angular.module('appControllers', [])
                         } else {
                             $scope.nonAggregatedDataElements.push(idMacth[1] + "." + idMacth[2]);
                         }
+                        if(match[0].indexOf("integer") > -1){
+                            alert("here")
+                        }
                         newHtml = newHtml.replace(match[0], $scope.getElementReplacment("dataElementsData['" + idMacth[1] + "." + idMacth[2] + "']", "dataElement"));
                     }
                 } else if ((idMacth = /id="indicator(.*?)"/.exec(match[0])) !== null || (idMacth = /id="(.*?)-val"/.exec(match[0])) !== null) {
@@ -1176,7 +1159,6 @@ var appControllers = angular.module('appControllers', [])
                         $scope.dataElements.push(idMacth[1]);
                     }
                 }else if ((idMacth = /lastindicator="(.*?)"/.exec(match[0])) !== null) {
-                    console.log("Last Indicator:" + idMacth);
                     $scope.lastIndicator.push(idMacth[1]);
                     newHtml = newHtml.replace(match[0], "{{lastIndicatorData['" + idMacth[1] + "']}}");
                 } else {
