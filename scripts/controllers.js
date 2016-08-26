@@ -804,7 +804,9 @@ var appControllers = angular.module('appControllers', [])
                                 } else {
                                     $scope.lastDataElementsData[row[0]] = row[3];
                                 }
-                                $scope.lastIndicatorData[row[2]][row[0]] = row[3];
+                                if($scope.lastIndicator.length > 0){
+                                    $scope.lastIndicatorData[row[2]][row[0]] = row[3];
+                                }
                                 $scope.progressValue = $scope.progressValue + progressFactor;
                             });
                         }));
@@ -1159,6 +1161,7 @@ var appControllers = angular.module('appControllers', [])
                         $scope.dataElements.push(idMacth[1]);
                     }
                 }else if ((idMacth = /lastindicator="(.*?)"/.exec(match[0])) !== null) {
+                    console.log("Last Indicator:")
                     $scope.lastIndicator.push(idMacth[1]);
                     newHtml = newHtml.replace(match[0], "{{lastIndicatorData['" + idMacth[1] + "']}}");
                 } else {
