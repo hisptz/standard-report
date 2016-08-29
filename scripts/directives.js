@@ -898,7 +898,10 @@ var appDirectives = angular.module('appDirectives', [])
                         for (var i = 1; i <= scope.data.dataElements.length; i++) {
                             var dataIndex = i - 1;
                             var previous = null, previousFromFirst = null, cellToExtend = null, rowspan = 1;
-                            if (scope.data.dataElements[dataIndex].valueType == "TEXT" || scope.data.dataElements[dataIndex].valueType == "LONG_TEXT") {
+                            //if ((scope.data.dataElements[dataIndex].valueType == "TEXT" || scope.data.dataElements[dataIndex].valueType == "LONG_TEXT") && scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id) > -1)
+                            if (scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id) > -1)
+                            {
+                                //console.log(scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id),scope.data.dataElements[dataIndex].id,scope.config.groupBy);
                                 elem.find("td:nth-child(" + i + ")").each(function (index, el) {
                                     if ((previous == $(el).text() && $.inArray(index, firstColumnBrakes) === -1)) {
                                         $(el).addClass('hidden');
@@ -913,7 +916,8 @@ var appDirectives = angular.module('appDirectives', [])
                                         cellToExtend = $(el);
                                     }
                                 })
-                            } else {
+                            } else if(scope.config.continuous)
+                            {
                                 elem.find("td:nth-child(" + i + ")").each(function (index, el) {
                                     if (previous == adjacentToGroup(index, i)) {
                                         $(el).addClass('hidden');
@@ -937,9 +941,6 @@ var appDirectives = angular.module('appDirectives', [])
 
                                         cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
                                     } else {
-                                        /*if ($.inArray(index, firstColumnBrakes) === -1) {
-                                            firstColumnBrakes.push(index);
-                                        }*/
                                         rowspan = 1;
                                         //previous = $(el).text();
                                         previous = adjacentToGroup(index, i);
