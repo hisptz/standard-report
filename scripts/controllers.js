@@ -213,13 +213,25 @@ var appControllers = angular.module('appControllers', [])
         $http.get(DHIS2URL + "api/dataSets.json?fields=id,name,periodType,attributeValues[value,attribute[name]],organisationUnits[id]&filter=attributeValues.value:eq:true&filter=attributeValues.attribute.name:eq:Is Report").then(function (results) {
             $scope.data.dataSets = results.data.dataSets;
             $scope.loadTracker = undefined;
-            if ($routeParams.dataSet) {
-                $scope.data.dataSets.forEach(function (dataSet) {
+
+            $scope.data.dataSets.forEach(function (dataSet) {
+                if ($routeParams.dataSet) {
                     if (dataSet.id == $routeParams.dataSet) {
                         $scope.data.dataSet = dataSet;
                     }
-                })
-            }
+                }
+                if (dataSet.name == "Monthly District Report (DR01)") {
+                    dataSet.sortOrder = 1;
+                }else if (dataSet.name == "Quarterly District Report (DR02)") {
+                    dataSet.sortOrder = 2;
+                }else if (dataSet.name == "Annually District Report (DR03)") {
+                    dataSet.sortOrder = 3;
+                }else if (dataSet.name == "Quarterly Integrated Report (DIR02/RIR02/NIR02)") {
+                    dataSet.sortOrder = 4;
+                }else if (dataSet.name == "Annual Integrated Report (DIR03/RIR03/NIR03)") {
+                    dataSet.sortOrder = 5;
+                }
+            })
             ReportService.getUser().then(function (results) {
                 var orgUnitIds = [];
                 results.organisationUnits.forEach(function (orgUnit) {
@@ -752,8 +764,8 @@ var appControllers = angular.module('appControllers', [])
                 $scope.data.dataSetForm = results.data;
 
                 var trustedHtml = $scope.renderHtml(results.data.dataEntryForm.htmlCode, results.data.dataElements);
-                if($scope.lastIndicator.length > 0){
-                    $scope.orgUnit.children.forEach(function(child){
+                if ($scope.lastIndicator.length > 0) {
+                    $scope.orgUnit.children.forEach(function (child) {
                         $scope.lastIndicatorData[child.id] = {};
                     })
                 }
@@ -804,7 +816,7 @@ var appControllers = angular.module('appControllers', [])
                                 } else {
                                     $scope.lastDataElementsData[row[0]] = row[3];
                                 }
-                                if($scope.lastIndicator.length > 0){
+                                if ($scope.lastIndicator.length > 0) {
                                     $scope.lastIndicatorData[row[2]][row[0]] = row[3];
                                 }
                                 $scope.progressValue = $scope.progressValue + progressFactor;
@@ -940,24 +952,24 @@ var appControllers = angular.module('appControllers', [])
                         }
                         promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, $routeParams.period));
                     }
-                    if($scope.lastIndicator.length > 0){
-                        $scope.orgUnit.children.forEach(function(child){
-                            $scope.lastIndicator.forEach(function(indicator){
+                    if ($scope.lastIndicator.length > 0) {
+                        $scope.orgUnit.children.forEach(function (child) {
+                            $scope.lastIndicator.forEach(function (indicator) {
                                 $scope.lastIndicatorData[child.id][indicator] = indicator;
-                                Object.keys($scope.lastIndicatorData[child.id]).forEach(function(indicatorInObject){
-                                    $scope.lastIndicatorData[child.id][indicator] = $scope.lastIndicatorData[child.id][indicator].replace(indicatorInObject,$scope.lastIndicatorData[child.id][indicatorInObject])
+                                Object.keys($scope.lastIndicatorData[child.id]).forEach(function (indicatorInObject) {
+                                    $scope.lastIndicatorData[child.id][indicator] = $scope.lastIndicatorData[child.id][indicator].replace(indicatorInObject, $scope.lastIndicatorData[child.id][indicatorInObject])
                                 })
-                                try{
-                                    $scope.lastIndicatorData[child.id][indicator] = eval("(" + $scope.lastIndicatorData[child.id][indicator] +")");
-                                }catch(e){
+                                try {
+                                    $scope.lastIndicatorData[child.id][indicator] = eval("(" + $scope.lastIndicatorData[child.id][indicator] + ")");
+                                } catch (e) {
                                     $scope.lastIndicatorData[child.id][indicator] = 0;
                                 }
                             })
 
                         })
-                        $scope.lastIndicator.forEach(function(indicator){
+                        $scope.lastIndicator.forEach(function (indicator) {
                             $scope.lastIndicatorData[indicator] = 0;
-                            $scope.orgUnit.children.forEach(function(child){
+                            $scope.orgUnit.children.forEach(function (child) {
                                 $scope.lastIndicatorData[indicator] += $scope.lastIndicatorData[child.id][indicator];
                             })
                         })
@@ -1157,7 +1169,7 @@ var appControllers = angular.module('appControllers', [])
                         newHtml = newHtml.replace(match[0], $scope.getElementReplacment("dataElementsData['" + idMacth[1] + "']", "dataElement"));
                         $scope.dataElements.push(idMacth[1]);
                     }
-                }else if ((idMacth = /lastindicator="(.*?)"/.exec(match[0])) !== null) {
+                } else if ((idMacth = /lastindicator="(.*?)"/.exec(match[0])) !== null) {
                     console.log("Last Indicator:")
                     $scope.lastIndicator.push(idMacth[1]);
                     newHtml = newHtml.replace(match[0], "{{lastIndicatorData['" + idMacth[1] + "']}}");
