@@ -1695,14 +1695,14 @@ var appControllers = angular.module('appControllers', [])
                         $scope.activities = analytics_response;
                     });
                     $interval(function () {
-                        $http.get(DHIS2URL + 'api/dataStore/estimation/status?'+Math.floor((Math.random() * 100) + 1)).success(function (analytics_response) {
+                        $http.get(DHIS2URL + 'api/dataStore/estimation/status?'+Math.floor((Math.random() * 10000000000) + 1)).success(function (analytics_response) {
                             $scope.activities = analytics_response;
                             if (analytics_response.is_running = "No") {
                                 $scope.pull_updates = false;
                             }
                         })
 
-                        $http.get(DHIS2URL + 'api/system/tasks/ANALYTICSTABLE_UPDATE?'+Math.floor((Math.random() * 100) + 1)).success(function (analytics_status) {
+                        $http.get(DHIS2URL + 'api/system/tasks/ANALYTICSTABLE_UPDATE?'+Math.floor((Math.random() * 10000000000) + 1)).success(function (analytics_status) {
                             $scope.analytics_activities = analytics_status;
                         })
                     }, 2000);
