@@ -884,7 +884,8 @@ var appDirectives = angular.module('appDirectives', [])
                         function adjacentToGroup(row, column) {
                             var adjacentString = "";
                             dataElementIndexes.forEach(function (dataElementIndex) {
-                                if (column > (dataElementIndex + 1)) {
+                                //if (column > (dataElementIndex + 1))
+                                {
                                     elem.find("td:nth-child(" + (dataElementIndex + 1) + ")").each(function (index, el) {
                                         if (row == index) {
                                             adjacentString += $(el).html();
@@ -911,12 +912,16 @@ var appDirectives = angular.module('appDirectives', [])
                                             firstColumnBrakes.push(index);
                                         }
                                         rowspan = 1;
+                                        dataElementIndexes.forEach(function (dataElementIndex) {
+                                            if(dataElementIndex == index){
+
+                                            }
+                                        });
                                         previous = $(el).text();
-                                        previousFromFirst = adjacentToGroup(index, i);
                                         cellToExtend = $(el);
                                     }
                                 })
-                            } else if(scope.config.continuous)
+                            } else //if(scope.config.continuous)
                             {
                                 elem.find("td:nth-child(" + i + ")").each(function (index, el) {
                                     if (previous == adjacentToGroup(index, i)) {
