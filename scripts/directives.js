@@ -912,11 +912,6 @@ var appDirectives = angular.module('appDirectives', [])
                                             firstColumnBrakes.push(index);
                                         }
                                         rowspan = 1;
-                                        dataElementIndexes.forEach(function (dataElementIndex) {
-                                            if(dataElementIndex == index){
-
-                                            }
-                                        });
                                         previous = $(el).text();
                                         cellToExtend = $(el);
                                     }
