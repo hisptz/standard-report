@@ -810,7 +810,6 @@ var appControllers = angular.module('appControllers', [])
                     var period = $routeParams.period;
                     if(period.substr(5) == "3"){
                         period = period.substr(0,4) + "09";
-                        alert(period);
                     }
                     for (var i = 0; i < $scope.lastMonthIndicator.length; i += common) {
                         promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.lastMonthIndicator.slice(i, i + common).join(";") + "&dimension=pe:" + period + "&filter=ou:" + $routeParams.orgUnit)
