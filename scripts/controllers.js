@@ -820,7 +820,6 @@ var appControllers = angular.module('appControllers', [])
                                 });
                                 $scope.progressValue = $scope.progressValue + progressFactor;
                             }));
-
                     }
                 }
                 for (var i = 0; i < $scope.lastDataElements.length; i += common) {
