@@ -751,6 +751,7 @@ var appControllers = angular.module('appControllers', [])
             $scope.fourthQuarterData = {};
             $scope.listByWardData = {};
             $scope.lastIndicatorData = {};
+            $scope.lastMonthIndicatorData = {};
             $scope.loadingStatus = "Loading Organisation Units";
 
             var organisationUnit = $scope.orgUnit;
@@ -800,10 +801,27 @@ var appControllers = angular.module('appControllers', [])
                                 if (isNotSet) {
                                     $scope.dataElementsData[row[0]] = row[2];
                                 }
-                                $scope.progressValue = $scope.progressValue + progressFactor;
                             });
+                            $scope.progressValue = $scope.progressValue + progressFactor;
                         }));
 
+                }
+                if($scope.lastMonthIndicator.length > 0){
+                    var period = $routeParams.period;
+                    if(period.substr(5) == "3"){
+                        period = period.substr(0,4) + "09";
+                        alert(period);
+                    }
+                    for (var i = 0; i < $scope.lastMonthIndicator.length; i += common) {
+                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.lastMonthIndicator.slice(i, i + common).join(";") + "&dimension=pe:" + period + "&filter=ou:" + $routeParams.orgUnit)
+                            .then(function (analyticsResults) {
+                                analyticsResults.data.rows.forEach(function (row) {
+                                    $scope.lastMonthIndicatorData[row[0]] = row[2];
+                                });
+                                $scope.progressValue = $scope.progressValue + progressFactor;
+                            }));
+
+                    }
                 }
                 for (var i = 0; i < $scope.lastDataElements.length; i += common) {
                     promises.push($http.get(DHIS2URL + "api/analytics.json?last&dimension=dx:" + $scope.lastDataElements.slice(i, i + common).join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:LEVEL-4;" + $routeParams.orgUnit)
@@ -1039,6 +1057,7 @@ var appControllers = angular.module('appControllers', [])
         $scope.nonAggregatedDataElementsDate = [];
         $scope.autogrowingPrograms = {};
         $scope.lastIndicator = [];
+        $scope.lastMonthIndicator = [];
         $scope.getElementReplacment = function (content, type) {
             var processed = content.replace("lastDataElementsData['", "").replace("dataElementsData['", "").replace("list-by-ward='listByWardData['", "").replace("dataElementsData['", "").replace("lastMonthOfQuarterData['", "").replace("cumulativeToDateData['", "").replace("fourthQuarterData['", "").replace("']", "");
             if (content.indexOf("lastDataElementsData['") == -1 && content.indexOf("dataElementsData['") == -1 && content.indexOf("fourthQuarterData['") == -1 && content.indexOf("lastMonthOfQuarterData['") == -1 && content.indexOf("cumulativeToDateData['") == -1) {
@@ -1173,6 +1192,10 @@ var appControllers = angular.module('appControllers', [])
                     console.log("Last Indicator:")
                     $scope.lastIndicator.push(idMacth[1]);
                     newHtml = newHtml.replace(match[0], "{{lastIndicatorData['" + idMacth[1] + "']}}");
+                }else if ((idMacth = /lastmonthindicator="(.*?)"/.exec(match[0])) !== null) {
+                    console.log("Last Indicator:")
+                    $scope.lastMonthIndicator.push(idMacth[1]);
+                    newHtml = newHtml.replace(match[0], "{{lastMonthIndicatorData['" + idMacth[1] + "']}}");
                 } else {
                     console.log(match);
                 }
