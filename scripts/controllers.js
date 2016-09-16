@@ -907,10 +907,10 @@ var appControllers = angular.module('appControllers', [])
                                 .then(function (analyticsResults) {
                                     analyticsResults.data.rows.forEach(function (row) {
                                         if ($scope.cumulativeToDateData[row[0]]) {
-                                            $scope.cumulativeToDateData[row[0]] = ($scope.cumulativeToDateData[row[0]] + parseFloat(row[2])).toFixed(1) + 1;
-                                            $scope.cumulativeToDateData[row[0]] = parseFloat($scope.cumulativeToDateData[row[0]]).toFixed(1);
+                                            $scope.cumulativeToDateData[row[0]] = (parseFloat($scope.cumulativeToDateData[row[0]]) + parseFloat(row[2])).toFixed(1) + 1;
+                                            $scope.cumulativeToDateData[row[0]] = "" + parseFloat($scope.cumulativeToDateData[row[0]]).toFixed(1);
                                         } else {
-                                            $scope.cumulativeToDateData[row[0]] = parseFloat(row[2]);
+                                            $scope.cumulativeToDateData[row[0]] = "" + parseFloat(row[2]).toFixed(1);
                                         }
 
                                     });
