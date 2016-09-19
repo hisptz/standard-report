@@ -737,6 +737,9 @@ var appControllers = angular.module('appControllers', [])
             }
             return periods;
         }
+        $scope.getFourthQuarterPeriod = function () {
+            return [(parseInt($routeParams.period.substr(0,4)) + 1) + "Q2"];
+        }
         $scope.progressValue = 0;
         $scope.loadingStatus = "Loading";
         $scope.getReport = function () {
@@ -781,29 +784,47 @@ var appControllers = angular.module('appControllers', [])
                     $scope.fourthQuarter.length +
                     $scope.nonAggregatedDataElements.length +
                     $scope.nonAggregatedDataElementsDate.length) / common);
-                for (var i = 0; i < $scope.dataElements.length; i += common) {
-                    promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.dataElements.slice(i, i + common).join(";") + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit)
-                        .then(function (analyticsResults) {
-                            analyticsResults.data.rows.forEach(function (row) {
-                                var isNotSet = true;
-                                $scope.data.dataSetForm.dataElements.forEach(function (dataElement) {
-                                    if (row[0].indexOf(dataElement.id) > -1 && dataElement.aggregationType == "LAST") {
+                for (var i = 0; i < $scope.dataElements.length; i++) {
+                    if($scope.wardLevelIndicator.indexOf($scope.dataElements[i]) > -1){
+                        console.log($scope);
+                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.dataElements[i] + "&dimension=pe:" + $routeParams.period + "&dimension=ou:LEVEL-4;" + $routeParams.orgUnit)
+                            .then(function (analyticsResults) {
+                                analyticsResults.data.rows.forEach(function (row) {
+                                    if ($scope.dataElementsData[row[0]]) {
+                                        $scope.dataElementsData[row[0]] = "" + (parseFloat($scope.dataElementsData[row[0]]) + parseFloat(row[3])) + ".0";
 
-                                        if ($scope.dataElementsData[row[0]]) {
-                                            $scope.dataElementsData[row[0]] = "" + (parseFloat($scope.dataElementsData[row[0]]) + parseFloat(row[2])) + ".0";
-
-                                        } else {
-                                            $scope.dataElementsData[row[0]] = row[2];
-                                        }
-                                        isNotSet = true;
+                                    } else {
+                                        $scope.dataElementsData[row[0]] = row[3];
                                     }
-                                })
-                                if (isNotSet) {
-                                    $scope.dataElementsData[row[0]] = parseFloat(row[2]).toFixed(1);
-                                }
-                            });
-                            $scope.progressValue = $scope.progressValue + progressFactor;
-                        }));
+                                });
+                                $scope.progressValue = $scope.progressValue + progressFactor;
+                            }));
+
+                    }else{
+                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.dataElements[i] + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit)
+                            .then(function (analyticsResults) {
+                                analyticsResults.data.rows.forEach(function (row) {
+                                    var isNotSet = true;
+                                    $scope.data.dataSetForm.dataElements.forEach(function (dataElement) {
+                                        if (row[0].indexOf(dataElement.id) > -1 && dataElement.aggregationType == "LAST") {
+
+                                            if ($scope.dataElementsData[row[0]]) {
+                                                $scope.dataElementsData[row[0]] = "" + (parseFloat($scope.dataElementsData[row[0]]) + parseFloat(row[2])) + ".0";
+
+                                            } else {
+                                                $scope.dataElementsData[row[0]] = row[2];
+                                            }
+                                            isNotSet = true;
+                                        }
+                                    })
+                                    if (isNotSet) {
+                                        $scope.dataElementsData[row[0]] = parseFloat(row[2]).toFixed(1);
+                                    }
+                                });
+                                $scope.progressValue = $scope.progressValue + progressFactor;
+                            }));
+                    }
+
 
                 }
                 if($scope.lastMonthIndicator.length > 0){
@@ -966,8 +987,15 @@ var appControllers = angular.module('appControllers', [])
 
                                 promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, $routeParams.period, true));
                             })
+                            promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, $routeParams.period));
+                        }else if ($scope.autogrowingPrograms[programId].fourthQuarter) {
+                            //console.log("Program:",$scope.autogrowingPrograms);
+                            $scope.getFourthQuarterPeriod().forEach(function (period) {
+                                promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, period, true));
+                            })
+                        }else{
+                            promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, $routeParams.period));
                         }
-                        promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, $routeParams.period));
                     }
                     if ($scope.lastIndicator.length > 0) {
                         $scope.orgUnit.children.forEach(function (child) {
@@ -1057,6 +1085,7 @@ var appControllers = angular.module('appControllers', [])
         $scope.autogrowingPrograms = {};
         $scope.lastIndicator = [];
         $scope.lastMonthIndicator = [];
+        $scope.wardLevelIndicator = []
         $scope.getElementReplacment = function (content, type) {
             var processed = content.replace("lastDataElementsData['", "").replace("dataElementsData['", "").replace("list-by-ward='listByWardData['", "").replace("dataElementsData['", "").replace("lastMonthOfQuarterData['", "").replace("cumulativeToDateData['", "").replace("fourthQuarterData['", "").replace("']", "");
             if (content.indexOf("lastDataElementsData['") == -1 && content.indexOf("dataElementsData['") == -1 && content.indexOf("fourthQuarterData['") == -1 && content.indexOf("lastMonthOfQuarterData['") == -1 && content.indexOf("cumulativeToDateData['") == -1) {
@@ -1171,6 +1200,9 @@ var appControllers = angular.module('appControllers', [])
                         newHtml = newHtml.replace(match[0], $scope.getElementReplacment("fourthQuarterData['" + idMacth[1] + "']", "indicator"));
                         $scope.fourthQuarter.push(idMacth[1]);
                     } else {
+                        if (match[0].indexOf("ward-level") > -1){
+                            $scope.wardLevelIndicator.push(idMacth[1]);
+                        }
                         newHtml = newHtml.replace(match[0], $scope.getElementReplacment("dataElementsData['" + idMacth[1] + "']", "indicator"));
                         $scope.dataElements.push(idMacth[1]);
                     }
@@ -1215,7 +1247,7 @@ var appControllers = angular.module('appControllers', [])
                         $scope.autogrowingPrograms[config.programId].dataElementsDetails = [];
                         $scope.autogrowingPrograms[config.programId].data = [];
                     }
-                    if (config.cumulativeToDate) {
+                    if (config.cumulativeToDate || config.fourthQuarter) {
                         $scope.autogrowingPrograms[config.programId].otherData = [];
                     }
                     var directive = "autogrowing";

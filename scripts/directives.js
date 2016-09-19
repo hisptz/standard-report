@@ -371,6 +371,7 @@ var appDirectives = angular.module('appDirectives', [])
                 } else {
                     $scope.data = [];
                 }
+                console.log($scope.listByWard);
                 if ($scope.listByWard)
                     $scope.listByWard.values.forEach(function (value) {
                         //value[]
@@ -1038,8 +1039,11 @@ var appDirectives = angular.module('appDirectives', [])
                         }
 
                     });
-
+                    if ($scope.config.fourthQuarter) {
+                        console.log("Duh:",$scope.data);
+                    }
                 } else {
+
                     $scope.data.events = [];
                     $scope.config.data.forEach(function (eventData) {
 
