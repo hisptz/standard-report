@@ -864,6 +864,9 @@ var appControllers = angular.module('appControllers', [])
                 if ($scope.listByWard.length > 0) {
                     if ($scope.dataSet.attributeValues.length > 0) {
                         var dataSetFound = false;
+                        $scope.listByWard.forEach(function (dx) {
+                            $scope.listByWardData[dx] = {values: []};
+                        });
                         $scope.dataSet.attributeValues.forEach(function (attributeValue) {
                             if (attributeValue.attribute.name == "Source") {
                                 var sources = eval("(" + attributeValue.value + ")");
@@ -872,9 +875,7 @@ var appControllers = angular.module('appControllers', [])
                                         //hLCbwDwbNYr
                                         promises.push($http.get(DHIS2URL + "api/dataValueSets.json?dataSet=" + source2.dataSet + "&orgUnit=" + $routeParams.orgUnit + "&children=true&period=" + $routeParams.period)
                                             .then(function (dataSetResults) {
-                                                $scope.listByWard.forEach(function (dx) {
-                                                    $scope.listByWardData[dx] = {values: []};
-                                                });
+
                                                 if (dataSetResults.data.dataValues) {
                                                     dataSetResults.data.dataValues.forEach(function (value) {
                                                         if ($scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo]) {
