@@ -3,20 +3,22 @@
     font-weight: normal;
     color: #585D61;
 }
+
 .navbar-inverse .navbar-nav > li > a {
     color: #ffffff;
 }
-.vertical-spacing{
-    margin-top: 20px;    
+
+.vertical-spacing {
+    margin-top: 20px;
 }
 
-table 
-{
+table {
     font-size: 13px;
     line-height: 24px;
     table-layout: fixed;
     margin-bottom: 10px;
 }
+
 #mainPage {
     margin: 65px 10px 10px 270px;
 }
@@ -25,6 +27,24 @@ table
     font-size: 9pt;
     margin: 65px 10px 10px 270px;
 }
-c-tree .list-group .list-group-item{
-    border:none;
+
+c-tree .list-group .list-group-item {
+    border: none;
+}
+
+.hide-text {
+    color: transparent;
+}
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #report, #report * {
+        visibility: visible;
+    }
+    #report {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
 }

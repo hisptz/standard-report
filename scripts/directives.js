@@ -371,7 +371,6 @@ var appDirectives = angular.module('appDirectives', [])
                 } else {
                     $scope.data = [];
                 }
-                console.log($scope.listByWard);
                 if ($scope.listByWard)
                     $scope.listByWard.values.forEach(function (value) {
                         //value[]
@@ -1039,9 +1038,6 @@ var appDirectives = angular.module('appDirectives', [])
                         }
 
                     });
-                    if ($scope.config.fourthQuarter) {
-                        console.log("Duh:",$scope.data);
-                    }
                 } else {
 
                     $scope.data.events = [];
@@ -1076,7 +1072,6 @@ var appDirectives = angular.module('appDirectives', [])
 
                     $scope.config.indicators.forEach(function (indicator, index) {
                         $scope.data.dataElements.splice(indicator.position, 0, {name:"Inidicator" + index});
-                        console.log($scope.data.dataElements);
                         //$scope.data.dataElements.push({name: "Inidicator" + index});
                         $scope.data.events.forEach(function (event) {
                             var eventIndicator = "(" + indicator.numerator + ")/(" + indicator.denominator + ")";
@@ -1096,7 +1091,7 @@ var appDirectives = angular.module('appDirectives', [])
                             try {
                                 event["Inidicator" + index] = eval('(' + eventIndicator + ')');
                             } catch (e) {
-                                console.log(e);
+
                             }
                         })
                     });
