@@ -1073,8 +1073,10 @@ var appDirectives = angular.module('appDirectives', [])
                 }
                 //Evaluate indicators if there calculations that need to be made
                 if ($scope.config.indicators) {
+
                     $scope.config.indicators.forEach(function (indicator, index) {
-                        $scope.data.dataElements.splice(indicator.position, 0, "Inidicator" + index);
+                        $scope.data.dataElements.splice(indicator.position, 0, {name:"Inidicator" + index});
+                        console.log($scope.data.dataElements);
                         //$scope.data.dataElements.push({name: "Inidicator" + index});
                         $scope.data.events.forEach(function (event) {
                             var eventIndicator = "(" + indicator.numerator + ")/(" + indicator.denominator + ")";
@@ -1094,7 +1096,7 @@ var appDirectives = angular.module('appDirectives', [])
                             try {
                                 event["Inidicator" + index] = eval('(' + eventIndicator + ')');
                             } catch (e) {
-
+                                console.log(e);
                             }
                         })
                     });
