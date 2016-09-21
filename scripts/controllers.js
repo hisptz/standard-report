@@ -1070,6 +1070,9 @@ var appControllers = angular.module('appControllers', [])
 
                     });
                     $scope.progressValue = $scope.progressValue + (20 / length);
+                },function(){
+                    $scope.error = true;
+                    toaster.pop('error', "Error" + error.status, "Error Loading Data from Server. Please try again");
                 })
         }
         $scope.back = function () {
@@ -1200,6 +1203,9 @@ var appControllers = angular.module('appControllers', [])
                         }
                         newHtml = newHtml.replace(match[0], $scope.getElementReplacment("fourthQuarterData['" + idMacth[1] + "']", "indicator"));
                         $scope.fourthQuarter.push(idMacth[1]);
+                    }else if (match[0].indexOf("lastMonthOfQuarter") > -1) {//If it is last month of quarter
+                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("lastMonthOfQuarterData['" + idMacth[1] + "']", "dataElement"));
+                        $scope.lastMonthOfQuarter.push(idMacth[1]);
                     } else {
                         if (match[0].indexOf("ward-level") > -1){
                             $scope.wardLevelIndicator.push(idMacth[1]);
