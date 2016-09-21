@@ -1120,6 +1120,9 @@ var appControllers = angular.module('appControllers', [])
         $scope.getDebugId = function (id) {
             return $scope.debugData[id];
         }
+        $scope.Int = function(val){
+            return parseFloat(val).toFixed(0);
+        }
         function performRender(html, dataElements) {
             var inputRegEx = /<input (.*?)>/g;
             var match = null;
@@ -1169,7 +1172,12 @@ var appControllers = angular.module('appControllers', [])
                             }
                             $scope.listByWard.push(idMacth[1] + "." + idMacth[2]);
                         } else {
-                            newHtml = newHtml.replace(match[0], $scope.getElementReplacment("dataElementsData['" + idMacth[1] + "." + idMacth[2] + "']", "dataElement"));
+                            //newHtml = newHtml.replace(match[0], $scope.getElementReplacment("dataElementsData['" + idMacth[1] + "." + idMacth[2] + "']", "dataElement"));
+                            if(match[0].indexOf("integer") > -1){
+                                newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "." + idMacth[2] + "\"])}}</div>");
+                            }else{
+                                newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "." + idMacth[2] + "\"]}}</div>");
+                            }
                             $scope.dataElements.push(idMacth[1] + "." + idMacth[2]);
                         }
 
@@ -1210,7 +1218,11 @@ var appControllers = angular.module('appControllers', [])
                         if (match[0].indexOf("ward-level") > -1){
                             $scope.wardLevelIndicator.push(idMacth[1]);
                         }
-                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("dataElementsData['" + idMacth[1] + "']", "indicator"));
+                        if(match[0].indexOf("integer") > -1){
+                            newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "\"])}}</div>");
+                        }else{
+                            newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "\"]}}</div>");
+                        }
                         $scope.dataElements.push(idMacth[1]);
                     }
 
@@ -1223,7 +1235,12 @@ var appControllers = angular.module('appControllers', [])
                         newHtml = newHtml.replace(match[0], $scope.getElementReplacment("fourthQuarterData['" + idMacth[1] + "']", "dataElement"));
                         $scope.fourthQuarter.push(idMacth[1]);
                     } else {
-                        newHtml = newHtml.replace(match[0], $scope.getElementReplacment("dataElementsData['" + idMacth[1] + "']", "dataElement"));
+                        if(match[0].indexOf("integer") > -1){
+                            newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "\"])}}</div>");
+                        }else{
+                            newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "\"]}}</div>");
+                        }
+
                         $scope.dataElements.push(idMacth[1]);
                     }
                 } else if ((idMacth = /lastindicator="(.*?)"/.exec(match[0])) !== null) {
