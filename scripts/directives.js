@@ -949,15 +949,24 @@ var appDirectives = angular.module('appDirectives', [])
                                 })
                             }
                         }
+
                         if(scope.config.groupAdd){
                             //alert("hskdjff");
                             firstColumnBrakes = [];
                             scope.config.groupAdd.forEach(function(dataElementId){
                                 scope.data.dataElements.forEach(function(dataElement,i){
-                                    //if(dataElementId == dataElement.id)
+                                    if(dataElementId == dataElement.id)
                                     {
                                         elem.find("td:nth-child(" + i + ")").each(function (index, el) {
-                                            if ((previous == $(el).text() && $.inArray(index, firstColumnBrakes) === -1 && dataElementId == dataElement.id)) {
+                                            if(elem[0].children[index].children[i - 1].getAttribute('rowspan') != null){
+                                                var span = parseInt(elem[0].children[index].children[i - 1].getAttribute('rowspan'));
+                                                elem[0].children[index].children[i].setAttribute('rowspan',span);
+                                                for(var counter = 1;counter < span;counter++){
+                                                    $(elem[0].children[index + counter].children[i]).addClass('hidden');
+                                                    elem[0].children[index].children[i].innerHTML = (parseFloat(elem[0].children[index].children[i].innerHTML) + parseFloat(elem[0].children[index + counter].children[i].innerHTML)).toFixed(1);
+                                                }
+                                            }
+                                            /*if ((previous == $(el).text() && $.inArray(index, firstColumnBrakes) === -1 && dataElementId == dataElement.id)) {
                                                 $(el).addClass('hidden');
                                                 cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
                                             } else {
@@ -967,7 +976,7 @@ var appDirectives = angular.module('appDirectives', [])
                                                 rowspan = 1;
                                                 previous = $(el).text();
                                                 cellToExtend = $(el);
-                                            }
+                                            }*/
                                         })
                                     }
                                 })
