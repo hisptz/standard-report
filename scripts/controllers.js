@@ -786,7 +786,6 @@ var appControllers = angular.module('appControllers', [])
                     $scope.nonAggregatedDataElementsDate.length) / common);
                 for (var i = 0; i < $scope.dataElements.length; i++) {
                     if($scope.wardLevelIndicator.indexOf($scope.dataElements[i]) > -1){
-                        console.log($scope);
                         promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.dataElements[i] + "&dimension=pe:" + $routeParams.period + "&dimension=ou:LEVEL-4;" + $routeParams.orgUnit)
                             .then(function (analyticsResults) {
                                 analyticsResults.data.rows.forEach(function (row) {
@@ -832,8 +831,8 @@ var appControllers = angular.module('appControllers', [])
                     if(period.substr(5) == "3"){
                         period = period.substr(0,4) + "09";
                     }
-                    for (var i = 0; i < $scope.lastMonthIndicator.length; i += common) {
-                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.lastMonthIndicator.slice(i, i + common).join(";") + "&dimension=pe:" + period + "&filter=ou:" + $routeParams.orgUnit)
+                    for (var i = 0; i < $scope.lastMonthIndicator.length; i++) {
+                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.lastMonthIndicator[i] + "&dimension=pe:" + period + "&filter=ou:" + $routeParams.orgUnit)
                             .then(function (analyticsResults) {
                                 analyticsResults.data.rows.forEach(function (row) {
                                     $scope.lastMonthIndicatorData[row[0]] = row[2];
@@ -910,14 +909,31 @@ var appControllers = angular.module('appControllers', [])
                     if (month < 10) {
                         month = "0" + month;
                     }
-                    for (var i = 0; i < $scope.lastMonthOfQuarter.length; i += common) {
-                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.lastMonthOfQuarter.slice(i, i + common).join(";") + "&dimension=pe:" + str[0] + month + "&filter=ou:" + $routeParams.orgUnit)
-                            .then(function (analyticsResults) {
-                                analyticsResults.data.rows.forEach(function (row) {
-                                    $scope.lastMonthOfQuarterData[row[0]] = row[2];
-                                });
-                                $scope.progressValue = $scope.progressValue + progressFactor;
-                            }));
+                    for (var i = 0; i < $scope.lastMonthOfQuarter.length; i++) {
+                        if($scope.wardLevelIndicator.indexOf($scope.lastMonthOfQuarter[i]) > -1){
+                            promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.lastMonthOfQuarter[i] + "&dimension=pe:" + str[0] + month + "&dimension=ou:LEVEL-4;" + $routeParams.orgUnit)
+                                .then(function (analyticsResults) {
+                                    analyticsResults.data.rows.forEach(function (row) {
+                                        //$scope.lastMonthOfQuarterData[row[0]] = row[3];
+                                        if ($scope.lastMonthOfQuarterData[row[0]]) {
+                                            $scope.lastMonthOfQuarterData[row[0]] = "" + (parseFloat($scope.lastMonthOfQuarterData[row[0]]) + parseFloat(row[3])) + ".0";
+
+                                        } else {
+                                            $scope.lastMonthOfQuarterData[row[0]] = row[3];
+                                        }
+                                    });
+                                    $scope.progressValue = $scope.progressValue + progressFactor;
+                                }));
+                        }else{
+                            promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.lastMonthOfQuarter[i] + "&dimension=pe:" + str[0] + month + "&filter=ou:" + $routeParams.orgUnit)
+                                .then(function (analyticsResults) {
+                                    analyticsResults.data.rows.forEach(function (row) {
+                                        $scope.lastMonthOfQuarterData[row[0]] = row[2];
+                                    });
+                                    $scope.progressValue = $scope.progressValue + progressFactor;
+                                }));
+                        }
+
 
                     }
                 }
@@ -1089,7 +1105,8 @@ var appControllers = angular.module('appControllers', [])
         $scope.autogrowingPrograms = {};
         $scope.lastIndicator = [];
         $scope.lastMonthIndicator = [];
-        $scope.wardLevelIndicator = []
+        $scope.wardLevelIndicator = [];
+        $scope.lastMonthOfQuarterWardLevel = [];
         $scope.getElementReplacment = function (content, type) {
             var processed = content.replace("lastDataElementsData['", "").replace("dataElementsData['", "").replace("list-by-ward='listByWardData['", "").replace("dataElementsData['", "").replace("lastMonthOfQuarterData['", "").replace("cumulativeToDateData['", "").replace("fourthQuarterData['", "").replace("']", "");
             if (content.indexOf("lastDataElementsData['") == -1 && content.indexOf("dataElementsData['") == -1 && content.indexOf("fourthQuarterData['") == -1 && content.indexOf("lastMonthOfQuarterData['") == -1 && content.indexOf("cumulativeToDateData['") == -1) {
@@ -1213,6 +1230,9 @@ var appControllers = angular.module('appControllers', [])
                         $scope.fourthQuarter.push(idMacth[1]);
                     }else if (match[0].indexOf("lastMonthOfQuarter") > -1) {//If it is last month of quarter
                         newHtml = newHtml.replace(match[0], $scope.getElementReplacment("lastMonthOfQuarterData['" + idMacth[1] + "']", "dataElement"));
+                        if (match[0].indexOf("ward-level") > -1){
+                            $scope.wardLevelIndicator.push(idMacth[1]);
+                        }
                         $scope.lastMonthOfQuarter.push(idMacth[1]);
                     } else {
                         if (match[0].indexOf("ward-level") > -1){

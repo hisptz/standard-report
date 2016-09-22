@@ -949,6 +949,30 @@ var appDirectives = angular.module('appDirectives', [])
                                 })
                             }
                         }
+                        if(scope.config.groupAdd){
+                            //alert("hskdjff");
+                            firstColumnBrakes = [];
+                            scope.config.groupAdd.forEach(function(dataElementId){
+                                scope.data.dataElements.forEach(function(dataElement,i){
+                                    //if(dataElementId == dataElement.id)
+                                    {
+                                        elem.find("td:nth-child(" + i + ")").each(function (index, el) {
+                                            if ((previous == $(el).text() && $.inArray(index, firstColumnBrakes) === -1 && dataElementId == dataElement.id)) {
+                                                $(el).addClass('hidden');
+                                                cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
+                                            } else {
+                                                if ($.inArray(index, firstColumnBrakes) === -1) {
+                                                    firstColumnBrakes.push(index);
+                                                }
+                                                rowspan = 1;
+                                                previous = $(el).text();
+                                                cellToExtend = $(el);
+                                            }
+                                        })
+                                    }
+                                })
+                            })
+                        }
                     });
 
                 }
