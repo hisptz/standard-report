@@ -966,17 +966,6 @@ var appDirectives = angular.module('appDirectives', [])
                                                     elem[0].children[index].children[i].innerHTML = (parseFloat(elem[0].children[index].children[i].innerHTML) + parseFloat(elem[0].children[index + counter].children[i].innerHTML)).toFixed(1);
                                                 }
                                             }
-                                            /*if ((previous == $(el).text() && $.inArray(index, firstColumnBrakes) === -1 && dataElementId == dataElement.id)) {
-                                                $(el).addClass('hidden');
-                                                cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
-                                            } else {
-                                                if ($.inArray(index, firstColumnBrakes) === -1) {
-                                                    firstColumnBrakes.push(index);
-                                                }
-                                                rowspan = 1;
-                                                previous = $(el).text();
-                                                cellToExtend = $(el);
-                                            }*/
                                         })
                                     }
                                 })
@@ -988,6 +977,9 @@ var appDirectives = angular.module('appDirectives', [])
             },
             replace: true,
             controller: function ($scope, $routeParams) {
+                if($scope.config.fourthQuarter){
+                    console.log($scope.config)
+                }
                 $scope.data = {
                     dataElements: [],
                     events: []
@@ -1071,6 +1063,16 @@ var appDirectives = angular.module('appDirectives', [])
                         }
 
                     });
+                    if ($scope.config.fourthQuarter) {
+                        $scope.config.groupBy.forEach(function (group, index) {
+                            if (index == 0) {
+                                $scope.config.otherData.forEach(function (eventData) {
+                                    $scope.data.events.push(eventData);
+                                })
+                            }
+
+                        });
+                    }
                 } else {
 
                     $scope.data.events = [];
