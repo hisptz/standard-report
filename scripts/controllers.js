@@ -1379,7 +1379,7 @@ var appControllers = angular.module('appControllers', [])
         });
         $scope.organisationUnit = {};
         $http.get(DHIS2URL + "api/organisationUnits/" + $scope.orgUnit + ".json?fields=name,level,parent[name,level]").then(function (result) {
-            $scope.organisationUnits = result.data;
+            $scope.organisationUnit = result.data;
             $http.get(DHIS2URL + "api/organisationUnitLevels.json?filter=level:eq:" + result.data.level).then(function (result) {
                 $scope.organisationUnit.organisationUnitLevel = result.data.organisationUnitLevels[0];
 
