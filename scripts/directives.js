@@ -973,8 +973,24 @@ var appDirectives = angular.module('appDirectives', [])
                                 })
                             })
                         }
-                    });
 
+                        //re-calculate indicator values after merging rows
+                        if (scope.config.indicators) {
+                            elem.find("tr").each(function (trIndex, trElement){
+                                scope.config.indicators.forEach(function (indicator) {
+                                    var eventIndicator = "(" + indicator.numerator + ")/(" + indicator.denominator + ")";
+                                    scope.data.dataElements.forEach(function (dataElement) {
+                                        if (eventIndicator.indexOf(dataElement.id) > -1) {
+                                            var dataElementIndex = scope.config.dataElements.indexOf(dataElement.id);
+                                            var value = trElement.children[dataElementIndex].innerText;
+                                            eventIndicator = eventIndicator.replace("#{" + dataElement.id + "}", value);
+                                        }
+                                    });
+                                    trElement.children[indicator.position].innerText = eval('(' + eventIndicator + ')');
+                                });
+                            });
+                        }
+                    });
                 }
             },
             replace: true,
@@ -991,7 +1007,7 @@ var appDirectives = angular.module('appDirectives', [])
                         }
                     });
                     return name;
-                }
+                };
 
                 if ($scope.config.cumulativeToDate) {
                     var addDataElements = [];
