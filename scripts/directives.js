@@ -984,7 +984,7 @@ var appDirectives = angular.module('appDirectives', [])
                                             eventIndicator = eventIndicator.replace("#{" + dataElement.id + "}", value);
                                         }
                                     });
-                                    trElement.children[indicator.position].innerText = eval('(' + eventIndicator + ')');
+                                    trElement.children[indicator.position].innerText = (eval('(' + eventIndicator + ')')).toFixed(1);
                                 });
                             });
                         }
