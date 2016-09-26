@@ -1,0 +1,10 @@
+<tbody>
+<tr>
+    <!--<td ng-repeat="dataElement in data.dataElements">{{dataElement.event[dataElement.name]}}</td>-->
+    <td> {{event[dataElement.name]}}</td>
+</tr>
+<tr  ng-repeat="event in data.events">
+    <!--<td ng-repeat="dataElement in data.dataElements">{{dataElement.event[dataElement.name]}}</td>-->
+    <td ng-class="{'hide-text':config.hide.indexOf($index) > -1}" style="border:1px solid lightgrey" ng-if="event[dataElement.id] != undefined" ng-repeat="dataElement in data.dataElements track by $index">{{event[dataElement.id]}}</td>
+</tr>
+</tbody>
