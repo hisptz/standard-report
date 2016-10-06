@@ -861,6 +861,7 @@ var appControllers = angular.module('appControllers', [])
 
                 }
                 if ($scope.listByWard.length > 0) {
+                    var loadedDataset = [];
                     if ($scope.dataSet.attributeValues.length > 0) {
                         var dataSetFound = false;
                         $scope.listByWard.forEach(function (dx) {
@@ -872,28 +873,39 @@ var appControllers = angular.module('appControllers', [])
                                 sources.forEach(function (source) {
                                     source.sources.forEach(function (source2) {
                                         //hLCbwDwbNYr
-                                        promises.push($http.get(DHIS2URL + "api/dataValueSets.json?dataSet=" + source2.dataSet + "&orgUnit=" + $routeParams.orgUnit + "&children=true&period=" + $routeParams.period)
-                                            .then(function (dataSetResults) {
+                                        if(loadedDataset.indexOf(source2.dataSet + $routeParams.orgUnit + $routeParams.period) == -1){
+                                            loadedDataset.push(source2.dataSet + $routeParams.orgUnit + $routeParams.period);
+                                            promises.push($http.get(DHIS2URL + "api/dataValueSets.json?dataSet=" + source2.dataSet + "&orgUnit=" + $routeParams.orgUnit + "&children=true&period=" + $routeParams.period)
+                                                .then(function (dataSetResults) {
 
-                                                if (dataSetResults.data.dataValues) {
-                                                    dataSetResults.data.dataValues.forEach(function (value) {
-                                                        if ($scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo]) {
-                                                            $scope.data.dataSetForm.dataElements.forEach(function (dataElement) {
-                                                                if (dataElement.id == value.dataElement) {
-                                                                    $scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo].name = dataElement.name;
+                                                    if (dataSetResults.data.dataValues) {
+                                                        dataSetResults.data.dataValues.forEach(function (value) {
+                                                            if ($scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo]) {
+                                                                $scope.data.dataSetForm.dataElements.forEach(function (dataElement) {
+                                                                    if (dataElement.id == value.dataElement) {
+                                                                        $scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo].name = dataElement.name;
+                                                                    }
+                                                                })
+                                                            }
+                                                        });
+                                                        dataSetResults.data.dataValues.forEach(function (value) {
+                                                            var listID = value.dataElement + "." + value.categoryOptionCombo;
+                                                            if ($scope.listByWardData[listID]) {
+                                                                var found = false;
+                                                                $scope.listByWardData[listID].values.forEach(function(value1){
+                                                                    if(value1.dataElement == value.dataElement && value1.period == value.period && value1.orgUnit == value.orgUnit && value1.categoryOptionCombo == value.categoryOptionCombo){
+                                                                        found = true;
+                                                                    }
+                                                                })
+                                                                if(!found){
+                                                                    $scope.listByWardData[listID].values.push(value);
                                                                 }
-                                                            })
-                                                        }
-                                                    });
-                                                    dataSetResults.data.dataValues.forEach(function (value) {
-                                                        if ($scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo]) {
-
-                                                            $scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo].values.push(value);
-                                                        }
-                                                    });
-                                                }
-                                                $scope.progressValue = $scope.progressValue + progressFactor;
-                                            }));
+                                                            }
+                                                        });
+                                                    }
+                                                    $scope.progressValue = $scope.progressValue + progressFactor;
+                                                }));
+                                        }
                                     })
                                 });
                                 dataSetFound = true;

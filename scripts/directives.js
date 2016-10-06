@@ -365,6 +365,7 @@ var appDirectives = angular.module('appDirectives', [])
             },
             replace: true,
             controller: function ($scope, $routeParams) {
+                console.log($scope.listByWard);
                 $scope.params = $routeParams;
                 if ($scope.count) {
                     $scope.data = {};
@@ -388,6 +389,18 @@ var appDirectives = angular.module('appDirectives', [])
 
                             }
                         })
+                        if ($scope.orgUnit.id == value.orgUnit) {
+                            if ($scope.count) {
+                                if ($scope.data[value.value]) {
+                                    $scope.data[value.value]++;
+                                } else {
+                                    $scope.data[value.value] = 1;
+                                }
+                            } else {
+                                $scope.data.push({name: $scope.orgUnit.name, value: value.value});
+                            }
+
+                        }
                     })
             },
             templateUrl: 'views/listByWard.html'
@@ -902,7 +915,6 @@ var appDirectives = angular.module('appDirectives', [])
                             //if ((scope.data.dataElements[dataIndex].valueType == "TEXT" || scope.data.dataElements[dataIndex].valueType == "LONG_TEXT") && scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id) > -1)
                             if (scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id) > -1)
                             {
-                                //console.log(scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id),scope.data.dataElements[dataIndex].id,scope.config.groupBy);
                                 elem.find("td:nth-child(" + i + ")").each(function (index, el) {
                                     if ((previous == $(el).text() && $.inArray(index, firstColumnBrakes) === -1)) {
                                         $(el).addClass('hidden');
@@ -993,9 +1005,6 @@ var appDirectives = angular.module('appDirectives', [])
             },
             replace: true,
             controller: function ($scope, $routeParams) {
-                if($scope.config.fourthQuarter){
-                    console.log($scope.config)
-                }
                 $scope.data = {
                     dataElements: [],
                     events: []
@@ -1224,7 +1233,6 @@ var appDirectives = angular.module('appDirectives', [])
                                 //if ((scope.data.dataElements[dataIndex].valueType == "TEXT" || scope.data.dataElements[dataIndex].valueType == "LONG_TEXT") && scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id) > -1)
                                 if (scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id) > -1)
                                 {
-                                    //console.log(scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id),scope.data.dataElements[dataIndex].id,scope.config.groupBy);
                                     elem.find("td:nth-child(" + i + ")").each(function (index, el) {
                                         if ((previous == $(el).text() && $.inArray(index, firstColumnBrakes) === -1)) {
                                             $(el).addClass('hidden');
@@ -1301,7 +1309,6 @@ var appDirectives = angular.module('appDirectives', [])
                 $scope.mergePrograms = function(program){
                     promises.push($http.get(DHIS2URL + "api/analytics/events/query/" + program.id + "?merge&dimension=pe:" + $routeParams.period + "&dimension=ou:" + $routeParams.orgUnit + "&dimension=" + program.dataElements.join("&dimension="))
                         .then(function (analyticsResults) {
-                            console.log(analyticsResults);
                             analyticsResults.data.rows.forEach(function (row) {
                                 var object = {};
                                 analyticsResults.data.headers.forEach(function (header, index) {
@@ -1342,7 +1349,6 @@ var appDirectives = angular.module('appDirectives', [])
                                 }*/
                                 $scope.data.events.push(object);
                             });
-                            console.log($scope.data);
                         },function(){
                             $scope.error = true;
                             toaster.pop('error', "Error" + error.status, "Error Loading Data from Server. Please try again");
@@ -1353,7 +1359,6 @@ var appDirectives = angular.module('appDirectives', [])
                 })
                 promises.push($http.get(DHIS2URL + "api/dataElements.json?filter=id:in:[" + $scope.config.dataElements.join(",") + "]&fields=id,name,displayName,valueType")
                     .then(function (dataElementResults) {
-                        console.log(dataElementResults.data.dataElements);
                         $scope.config.dataElements.forEach(function(dataElementID){
                             dataElementResults.data.dataElements.forEach(function(dataElement){
                                 if(dataElement.id == dataElementID){
