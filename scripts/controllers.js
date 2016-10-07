@@ -853,8 +853,16 @@ var appControllers = angular.module('appControllers', [])
                                     $scope.lastDataElementsData[row[0]] = row[3];
                                 }
                                 if ($scope.lastIndicator.length > 0) {
-                                    $scope.lastIndicatorData[row[2]][row[0]] = row[3];
+
+                                    if($scope.lastIndicatorData[row[2]]){
+                                        $scope.lastIndicatorData[row[2]][row[0]] = row[3];
+                                    }else{
+                                        console.log(row[2],row[0],row[3]);
+                                        $scope.lastIndicatorData[row[2]] = {};
+                                        $scope.lastIndicatorData[row[2]][row[0]] = row[3];
+                                    }
                                 }
+
                                 $scope.progressValue = $scope.progressValue + progressFactor;
                             });
                         }));
