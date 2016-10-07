@@ -882,8 +882,13 @@ var appControllers = angular.module('appControllers', [])
                                     source.sources.forEach(function (source2) {
                                         //hLCbwDwbNYr
                                         if(loadedDataset.indexOf(source2.dataSet + $routeParams.orgUnit + $routeParams.period) == -1){
+                                            var newChildren = []
+                                            $scope.orgUnit.children.forEach(function(child){
+                                                newChildren.push(child.id);
+                                            })
                                             loadedDataset.push(source2.dataSet + $routeParams.orgUnit + $routeParams.period);
-                                            promises.push($http.get(DHIS2URL + "api/dataValueSets.json?dataSet=" + source2.dataSet + "&orgUnit=" + $routeParams.orgUnit + "&children=true&period=" + $routeParams.period)
+                                            console.log($scope.orgUnit);
+                                            promises.push($http.get(DHIS2URL + "api/dataValueSets.json?dataSet=" + source2.dataSet + "&orgUnit=" + $routeParams.orgUnit + "," + newChildren.join(",") +"&children=true&period=" + $routeParams.period)
                                                 .then(function (dataSetResults) {
 
                                                     if (dataSetResults.data.dataValues) {
@@ -1231,7 +1236,12 @@ var appControllers = angular.module('appControllers', [])
                             if ($routeParams.preview == "debug") {
                                 newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' count='true' org-unit='orgUnit'></div><debug report='dataSet' list-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' dg-id='" + idMacth[1] + "." + idMacth[2] + "' type='dataElement'></debug>");
                             } else {
-                                newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' org-unit='orgUnit'></div>");
+                                if(match[0].indexOf("choice") > -1){
+                                    //alert("Choice");
+                                    newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' choice='true' org-unit='orgUnit'></div>");
+                                }else{
+                                    newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' org-unit='orgUnit'></div>");
+                                }
                             }
                             $scope.listByWard.push(idMacth[1] + "." + idMacth[2]);
 

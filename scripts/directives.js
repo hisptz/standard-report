@@ -361,7 +361,8 @@ var appDirectives = angular.module('appDirectives', [])
             scope: {
                 listByWard: '=',
                 orgUnit: '=',
-                count: '='
+                count: '=',
+                choice:'='
             },
             replace: true,
             controller: function ($scope, $routeParams) {
@@ -372,11 +373,37 @@ var appDirectives = angular.module('appDirectives', [])
                 } else {
                     $scope.data = [];
                 }
-                if ($scope.listByWard)
-                    $scope.listByWard.values.forEach(function (value) {
-                        //value[]
-                        $scope.orgUnit.children.forEach(function (orgUnit) {
-                            if (orgUnit.id == value.orgUnit) {
+                if ($scope.listByWard){
+                    if($scope.choice){
+                        $scope.valueMap = {
+                            '1':0,
+                            '2':0,
+                            '3':0,
+                            '4':0,
+                            '5':0,
+                            '6':0,
+                        };
+                        $scope.listByWard.values.forEach(function (value) {
+                            $scope.valueMap[value.value]++;
+                        })
+                    }else{
+                        $scope.listByWard.values.forEach(function (value) {
+                            //value[]
+                            $scope.orgUnit.children.forEach(function (orgUnit) {
+                                if (orgUnit.id == value.orgUnit) {
+                                    if ($scope.count) {
+                                        if ($scope.data[value.value]) {
+                                            $scope.data[value.value]++;
+                                        } else {
+                                            $scope.data[value.value] = 1;
+                                        }
+                                    } else {
+                                        $scope.data.push({name: orgUnit.name, value: value.value});
+                                    }
+
+                                }
+                            })
+                            if ($scope.orgUnit.id == value.orgUnit) {
                                 if ($scope.count) {
                                     if ($scope.data[value.value]) {
                                         $scope.data[value.value]++;
@@ -384,24 +411,13 @@ var appDirectives = angular.module('appDirectives', [])
                                         $scope.data[value.value] = 1;
                                     }
                                 } else {
-                                    $scope.data.push({name: orgUnit.name, value: value.value});
+                                    $scope.data.push({name: $scope.orgUnit.name, value: value.value});
                                 }
 
                             }
                         })
-                        if ($scope.orgUnit.id == value.orgUnit) {
-                            if ($scope.count) {
-                                if ($scope.data[value.value]) {
-                                    $scope.data[value.value]++;
-                                } else {
-                                    $scope.data[value.value] = 1;
-                                }
-                            } else {
-                                $scope.data.push({name: $scope.orgUnit.name, value: value.value});
-                            }
-
-                        }
-                    })
+                    }
+                }
             },
             templateUrl: 'views/listByWard.html'
         }
