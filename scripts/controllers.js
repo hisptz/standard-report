@@ -1348,7 +1348,7 @@ var appControllers = angular.module('appControllers', [])
         $http.get(DHIS2URL + "api/me.json?fields=:all,organisationUnits[id,level],userCredentials[userRoles[:all]]").then(function (results) {
             $scope.progressValue = 5;
             $scope.user = results.data;
-            $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,children[id,name]").then(function (results) {
+            $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,level,children[id,name]").then(function (results) {
                 $scope.progressValue = 10;
                 $scope.orgUnit = results.data;
                 $scope.getReport().then(function () {
