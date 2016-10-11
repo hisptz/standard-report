@@ -817,7 +817,11 @@ var appControllers = angular.module('appControllers', [])
                                         }
                                     })
                                     if (isNotSet) {
-                                        $scope.dataElementsData[row[0]] = parseFloat(row[2]).toFixed(1);
+                                        if(parseFloat(row[2]).toFixed(1) == "NaN"){
+                                            $scope.dataElementsData[row[0]] = row[2];
+                                        }else{
+                                            $scope.dataElementsData[row[0]] = parseFloat(row[2]).toFixed(1);
+                                        }
                                     }
                                 });
                                 $scope.progressValue = $scope.progressValue + progressFactor;
