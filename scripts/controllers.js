@@ -1314,21 +1314,41 @@ var appControllers = angular.module('appControllers', [])
                 var autogrowingMacth = null;
                 if ((autogrowingMacth = /config="(.*?)"/.exec(match[0])) !== null) {
                     var config = eval('(' + autogrowingMacth[1] + ')');
-                    if ($scope.autogrowingPrograms[config.programId]) {
-                        $scope.autogrowingPrograms[config.programId].dataElements = $scope.autogrowingPrograms[config.programId].dataElements.concat(config.dataElements);
-                    } else {
-                        $scope.autogrowingPrograms[config.programId] = config;
-                        $scope.autogrowingPrograms[config.programId].dataElementsDetails = [];
-                        $scope.autogrowingPrograms[config.programId].data = [];
+                    if(config.level){
+                        if(config.level.indexOf($scope.orgUnit.level) > -1){
+                            if ($scope.autogrowingPrograms[config.programId]) {
+                                $scope.autogrowingPrograms[config.programId].dataElements = $scope.autogrowingPrograms[config.programId].dataElements.concat(config.dataElements);
+                            } else {
+                                $scope.autogrowingPrograms[config.programId] = config;
+                                $scope.autogrowingPrograms[config.programId].dataElementsDetails = [];
+                                $scope.autogrowingPrograms[config.programId].data = [];
+                            }
+                            if (config.cumulativeToDate || config.fourthQuarter) {
+                                $scope.autogrowingPrograms[config.programId].otherData = [];
+                            }
+                            var directive = "autogrowing";
+                            if ($routeParams.preview == "debug") {
+                                directive = "autogrowing-debug a-debug= '" + JSON.stringify(config) + "'";
+                            }
+                            newHtml = newHtml.replace(match[0], "<tbody " + directive + " config='autogrowingPrograms[\"" + config.programId + "\"]'></tbody>");
+                        }
+                    }else{
+                        if ($scope.autogrowingPrograms[config.programId]) {
+                            $scope.autogrowingPrograms[config.programId].dataElements = $scope.autogrowingPrograms[config.programId].dataElements.concat(config.dataElements);
+                        } else {
+                            $scope.autogrowingPrograms[config.programId] = config;
+                            $scope.autogrowingPrograms[config.programId].dataElementsDetails = [];
+                            $scope.autogrowingPrograms[config.programId].data = [];
+                        }
+                        if (config.cumulativeToDate || config.fourthQuarter) {
+                            $scope.autogrowingPrograms[config.programId].otherData = [];
+                        }
+                        var directive = "autogrowing";
+                        if ($routeParams.preview == "debug") {
+                            directive = "autogrowing-debug a-debug= '" + JSON.stringify(config) + "'";
+                        }
+                        newHtml = newHtml.replace(match[0], "<tbody " + directive + " config='autogrowingPrograms[\"" + config.programId + "\"]'></tbody>");
                     }
-                    if (config.cumulativeToDate || config.fourthQuarter) {
-                        $scope.autogrowingPrograms[config.programId].otherData = [];
-                    }
-                    var directive = "autogrowing";
-                    if ($routeParams.preview == "debug") {
-                        directive = "autogrowing-debug a-debug= '" + JSON.stringify(config) + "'";
-                    }
-                    newHtml = newHtml.replace(match[0], "<tbody " + directive + " config='autogrowingPrograms[\"" + config.programId + "\"]'></tbody>");
                 }
             }
             return newHtml;
