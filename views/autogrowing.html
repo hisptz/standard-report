@@ -5,6 +5,7 @@
 </tr>
 <tr  ng-if="config.groupBy" ng-repeat="event in data.events">
     <!--<td ng-repeat="dataElement in data.dataElements">{{dataElement.event[dataElement.name]}}</td>-->
-    <td ng-class="{'hide-text':config.hide.indexOf($index) > -1}" style="border:1px solid lightgrey" ng-if="event[dataElement.name] != undefined" ng-repeat="dataElement in data.dataElements track by $index">{{event[dataElement.name]}}</td>
+    <td ng-class="{'hide-text':config.hide.indexOf($index) > -1}" style="border:1px solid lightgrey" ng-if="event[dataElement.name] != undefined && dataElement.valueType != 'NA'" ng-repeat="dataElement in data.dataElements track by $index">{{event[dataElement.name]}}</td>
+    <td ng-if="config.na">N/A</td><td ng-if="config.na">N/A</td>
 </tr>
 </tbody>
