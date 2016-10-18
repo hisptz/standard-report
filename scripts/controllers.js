@@ -861,7 +861,6 @@ var appControllers = angular.module('appControllers', [])
                                     if($scope.lastIndicatorData[row[2]]){
                                         $scope.lastIndicatorData[row[2]][row[0]] = row[3];
                                     }else{
-                                        console.log(row[2],row[0],row[3]);
                                         $scope.lastIndicatorData[row[2]] = {};
                                         $scope.lastIndicatorData[row[2]][row[0]] = row[3];
                                     }
@@ -1298,7 +1297,6 @@ var appControllers = angular.module('appControllers', [])
                         $scope.dataElements.push(idMacth[1]);
                     }
                 } else if ((idMacth = /lastindicator="(.*?)"/.exec(match[0])) !== null) {
-                    console.log("Last Indicator:")
                     $scope.lastIndicator.push(idMacth[1]);
                     newHtml = newHtml.replace(match[0], "{{lastIndicatorData['" + idMacth[1] + "']}}");
                 }else if ((idMacth = /lastmonthindicator="(.*?)"/.exec(match[0])) !== null) {
@@ -1335,6 +1333,8 @@ var appControllers = angular.module('appControllers', [])
                                 directive = "autogrowing-debug a-debug= '" + JSON.stringify(config) + "'";
                             }
                             newHtml = newHtml.replace(match[0], "<tbody " + directive + " config='autogrowingPrograms[\"" + config.programId + "\"]'></tbody>");
+                        }else{
+                            newHtml = newHtml.replace(match[0], "");
                         }
                     }else{
                         if ($scope.autogrowingPrograms[config.programId]) {

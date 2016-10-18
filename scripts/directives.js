@@ -1096,11 +1096,16 @@ var appDirectives = angular.module('appDirectives', [])
                 if ($scope.config.groupBy) {//If grouping is required
                     //$scope.data.groupedEvents = [];
                     $scope.foundDataValues = {};
+
+
                     $scope.config.groupBy.forEach(function (group, index) {
                         if (index == 0) {
-                            $scope.config.data.forEach(function (eventData) {
-                                $scope.data.events.push(eventData);
-                            })
+                            //if($scope.config.data)
+                            {
+                                $scope.config.data.forEach(function (eventData) {
+                                    $scope.data.events.push(eventData);
+                                })
+                            }
                         }
 
                     });
