@@ -890,7 +890,6 @@ var appControllers = angular.module('appControllers', [])
                                                 newChildren.push(child.id);
                                             })
                                             loadedDataset.push(source2.dataSet + $routeParams.orgUnit + $routeParams.period);
-                                            console.log($scope.orgUnit);
                                             promises.push($http.get(DHIS2URL + "api/dataValueSets.json?dataSet=" + source2.dataSet + "&orgUnit=" + $routeParams.orgUnit + "," + newChildren.join(",") +"&children=true&period=" + $routeParams.period)
                                                 .then(function (dataSetResults) {
 

@@ -366,7 +366,6 @@ var appDirectives = angular.module('appDirectives', [])
             },
             replace: true,
             controller: function ($scope, $routeParams) {
-                console.log($scope.listByWard);
                 $scope.params = $routeParams;
                 if ($scope.count) {
                     $scope.data = {};
@@ -1015,7 +1014,9 @@ var appDirectives = angular.module('appDirectives', [])
             },
             replace: true,
             controller: function ($scope, $routeParams) {
-
+                if($scope.config.programId == "raoa6YrS6YZ"){
+                    console.log(JSON.stringify($scope.config.data));
+                }
                 $scope.data = {
                     dataElements: [],
                     events: []
