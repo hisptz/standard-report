@@ -1043,24 +1043,25 @@ var appControllers = angular.module('appControllers', [])
                         }
                     }
                     if ($scope.lastIndicator.length > 0) {
-                        $scope.orgUnit.children.forEach(function (child) {
+                        Object.keys($scope.lastIndicatorData).forEach(function(key){
                             $scope.lastIndicator.forEach(function (indicator) {
-                                $scope.lastIndicatorData[child.id][indicator] = indicator;
-                                Object.keys($scope.lastIndicatorData[child.id]).forEach(function (indicatorInObject) {
-                                    $scope.lastIndicatorData[child.id][indicator] = $scope.lastIndicatorData[child.id][indicator].replace(indicatorInObject, $scope.lastIndicatorData[child.id][indicatorInObject])
+                                $scope.lastIndicatorData[key][indicator] = indicator;
+                                Object.keys($scope.lastIndicatorData[key]).forEach(function (indicatorInObject) {
+                                    $scope.lastIndicatorData[key][indicator] = $scope.lastIndicatorData[key][indicator].replace(indicatorInObject, $scope.lastIndicatorData[key][indicatorInObject])
                                 })
                                 try {
-                                    $scope.lastIndicatorData[child.id][indicator] = eval("(" + $scope.lastIndicatorData[child.id][indicator] + ")");
+                                    $scope.lastIndicatorData[key][indicator] = eval("(" + $scope.lastIndicatorData[key][indicator] + ")");
                                 } catch (e) {
-                                    $scope.lastIndicatorData[child.id][indicator] = 0;
+                                    $scope.lastIndicatorData[key][indicator] = 0;
                                 }
                             })
-
                         })
                         $scope.lastIndicator.forEach(function (indicator) {
                             $scope.lastIndicatorData[indicator] = 0;
-                            $scope.orgUnit.children.forEach(function (child) {
-                                $scope.lastIndicatorData[indicator] += $scope.lastIndicatorData[child.id][indicator];
+                            Object.keys($scope.lastIndicatorData).forEach(function(key){
+                                if($scope.lastIndicatorData[key][indicator]){
+                                    $scope.lastIndicatorData[indicator] += $scope.lastIndicatorData[key][indicator];
+                                }
                             })
                         })
                     }
