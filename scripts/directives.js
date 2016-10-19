@@ -880,12 +880,6 @@ var appDirectives = angular.module('appDirectives', [])
                         });
                         function dynamicSort(property) {
                             return function (obj1, obj2) {
-                                if (obj1.children[property].innerHTML == "") {
-                                    return 1;
-                                }
-                                if (obj2.children[property].innerHTML == "") {
-                                    return -1;
-                                }
                                 return obj1.children[property].innerHTML > obj2.children[property].innerHTML ? 1
                                     : obj1.children[property].innerHTML < obj2.children[property].innerHTML ? -1 : 0;
                             }
@@ -1021,6 +1015,7 @@ var appDirectives = angular.module('appDirectives', [])
             },
             replace: true,
             controller: function ($scope, $routeParams) {
+
                 $scope.data = {
                     dataElements: [],
                     events: []
