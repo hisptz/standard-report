@@ -105,6 +105,18 @@
             margin-left:5px;
             border-bottom:3px dotted black;
         }
+        /*table.avoid tr td, table.avoid tr th {
+            page-break-inside: avoid !important;
+            margin: 4px 0 4px 0;
+        }*/
+        table tbody tr td:before,
+        table tbody tr td:after,
+        table tr td:before,
+        table tr td:after{
+            content : "" ;
+            height : 4px ;
+            display : block ;
+        }
     </style>
 
 </head>
@@ -117,7 +129,7 @@
 
     </div>
 </div>-->
-<div>
+<div class="break-enable">
     <div ng-view></div>
 </div>
 

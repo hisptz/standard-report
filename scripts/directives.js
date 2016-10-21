@@ -917,7 +917,6 @@ var appDirectives = angular.module('appDirectives', [])
                             });
                             return adjacentString;
                         }
-
                         for (var i = 1; i <= scope.data.dataElements.length; i++) {
                             var dataIndex = i - 1;
                             var previous = null, previousFromFirst = null, cellToExtend = null, rowspan = 1;
@@ -970,9 +969,7 @@ var appDirectives = angular.module('appDirectives', [])
                                 })
                             }
                         }
-
                         if(scope.config.groupAdd){
-                            //alert("hskdjff");
                             firstColumnBrakes = [];
                             scope.config.groupAdd.forEach(function(dataElementId){
                                 scope.data.dataElements.forEach(function(dataElement,i){
@@ -982,9 +979,26 @@ var appDirectives = angular.module('appDirectives', [])
                                             if(elem[0].children[index].children[i - 1].getAttribute('rowspan') != null){
                                                 var span = parseInt(elem[0].children[index].children[i - 1].getAttribute('rowspan'));
                                                 elem[0].children[index].children[i].setAttribute('rowspan',span);
+                                                if(scope.config.programId == "rGP4rXjvyuv"){
+                                                    console.log("Span:" + span);
+                                                }
+                                                var previousVal = "";
                                                 for(var counter = 1;counter < span;counter++){
+                                                    if(scope.config.programId == "rGP4rXjvyuv"){
+                                                        console.log("Adding:" + elem[0].children[index + counter].children[i].innerHTML);
+                                                    }
                                                     $(elem[0].children[index + counter].children[i]).addClass('hidden');
-                                                    elem[0].children[index].children[i].innerHTML = (parseFloat(elem[0].children[index].children[i].innerHTML) + parseFloat(elem[0].children[index + counter].children[i].innerHTML)).toFixed(1);
+                                                    if(elem[0].children[index + counter].children[i + 1].innerHTML != previousVal){
+                                                        elem[0].children[index].children[i].innerHTML = (parseFloat(elem[0].children[index].children[i].innerHTML) + parseFloat(elem[0].children[index + counter].children[i].innerHTML)).toFixed(1);
+                                                    }
+                                                    previousVal = elem[0].children[index + counter].children[i + 1].innerHTML;
+                                                    if(scope.config.programId == "rGP4rXjvyuv"){
+                                                        console.log("Sub Sum:Index:"+ (index + counter) + ":" + elem[0].children[index].children[i].innerHTML);
+                                                    }
+
+                                                }
+                                                if(scope.config.programId == "rGP4rXjvyuv"){
+                                                    console.log("Sum:" + elem[0].children[index].children[i].innerHTML);
                                                 }
                                             }
                                         })
@@ -992,7 +1006,6 @@ var appDirectives = angular.module('appDirectives', [])
                                 })
                             })
                         }
-
                         //re-calculate indicator values after merging rows
                         if (scope.config.indicators) {
                             elem.find("tr").each(function (trIndex, trElement){
@@ -1014,9 +1027,6 @@ var appDirectives = angular.module('appDirectives', [])
             },
             replace: true,
             controller: function ($scope, $routeParams) {
-                if($scope.config.programId == "raoa6YrS6YZ"){
-                    console.log(JSON.stringify($scope.config.data));
-                }
                 $scope.data = {
                     dataElements: [],
                     events: []
