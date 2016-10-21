@@ -979,26 +979,13 @@ var appDirectives = angular.module('appDirectives', [])
                                             if(elem[0].children[index].children[i - 1].getAttribute('rowspan') != null){
                                                 var span = parseInt(elem[0].children[index].children[i - 1].getAttribute('rowspan'));
                                                 elem[0].children[index].children[i].setAttribute('rowspan',span);
-                                                if(scope.config.programId == "rGP4rXjvyuv"){
-                                                    console.log("Span:" + span);
-                                                }
                                                 var previousVal = "";
                                                 for(var counter = 1;counter < span;counter++){
-                                                    if(scope.config.programId == "rGP4rXjvyuv"){
-                                                        console.log("Adding:" + elem[0].children[index + counter].children[i].innerHTML);
-                                                    }
                                                     $(elem[0].children[index + counter].children[i]).addClass('hidden');
                                                     if(elem[0].children[index + counter].children[i + 1].innerHTML != previousVal){
                                                         elem[0].children[index].children[i].innerHTML = (parseFloat(elem[0].children[index].children[i].innerHTML) + parseFloat(elem[0].children[index + counter].children[i].innerHTML)).toFixed(1);
                                                     }
                                                     previousVal = elem[0].children[index + counter].children[i + 1].innerHTML;
-                                                    if(scope.config.programId == "rGP4rXjvyuv"){
-                                                        console.log("Sub Sum:Index:"+ (index + counter) + ":" + elem[0].children[index].children[i].innerHTML);
-                                                    }
-
-                                                }
-                                                if(scope.config.programId == "rGP4rXjvyuv"){
-                                                    console.log("Sum:" + elem[0].children[index].children[i].innerHTML);
                                                 }
                                             }
                                         })
