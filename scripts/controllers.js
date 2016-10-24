@@ -224,7 +224,7 @@ var appControllers = angular.module('appControllers', [])
                     dataSet.sortOrder = 1;
                 }else if (dataSet.name == "District Quarterly Report (DR02)") {
                     dataSet.sortOrder = 2;
-                }else if (dataSet.name == "District Annually Report (DR03)") {
+                }else if (dataSet.name == "District Annual Report (DR03)") {
                     dataSet.sortOrder = 3;
                 }else if (dataSet.name == "Quarterly Integrated Report (DIR02/RIR02/NIR02)") {
                     dataSet.sortOrder = 4;
@@ -1419,7 +1419,7 @@ var appControllers = angular.module('appControllers', [])
                 }
             } else if ($scope.period.indexOf("Q") > -1) {
                 if( $scope.dataSet == 'Znn30Q67yDO'){
-                    return "QUARTER REPORT (DR02) ";
+                    return "QUARTERLY REPORT (DR02) ";
                 }if( $scope.dataSet == 'QLoyT2aHGes'){
                     return "QUARTERLY INTEGRATED REPORT ";
                 }
