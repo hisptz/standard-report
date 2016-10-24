@@ -41,7 +41,14 @@
 </div>
 
 <div class="interReport text text-center ng-scope">
-    <h2><strong>{{organisationUnit.organisationUnitLevel.displayName | uppercase}} <span>{{getPeriodName()}}</span> DATA COLLECTION REPORT</strong></h2>
+    <h2><strong>{{organisationUnit.organisationUnitLevel.displayName | uppercase}} <span>{{getPeriodName()}}</span>
+        <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'District' && dataSet == 'QLoyT2aHGes'"> (DIR02)</span>
+        <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'District' && dataSet == 'HhyM40b8ma1'"> (DIR03)</span>
+        <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'National' && dataSet == 'QLoyT2aHGes'"> (NIR02)</span>
+        <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'National' && dataSet == 'HhyM40b8ma1'"> (NIR03)</span>
+        <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'Regional' && dataSet == 'QLoyT2aHGes'"> (RIR02)</span>
+        <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'Regional' && dataSet == 'HhyM40b8ma1'"> (RIR03)</span>
+    </strong></h2>
 </div>
 <div class="interReport text text-center ng-scope">
     <h2><strong>{{organisationUnit.name | uppercase}}</strong></h2>

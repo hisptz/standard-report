@@ -1412,11 +1412,20 @@ var appControllers = angular.module('appControllers', [])
         $scope.dataSetDetails = {};
         $scope.getPeriodName = function () {
             if ($scope.period.indexOf("July") > -1) {
-                return "ANNUAL";
+                if( $scope.dataSet == 'OBnVfEenAuW'){
+                    return "ANNUAL REPORT (DR03) ";
+                }if( $scope.dataSet == 'HhyM40b8ma1'){
+                    return "ANNUAL INTEGRATED REPORT ";
+                }
             } else if ($scope.period.indexOf("Q") > -1) {
-                return "QUARTER";
+                if( $scope.dataSet == 'Znn30Q67yDO'){
+                    return "QUARTER REPORT (DR02) ";
+                }if( $scope.dataSet == 'QLoyT2aHGes'){
+                    return "QUARTERLY INTEGRATED REPORT ";
+                }
             } else {
-                return "MONTHLY";
+                return "MONTHLY REPORT (DR01) ";
+
             }
         }
         $http.get(DHIS2URL + "api/dataSets/" + $scope.dataSet + ".json").then(function (result) {
