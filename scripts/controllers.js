@@ -220,11 +220,11 @@ var appControllers = angular.module('appControllers', [])
                         $scope.data.dataSet = dataSet;
                     }
                 }
-                if (dataSet.name == "Monthly District Report (DR01)") {
+                if (dataSet.name == "District Monthly  Report (DR01)") {
                     dataSet.sortOrder = 1;
-                }else if (dataSet.name == "Quarterly District Report (DR02)") {
+                }else if (dataSet.name == "District Quarterly Report (DR02)") {
                     dataSet.sortOrder = 2;
-                }else if (dataSet.name == "Annually District Report (DR03)") {
+                }else if (dataSet.name == "District Annually Report (DR03)") {
                     dataSet.sortOrder = 3;
                 }else if (dataSet.name == "Quarterly Integrated Report (DIR02/RIR02/NIR02)") {
                     dataSet.sortOrder = 4;
