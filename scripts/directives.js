@@ -950,7 +950,11 @@ var appDirectives = angular.module('appDirectives', [])
                                         }
                                         try{
                                             if(scope.config.valueTypes){
-                                                cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")"));
+                                                if(scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'int'){
+                                                    cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")"));
+                                                }else{
+                                                    cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")").toFixed(1));
+                                                }
                                             }else
                                             {
                                                 cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")").toFixed(1));
