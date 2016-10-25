@@ -220,11 +220,11 @@ var appControllers = angular.module('appControllers', [])
                         $scope.data.dataSet = dataSet;
                     }
                 }
-                if (dataSet.name == "Monthly District Report (DR01)") {
+                if (dataSet.name == "District Monthly  Report (DR01)") {
                     dataSet.sortOrder = 1;
-                }else if (dataSet.name == "Quarterly District Report (DR02)") {
+                }else if (dataSet.name == "District Quarterly Report (DR02)") {
                     dataSet.sortOrder = 2;
-                }else if (dataSet.name == "Annually District Report (DR03)") {
+                }else if (dataSet.name == "District Annual Report (DR03)") {
                     dataSet.sortOrder = 3;
                 }else if (dataSet.name == "Quarterly Integrated Report (DIR02/RIR02/NIR02)") {
                     dataSet.sortOrder = 4;
@@ -1412,11 +1412,20 @@ var appControllers = angular.module('appControllers', [])
         $scope.dataSetDetails = {};
         $scope.getPeriodName = function () {
             if ($scope.period.indexOf("July") > -1) {
-                return "ANNUAL";
+                if( $scope.dataSet == 'OBnVfEenAuW'){
+                    return "ANNUAL REPORT (DR03) ";
+                }if( $scope.dataSet == 'HhyM40b8ma1'){
+                    return "ANNUAL INTEGRATED REPORT ";
+                }
             } else if ($scope.period.indexOf("Q") > -1) {
-                return "QUARTER";
+                if( $scope.dataSet == 'Znn30Q67yDO'){
+                    return "QUARTERLY REPORT (DR02) ";
+                }if( $scope.dataSet == 'QLoyT2aHGes'){
+                    return "QUARTERLY INTEGRATED REPORT ";
+                }
             } else {
-                return "MONTHLY";
+                return "MONTHLY REPORT (DR01) ";
+
             }
         }
         $http.get(DHIS2URL + "api/dataSets/" + $scope.dataSet + ".json").then(function (result) {
