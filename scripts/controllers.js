@@ -617,6 +617,10 @@ var appControllers = angular.module('appControllers', [])
                     $scope.loadTracker = undefined;
                 });
         });
+        $scope.enableCommentEditBool = false;
+        $scope.enableCommentEdit = function(){
+            $scope.enableCommentEditBool = true;
+        }
         $scope.savingComment = "commentLoad";
         $http.get(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
             $scope.savingComment = "";
@@ -626,35 +630,38 @@ var appControllers = angular.module('appControllers', [])
             $scope.savingComment = "";
             //toaster.pop('info', "Information", "No comments where found.");
         });
-        $scope.showComment = function () {
-            $scope.saveComment = function () {
-                $scope.savingComment = "savingLoad";
-                if ($scope.commentData.lastCommenter) {
-                    $scope.commentData.lastUpdated = new Date();
-                    $scope.commentData.lastCommenter = $scope.user;
-                    $http.put(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period, $scope.commentData).then(function (results) {
-                        $scope.savingComment = "";
-                        toaster.pop('success', "Success", "Saved Comments Successfully.");
-                    }, function (error) {
-                        $scope.savingComment = "error";
-                        toaster.pop('error', "Failure", "Failed to post the comment. Please Try again.");
-                    });
-                } else {
-                    $scope.commentData = {
-                        comment: $scope.commentData.comment,
-                        lastUpdated: new Date(),
-                        lastCommenter: $scope.user
-                    };
-                    $http.post(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period, $scope.commentData).then(function (results) {
-                        $scope.savingComment = "";
-                        toaster.pop('success', "Success", "Saved Comments Successfully.");
-                    }, function (error) {
-                        $scope.savingComment = "error";
-                        toaster.pop('error', "Failure", "Failed to post the comment. Please Try again.");
-                    });
-                }
-
+        $scope.saveComment = function () {
+            $scope.savingComment = "savingLoad";
+            if ($scope.commentData.lastCommenter) {
+                $scope.commentData.lastUpdated = new Date();
+                $scope.commentData.lastCommenter = $scope.user;
+                $http.put(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period, $scope.commentData).then(function (results) {
+                    $scope.savingComment = "";
+                    $scope.enableCommentEditBool = false;
+                    toaster.pop('success', "Success", "Saved Comments Successfully.");
+                }, function (error) {
+                    $scope.savingComment = "error";
+                    toaster.pop('error', "Failure", "Failed to post the comment. Please Try again.");
+                });
+            } else {
+                $scope.commentData = {
+                    comment: $scope.commentData.comment,
+                    lastUpdated: new Date(),
+                    lastCommenter: $scope.user
+                };
+                $http.post(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period, $scope.commentData).then(function (results) {
+                    $scope.savingComment = "";
+                    $scope.enableCommentEditBool = false;
+                    toaster.pop('success', "Success", "Saved Comments Successfully.");
+                }, function (error) {
+                    $scope.savingComment = "error";
+                    toaster.pop('error', "Failure", "Failed to post the comment. Please Try again.");
+                });
             }
+
+        }
+        $scope.showComment = function () {
+
             $scope.closeComment = function () {
                 $('#demo').collapse('toggle');
             }
