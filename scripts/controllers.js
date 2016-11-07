@@ -665,6 +665,11 @@ var appControllers = angular.module('appControllers', [])
                 }
             });
         }
+        $scope.printReport3 = function(){
+            kendo.drawing.drawDOM($("#printablereport")).then(function(group) {
+                kendo.drawing.pdf.saveAs(group, "Converted PDF.pdf");
+            });
+        }
         $scope.saveComment = function () {
             $scope.savingComment = "savingLoad";
             if ($scope.commentData.lastCommenter) {
