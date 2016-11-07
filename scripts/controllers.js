@@ -1,6 +1,35 @@
 /* global angular */
 
 'use strict';
+function kendoPrint(){
+    kendo.drawing.drawDOM($("#printablereport"),{
+        avoidLinks: true,
+        paperSize: "A4",
+        margin:'1cm',
+        scale: 0.8
+    }).then(function(group) {
+        kendo.drawing.pdf.saveAs(group, "Converted PDF.pdf");
+    });
+}
+function browserPrint(){
+    var mywindow = window.open('', 'PRINT', 'height=400,width=600');
+
+
+    mywindow.document.write('<html><head><title>' + document.title  + '</title>');
+
+    mywindow.document.write('</head><body >');
+    mywindow.document.write('<h1>' + document.title  + '</h1>');
+    mywindow.document.write(document.getElementById("printablereport").innerHTML);
+    mywindow.document.write('</body></html>');
+
+    mywindow.document.close(); // necessary for IE >= 10
+    mywindow.focus(); // necessary for IE >= 10*/
+
+    mywindow.print();
+    mywindow.close();
+
+    return true;
+}
 /* Controllers */
 var appControllers = angular.module('appControllers', [])
     .controller('StandardReportController', function ($scope, DHIS2URL, $http, $sce, $timeout, $location, ReportService, toaster, $routeParams) {
@@ -632,43 +661,9 @@ var appControllers = angular.module('appControllers', [])
         });
         $scope.printReport = function()
         {
-            var mywindow = window.open('', 'PRINT', 'height=400,width=600');
+            browserPrint();
+            //kendoPrint();
 
-
-            mywindow.document.write('<html><head><title>' + document.title  + '</title>');
-
-            mywindow.document.write('</head><body >');
-            mywindow.document.write('<h1>' + document.title  + '</h1>');
-            mywindow.document.write(document.getElementById("printablereport").innerHTML);
-            mywindow.document.write('</body></html>');
-
-            mywindow.document.close(); // necessary for IE >= 10
-            mywindow.focus(); // necessary for IE >= 10*/
-
-            mywindow.print();
-            mywindow.close();
-
-            return true;
-
-        }
-        $scope.printReport2 = function(){
-            html2canvas(document.getElementById('printablereport'), {
-                onrendered: function (canvas) {
-                    var data = canvas.toDataURL();
-                    var docDefinition = {
-                        content: [{
-                            image: data,
-                            width: 500,
-                        }]
-                    };
-                    pdfMake.createPdf(docDefinition).download("Score_Details.pdf");
-                }
-            });
-        }
-        $scope.printReport3 = function(){
-            kendo.drawing.drawDOM($("#printablereport")).then(function(group) {
-                kendo.drawing.pdf.saveAs(group, "Converted PDF.pdf");
-            });
         }
         $scope.saveComment = function () {
             $scope.savingComment = "savingLoad";
