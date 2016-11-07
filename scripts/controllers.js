@@ -651,6 +651,20 @@ var appControllers = angular.module('appControllers', [])
             return true;
 
         }
+        $scope.printReport2 = function(){
+            html2canvas(document.getElementById('printablereport'), {
+                onrendered: function (canvas) {
+                    var data = canvas.toDataURL();
+                    var docDefinition = {
+                        content: [{
+                            image: data,
+                            width: 500,
+                        }]
+                    };
+                    pdfMake.createPdf(docDefinition).download("Score_Details.pdf");
+                }
+            });
+        }
         $scope.saveComment = function () {
             $scope.savingComment = "savingLoad";
             if ($scope.commentData.lastCommenter) {
