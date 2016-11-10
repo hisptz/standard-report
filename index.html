@@ -104,6 +104,36 @@
     .navbar-inverse .navbar-brand {
         color: #ffffff !important;
     }
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        #report, #report * {
+            visibility: visible;
+        }
+        #header_cover * {
+            visibility: visible;
+        }#header_cover {
+             margin-top: 20px!important;
+         }
+        #report {
+            position: absolute;
+            left: 0;
+            /*top: 0;*/
+        }
+        table tbody tr td:before,
+        table tbody tr td:after,
+        table tr td:before,
+        table tr td:after{
+            content : "" ;
+            height : 4px ;
+            display : block ;
+        }
+        tr {page-break-inside:avoid;}
+        td{
+            font-size:11pt
+        }
+    }
 </style>
 <script>
     var hideAnimated = dhis2.leftBar.hideAnimated;
