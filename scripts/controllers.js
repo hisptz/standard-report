@@ -12,10 +12,10 @@ function kendoPrint(){
     });
 }
 function browserPrint(){
-    var mywindow = window.open('', 'PRINT', 'height=400,width=600');
+    /*var mywindow = window.open('', 'PRINT', 'height=400,width=600');
 
 
-    mywindow.document.write('<html><head><title>' + document.title  + '</title>');
+    mywindow.document.write('<html><head><title>' + document.title  + '</title><style>.noPrint {display: none;}</style>');
 
     mywindow.document.write('</head><body >');
     mywindow.document.write('<h1>' + document.title  + '</h1>');
@@ -23,11 +23,11 @@ function browserPrint(){
     mywindow.document.write('</body></html>');
 
     mywindow.document.close(); // necessary for IE >= 10
-    mywindow.focus(); // necessary for IE >= 10*/
+    mywindow.focus(); // necessary for IE >= 10*!/
 
     mywindow.print();
-    mywindow.close();
-
+    mywindow.close();*/
+    window.print();
     return true;
 }
 /* Controllers */
@@ -740,6 +740,20 @@ var appControllers = angular.module('appControllers', [])
         $scope.changeCriteria = function () {
             $scope.dataCriteria = !$scope.dataCriteria;
         }
+        $scope.createReport = false;
+        $http.get(DHIS2URL + "api/dataStore/notExecuted/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
+
+        }, function (error) {
+            if (error.data.httpStatusCode == 404) {
+                //Check if the report is in the executed namespace
+                $http.get(DHIS2URL + "api/dataStore/executed/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
+
+
+                }, function (error) {
+                    $scope.createReport = true;
+                });
+            }
+        });
         var common = 1;
         $scope.state = $routeParams.preview;
         $scope.showDebug = function () {
@@ -1445,6 +1459,12 @@ var appControllers = angular.module('appControllers', [])
                 toaster.pop('error', "Error", "Error Loading Data. Please try again.");
             });
         };
+        $scope.printReport = function()
+        {
+            browserPrint();
+            //kendoPrint();
+
+        }
     })
     .controller("CoverController", function ($scope, $location, $http, DHIS2URL, ReportService) {
         var url = $location.$$url.replace("/dataSetReport", "").replace("/report/", "").replace("dataSet/", "").replace("/orgUnit/", "/").replace("/period/", "/").split("/");
