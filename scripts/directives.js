@@ -1038,6 +1038,11 @@ var appDirectives = angular.module('appDirectives', [])
                         }
                         //re-calculate indicator values after merging rows
                         if (scope.config.indicators) {
+                            scope.config.indicators.forEach(function (indicator) {
+                                if(indicator.position){
+                                    scope.config.dataElements.splice(indicator.position, 0, indicator.position);
+                                }
+                            });
                             elem.find("tr").each(function (trIndex, trElement){
                                 scope.config.indicators.forEach(function (indicator) {
                                     var eventIndicator = "(" + indicator.numerator + ")/(" + indicator.denominator + ")";
