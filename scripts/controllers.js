@@ -1295,7 +1295,7 @@ var appControllers = angular.module('appControllers', [])
                             var label = "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' org-unit='orgUnit'>";
                             //
                             if (match[0].indexOf("count") > -1) {
-                                newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' count='true' org-unit='orgUnit'></div><debug report='dataSet' list-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' dg-id='" + idMacth[1] + "." + idMacth[2] + "' type='dataElement'></debug>");
+                                newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' count='true' org-unit='orgUnit'></div>");
                             } else {
                                 if(match[0].indexOf("choice") > -1){
                                     //alert("Choice");
