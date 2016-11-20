@@ -144,35 +144,43 @@ var appControllers = angular.module('appControllers', [])
                     }
                 },
                 "Yearly": {
+
                     name: "Yearly", value: "Yearly", list: [],
                     populateList: function () {
-                        var date = new Date();
                         this.list = [];
-                        for (var i = date.getFullYear() - 5; i < date.getFullYear() + 5; i++) {
+                        for (var i = this.currentDate.getFullYear() - 2; i < this.currentDate.getFullYear(); i++) {
                             this.list.unshift({name: "" + i});
                         }
                     }
                 },
-                "FinancialJuly": {
 
-                    name: "Financial-July", value: "FinancialJuly", allowNext: false, allowPrevious: false, list: [],
+                "FinancialJuly": {
+                    currentDate: new Date(),
+                    next: function () {
+                        this.currentDate = new Date(this.currentDate.getFullYear() + 5, this.currentDate.getMonth(), this.currentDate.getDate());
+                        this.populateList();
+                    },
+                    previous: function () {
+                        this.currentDate = new Date(this.currentDate.getFullYear() - 5, this.currentDate.getMonth(), this.currentDate.getDate());
+                        this.populateList();
+                    },
+                    name: "Financial-July", value: "FinancialJuly", allowNext: false, allowPrevious: true, list: [],
                     populateList: function () {
                         var date = new Date();
                         this.list = [];
                         var testDate = new Date();
 
-                        for (var i = 2011; i < date.getFullYear(); i++) {
+                        for (var i = this.currentDate.getFullYear() - 4; i <= this.currentDate.getFullYear(); i++) {
                             if (i == date.getFullYear() && date.getMonth() < 7) {
                                 continue;
                             }
                             this.list.unshift({name: "July " + i + " - June " + (i + 1), value: i + "July"});
                         }
-                        /*for (var i = date.getFullYear() - 5; i < date.getFullYear() + 5; i++) {
-                         if ((i == testDate.getFullYear() && (testDate.getMonth() + 1) < 7) || (i == (testDate.getFullYear() - 1) && (testDate.getMonth() + 1) < 7) || i > testDate.getFullYear()) {
-                         continue;
-                         }
-                         this.list.unshift({name: "July " + i + " - June " + (i + 1), value: i + "July"});
-                         }*/
+                        if(this.currentDate.getFullYear() == (new Date).getFullYear()){
+                            this.allowNext = false;
+                        }else{
+                            this.allowNext = true;
+                        }
                     }
                 }
             }
