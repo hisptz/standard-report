@@ -969,8 +969,15 @@ var appDirectives = angular.module('appDirectives', [])
                                                 }
                                             }else
                                             {
-
-                                                cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")").toFixed(1));
+                                                if(scope.config.list){
+                                                    if(scope.config.list == scope.config.dataElements[i - 1]){
+                                                        cellToExtend.html(firstValue + "<br /> " + secondValue);
+                                                    }else{
+                                                        cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")").toFixed(1));
+                                                    }
+                                                }else{
+                                                    cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")").toFixed(1));
+                                                }
                                             }
                                         }catch(e){
                                             //alert("Catch:" + scope.config.dataElements[i]);
