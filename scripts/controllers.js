@@ -1,35 +1,31 @@
 /* global angular */
 
 'use strict';
-function kendoPrint(){
-    kendo.drawing.drawDOM($("#printablereport"),{
+function kendoPrint() {
+    kendo.drawing.drawDOM($("#printablereport"), {
         avoidLinks: true,
         paperSize: "A4",
-        margin:'1cm',
+        margin: '1cm',
         scale: 0.8
-    }).then(function(group) {
+    }).then(function (group) {
         kendo.drawing.pdf.saveAs(group, "Converted PDF.pdf");
     });
 }
-function browserPrint(){
+function browserPrint() {
     window.print();
     return true;
 }
-function browserPrint2(){
+function browserPrint2() {
+    console.log("Here");
     var mywindow = window.open('', 'PRINT', 'height=400,width=600');
+    mywindow.document.write(document.getElementById("printablereport").innerHTML);
 
-
-     mywindow.document.write('<html><head><title>' + document.title  + '</title><style>.noPrint {display: none;}</style>');
-
-     mywindow.document.write('</head><body >');
-     mywindow.document.write(document.getElementById("printablereport").innerHTML);
-     mywindow.document.write('</body></html>');
-
-     mywindow.document.close(); // necessary for IE >= 10
-     mywindow.focus(); // necessary for IE >= 10*!/
-
-     mywindow.print();
-     mywindow.close();
+    mywindow.document.close(); // necessary for IE >= 10
+    console.log("Here6");
+    mywindow.focus(); // necessary for IE >= 10*!/
+    console.log("Here7");
+    mywindow.print();
+    mywindow.close();
     return true;
 }
 /* Controllers */
@@ -176,9 +172,9 @@ var appControllers = angular.module('appControllers', [])
                             }
                             this.list.unshift({name: "July " + i + " - June " + (i + 1), value: i + "July"});
                         }
-                        if(this.currentDate.getFullYear() == (new Date).getFullYear()){
+                        if (this.currentDate.getFullYear() == (new Date).getFullYear()) {
                             this.allowNext = false;
-                        }else{
+                        } else {
                             this.allowNext = true;
                         }
                     }
@@ -261,13 +257,13 @@ var appControllers = angular.module('appControllers', [])
                 }
                 if (dataSet.name == "District Monthly  Report (DR01)") {
                     dataSet.sortOrder = 1;
-                }else if (dataSet.name == "District Quarterly Report (DR02)") {
+                } else if (dataSet.name == "District Quarterly Report (DR02)") {
                     dataSet.sortOrder = 2;
-                }else if (dataSet.name == "District Annual Report (DR03)") {
+                } else if (dataSet.name == "District Annual Report (DR03)") {
                     dataSet.sortOrder = 3;
-                }else if (dataSet.name == "Quarterly Integrated Report (DIR02/RIR02/NIR02)") {
+                } else if (dataSet.name == "Quarterly Integrated Report (DIR02/RIR02/NIR02)") {
                     dataSet.sortOrder = 4;
-                }else if (dataSet.name == "Annual Integrated Report (DIR03/RIR03/NIR03)") {
+                } else if (dataSet.name == "Annual Integrated Report (DIR03/RIR03/NIR03)") {
                     dataSet.sortOrder = 5;
                 }
             })
@@ -657,7 +653,7 @@ var appControllers = angular.module('appControllers', [])
                 });
         });
         $scope.enableCommentEditBool = false;
-        $scope.enableCommentEdit = function(){
+        $scope.enableCommentEdit = function () {
             $scope.enableCommentEditBool = true;
         }
         $scope.savingComment = "commentLoad";
@@ -669,8 +665,7 @@ var appControllers = angular.module('appControllers', [])
             $scope.savingComment = "";
             //toaster.pop('info', "Information", "No comments where found.");
         });
-        $scope.printReport = function()
-        {
+        $scope.printReport = function () {
             browserPrint2();
             //kendoPrint();
 
@@ -804,7 +799,7 @@ var appControllers = angular.module('appControllers', [])
             return periods;
         }
         $scope.getFourthQuarterPeriod = function () {
-            return [(parseInt($routeParams.period.substr(0,4)) + 1) + "Q2"];
+            return [(parseInt($routeParams.period.substr(0, 4)) + 1) + "Q2"];
         }
         $scope.progressValue = 0;
         $scope.loadingStatus = "Loading";
@@ -851,7 +846,7 @@ var appControllers = angular.module('appControllers', [])
                     $scope.nonAggregatedDataElements.length +
                     $scope.nonAggregatedDataElementsDate.length) / common);
                 for (var i = 0; i < $scope.dataElements.length; i++) {
-                    if($scope.wardLevelIndicator.indexOf($scope.dataElements[i]) > -1){
+                    if ($scope.wardLevelIndicator.indexOf($scope.dataElements[i]) > -1) {
                         promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.dataElements[i] + "&dimension=pe:" + $routeParams.period + "&dimension=ou:LEVEL-4;" + $routeParams.orgUnit)
                             .then(function (analyticsResults) {
                                 analyticsResults.data.rows.forEach(function (row) {
@@ -865,7 +860,7 @@ var appControllers = angular.module('appControllers', [])
                                 $scope.progressValue = $scope.progressValue + progressFactor;
                             }));
 
-                    }else{
+                    } else {
                         promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.dataElements[i] + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit)
                             .then(function (analyticsResults) {
                                 analyticsResults.data.rows.forEach(function (row) {
@@ -883,9 +878,9 @@ var appControllers = angular.module('appControllers', [])
                                         }
                                     })
                                     if (isNotSet) {
-                                        if(parseFloat(row[2]).toFixed(1) == "NaN"){
+                                        if (parseFloat(row[2]).toFixed(1) == "NaN") {
                                             $scope.dataElementsData[row[0]] = row[2];
-                                        }else{
+                                        } else {
                                             $scope.dataElementsData[row[0]] = parseFloat(row[2]).toFixed(1);
                                         }
                                     }
@@ -896,10 +891,10 @@ var appControllers = angular.module('appControllers', [])
 
 
                 }
-                if($scope.lastMonthIndicator.length > 0){
+                if ($scope.lastMonthIndicator.length > 0) {
                     var period = $routeParams.period;
-                    if(period.substr(5) == "3"){
-                        period = period.substr(0,4) + "09";
+                    if (period.substr(5) == "3") {
+                        period = period.substr(0, 4) + "09";
                     }
                     for (var i = 0; i < $scope.lastMonthIndicator.length; i++) {
                         promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.lastMonthIndicator[i] + "&dimension=pe:" + period + "&filter=ou:" + $routeParams.orgUnit)
@@ -924,9 +919,9 @@ var appControllers = angular.module('appControllers', [])
                                 }
                                 if ($scope.lastIndicator.length > 0) {
 
-                                    if($scope.lastIndicatorData[row[2]]){
+                                    if ($scope.lastIndicatorData[row[2]]) {
                                         $scope.lastIndicatorData[row[2]][row[0]] = row[3];
-                                    }else{
+                                    } else {
                                         $scope.lastIndicatorData[row[2]] = {};
                                         $scope.lastIndicatorData[row[2]][row[0]] = row[3];
                                     }
@@ -950,13 +945,13 @@ var appControllers = angular.module('appControllers', [])
                                 sources.forEach(function (source) {
                                     source.sources.forEach(function (source2) {
                                         //hLCbwDwbNYr
-                                        if(loadedDataset.indexOf(source2.dataSet + $routeParams.orgUnit + $routeParams.period) == -1){
+                                        if (loadedDataset.indexOf(source2.dataSet + $routeParams.orgUnit + $routeParams.period) == -1) {
                                             var newChildren = []
-                                            $scope.orgUnit.children.forEach(function(child){
+                                            $scope.orgUnit.children.forEach(function (child) {
                                                 newChildren.push(child.id);
                                             })
                                             loadedDataset.push(source2.dataSet + $routeParams.orgUnit + $routeParams.period);
-                                            promises.push($http.get(DHIS2URL + "api/dataValueSets.json?dataSet=" + source2.dataSet + "&orgUnit=" + $routeParams.orgUnit + "," + newChildren.join(",") +"&children=true&period=" + $routeParams.period)
+                                            promises.push($http.get(DHIS2URL + "api/dataValueSets.json?dataSet=" + source2.dataSet + "&orgUnit=" + $routeParams.orgUnit + "," + newChildren.join(",") + "&children=true&period=" + $routeParams.period)
                                                 .then(function (dataSetResults) {
 
                                                     if (dataSetResults.data.dataValues) {
@@ -973,12 +968,12 @@ var appControllers = angular.module('appControllers', [])
                                                             var listID = value.dataElement + "." + value.categoryOptionCombo;
                                                             if ($scope.listByWardData[listID]) {
                                                                 var found = false;
-                                                                $scope.listByWardData[listID].values.forEach(function(value1){
-                                                                    if(value1.dataElement == value.dataElement && value1.period == value.period && value1.orgUnit == value.orgUnit && value1.categoryOptionCombo == value.categoryOptionCombo){
+                                                                $scope.listByWardData[listID].values.forEach(function (value1) {
+                                                                    if (value1.dataElement == value.dataElement && value1.period == value.period && value1.orgUnit == value.orgUnit && value1.categoryOptionCombo == value.categoryOptionCombo) {
                                                                         found = true;
                                                                     }
                                                                 })
-                                                                if(!found){
+                                                                if (!found) {
                                                                     $scope.listByWardData[listID].values.push(value);
                                                                 }
                                                             }
@@ -1003,7 +998,7 @@ var appControllers = angular.module('appControllers', [])
                         month = "0" + month;
                     }
                     for (var i = 0; i < $scope.lastMonthOfQuarter.length; i++) {
-                        if($scope.wardLevelIndicator.indexOf($scope.lastMonthOfQuarter[i]) > -1){
+                        if ($scope.wardLevelIndicator.indexOf($scope.lastMonthOfQuarter[i]) > -1) {
                             promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.lastMonthOfQuarter[i] + "&dimension=pe:" + str[0] + month + "&dimension=ou:LEVEL-4;" + $routeParams.orgUnit)
                                 .then(function (analyticsResults) {
                                     analyticsResults.data.rows.forEach(function (row) {
@@ -1017,7 +1012,7 @@ var appControllers = angular.module('appControllers', [])
                                     });
                                     $scope.progressValue = $scope.progressValue + progressFactor;
                                 }));
-                        }else{
+                        } else {
                             promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.lastMonthOfQuarter[i] + "&dimension=pe:" + str[0] + month + "&filter=ou:" + $routeParams.orgUnit)
                                 .then(function (analyticsResults) {
                                     analyticsResults.data.rows.forEach(function (row) {
@@ -1098,17 +1093,17 @@ var appControllers = angular.module('appControllers', [])
                                 promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, $routeParams.period, true));
                             })
                             promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, $routeParams.period));
-                        }else if ($scope.autogrowingPrograms[programId].fourthQuarter) {
+                        } else if ($scope.autogrowingPrograms[programId].fourthQuarter) {
                             //console.log("Program:",$scope.autogrowingPrograms);
                             $scope.getFourthQuarterPeriod().forEach(function (period) {
                                 promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, period, true));
                             })
-                        }else{
+                        } else {
                             promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, $routeParams.period));
                         }
                     }
                     if ($scope.lastIndicator.length > 0) {
-                        Object.keys($scope.lastIndicatorData).forEach(function(key){
+                        Object.keys($scope.lastIndicatorData).forEach(function (key) {
                             $scope.lastIndicator.forEach(function (indicator) {
                                 $scope.lastIndicatorData[key][indicator] = indicator;
                                 Object.keys($scope.lastIndicatorData[key]).forEach(function (indicatorInObject) {
@@ -1123,8 +1118,8 @@ var appControllers = angular.module('appControllers', [])
                         })
                         $scope.lastIndicator.forEach(function (indicator) {
                             $scope.lastIndicatorData[indicator] = 0;
-                            Object.keys($scope.lastIndicatorData).forEach(function(key){
-                                if($scope.lastIndicatorData[key][indicator]){
+                            Object.keys($scope.lastIndicatorData).forEach(function (key) {
+                                if ($scope.lastIndicatorData[key][indicator]) {
                                     $scope.lastIndicatorData[indicator] += $scope.lastIndicatorData[key][indicator];
                                 }
                             })
@@ -1180,7 +1175,7 @@ var appControllers = angular.module('appControllers', [])
 
                     });
                     $scope.progressValue = $scope.progressValue + (20 / length);
-                },function(){
+                }, function () {
                     $scope.error = true;
                     toaster.pop('error', "Error" + error.status, "Error Loading Data from Server. Please try again");
                 })
@@ -1231,7 +1226,7 @@ var appControllers = angular.module('appControllers', [])
         $scope.getDebugId = function (id) {
             return $scope.debugData[id];
         }
-        $scope.Int = function(val){
+        $scope.Int = function (val) {
             return parseFloat(val).toFixed(0);
         }
         function performRender(html, dataElements) {
@@ -1284,9 +1279,9 @@ var appControllers = angular.module('appControllers', [])
                             $scope.listByWard.push(idMacth[1] + "." + idMacth[2]);
                         } else {
                             //newHtml = newHtml.replace(match[0], $scope.getElementReplacment("dataElementsData['" + idMacth[1] + "." + idMacth[2] + "']", "dataElement"));
-                            if(match[0].indexOf("integer") > -1){
+                            if (match[0].indexOf("integer") > -1) {
                                 newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "." + idMacth[2] + "\"])}}</div>");
-                            }else{
+                            } else {
                                 newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "." + idMacth[2] + "\"]}}</div>");
                             }
                             $scope.dataElements.push(idMacth[1] + "." + idMacth[2]);
@@ -1305,10 +1300,10 @@ var appControllers = angular.module('appControllers', [])
                             if (match[0].indexOf("count") > -1) {
                                 newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' count='true' org-unit='orgUnit'></div>");
                             } else {
-                                if(match[0].indexOf("choice") > -1){
+                                if (match[0].indexOf("choice") > -1) {
                                     //alert("Choice");
                                     newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' choice='true' org-unit='orgUnit'></div>");
-                                }else{
+                                } else {
                                     newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' org-unit='orgUnit'></div>");
                                 }
                             }
@@ -1327,19 +1322,19 @@ var appControllers = angular.module('appControllers', [])
                         }
                         newHtml = newHtml.replace(match[0], $scope.getElementReplacment("fourthQuarterData['" + idMacth[1] + "']", "indicator"));
                         $scope.fourthQuarter.push(idMacth[1]);
-                    }else if (match[0].indexOf("lastMonthOfQuarter") > -1) {//If it is last month of quarter
+                    } else if (match[0].indexOf("lastMonthOfQuarter") > -1) {//If it is last month of quarter
                         newHtml = newHtml.replace(match[0], $scope.getElementReplacment("lastMonthOfQuarterData['" + idMacth[1] + "']", "dataElement"));
-                        if (match[0].indexOf("ward-level") > -1){
+                        if (match[0].indexOf("ward-level") > -1) {
                             $scope.wardLevelIndicator.push(idMacth[1]);
                         }
                         $scope.lastMonthOfQuarter.push(idMacth[1]);
                     } else {
-                        if (match[0].indexOf("ward-level") > -1){
+                        if (match[0].indexOf("ward-level") > -1) {
                             $scope.wardLevelIndicator.push(idMacth[1]);
                         }
-                        if(match[0].indexOf("integer") > -1){
+                        if (match[0].indexOf("integer") > -1) {
                             newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "\"])}}</div>");
-                        }else{
+                        } else {
                             newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "\"]}}</div>");
                         }
                         $scope.dataElements.push(idMacth[1]);
@@ -1354,9 +1349,9 @@ var appControllers = angular.module('appControllers', [])
                         newHtml = newHtml.replace(match[0], $scope.getElementReplacment("fourthQuarterData['" + idMacth[1] + "']", "dataElement"));
                         $scope.fourthQuarter.push(idMacth[1]);
                     } else {
-                        if(match[0].indexOf("integer") > -1){
+                        if (match[0].indexOf("integer") > -1) {
                             newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "\"])}}</div>");
-                        }else{
+                        } else {
                             newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "\"]}}</div>");
                         }
 
@@ -1365,7 +1360,7 @@ var appControllers = angular.module('appControllers', [])
                 } else if ((idMacth = /lastindicator="(.*?)"/.exec(match[0])) !== null) {
                     $scope.lastIndicator.push(idMacth[1]);
                     newHtml = newHtml.replace(match[0], "{{lastIndicatorData['" + idMacth[1] + "']}}");
-                }else if ((idMacth = /lastmonthindicator="(.*?)"/.exec(match[0])) !== null) {
+                } else if ((idMacth = /lastmonthindicator="(.*?)"/.exec(match[0])) !== null) {
                     console.log("Last Indicator:")
                     $scope.lastMonthIndicator.push(idMacth[1]);
                     newHtml = newHtml.replace(match[0], "{{lastMonthIndicatorData['" + idMacth[1] + "']}}");
@@ -1382,8 +1377,8 @@ var appControllers = angular.module('appControllers', [])
                 var autogrowingMacth = null;
                 if ((autogrowingMacth = /config="(.*?)"/.exec(match[0])) !== null) {
                     var config = eval('(' + autogrowingMacth[1] + ')');
-                    if(config.level){
-                        if(config.level.indexOf($scope.orgUnit.level) > -1){
+                    if (config.level) {
+                        if (config.level.indexOf($scope.orgUnit.level) > -1) {
                             if ($scope.autogrowingPrograms[config.programId]) {
                                 $scope.autogrowingPrograms[config.programId].dataElements = $scope.autogrowingPrograms[config.programId].dataElements.concat(config.dataElements);
                             } else {
@@ -1399,10 +1394,10 @@ var appControllers = angular.module('appControllers', [])
                                 directive = "autogrowing-debug a-debug= '" + JSON.stringify(config) + "'";
                             }
                             newHtml = newHtml.replace(match[0], "<tbody " + directive + " config='autogrowingPrograms[\"" + config.programId + "\"]'></tbody>");
-                        }else{
+                        } else {
                             newHtml = newHtml.replace(match[0], "");
                         }
-                    }else{
+                    } else {
                         if ($scope.autogrowingPrograms[config.programId]) {
                             $scope.autogrowingPrograms[config.programId].dataElements = $scope.autogrowingPrograms[config.programId].dataElements.concat(config.dataElements);
                         } else {
@@ -1469,8 +1464,7 @@ var appControllers = angular.module('appControllers', [])
                 toaster.pop('error', "Error", "Error Loading Data. Please try again.");
             });
         };
-        $scope.printReport = function()
-        {
+        $scope.printReport = function () {
             browserPrint();
             //kendoPrint();
 
@@ -1484,15 +1478,17 @@ var appControllers = angular.module('appControllers', [])
         $scope.dataSetDetails = {};
         $scope.getPeriodName = function () {
             if ($scope.period.indexOf("July") > -1) {
-                if( $scope.dataSet == 'OBnVfEenAuW'){
+                if ($scope.dataSet == 'OBnVfEenAuW') {
                     return "ANNUAL REPORT (DR03) ";
-                }if( $scope.dataSet == 'HhyM40b8ma1'){
+                }
+                if ($scope.dataSet == 'HhyM40b8ma1') {
                     return "ANNUAL INTEGRATED REPORT ";
                 }
             } else if ($scope.period.indexOf("Q") > -1) {
-                if( $scope.dataSet == 'Znn30Q67yDO'){
+                if ($scope.dataSet == 'Znn30Q67yDO') {
                     return "QUARTERLY REPORT (DR02) ";
-                }if( $scope.dataSet == 'QLoyT2aHGes'){
+                }
+                if ($scope.dataSet == 'QLoyT2aHGes') {
                     return "QUARTERLY INTEGRATED REPORT ";
                 }
             } else {
@@ -1928,14 +1924,14 @@ var appControllers = angular.module('appControllers', [])
                         $scope.activities = analytics_response;
                     });
                     $interval(function () {
-                        $http.get(DHIS2URL + 'api/dataStore/estimation/status?'+Math.floor((Math.random() * 10000000000) + 1)).success(function (analytics_response) {
+                        $http.get(DHIS2URL + 'api/dataStore/estimation/status?' + Math.floor((Math.random() * 10000000000) + 1)).success(function (analytics_response) {
                             $scope.activities = analytics_response;
                             if (analytics_response.is_running = "No") {
                                 $scope.pull_updates = false;
                             }
                         })
 
-                        $http.get(DHIS2URL + 'api/system/tasks/ANALYTICSTABLE_UPDATE?'+Math.floor((Math.random() * 10000000000) + 1)).success(function (analytics_status) {
+                        $http.get(DHIS2URL + 'api/system/tasks/ANALYTICSTABLE_UPDATE?' + Math.floor((Math.random() * 10000000000) + 1)).success(function (analytics_status) {
                             $scope.analytics_activities = analytics_status;
                         })
                     }, 2000);
