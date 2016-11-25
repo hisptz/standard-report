@@ -903,6 +903,7 @@ var appDirectives = angular.module('appDirectives', [])
                         elem[0].children.sort(dynamicSortMultiple(dataElementIndexes));
 
                         var firstColumnBrakes = [];
+                        var toFixed = [];
                         function adjacentToGroup(row, column) {
                             var adjacentString = "";
                             dataElementIndexes.forEach(function (dataElementIndex) {
@@ -939,6 +940,7 @@ var appDirectives = angular.module('appDirectives', [])
                             } else //if(scope.config.continuous)
                             {
                                 elem.find("td:nth-child(" + i + ")").each(function (index, el) {
+
                                     if (previous == adjacentToGroup(index, i)) {
                                         $(el).addClass('hidden');
                                         if(scope.config.valueTypes){
@@ -1021,7 +1023,15 @@ var appDirectives = angular.module('appDirectives', [])
                                 })
                             }
                         }
-
+                        if(scope.config.dec){
+                            for (var i = 1; i <= scope.data.dataElements.length; i++) {
+                                elem.find("td:nth-child(" + i + ")").each(function (index, el) {
+                                    if(scope.config.dec == scope.config.dataElements[i]){
+                                        $(elem[0].children[index].children[i]).html(parseFloat($(elem[0].children[index].children[i]).html()).toFixed(1));
+                                    }
+                                })
+                            }
+                        }
 
                         if(scope.config.groupAdd){
                             firstColumnBrakes = [];
@@ -1068,6 +1078,11 @@ var appDirectives = angular.module('appDirectives', [])
                                 });
                             });
                         }
+                        toFixed.forEach(function(child){
+                            console.log(child);
+                            console.log(child.html());
+                            child.html(parseFloat(child.html()).toFixed(1));
+                        })
                     });
                 }
             },
