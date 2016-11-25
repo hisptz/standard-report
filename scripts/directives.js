@@ -944,8 +944,8 @@ var appDirectives = angular.module('appDirectives', [])
                                     if (previous == adjacentToGroup(index, i)) {
                                         $(el).addClass('hidden');
                                         if(scope.config.valueTypes){
-                                            if(scope.config.valueTypes[scope.config.dataElements[i]] == 'min' ||
-                                                scope.config.valueTypes[scope.config.dataElements[i]] == 'max'){
+                                            if(scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'min' ||
+                                                scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'max'){
                                                 cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
                                                 return;
                                             }
@@ -966,6 +966,7 @@ var appDirectives = angular.module('appDirectives', [])
                                                     cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")"));
                                                 }else if(scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'min' ||
                                                     scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'max'){
+
                                                 }else{
                                                     cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")").toFixed(1));
                                                 }
