@@ -1079,8 +1079,6 @@ var appDirectives = angular.module('appDirectives', [])
                             });
                         }
                         toFixed.forEach(function(child){
-                            console.log(child);
-                            console.log(child.html());
                             child.html(parseFloat(child.html()).toFixed(1));
                         })
                     });
