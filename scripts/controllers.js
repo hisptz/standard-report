@@ -1283,9 +1283,9 @@ var appControllers = angular.module('appControllers', [])
                         } else {
                             //newHtml = newHtml.replace(match[0], $scope.getElementReplacment("dataElementsData['" + idMacth[1] + "." + idMacth[2] + "']", "dataElement"));
                             if (match[0].indexOf("integer") > -1) {
-                                newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "." + idMacth[2] + "\"])}}</div>");
+                                newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "." + idMacth[2] + "\"]) |removeNaN}}</div>");
                             } else {
-                                newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "." + idMacth[2] + "\"]}}</div>");
+                                newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "." + idMacth[2] + "\"] | removeNaN}}</div>");
                             }
                             $scope.dataElements.push(idMacth[1] + "." + idMacth[2]);
                         }
@@ -1336,9 +1336,9 @@ var appControllers = angular.module('appControllers', [])
                             $scope.wardLevelIndicator.push(idMacth[1]);
                         }
                         if (match[0].indexOf("integer") > -1) {
-                            newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "\"])}}</div>");
+                            newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "\"]) | removeNaN}}</div>");
                         } else {
-                            newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "\"]}}</div>");
+                            newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "\"] | removeNaN}}</div>");
                         }
                         $scope.dataElements.push(idMacth[1]);
                     }

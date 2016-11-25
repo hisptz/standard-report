@@ -976,7 +976,11 @@ var appDirectives = angular.module('appDirectives', [])
                                                         cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")").toFixed(1));
                                                     }
                                                 }else{
-                                                    cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")").toFixed(1));
+                                                    if(scope.config.dataElementsDetails[i - 1].aggregationType == "AVERAGE"){
+                                                        cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")"));
+                                                    }else{
+                                                        cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")").toFixed(1));
+                                                    }
                                                 }
                                             }
                                         }catch(e){
@@ -1133,7 +1137,7 @@ var appDirectives = angular.module('appDirectives', [])
                                         }
                                     });
                                     $scope.config.data.forEach(function (eventData) {
-                                        eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] + ")").toFixed(1);
+                                        eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] + ")");
                                     })
                                 }
                             }
