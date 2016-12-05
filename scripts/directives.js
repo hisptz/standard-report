@@ -974,7 +974,9 @@ var appDirectives = angular.module('appDirectives', [])
                                             {
                                                 if(scope.config.list){
                                                     if(scope.config.list == scope.config.dataElements[i - 1]){
-                                                        cellToExtend.html(firstValue + "<br /> " + secondValue);
+                                                        if(firstValue.indexOf(secondValue) == -1){
+                                                            cellToExtend.html(firstValue + "<br /> " + secondValue);
+                                                        }
                                                     }else{
                                                         cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")").toFixed(1));
                                                     }
