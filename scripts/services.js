@@ -112,7 +112,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                     }
                 }
             },
-            dhis2:{
+            dhis2: {
                 "util": {},
                 "commons": {},
                 "array": {},
@@ -1326,137 +1326,138 @@ var appServices = angular.module('appServices', ['ngResource'])
                 "settings": {},
                 "leftBar": {},
                 "report": {
-                    "organisationUnit": {
-
-                    },
-                    "organisationUnitHierarchy": [
-                    ],
+                    "organisationUnit": {},
+                    "organisationUnitHierarchy": [],
                     "organisationUnitChildren": [],
                     "date": "2016-01-01",
                     "periods": []
                 }
             },
             prepareOrganisationUnit: function (selectedOrgUnit) {
-                var template = {"id":selectedOrgUnit.id ,"name":selectedOrgUnit.name ,"code":"" };
+                var template = {"id": selectedOrgUnit.id, "name": selectedOrgUnit.name, "code": ""};
                 dhis2.report.organisationUnit = template;
                 dhis2.report.organisationUnitChildren = selectedOrgUnit.children;
             },
-            getPeriodName:function(period){
-                if(period.indexOf("July") > -1){
+            getPeriodName: function (period) {
+                if (period.indexOf("July") > -1) {
 
-                    return "July " + period.substr(0,4) + " - June " + (parseInt(period.substr(0,4)) + 1);
-                }else if(period.indexOf("Q") > -1){
+                    return "July " + period.substr(0, 4) + " - June " + (parseInt(period.substr(0, 4)) + 1);
+                } else if (period.indexOf("Q") > -1) {
                     var quarter = period.substr(period.indexOf("Q") + 1);
                     var name = "";
-                    if(quarter == "3"){
+                    if (quarter == "3") {
                         name = "July - September";
-                    }else if(quarter == "4"){
+                    } else if (quarter == "4") {
                         name = "October - December";
-                    }else if(quarter == "1"){
+                    } else if (quarter == "1") {
                         name = "January - March";
-                    }else if(quarter == "2"){
+                    } else if (quarter == "2") {
                         name = "April - June";
                     }
-                    return name +  " " + (parseInt(period.substr(0,4)));
-                }else{
+                    return name + " " + (parseInt(period.substr(0, 4)));
+                } else {
                     var month = period.substr(4);
                     var name = "";
-                    if(month == "01"){
+                    if (month == "01") {
                         name = "January";
-                    }else if(month == "02"){
+                    } else if (month == "02") {
                         name = "February";
-                    }else if(month == "03"){
+                    } else if (month == "03") {
                         name = "March";
-                    }else if(month == "04"){
+                    } else if (month == "04") {
                         name = "April";
-                    }else if(month == "05"){
+                    } else if (month == "05") {
                         name = "May";
-                    }else if(month == "06"){
+                    } else if (month == "06") {
                         name = "June";
-                    }else if(month == "07"){
+                    } else if (month == "07") {
                         name = "July";
-                    }else if(month == "08"){
+                    } else if (month == "08") {
                         name = "August";
-                    }else if(month == "09"){
+                    } else if (month == "09") {
                         name = "September";
-                    }else if(month == "10"){
+                    } else if (month == "10") {
                         name = "October";
-                    }else if(month == "11"){
+                    } else if (month == "11") {
                         name = "November";
-                    }else if(month == "12"){
+                    } else if (month == "12") {
                         name = "December";
                     }
-                    return name +  " " + (parseInt(period.substr(0,4)));
+                    return name + " " + (parseInt(period.substr(0, 4)));
                 }
             },
-            prepareOrganisationUnitHierarchy: function (selectedOrgUnit,organisationUnits) {
+            prepareOrganisationUnitHierarchy: function (selectedOrgUnit, organisationUnits) {
                 var hierarchy = [];
                 var selectedOrgUniLevel = selectedOrgUnit.level;
 
-                var first_parent  = null;
-                var second_parent  = null;
-                var third_parent  = null;
+                var first_parent = null;
+                var second_parent = null;
+                var third_parent = null;
 
-                first_parent = {"id":organisationUnits[0].id ,"name":organisationUnits[0].name ,"code":"" };
+                first_parent = {"id": organisationUnits[0].id, "name": organisationUnits[0].name, "code": ""};
 
-                if ( selectedOrgUniLevel == 1 ) {
+                if (selectedOrgUniLevel == 1) {
 
 
                 }
 
 
-                if ( selectedOrgUniLevel == 2 ) {
+                if (selectedOrgUniLevel == 2) {
 
 
-                    hierarchy.push({"id":selectedOrgUnit.id ,"name":selectedOrgUnit.name ,"code":"" });
+                    hierarchy.push({"id": selectedOrgUnit.id, "name": selectedOrgUnit.name, "code": ""});
                     hierarchy.push(first_parent);
 
 
                 }
 
 
-                if ( selectedOrgUniLevel == 3 ) {
+                if (selectedOrgUniLevel == 3) {
 
 
-                    angular.forEach( organisationUnits[0].children , function ( child , childIndex ) {
-                        angular.forEach( child.children , function ( glandChild , glandChildIndex ) {
+                    angular.forEach(organisationUnits[0].children, function (child, childIndex) {
+                        angular.forEach(child.children, function (glandChild, glandChildIndex) {
 
-                            if( glandChild.id == selectedOrgUnit.id ) {
+                            if (glandChild.id == selectedOrgUnit.id) {
 
-                                hierarchy.push({"id":glandChild.id ,"name":glandChild.name ,"code":"" });
-                                hierarchy.push({"id":child.id ,"name":child.name ,"code":"" });
+                                hierarchy.push({"id": glandChild.id, "name": glandChild.name, "code": ""});
+                                hierarchy.push({"id": child.id, "name": child.name, "code": ""});
                                 hierarchy.push(first_parent);
 
                             }
 
-                        } );
-                    } );
+                        });
+                    });
 
 
                 }
 
 
-                if ( selectedOrgUniLevel == 4 ) {
+                if (selectedOrgUniLevel == 4) {
 
 
-                    angular.forEach( organisationUnits[0].children , function ( child , childIndex ) {
-                        angular.forEach( child.children , function ( glandChild , glandChildIndex ) {
+                    angular.forEach(organisationUnits[0].children, function (child, childIndex) {
+                        angular.forEach(child.children, function (glandChild, glandChildIndex) {
 
-                            angular.forEach( glandChild.children , function ( superGlandChild , superGlandChildIndex ) {
+                            angular.forEach(glandChild.children, function (superGlandChild, superGlandChildIndex) {
 
-                                if( superGlandChild.id == selectedOrgUnit.id ) {
+                                if (superGlandChild.id == selectedOrgUnit.id) {
 
-                                    hierarchy.push({"id":superGlandChild.id ,"name":superGlandChild.name ,"code":"" });
-                                    hierarchy.push({"id":glandChild.id ,"name":glandChild.name ,"code":"" });
-                                    hierarchy.push({"id":child.id ,"name":child.name ,"code":"" });
+                                    hierarchy.push({
+                                        "id": superGlandChild.id,
+                                        "name": superGlandChild.name,
+                                        "code": ""
+                                    });
+                                    hierarchy.push({"id": glandChild.id, "name": glandChild.name, "code": ""});
+                                    hierarchy.push({"id": child.id, "name": child.name, "code": ""});
                                     hierarchy.push(first_parent);
 
                                 }
 
-                            } );
+                            });
 
-                        } );
-                    } );
+                        });
+                    });
 
 
                 }
@@ -1464,8 +1465,8 @@ var appServices = angular.module('appServices', ['ngResource'])
 
                 dhis2.report.organisationUnitHierarchy = hierarchy;
             },
-            getRenderedReport: function ( reportUid ){
-                return eval('('+localStorage.getItem(reportUid)+')');
+            getRenderedReport: function (reportUid) {
+                return eval('(' + localStorage.getItem(reportUid) + ')');
             },
             sortOrganisationUnits: function (orgUnit) {
                 var that = this;
@@ -1478,39 +1479,39 @@ var appServices = angular.module('appServices', ['ngResource'])
                     })
                 }
             },
-            getLastDateOfMonth:function(year,month){
-                var date = new Date(parseInt(year),parseInt(month),1);
-                date.setTime(date.getTime() - 1000*60*60*24*1);
+            getLastDateOfMonth: function (year, month) {
+                var date = new Date(parseInt(year), parseInt(month), 1);
+                date.setTime(date.getTime() - 1000 * 60 * 60 * 24 * 1);
                 var monthString = (date.getMonth() + 1);
-                if(monthString < 10){
+                if (monthString < 10) {
                     monthString = "0" + monthString;
                 }
                 var dayString = parseInt(date.getDate());
-                if(dayString < 10){
+                if (dayString < 10) {
                     dayString = "0" + dayString;
                 }
-                return date.getFullYear() +"-" + monthString + "-" + dayString;
+                return date.getFullYear() + "-" + monthString + "-" + dayString;
             },
             getPeriodDate: function (period) {
                 var returnDate = {};
                 if (period.indexOf("July") != -1) {
                     returnDate.startDate = period.substr(0, 4) + "-07-01";
-                    returnDate.endDate = this.getLastDateOfMonth(parseInt(period.substr(0, 4)) + 1,"6");
+                    returnDate.endDate = this.getLastDateOfMonth(parseInt(period.substr(0, 4)) + 1, "6");
                 } else if (period.indexOf("Q") != -1) {
                     var lastMonth = parseInt(period.substr(5)) * 3;
                     var firstMonthString = lastMonth - 2;
-                    if(firstMonthString < 10){
+                    if (firstMonthString < 10) {
                         firstMonthString = "0" + firstMonthString;
                     }
-                    returnDate.startDate = period.substr(0, 4) + "-" + firstMonthString +"-01";
-                    returnDate.endDate = this.getLastDateOfMonth(period.substr(0, 4),lastMonth);
+                    returnDate.startDate = period.substr(0, 4) + "-" + firstMonthString + "-01";
+                    returnDate.endDate = this.getLastDateOfMonth(period.substr(0, 4), lastMonth);
                 } else {
                     /*var monthVal = parseInt(period.substr(5));
                      if(monthVal < 10){
                      monthVal = "0" + monthVal;
                      }*/
                     returnDate.startDate = period.substr(0, 4) + "-" + period.substr(4) + "-01";
-                    returnDate.endDate = this.getLastDateOfMonth(period.substr(0, 4),period.substr(4));
+                    returnDate.endDate = this.getLastDateOfMonth(period.substr(0, 4), period.substr(4));
                 }
                 return returnDate;
             },
@@ -1525,17 +1526,81 @@ var appServices = angular.module('appServices', ['ngResource'])
             undoDataSetReport: function (data) {
                 var deffered = $q.defer();
                 var that = this;
-                $http.delete(DHIS2URL + "api/dataStore/executed/" + data.dataSet + "_" + data.orgUnit + "_" + data.period)
-                    .then(function (results) {
-                        deffered.resolve();
-                        /*that.createDataSetReport(data).then(function () {
-                         deffered.resolve();
-                         });*/
+                $http.get(DHIS2URL + "api/dataSets.json?fields=id,periodType&filter=attributeValues.value:like:" + data.dataSet)
+                    .then(function (dataSetsResults) {
+                        console.log(dataSetsResults.data.dataSets);
+                        $http.get(DHIS2URL + "api/organisationUnits/" + data.orgUnit + ".json?fields=ancestors")
+                            .then(function (orgUnitResults) {
+                                console.log(orgUnitResults.data.ancestors);
+                                var promises = [];
+                                promises.push(that.delete(data.dataSet, data.orgUnit, data.period));
+                                var periods = [];
+                                if (data.period.indexOf("July") > -1) {
+                                    periods.push(data.period);
+                                } else if (data.period.indexOf("Q") > -1) {
+                                    periods.push(data.period);
+                                    var year = parseInt(data.period.substr(0, 4));
+                                    if (parseInt(data.period.substr(5)) < 3) {
+                                        year--;
+                                    }
+                                    periods.push("July" + year);
+                                } else {
+                                    periods.push(data.period);
+                                    var year = parseInt(data.period.substr(0, 4));
+                                    var month = parseInt(data.period.substr(4));
+                                    var quarter = Math.ceil(month / 3);
+                                    periods.push(year + "Q" + quarter);
+                                    if (month < 7) {
+                                        year--;
+                                    }
+                                    periods.push("July" + year);
+                                }
+                                dataSetsResults.data.dataSets.forEach(function (dataSet) {
+                                    orgUnitResults.data.ancestors.forEach(function (ancestor) {
+
+                                        periods.forEach(function (period) {
+                                            console.log(dataSet.id + "_" + ancestor.id + "_" + period);
+                                            //promises.push($http.delete(DHIS2URL + "api/dataStore/executed/" + dataSet.id + "_" + ancestor.id + "_" + period));
+                                            promises.push(that.delete(dataSet.id,ancestor.id,period));
+                                        })
+                                    })
+                                })
+                                $q.all(promises).then(function (result) {
+                                    console.log("Results:", arguments);
+                                    deffered.resolve(result);
+                                }, function (result) {
+                                    console.log("Error:", arguments);
+                                    deffered.reject(result);
+                                })
+                            }, function () {
+                                deffered.reject();
+                            });
+                    }, function () {
+                        deffered.reject();
                     });
+                /*var that = this;
+                 $http.delete(DHIS2URL + "api/dataStore/executed/" + data.dataSet + "_" + data.orgUnit + "_" + data.period)
+                 .then(function (results) {
+                 deffered.resolve();
+                 });*/
                 return deffered.promise;
             },
-            getUser:function(){
-                if(user){
+            delete: function (dataSet,orgUnit,period) {
+                var deffered = $q.defer();
+                $http.delete(DHIS2URL + "api/dataStore/executed/" + dataSet + "_" + orgUnit + "_" + period).then(function () {
+                        deffered.resolve();
+                    },
+                    function (error) {
+                        if (error.data.httpStatusCode == 404){
+                            deffered.reject(error.data);
+                        }else{
+                            deffered.reject(error);
+                        }
+                    })
+                return deffered.promise;
+            },
+            getUser: function () {
+                if (user) {
                     userDeffered.resolve(user);
                 }
                 return userDeffered.promise;
@@ -1543,54 +1608,54 @@ var appServices = angular.module('appServices', ['ngResource'])
         }
 
     })
-    .factory("DebugService", function ($compile,$timeout,$q){
-        var WFOO1 = {consolidation:"Formula (Sum), No Estimation",source:"WF00"};
+    .factory("DebugService", function ($compile, $timeout, $q) {
+        var WFOO1 = {consolidation: "Formula (Sum), No Estimation", source: "WF00"};
         var debugProcess = {
-            compile:function(element,scope){
+            compile: function (element, scope) {
                 var deffered = $q.defer();
                 $compile(element)(scope);
                 /*$timeout(function () {
-                    console.log("Timing Out")
-                    var childsToRemove = [];
-                    var existingRows = []
-                    element.forEach(function (child, rowIndex) {
-                        if (existingRows.indexOf(child.getAttribute('event')) > -1) {
-                            childsToRemove.push(child);
-                        } else {
-                            existingRows.push(child.getAttribute('event'));
-                        }
-                        var dataElements = [];
-                        child.children.forEach(function (child2, colIndex) {
-                            //child2.id = scope.config.dataElements[colIndex];
-                            if (dataElements.indexOf(child2.id) > -1) {
-                                childsToRemove.push(child2);
-                            } else {
-                                dataElements.push(child2.id);
-                            }
+                 console.log("Timing Out")
+                 var childsToRemove = [];
+                 var existingRows = []
+                 element.forEach(function (child, rowIndex) {
+                 if (existingRows.indexOf(child.getAttribute('event')) > -1) {
+                 childsToRemove.push(child);
+                 } else {
+                 existingRows.push(child.getAttribute('event'));
+                 }
+                 var dataElements = [];
+                 child.children.forEach(function (child2, colIndex) {
+                 //child2.id = scope.config.dataElements[colIndex];
+                 if (dataElements.indexOf(child2.id) > -1) {
+                 childsToRemove.push(child2);
+                 } else {
+                 dataElements.push(child2.id);
+                 }
 
-                            //child2.removeAttribute("ng-repeat");
-                            //$compile(child2)(scope);
-                        });
-                    });
-                    childsToRemove.forEach(function (element) {
-                        element.remove();
-                    })
-                    deffered.resolve();
-                });*/
+                 //child2.removeAttribute("ng-repeat");
+                 //$compile(child2)(scope);
+                 });
+                 });
+                 childsToRemove.forEach(function (element) {
+                 element.remove();
+                 })
+                 deffered.resolve();
+                 });*/
                 deffered.promise;
             },
-            count:0,
-            elements:[],
-            addCompileElements: function(element,scope){
+            count: 0,
+            elements: [],
+            addCompileElements: function (element, scope) {
                 //this.compile(element,scope);
-                this.elements.push({element:element,scope:scope});
+                this.elements.push({element: element, scope: scope});
                 //console.log("Element:",this.elements.length);
             },
-            finishCompileElements: function(element,scope){
+            finishCompileElements: function (element, scope) {
                 this.count++;
-                if(this.count == this.elements.length){
+                if (this.count == this.elements.length) {
                     console.log("Awesome start compiling");
-                    this.elements.forEach(function(element){
+                    this.elements.forEach(function (element) {
                         console.log("Here");
                         $compile(element.element)(element.scope);
                         console.log("Here1");
@@ -1602,9 +1667,9 @@ var appServices = angular.module('appServices', ['ngResource'])
             }
         }
         return {
-            debugProcess:debugProcess,
-            "DR01":{
-                "NK6MyHADqBo.WgIlmdIhlpD":{consolidation:"Formula (Average)",source:"WF01"},
+            debugProcess: debugProcess,
+            "DR01": {
+                "NK6MyHADqBo.WgIlmdIhlpD": {consolidation: "Formula (Average)", source: "WF01"},
                 "xBxqNNV8jLR.BktmzfgqCjX": WFOO1,
                 "xBxqNNV8jLR.Z0LtVda8wAo": WFOO1,
                 "xBxqNNV8jLR.J6W3kbELkGw": WFOO1,

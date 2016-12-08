@@ -380,6 +380,8 @@ var appControllers = angular.module('appControllers', [])
             }).then(function () {
                 toaster.pop('success', "Report Undone", "Report was undone successfully.");
                 $route.reload();
+            },function () {
+                toaster.pop('warning', "Error Undoing Reports", "Some reports could not be undone. Nothing to worry though. The server will take care of it in the background");
             });
         };
         $scope.params = $routeParams;
