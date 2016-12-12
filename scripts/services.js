@@ -1531,9 +1531,8 @@ var appServices = angular.module('appServices', ['ngResource'])
                         console.log(dataSetsResults.data.dataSets);
                         $http.get(DHIS2URL + "api/organisationUnits/" + data.orgUnit + ".json?fields=ancestors")
                             .then(function (orgUnitResults) {
-                                console.log(orgUnitResults.data.ancestors);
                                 var promises = [];
-                                //promises.push(that.delete(data.dataSet, data.orgUnit, data.period));
+                                promises.push(that.delete(data.dataSet, data.orgUnit, data.period));
                                 var periods = [];
                                 if (data.period.indexOf("July") > -1) {
                                     periods.push(data.period);
@@ -1559,17 +1558,14 @@ var appServices = angular.module('appServices', ['ngResource'])
                                     orgUnitResults.data.ancestors.forEach(function (ancestor) {
 
                                         periods.forEach(function (period) {
-                                            console.log(dataSet.id + "_" + ancestor.id + "_" + period);
-                                            //promises.push($http.delete(DHIS2URL + "api/dataStore/executed/" + dataSet.id + "_" + ancestor.id + "_" + period));
+                                            promises.push($http.delete(DHIS2URL + "api/dataStore/executed/" + dataSet.id + "_" + ancestor.id + "_" + period));
                                             //promises.push(that.delete(dataSet.id,ancestor.id,period));
                                         })
                                     })
                                 })
                                 $q.all(promises).then(function (result) {
-                                    console.log("Results:", arguments);
                                     deffered.resolve(result);
                                 }, function (result) {
-                                    console.log("Error:", arguments);
                                     deffered.reject(result);
                                 })
                             }, function () {
@@ -1578,11 +1574,6 @@ var appServices = angular.module('appServices', ['ngResource'])
                     }, function () {
                         deffered.reject();
                     });
-                /*var that = this;
-                 $http.delete(DHIS2URL + "api/dataStore/executed/" + data.dataSet + "_" + data.orgUnit + "_" + data.period)
-                 .then(function (results) {
-                 deffered.resolve();
-                 });*/
                 return deffered.promise;
             },
             delete: function (dataSet,orgUnit,period) {
@@ -1608,151 +1599,9 @@ var appServices = angular.module('appServices', ['ngResource'])
         }
 
     })
-    .factory("DebugService", function ($compile, $timeout, $q) {
-        var WFOO1 = {consolidation: "Formula (Sum), No Estimation", source: "WF00"};
-        var debugProcess = {
-            compile: function (element, scope) {
-                var deffered = $q.defer();
-                $compile(element)(scope);
-                /*$timeout(function () {
-                 console.log("Timing Out")
-                 var childsToRemove = [];
-                 var existingRows = []
-                 element.forEach(function (child, rowIndex) {
-                 if (existingRows.indexOf(child.getAttribute('event')) > -1) {
-                 childsToRemove.push(child);
-                 } else {
-                 existingRows.push(child.getAttribute('event'));
-                 }
-                 var dataElements = [];
-                 child.children.forEach(function (child2, colIndex) {
-                 //child2.id = scope.config.dataElements[colIndex];
-                 if (dataElements.indexOf(child2.id) > -1) {
-                 childsToRemove.push(child2);
-                 } else {
-                 dataElements.push(child2.id);
-                 }
-
-                 //child2.removeAttribute("ng-repeat");
-                 //$compile(child2)(scope);
-                 });
-                 });
-                 childsToRemove.forEach(function (element) {
-                 element.remove();
-                 })
-                 deffered.resolve();
-                 });*/
-                deffered.promise;
-            },
-            count: 0,
-            elements: [],
-            addCompileElements: function (element, scope) {
-                //this.compile(element,scope);
-                this.elements.push({element: element, scope: scope});
-                //console.log("Element:",this.elements.length);
-            },
-            finishCompileElements: function (element, scope) {
-                this.count++;
-                if (this.count == this.elements.length) {
-                    console.log("Awesome start compiling");
-                    this.elements.forEach(function (element) {
-                        console.log("Here");
-                        $compile(element.element)(element.scope);
-                        console.log("Here1");
-                    })
-                }
-                //this.compile(element,scope);
-                /*this.elements.push(element);
-                 console.log("Element:",this.elements.length);*/
-            }
-        }
+    .factory("DebugService", function () {
         return {
-            debugProcess: debugProcess,
-            "DR01": {
-                "NK6MyHADqBo.WgIlmdIhlpD": {consolidation: "Formula (Average)", source: "WF01"},
-                "xBxqNNV8jLR.BktmzfgqCjX": WFOO1,
-                "xBxqNNV8jLR.Z0LtVda8wAo": WFOO1,
-                "xBxqNNV8jLR.J6W3kbELkGw": WFOO1,
-                "xBxqNNV8jLR.mlpia7QBdqY": WFOO1,
-                "xBxqNNV8jLR.oS2Oq1evsaK": WFOO1,
-                "xBxqNNV8jLR.bBKFyBvoo34": WFOO1,
-                "xBxqNNV8jLR.zSS1gwkIIu8": WFOO1,
-                "naRYicVv8Dp.ql8bSsHEnUN": WFOO1,
-                "naRYicVv8Dp.pcsiYqIW4kJ": WFOO1,
-                "naRYicVv8Dp.YwRiKDxpYON": WFOO1,
-                "naRYicVv8Dp.YkeweM90DZt": WFOO1,
-                "naRYicVv8Dp.pjXHRQQXIhg": WFOO1,
-                "hCLl9rGfYpb.wJIxAhejWKY": WFOO1,
-                "hCLl9rGfYpb.R5DIMqSCTA5": WFOO1,
-                "hCLl9rGfYpb.xCnCQxpSTUJ": WFOO1,
-                "hCLl9rGfYpb.iBa5lgXgvwk": WFOO1,
-                "hCLl9rGfYpb.v3Eq35RuqEA": WFOO1,
-                "hCLl9rGfYpb.bltcOiiZeO5": WFOO1,
-                "hCLl9rGfYpb.uMeEFdAzqKS": WFOO1,
-                "hCLl9rGfYpb.AqholFtHhlg": WFOO1,
-                "ZLsVcUh3yWM.jjfebeJ6pbV": WFOO1,
-                "ZLsVcUh3yWM.BYTuIQ47dnS": WFOO1,
-                "ZLsVcUh3yWM.lJ9Cv8ISZRT": WFOO1,
-                "ZLsVcUh3yWM.xLi4aE2hf45": WFOO1,
-                "ZLsVcUh3yWM.eHhQeZB29hz": WFOO1,
-                "ZLsVcUh3yWM.b5D4IKJFDJH": WFOO1,
-                "Ivu48nkpIw2.MT4SwuoV2pQ": WFOO1,
-                "Ivu48nkpIw2.Y1zhvDQTe5e": WFOO1,
-                "Ivu48nkpIw2.Efwc5ipDSTk": WFOO1,
-                "Ivu48nkpIw2.WAl6t24Jpzt": WFOO1,
-                "Ivu48nkpIw2.uQqzzomp9tc": WFOO1,
-                "Ivu48nkpIw2.ICiTJsU1Vec": WFOO1,
-                "Ivu48nkpIw2.TZJQRkPRJm4": WFOO1,
-                "Ivu48nkpIw2.jC7AWcjBkJ3": WFOO1,
-                "Ivu48nkpIw2.BPGkOcPjPS7": WFOO1,
-                "Ivu48nkpIw2.nMMaTQxdPJG": WFOO1,
-                "Ivu48nkpIw2.HdPaWqoDpdZ": WFOO1,
-                "I9MjFl6Y5hl.tPbRcvnWxkS": WFOO1,
-                "I9MjFl6Y5hl.fXZ1QJJJ9wp": WFOO1,
-                "I9MjFl6Y5hl.Z4bVJVRPKjl": WFOO1,
-                "I9MjFl6Y5hl.pAB6StXtLU8": WFOO1,
-                "I9MjFl6Y5hl.BEi0yw6WwBa": WFOO1,
-                "I9MjFl6Y5hl.w30fA5rFeRV": WFOO1,
-                "I9MjFl6Y5hl.Bkz2vXNsYke": WFOO1,
-                "I9MjFl6Y5hl.Heme7D8HT30": WFOO1,
-                "I9MjFl6Y5hl.VIPqyvWbwDU": WFOO1,
-                "I9MjFl6Y5hl.dUIkQFWg2qm": WFOO1,
-                "I9MjFl6Y5hl.H9p6YVxG7zJ": WFOO1,
-                "I9MjFl6Y5hl.JIeF7OCEt6D": WFOO1,
-                "I9MjFl6Y5hl.bSNT1r88kIC": WFOO1,
-                "I9MjFl6Y5hl.i9b5kFnGOkF": WFOO1,
-                "I9MjFl6Y5hl.hkdaOo9ZpB2": WFOO1,
-                "I9MjFl6Y5hl.rwsWnkaJ5HR": WFOO1,
-                "I9MjFl6Y5hl.wTlpU2TaHiz": WFOO1,
-                "U7ep9MxtQ1z.fuzYIcfLZN2": WFOO1,
-                "U7ep9MxtQ1z.HquzVesvM2Z": WFOO1,
-                "U7ep9MxtQ1z.BJuZMglWlTz": WFOO1,
-                "U7ep9MxtQ1z.GmO6g98S4G9": WFOO1,
-                "U7ep9MxtQ1z.wfxDF7iGY3f": WFOO1,
-                "U7ep9MxtQ1z.QlQ95KGkgR6": WFOO1,
-                "U7ep9MxtQ1z.nrQIoh49aGU": WFOO1,
-                "U7ep9MxtQ1z.ZbmI2XtXHIS": WFOO1,
-                "U7ep9MxtQ1z.dUwc6pkKgmM": WFOO1,
-                "U7ep9MxtQ1z.drXDRIxLVzv": WFOO1,
-                "U7ep9MxtQ1z.dqChjQjl0ZH": WFOO1,
-                "U7ep9MxtQ1z.oplxxXgoehP": WFOO1,
-                "U7ep9MxtQ1z.SyDcaTOW0JP": WFOO1,
-                "U7ep9MxtQ1z.XckkuoyUldR": WFOO1,
-                "U7ep9MxtQ1z.GtUrKU93piR": WFOO1,
-                "U7ep9MxtQ1z.Hmz6lySVDCN": WFOO1,
-                "gAS04LMK9UX.zPf9YtxdJJH": WFOO1,
-                "gAS04LMK9UX.D4phPJP6u9V": WFOO1,
-                "gAS04LMK9UX.MvHtsSwbho2": WFOO1,
-                "gAS04LMK9UX.e27Rj8LSYQV": WFOO1,
-                "gAS04LMK9UX.pq1B5YRvk3w": WFOO1,
-                "gAS04LMK9UX.hOj19H7Vodn": WFOO1,
-                "gAS04LMK9UX.mQjKnpOz1I8": WFOO1,
-                "ZLsVcUh3yWM.FxOzFSqMVd2": WFOO1,
-                "ZLsVcUh3yWM.vXOb5h9Rxqs": WFOO1,
-                "U7ep9MxtQ1z.QDSfLpYNZ3l": WFOO1,
-                "ZLsVcUh3yWM.OEoQ7kif63L": WFOO1
-
-            }
+            debugProcess: {},
         }
     })
     .factory('myHttpInterceptor', function ($q, $window) {
