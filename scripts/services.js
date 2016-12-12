@@ -1533,7 +1533,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                             .then(function (orgUnitResults) {
                                 console.log(orgUnitResults.data.ancestors);
                                 var promises = [];
-                                promises.push(that.delete(data.dataSet, data.orgUnit, data.period));
+                                //promises.push(that.delete(data.dataSet, data.orgUnit, data.period));
                                 var periods = [];
                                 if (data.period.indexOf("July") > -1) {
                                     periods.push(data.period);
@@ -1561,7 +1561,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                                         periods.forEach(function (period) {
                                             console.log(dataSet.id + "_" + ancestor.id + "_" + period);
                                             //promises.push($http.delete(DHIS2URL + "api/dataStore/executed/" + dataSet.id + "_" + ancestor.id + "_" + period));
-                                            promises.push(that.delete(dataSet.id,ancestor.id,period));
+                                            //promises.push(that.delete(dataSet.id,ancestor.id,period));
                                         })
                                     })
                                 })
