@@ -1250,6 +1250,68 @@ var appDirectives = angular.module('appDirectives', [])
             templateUrl: 'views/autogrowing.html'
         }
     })
+    .directive("grandtotal", function ($timeout, $compile) {
+        return {
+            scope: {
+                grandtotal: '='
+            },
+            link: function (scope, elem, attrs, controller) {
+                $timeout(function () {
+                    var arr = Array.prototype.slice.call(elem[0].rows);
+                    console.log(arr);
+                    var firstColumnBrakes = [];
+                    // iterate through the columns instead of passing each column as function parameter:
+                    for(var i=1; i<=arr.length; i++){
+                        var previous = null, cellToExtend = null, rowspan = 1;
+                        elem.find("td:nth-child(" + i + ")").each(function(index, e){
+                            var jthis = $(this);
+                            if(index == 0){
+                                rowspan = 1;
+                                cellToExtend = jthis;
+                            }else{
+                                if(i == 1){
+
+                                }else{
+                                    cellToExtend.html((parseFloat(cellToExtend.html()) + parseFloat(jthis.html())).toFixed(1))
+                                }
+                                jthis.addClass('hidden');
+                                cellToExtend.attr("rowspan", (rowspan = rowspan+1));
+                            }
+                        });
+                    }
+                    // now remove hidden td's (or leave them hidden if you wish):
+                    $('td.hidden').remove();
+                });
+            },
+            replace: true,
+            controller: function ($scope, $routeParams) {
+                console.log($scope.grandtotal);
+                $scope.data = {
+                    events:[]
+                }
+                $scope.config = {
+                    groupBy:[]
+                }
+                $scope.grandtotal.forEach(function(autogrowing){
+                    autogrowing.data.forEach(function(event){
+
+                        var newEvent = [];
+                        Object.keys(event).forEach(function(key){
+
+                            if(["$$hashKey","Event","Program stage","Event date","Longitude","Latitude",
+                                    "Organisation unit name","Organisation unit code","Organisation unit"].indexOf(key) == -1){
+
+                                newEvent.push(event[key]);
+                            }
+                        })
+                        newEvent[0] = "Grand Total";
+                        $scope.data.events.push(newEvent);
+                    })
+                })
+            },
+            templateUrl: 'views/grandtotal.html'
+        }
+    })
     .directive("autoGrowingMerge", function ($timeout, $compile) {
         return {
             scope: {
@@ -1335,38 +1397,6 @@ var appDirectives = angular.module('appDirectives', [])
                                             cellToExtend = $(el);
                                         }
                                     })
-                                } else //if(scope.config.continuous)
-                                {
-
-                                    /*elem.find("td:nth-child(" + i + ")").each(function (index, el) {
-                                        if (previous == adjacentToGroup(index, i)) {
-                                            $(el).addClass('hidden');
-                                            var firstValue = cellToExtend.html(),secondValue = $(el).html();
-                                            if(firstValue == ""){
-                                                firstValue = 0.0;
-                                            }
-                                            if(secondValue == ""){
-                                                secondValue = 0.0;
-                                            }
-                                            try{
-                                                if(scope.config.valueTypes){
-                                                    cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")"));
-                                                }else
-                                                {
-                                                    cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")").toFixed(1));
-                                                }
-                                            }catch(e){
-
-                                            }
-
-                                            cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
-                                        } else {
-                                            rowspan = 1;
-                                            //previous = $(el).text();
-                                            previous = adjacentToGroup(index, i);
-                                            cellToExtend = $(el);
-                                        }
-                                    })*/
                                 }
                             }
                             scope.data.dataElements.forEach(function(dataElement,i){
@@ -1414,28 +1444,6 @@ var appDirectives = angular.module('appDirectives', [])
                                        })
                                    }
                                 })
-                                /*var found = false;
-                                Object.keys(object).forEach(function(key){
-                                    //if($scope.config.merge[key])
-                                    {
-                                        $scope.data.events.forEach(function(event){
-                                            if(event[$scope.config.merge[key]] == object[key]){
-                                                found = true;
-                                                event[key] = object[key];
-                                                $scope.config.dataElements.forEach(function(dataElementID){
-                                                    if(object[dataElementID]){
-                                                        event[dataElementID] = object[dataElementID];
-                                                    }else{
-                                                        event[dataElementID] = "";
-                                                    }
-                                                })
-                                            }
-                                        })
-                                    }
-                                })
-                                if(!found){
-                                    $scope.data.events.push(object);
-                                }*/
                                 $scope.data.events.push(object);
                             });
                         },function(){
@@ -1460,85 +1468,6 @@ var appDirectives = angular.module('appDirectives', [])
                 $q.all(promises).then(function () {
                     $scope.initLink();
                 });
-                /*$scope.getDataElementName = function (id) {
-                    var name = "";
-                    $scope.config.dataElementsDetails.forEach(function (dataElement) {
-                        if (dataElement.id == id) {
-                            name = dataElement.name;
-                        }
-                    });
-                    return name;
-                };*/
-
-                /*if ($scope.config.cumulativeToDate) {
-                    var addDataElements = [];
-                    var addedIndexes = 0;
-                    $scope.config.cumulativeToDate.forEach(function (cumulativeDataElement) {
-                        $scope.config.dataElementsDetails.forEach(function (dataElement, index) {
-                            if (cumulativeDataElement.after == dataElement.id) {
-                                addDataElements.push({
-                                    dataElement: {
-                                        id: dataElement.id + index,
-                                        name: dataElement.name + index,
-                                        valueType: dataElement.valueType
-                                    }, index: index + 1 + addedIndexes
-                                });
-                                addedIndexes++;
-                            }
-                        });
-                    });
-                    addDataElements.forEach(function (addDataElements) {
-                        $scope.config.dataElementsDetails.splice(addDataElements.index, 0, addDataElements.dataElement)
-                        $scope.config.dataElements.splice(addDataElements.index, 0, addDataElements.dataElement.id);
-                    })
-                }
-                var averagingOccurences = {};
-                if ($scope.config.valueTypes) {
-                    $scope.config.dataElementsDetails.forEach(function (dataElement) {
-                        if ($scope.config.valueTypes[dataElement.id]) {
-                            $scope.config.data.forEach(function (eventData) {
-                                var value = parseInt(eventData[dataElement.name]);
-                                if(isNaN(value)){
-                                    value = 0;
-                                }
-                                eventData[dataElement.name] = value + "";
-                            });
-                        }
-                    });
-                }
-                $scope.config.dataElements.forEach(function (dataElementId) {
-                    if ($scope.config.dataElementsDetails) {
-                        $scope.config.dataElementsDetails.forEach(function (dataElement, index) {
-                            if (dataElement.id == dataElementId) {
-                                $scope.data.dataElements.push(dataElement);
-                                if (dataElement.aggregationType == "AVERAGE") {
-                                    $scope.config.data.forEach(function (eventData) {
-                                        if (averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]]) {
-                                            averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]]++;
-                                        } else {
-                                            averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] = 1;
-                                        }
-                                    });
-                                    $scope.config.data.forEach(function (eventData) {
-                                        eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] + ")").toFixed(1);
-                                    })
-                                }
-                            }
-                        });
-                    }
-
-                });
-                if ($scope.config.groupBy) {//If grouping is required
-                    //$scope.data.groupedEvents = [];
-                    $scope.config.groupBy.forEach(function (group, index) {
-                        if (index == 0) {
-                            $scope.config.data.forEach(function (eventData) {
-                                $scope.data.events.push(eventData);
-                            })
-                        }
-
-                    });
-                }*/
             },
             templateUrl: 'views/autogrowingmerge.html'
         }
