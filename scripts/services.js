@@ -1529,7 +1529,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                 $http.get(DHIS2URL + "api/dataSets.json?fields=id,periodType&filter=attributeValues.value:like:" + data.dataSet)
                     .then(function (dataSetsResults) {
                         console.log(dataSetsResults.data.dataSets);
-                        $http.get(DHIS2URL + "api/organisationUnits/" + data.orgUnit + ".json?fields=ancestors")
+                        $http.get(DHIS2URL + "api/organisationUnits/" + data.orgUnit + ".json?fields=id,ancestors")
                             .then(function (orgUnitResults) {
                                 var promises = [];
                                 promises.push(that.delete(data.dataSet, data.orgUnit, data.period));
@@ -1554,10 +1554,13 @@ var appServices = angular.module('appServices', ['ngResource'])
                                     }
                                     periods.push("July" + year);
                                 }
-                                dataSetsResults.data.dataSets.forEach(function (dataSet) {
-                                    orgUnitResults.data.ancestors.forEach(function (ancestor) {
+                                periods.forEach(function (period) {
+                                    dataSetsResults.data.dataSets.forEach(function (dataSet) {
+                                        promises.push($http.delete(DHIS2URL + "api/dataStore/executed/" + orgUnitResults.data.id + "_" + ancestor.id + "_" + period));
+                                        //promises.push(that.delete(dataSet.id,ancestor.id,period));
 
-                                        periods.forEach(function (period) {
+
+                                        orgUnitResults.data.ancestors.forEach(function (ancestor) {
                                             promises.push($http.delete(DHIS2URL + "api/dataStore/executed/" + dataSet.id + "_" + ancestor.id + "_" + period));
                                             //promises.push(that.delete(dataSet.id,ancestor.id,period));
                                         })
@@ -1576,15 +1579,15 @@ var appServices = angular.module('appServices', ['ngResource'])
                     });
                 return deffered.promise;
             },
-            delete: function (dataSet,orgUnit,period) {
+            delete: function (dataSet, orgUnit, period) {
                 var deffered = $q.defer();
                 $http.delete(DHIS2URL + "api/dataStore/executed/" + dataSet + "_" + orgUnit + "_" + period).then(function () {
                         deffered.resolve();
                     },
                     function (error) {
-                        if (error.data.httpStatusCode == 404){
+                        if (error.data.httpStatusCode == 404) {
                             deffered.reject(error.data);
-                        }else{
+                        } else {
                             deffered.reject(error);
                         }
                     })
