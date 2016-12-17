@@ -382,6 +382,7 @@ var appControllers = angular.module('appControllers', [])
                 $route.reload();
             },function () {
                 toaster.pop('warning', "Error Undoing Reports", "Some reports could not be undone. Nothing to worry though. The server will take care of it in the background");
+                $route.reload();
             });
         };
         $scope.params = $routeParams;

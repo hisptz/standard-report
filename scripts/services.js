@@ -1556,13 +1556,13 @@ var appServices = angular.module('appServices', ['ngResource'])
                                 }
                                 periods.forEach(function (period) {
                                     dataSetsResults.data.dataSets.forEach(function (dataSet) {
-                                        promises.push($http.delete(DHIS2URL + "api/dataStore/executed/" + orgUnitResults.data.id + "_" + ancestor.id + "_" + period));
-                                        //promises.push(that.delete(dataSet.id,ancestor.id,period));
+                                        //promises.push($http.delete(DHIS2URL + "api/dataStore/executed/" + dataSet.id + "_" + orgUnitResults.data.id + "_" + period));
+                                        promises.push(that.delete(dataSet.id, orgUnitResults.data.id, period));
 
 
                                         orgUnitResults.data.ancestors.forEach(function (ancestor) {
-                                            promises.push($http.delete(DHIS2URL + "api/dataStore/executed/" + dataSet.id + "_" + ancestor.id + "_" + period));
-                                            //promises.push(that.delete(dataSet.id,ancestor.id,period));
+                                            //promises.push($http.delete(DHIS2URL + "api/dataStore/executed/" + dataSet.id + "_" + ancestor.id + "_" + period));
+                                            promises.push(that.delete(dataSet.id, ancestor.id, period));
                                         })
                                     })
                                 })
@@ -1582,15 +1582,15 @@ var appServices = angular.module('appServices', ['ngResource'])
             delete: function (dataSet, orgUnit, period) {
                 var deffered = $q.defer();
                 $http.delete(DHIS2URL + "api/dataStore/executed/" + dataSet + "_" + orgUnit + "_" + period).then(function () {
-                        deffered.resolve();
-                    },
-                    function (error) {
-                        if (error.data.httpStatusCode == 404) {
-                            deffered.reject(error.data);
-                        } else {
-                            deffered.reject(error);
-                        }
-                    })
+                    deffered.resolve();
+                }, function (error) {
+                    console.log(error);
+                    if (error.data.httpStatusCode == 404) {
+                        deffered.resolve(error.data);
+                    } else {
+                        deffered.reject(error);
+                    }
+                })
                 return deffered.promise;
             },
             getUser: function () {
