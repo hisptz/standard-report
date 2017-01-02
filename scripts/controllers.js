@@ -851,9 +851,13 @@ var appControllers = angular.module('appControllers', [])
                     $scope.fourthQuarter.length +
                     $scope.nonAggregatedDataElements.length +
                     $scope.nonAggregatedDataElementsDate.length) / common);
+                var level4String = "LEVEL-4;";
+                if($scope.orgUnit.level == 3 && $scope.orgUnit.children.length == 0){
+                    level4String = "";
+                }
                 for (var i = 0; i < $scope.dataElements.length; i++) {
                     if ($scope.wardLevelIndicator.indexOf($scope.dataElements[i]) > -1) {
-                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.dataElements[i] + "&dimension=pe:" + $routeParams.period + "&dimension=ou:LEVEL-4;" + $routeParams.orgUnit)
+                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.dataElements[i] + "&dimension=pe:" + $routeParams.period + "&dimension=ou:" + level4String  + $routeParams.orgUnit)
                             .then(function (analyticsResults) {
                                 analyticsResults.data.rows.forEach(function (row) {
                                     if ($scope.dataElementsData[row[0]]) {
@@ -913,7 +917,7 @@ var appControllers = angular.module('appControllers', [])
                     }
                 }
                 for (var i = 0; i < $scope.lastDataElements.length; i += common) {
-                    promises.push($http.get(DHIS2URL + "api/analytics.json?last&dimension=dx:" + $scope.lastDataElements.slice(i, i + common).join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:LEVEL-4;" + $routeParams.orgUnit)
+                    promises.push($http.get(DHIS2URL + "api/analytics.json?last&dimension=dx:" + $scope.lastDataElements.slice(i, i + common).join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:" + level4String  + $routeParams.orgUnit)
                         .then(function (analyticsResults) {
                             analyticsResults.data.rows.forEach(function (row) {
                                 if ($scope.lastDataElementsData[row[0]]) {
@@ -1005,7 +1009,7 @@ var appControllers = angular.module('appControllers', [])
                     }
                     for (var i = 0; i < $scope.lastMonthOfQuarter.length; i++) {
                         if ($scope.wardLevelIndicator.indexOf($scope.lastMonthOfQuarter[i]) > -1) {
-                            promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.lastMonthOfQuarter[i] + "&dimension=pe:" + str[0] + month + "&dimension=ou:LEVEL-4;" + $routeParams.orgUnit)
+                            promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.lastMonthOfQuarter[i] + "&dimension=pe:" + str[0] + month + "&dimension=ou:" + level4String  + $routeParams.orgUnit)
                                 .then(function (analyticsResults) {
                                     analyticsResults.data.rows.forEach(function (row) {
                                         //$scope.lastMonthOfQuarterData[row[0]] = row[3];
