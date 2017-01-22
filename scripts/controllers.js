@@ -1134,6 +1134,7 @@ var appControllers = angular.module('appControllers', [])
                                     $scope.lastIndicatorData[indicator] += $scope.lastIndicatorData[key][indicator];
                                 }
                             })
+                            $scope.lastIndicatorData[indicator] = $scope.lastIndicatorData[indicator].toFixed(1);
                         })
                     }
                     $q.all(promises).then(function () {
