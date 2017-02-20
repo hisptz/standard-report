@@ -880,7 +880,7 @@ var appControllers = angular.module('appControllers', [])
                                         if (row[0].indexOf(dataElement.id) > -1 && dataElement.aggregationType == "LAST") {
 
                                             if ($scope.dataElementsData[row[0]]) {
-                                                $scope.dataElementsData[row[0]] = "" + (parseFloat($scope.dataElementsData[row[0]]) + parseFloat(row[2])) + ".0";
+                                                $scope.dataElementsData[row[0]] = "" + (parseFloat($scope.dataElementsData[row[0]]) + parseFloat(row[2])).toFixed(1);// + ".0";
 
                                             } else {
                                                 $scope.dataElementsData[row[0]] = row[2];
@@ -1015,7 +1015,7 @@ var appControllers = angular.module('appControllers', [])
                                     analyticsResults.data.rows.forEach(function (row) {
                                         //$scope.lastMonthOfQuarterData[row[0]] = row[3];
                                         if ($scope.lastMonthOfQuarterData[row[0]]) {
-                                            $scope.lastMonthOfQuarterData[row[0]] = "" + (parseFloat($scope.lastMonthOfQuarterData[row[0]]) + parseFloat(row[3])) + ".0";
+                                            $scope.lastMonthOfQuarterData[row[0]] = "" + (parseFloat($scope.lastMonthOfQuarterData[row[0]]) + parseFloat(row[3])).toFixed(1);
 
                                         } else {
                                             $scope.lastMonthOfQuarterData[row[0]] = row[3];
