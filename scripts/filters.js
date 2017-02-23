@@ -5,8 +5,12 @@
 var appFilters = angular.module('appFilters', [])
     .filter('removeNaN', function() {
         return function(input) {
-            if(input == "NaN"){
+            if(input == "NaN" || isNaN(input)){
                 return "";
+            }
+            if(input == null){
+                return "";
+                console.log("Supposed to be null");
             }
 
             return input;
