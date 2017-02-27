@@ -4,13 +4,23 @@
 
 var appFilters = angular.module('appFilters', [])
     .filter('removeNaN', function() {
-        return function(input) {
-            if(input == "NaN" || isNaN(input)){
-                return "";
-            }
-            if(input == null){
-                return "";
-                console.log("Supposed to be null");
+        return function(input,dataElement) {
+            if(dataElement){
+                if(dataElement.valueType != "TEXT"){
+                    if(input == "NaN" || isNaN(input)){
+                        return "";
+                    }
+                    if(input == null){
+                        return "";
+                    }
+                }
+            }else{
+                if(input == "NaN" || isNaN(input)){
+                    return "";
+                }
+                if(input == null){
+                    return "";
+                }
             }
 
             return input;
