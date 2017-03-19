@@ -830,11 +830,14 @@ var appControllers = angular.module('appControllers', [])
                 children.push(child.id);
             });
             $scope.loadingStatus = "Loading Data Set";
-            $http.get(DHIS2URL + "api/dataSets/" + $routeParams.dataSet + ".json?fields=:all,dataEntryForm[htmlCode],dataElements[id,name,aggregationType,valueType],attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
+            $http.get(DHIS2URL + "api/dataSets/" + $routeParams.dataSet + ".json?fields=:all,dataEntryForm[htmlCode],dataSetElements[dataElement[id,name,aggregationType,valueType]],attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
                 $scope.dataSet = results.data;
                 $scope.data.dataSetForm = results.data;
-
-                var trustedHtml = $scope.renderHtml(results.data.dataEntryForm.htmlCode, results.data.dataElements);
+                var dataElements = [];
+                results.data.dataSetElements.forEach(function(dataSetElement){
+                    dataElements.push(dataSetElement.dataElement)
+                })
+                var trustedHtml = $scope.renderHtml(results.data.dataEntryForm.htmlCode, dataElements);
                 if ($scope.lastIndicator.length > 0) {
                     $scope.orgUnit.children.forEach(function (child) {
                         $scope.lastIndicatorData[child.id] = {};
@@ -861,9 +864,7 @@ var appControllers = angular.module('appControllers', [])
                             .then(function (analyticsResults) {
                                 analyticsResults.data.rows.forEach(function (row) {
                                     if ($scope.dataElementsData[row[0]]) {
-                                        console.log($scope.dataElementsData[row[0]],row[3]);
                                         $scope.dataElementsData[row[0]] = "" + (parseFloat($scope.dataElementsData[row[0]]) + parseFloat(row[3])).toFixed(1);// + ".0";
-                                        console.log($scope.dataElementsData[row[0]]);
                                     } else {
                                         $scope.dataElementsData[row[0]] = row[3];
                                     }
@@ -876,7 +877,8 @@ var appControllers = angular.module('appControllers', [])
                             .then(function (analyticsResults) {
                                 analyticsResults.data.rows.forEach(function (row) {
                                     var isNotSet = true;
-                                    $scope.data.dataSetForm.dataElements.forEach(function (dataElement) {
+                                    $scope.data.dataSetForm.dataSetElements.forEach(function (dataSetElement) {
+                                        var dataElement = dataSetElement.dataElement
                                         if (row[0].indexOf(dataElement.id) > -1 && dataElement.aggregationType == "LAST") {
 
                                             if ($scope.dataElementsData[row[0]]) {
@@ -968,9 +970,9 @@ var appControllers = angular.module('appControllers', [])
                                                     if (dataSetResults.data.dataValues) {
                                                         dataSetResults.data.dataValues.forEach(function (value) {
                                                             if ($scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo]) {
-                                                                $scope.data.dataSetForm.dataElements.forEach(function (dataElement) {
-                                                                    if (dataElement.id == value.dataElement) {
-                                                                        $scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo].name = dataElement.name;
+                                                                $scope.data.dataSetForm.dataSetElements.forEach(function (dataSetElement) {
+                                                                    if (dataSetElement.dataElement.id == value.dataElement) {
+                                                                        $scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo].name = dataSetElement.dataElement.name;
                                                                     }
                                                                 })
                                                             }
@@ -1373,7 +1375,6 @@ var appControllers = angular.module('appControllers', [])
                     $scope.lastIndicator.push(idMacth[1]);
                     newHtml = newHtml.replace(match[0], "{{lastIndicatorData['" + idMacth[1] + "']}}");
                 } else if ((idMacth = /lastmonthindicator="(.*?)"/.exec(match[0])) !== null) {
-                    console.log("Last Indicator:")
                     $scope.lastMonthIndicator.push(idMacth[1]);
                     newHtml = newHtml.replace(match[0], "{{lastMonthIndicatorData['" + idMacth[1] + "']}}");
                 } else {
