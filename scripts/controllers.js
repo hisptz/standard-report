@@ -1370,9 +1370,9 @@ var appControllers = angular.module('appControllers', [])
                         $scope.fourthQuarter.push(idMacth[1]);
                     } else {
                         if (match[0].indexOf("integer") > -1) {
-                            newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "\"])}}</div>");
+                            newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "\"])  | removeNaN}}</div>");
                         } else {
-                            newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "\"]}}</div>");
+                            newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "\"] | removeNaN}}</div>");
                         }
 
                         $scope.dataElements.push(idMacth[1]);
