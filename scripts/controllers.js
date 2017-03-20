@@ -969,31 +969,34 @@ var appControllers = angular.module('appControllers', [])
                                             loadedDataset.push(source2.dataSet + $routeParams.orgUnit + $routeParams.period);
                                             promises.push($http.get(DHIS2URL + "api/dataValueSets.json?dataSet=" + source2.dataSet + "&orgUnit=" + $routeParams.orgUnit + "," + newChildren.join(",") + "&children=true&period=" + $routeParams.period)
                                                 .then(function (dataSetResults) {
-
                                                     if (dataSetResults.data.dataValues) {
-                                                        dataSetResults.data.dataValues.forEach(function (value) {
-                                                            if ($scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo]) {
-                                                                $scope.data.dataSetForm.dataSetElements.forEach(function (dataSetElement) {
-                                                                    if (dataSetElement.dataElement.id == value.dataElement) {
-                                                                        $scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo].name = dataSetElement.dataElement.name;
-                                                                    }
-                                                                })
-                                                            }
-                                                        });
-                                                        dataSetResults.data.dataValues.forEach(function (value) {
-                                                            var listID = value.dataElement + "." + value.categoryOptionCombo;
-                                                            if ($scope.listByWardData[listID]) {
-                                                                var found = false;
-                                                                $scope.listByWardData[listID].values.forEach(function (value1) {
-                                                                    if (value1.dataElement == value.dataElement && value1.period == value.period && value1.orgUnit == value.orgUnit && value1.categoryOptionCombo == value.categoryOptionCombo) {
-                                                                        found = true;
-                                                                    }
-                                                                })
-                                                                if (!found) {
-                                                                    $scope.listByWardData[listID].values.push(value);
+                                                        $http.get(DHIS2URL + "api/organisationUnits.json?fields=id,name&level=4&filter=path:like:" + $routeParams.orgUnit).then(function(organisationUnits){
+                                                            console.log(organisationUnits.data.organisationUnits);
+                                                            $scope.orgUnit.discendants = organisationUnits.data.organisationUnits;
+                                                            dataSetResults.data.dataValues.forEach(function (value) {
+                                                                if ($scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo]) {
+                                                                    $scope.data.dataSetForm.dataSetElements.forEach(function (dataSetElement) {
+                                                                        if (dataSetElement.dataElement.id == value.dataElement) {
+                                                                            $scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo].name = dataSetElement.dataElement.name;
+                                                                        }
+                                                                    })
                                                                 }
-                                                            }
-                                                        });
+                                                            });
+                                                            dataSetResults.data.dataValues.forEach(function (value) {
+                                                                var listID = value.dataElement + "." + value.categoryOptionCombo;
+                                                                if ($scope.listByWardData[listID]) {
+                                                                    var found = false;
+                                                                    $scope.listByWardData[listID].values.forEach(function (value1) {
+                                                                        if (value1.dataElement == value.dataElement && value1.period == value.period && value1.orgUnit == value.orgUnit && value1.categoryOptionCombo == value.categoryOptionCombo) {
+                                                                            found = true;
+                                                                        }
+                                                                    })
+                                                                    if (!found) {
+                                                                        $scope.listByWardData[listID].values.push(value);
+                                                                    }
+                                                                }
+                                                            });
+                                                        })
                                                     }
                                                     $scope.progressValue = $scope.progressValue + progressFactor;
                                                 }));
