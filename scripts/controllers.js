@@ -724,7 +724,8 @@ var appControllers = angular.module('appControllers', [])
         $scope.approve = function () {
             $scope.approvalStatus = "Approving Report..";
             $scope.approveData = {lastUpdated: new Date(), user: {
-                name:$scope.user.name
+                name:$scope.user.name,
+                id:$scope.user.id
             }};
             $http.post(DHIS2URL + "api/dataStore/approve/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period, $scope.approveData).then(function (results) {
                 //$scope.approveData.data = true;
