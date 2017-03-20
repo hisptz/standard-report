@@ -271,7 +271,7 @@
             <input type="button" value="Change Criteria" ng-click="dataCriteria = !dataCriteria">
             <!--<input type="button" value="Download PDF" ng-click="download()">-->
             <input type="button" value="Print" ng-click="printReport()">
-            <input ng-if="dataSet.name.indexOf('Integrated') == -1" type="button" ng-disabled="isNotAuthorized()" value="Undo Report Creation"
+            <input ng-if="dataSet.name.indexOf('Integrated') == -1 && !approveData.user" type="button" ng-disabled="isNotAuthorized()" value="Undo Report Creation"
                    ng-click="undoDataSetReport()">
             <input ng-if="!approveData.user && approvalStatus == ''" type="button" ng-disabled="isNotApproved()"
                    value="Approve" ng-click="approve()">
