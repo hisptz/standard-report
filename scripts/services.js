@@ -1517,10 +1517,20 @@ var appServices = angular.module('appServices', ['ngResource'])
             },
             createDataSetReport: function (data) {
                 var deffered = $q.defer();
-                $http.post(DHIS2URL + "api/dataStore/notExecuted/" + data.dataSet + "_" + data.orgUnit + "_" + data.period, {})
-                    .then(function (results) {
-                        deffered.resolve();
-                    });
+                this.getUser().then(function(user){
+                    var notExecuted = {
+                        name:user.name,
+                        creationDate:new Date()
+                    }
+                    $http.post(DHIS2URL + "api/dataStore/notExecuted/" + data.dataSet + "_" + data.orgUnit + "_" + data.period, notExecuted)
+                        .then(function (results) {
+                            deffered.resolve();
+                        },function(error){
+                            deffered.reject(error);
+                        });
+                },function(error){
+                    deffered.reject(error);
+                })
                 return deffered.promise;
             },
             undoDataSetReport: function (data) {
