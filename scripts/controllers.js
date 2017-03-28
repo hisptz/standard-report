@@ -749,11 +749,23 @@ var appControllers = angular.module('appControllers', [])
 
         }
     })
-    .controller("ReportController", function ($scope, $http, $routeParams, $sce, $q, DHIS2URL, $timeout, $compile, $location, ReportService, $window, toaster) {
+    .controller("ReportController", function ($scope, $http, $routeParams, $sce, $q, DHIS2URL, $timeout, $compile, $location, ReportService, $window, toaster,Excel) {
         $scope.dataCriteria = false;
         $scope.changeCriteria = function () {
             $scope.dataCriteria = !$scope.dataCriteria;
         }
+        $scope.downloadExcel = function(){
+            /*var blob = new Blob([document.getElementsByTagName("table")[0].innerHTML], {
+                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+            });
+            saveAs(blob, "Report.xls");*/
+            $scope.exportHref=Excel.tableToExcel();
+            $timeout(function(){
+                var link = document.createElement('a');
+                link.download = "export.xlsx";
+                link.href = $scope.exportHref;
+                link.click();},100);
+        };
         $scope.createReport = false;
         $http.get(DHIS2URL + "api/dataStore/notExecuted/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
 

@@ -38,6 +38,7 @@
         <div class="noPrint" ng-if="progressValue == 100 && notArchive" id="control" style="margin-top: 0px;">
             <input type="button" value="Change Data Criteria" ng-click="changeCriteria()"/>
             <input type="button" value="Print" style="width:140px" ng-click="printReport()">
+            <input type="button" value="Download Excel" style="width:140px" ng-click="downloadExcel()">
             <input type="button" ng-if="preview && createReport"
                    ng-disabled="isNotAuthorized() || reportStatus == 'Executed' || reportStatus == 'Not Executed'"
                    value="Create Report" style="width:120px" ng-click="createDataSetReport()" html-link=""><!--

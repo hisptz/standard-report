@@ -1517,18 +1517,18 @@ var appServices = angular.module('appServices', ['ngResource'])
             },
             createDataSetReport: function (data) {
                 var deffered = $q.defer();
-                this.getUser().then(function(user){
+                this.getUser().then(function (user) {
                     var notExecuted = {
-                        name:user.name,
-                        creationDate:new Date()
+                        name: user.name,
+                        creationDate: new Date()
                     }
                     $http.post(DHIS2URL + "api/dataStore/notExecuted/" + data.dataSet + "_" + data.orgUnit + "_" + data.period, notExecuted)
                         .then(function (results) {
                             deffered.resolve();
-                        },function(error){
+                        }, function (error) {
                             deffered.reject(error);
                         });
-                },function(error){
+                }, function (error) {
                     deffered.reject(error);
                 })
                 return deffered.promise;
@@ -1635,5 +1635,36 @@ var appServices = angular.module('appServices', ['ngResource'])
                 return $q.reject(response);
             }
         };
-    });
+    })
+    .factory('Excel', function ($window) {
+        var uri = 'data:application/vnd.ms-excel;base64,',
+            template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table border="1">{table}</table><br /><table border="1">{table}</table></body></html>',
+            base64 = function (s) {
+                return $window.btoa(unescape(encodeURIComponent(s)));
+            },
+            format = function (s, c) {
+                return s.replace(/{(\w+)}/g, function (m, p) {
+                    return c[p];
+                })
+            };
+        return {
+            tableToExcel: function () {
+                var tables = $(".excel-table");
+                var ctx = {worksheet: "Sheet 1"};
+                var str = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body>';
+                console.log("Title:",tables);
+                tables.each(function(index){
+                    ctx["table" + index] = this.innerHTML;
+                    if(this.title == "no-border"){
+                        str += '<table>{' + "table" + index+'}</table><br />';
+                    }else{
+                        str += '<table border="1">{' + "table" + index+'}</table><br />';
+                    }
+                })
+                str += '</body></html>';
+                var href = uri + base64(format(str, ctx));
+                return href;
+            }
+        };
+    })
 
