@@ -1077,7 +1077,11 @@ var appDirectives = angular.module('appDirectives', [])
                                             eventIndicator = eventIndicator.replace("#{" + dataElement.id + "}", value);
                                         }
                                     });
-                                    trElement.children[indicator.position].innerText = (eval('(' + eventIndicator + ')')).toFixed(1);
+                                    var valueCalculated = (eval('(' + eventIndicator + ')')).toFixed(1);
+                                    if(isNaN(valueCalculated)){
+                                        valueCalculated = "";
+                                    }
+                                    trElement.children[indicator.position].innerText = valueCalculated;
                                 });
                             });
                         }
@@ -1220,7 +1224,7 @@ var appDirectives = angular.module('appDirectives', [])
                 if ($scope.config.indicators) {
 
                     $scope.config.indicators.forEach(function (indicator, index) {
-                        $scope.data.dataElements.splice(indicator.position, 0, {name:"Inidicator" + index});
+                        $scope.data.dataElements.splice(indicator.position, 0, {name:"Inidicator" + index,valueType:"NUMBER"});
                         //$scope.data.dataElements.push({name: "Inidicator" + index});
                         $scope.data.events.forEach(function (event) {
                             var eventIndicator = "(" + indicator.numerator + ")/(" + indicator.denominator + ")";
