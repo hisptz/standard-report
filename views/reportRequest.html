@@ -54,6 +54,7 @@
                        ng-disabled="isNotAuthorized() || data.organisationUnit.level != 3 || consistsOfReport"
                        value="Create Report" style="width:120px" ng-click="createDataSetReport()" html-link="">
                 <input type="button" ng-disabled="isNotAuthorized()" value="Preview" ng-click="generateDataSetReport()">
+                <input type="button" class="pull-right" value="Create All Reports">
                 <!--<input type="button" ng-disabled="isNotAuthorized()" value="Preview in Debug Mode"
                        ng-click="generateDataSetReportInDebug()">-->
             </div>
@@ -84,9 +85,9 @@
                         <td ng-if="$first"
                             ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)"
                             ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1}">
-                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1)">Not Created</span>
+                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1)">Not Created <button class="pull-right">Create</button></span>
                             <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1">Created</span>
-                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1">In Progress</span>
+                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1">In Progress <button class="pull-right">Cancel Creation</button></span>
                         </td>
                     </tr>
                     <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
@@ -94,9 +95,9 @@
                             {{getPeriodName(organisationUnitPeriod)}}
                         </td>
                         <td ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1}">
-                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1)">Not Created</span>
+                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1)">Not Created <button class="pull-right">Create</button></span>
                             <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1">Created</span>
-                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1">In Progress</span>
+                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1">In Progress <button class="pull-right">Cancel Creation</button></span>
                         </td>
                     </tr>
                     <tbody ng-if="sourceDataSet.orgUnitLevel != data.organisationUnit.level"
@@ -110,9 +111,9 @@
                         <td ng-if="$first"
                             ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)"
                             ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) > -1}">
-                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1)">Not Created</span>
+                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1)">Not Created <button class="pull-right">Create</button></span>
                             <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) > -1">Created</span>
-                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) > -1">In Progress</span>
+                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) > -1">In Progress <button class="pull-right">Cancel Creation</button></span>
                         </td>
                     </tr>
                     <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
@@ -120,9 +121,9 @@
                             {{getPeriodName(organisationUnitPeriod)}}
                         </td>
                         <td ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) > -1}">
-                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1)">Not Created</span>
+                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1)">Not Created <button class="pull-right">Create</button></span>
                             <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) > -1">Created</span>
-                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) > -1">In Progress</span>
+                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) > -1">In Progress <button class="pull-right">Cancel Creation</button></span>
                         </td>
                     </tr>
                     </tbody>
@@ -324,7 +325,7 @@
         <input type="button" value="Preview" ng-click="generateDataSetReport()"><!--
         <input type="button" ng-disabled="isNotAuthorized()" value="Preview in Debug Mode"
                ng-click="generateDataSetReportInDebug()">-->
-        <input type="button" value="Change Criteria" ng-click="dataCriteria = !dataCriteria">
+        <input type="button" value="Change Criteria" ng-click="dataCriteria = !dataCriteria"><input type="button" value="Cancel Report Creation">
         <criteria class="criteria" ng-show="dataCriteria"></criteria>
     </div>
 </div>
