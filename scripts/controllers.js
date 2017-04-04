@@ -258,15 +258,15 @@ var appControllers = angular.module('appControllers', [])
                         $scope.data.dataSet = dataSet;
                     }
                 }
-                if (dataSet.name == "District Monthly  Report (DR01)") {
+                if (dataSet.id == "cSC1VV8uMh9") {
                     dataSet.sortOrder = 1;
-                } else if (dataSet.name == "District Quarterly Report (DR02)") {
+                } else if (dataSet.id == "Znn30Q67yDO") {
                     dataSet.sortOrder = 2;
-                } else if (dataSet.name == "District Annual Report (DR03)") {
+                } else if (dataSet.id == "OBnVfEenAuW") {
                     dataSet.sortOrder = 3;
-                } else if (dataSet.name == "Quarterly Integrated Report (DIR02/RIR02/NIR02)") {
+                } else if (dataSet.id == "QLoyT2aHGes") {
                     dataSet.sortOrder = 4;
-                } else if (dataSet.name == "Annual Integrated Report (DIR03/RIR03/NIR03)") {
+                } else if (dataSet.id == "HhyM40b8ma1") {
                     dataSet.sortOrder = 5;
                 }
             })
