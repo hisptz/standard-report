@@ -822,6 +822,25 @@ var appControllers = angular.module('appControllers', [])
         $scope.getFourthQuarterPeriod = function () {
             return [(parseInt($routeParams.period.substr(0, 4)) + 1) + "Q2"];
         }
+        var discendantDeffered;
+        $scope.getDescendants = function(){
+            if(discendantDeffered){
+                return discendantDeffered.promise;
+            }
+            discendantDeffered = $q.defer();
+            $http.get(DHIS2URL + "api/organisationUnits.json?fields=id,name&level=4&filter=path:like:" + $routeParams.orgUnit).then(function (organisationUnits){
+                $scope.orgUnit.discendants = organisationUnits.data.organisationUnits;
+                discendantDeffered.resolve();
+            }, function (error) {
+                console.log(error);
+                if (error.data.httpStatusCode == 404) {
+                    discendantDeffered.resolve(error.data);
+                } else {
+                    discendantDeffered.reject(error);
+                }
+            })
+            return discendantDeffered.promise;
+        }
         $scope.progressValue = 0;
         $scope.loadingStatus = "Loading";
         $scope.getReport = function () {
@@ -860,6 +879,7 @@ var appControllers = angular.module('appControllers', [])
                 }
                 $scope.loadingStatus = "Loading Data Values";
                 $scope.progressValue = 10;
+                var batch = 30;
                 var progressFactor = 60 / ((
                     $scope.dataElements.length +
                     $scope.listByWard.length +
@@ -868,14 +888,23 @@ var appControllers = angular.module('appControllers', [])
                     $scope.cumulativeToDate.length +
                     $scope.fourthQuarter.length +
                     $scope.nonAggregatedDataElements.length +
-                    $scope.nonAggregatedDataElementsDate.length) / common);
+                    $scope.nonAggregatedDataElementsDate.length) / batch);
                 var level4String = "LEVEL-4;";
                 if($scope.orgUnit.level == 3 && $scope.orgUnit.children.length == 0){
                     level4String = "";
                 }
-                for (var i = 0; i < $scope.dataElements.length; i++) {
-                    if ($scope.wardLevelIndicator.indexOf($scope.dataElements[i]) > -1) {
-                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.dataElements[i] + "&dimension=pe:" + $routeParams.period + "&dimension=ou:" + level4String  + $routeParams.orgUnit)
+                for (var i = 0; i < $scope.dataElements.length / batch; i++) {
+                    var wardLevel = [];
+                    var NotWardLevel = [];
+                    $scope.dataElements.slice(i * batch,(i * batch) + batch).forEach(function(dx){
+                        if ($scope.wardLevelIndicator.indexOf(dx) > -1) {
+                            wardLevel.push(dx)
+                        }else{
+                            NotWardLevel.push(dx)
+                        }
+                    })
+                    if (wardLevel.length > 0) {
+                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + wardLevel.join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:" + level4String  + $routeParams.orgUnit)
                             .then(function (analyticsResults) {
                                 analyticsResults.data.rows.forEach(function (row) {
                                     if ($scope.dataElementsData[row[0]]) {
@@ -887,8 +916,9 @@ var appControllers = angular.module('appControllers', [])
                                 $scope.progressValue = $scope.progressValue + progressFactor;
                             }));
 
-                    } else {
-                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.dataElements[i] + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit)
+                    }
+                    if (NotWardLevel.length > 0) {
+                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" +NotWardLevel.join(";") + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit)
                             .then(function (analyticsResults) {
                                 analyticsResults.data.rows.forEach(function (row) {
                                     var isNotSet = true;
@@ -920,6 +950,7 @@ var appControllers = angular.module('appControllers', [])
 
                 }
                 if ($scope.lastMonthIndicator.length > 0) {
+                    console.log("Last Month");
                     var period = $routeParams.period;
                     if (period.substr(5) == "3") {
                         period = period.substr(0, 4) + "09";
@@ -934,8 +965,9 @@ var appControllers = angular.module('appControllers', [])
                             }));
                     }
                 }
-                for (var i = 0; i < $scope.lastDataElements.length; i += common) {
-                    promises.push($http.get(DHIS2URL + "api/analytics.json?last&dimension=dx:" + $scope.lastDataElements.slice(i, i + common).join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:" + level4String  + $routeParams.orgUnit)
+                for (var i = 0; i < $scope.lastDataElements.length; i += batch) {
+                    console.log("There is Last DataElement");
+                    promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.lastDataElements.slice(i, i + batch).join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:" + level4String  + $routeParams.orgUnit)
                         .then(function (analyticsResults) {
                             analyticsResults.data.rows.forEach(function (row) {
                                 if ($scope.lastDataElementsData[row[0]]) {
@@ -982,9 +1014,7 @@ var appControllers = angular.module('appControllers', [])
                                             promises.push($http.get(DHIS2URL + "api/dataValueSets.json?dataSet=" + source2.dataSet + "&orgUnit=" + $routeParams.orgUnit + "," + newChildren.join(",") + "&children=true&period=" + $routeParams.period)
                                                 .then(function (dataSetResults) {
                                                     if (dataSetResults.data.dataValues) {
-                                                        $http.get(DHIS2URL + "api/organisationUnits.json?fields=id,name&level=4&filter=path:like:" + $routeParams.orgUnit).then(function(organisationUnits){
-                                                            console.log(organisationUnits.data.organisationUnits);
-                                                            $scope.orgUnit.discendants = organisationUnits.data.organisationUnits;
+                                                        $scope.getDescendants().then(function(organisationUnits){
                                                             dataSetResults.data.dataValues.forEach(function (value) {
                                                                 if ($scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo]) {
                                                                     $scope.data.dataSetForm.dataSetElements.forEach(function (dataSetElement) {
@@ -1028,9 +1058,19 @@ var appControllers = angular.module('appControllers', [])
                     if (month < 10) {
                         month = "0" + month;
                     }
-                    for (var i = 0; i < $scope.lastMonthOfQuarter.length; i++) {
-                        if ($scope.wardLevelIndicator.indexOf($scope.lastMonthOfQuarter[i]) > -1) {
-                            promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.lastMonthOfQuarter[i] + "&dimension=pe:" + str[0] + month + "&dimension=ou:" + level4String  + $routeParams.orgUnit)
+                    console.log("$scope.lastMonthOfQuarter.length:",$scope.lastMonthOfQuarter.length)
+                    for (var i = 0; i < $scope.lastMonthOfQuarter.length/batch; i++) {
+                        var wardLevel = [];
+                        var NotWardLevel = [];
+                        $scope.lastMonthOfQuarter.slice(i * batch,(i * batch) + batch).forEach(function(dx){
+                            if ($scope.wardLevelIndicator.indexOf(dx) > -1) {
+                                wardLevel.push(dx)
+                            }else{
+                                NotWardLevel.push(dx)
+                            }
+                        })
+                        if (wardLevel.length > 0) {
+                            promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + wardLevel.join(";") + "&dimension=pe:" + str[0] + month + "&dimension=ou:" + level4String  + $routeParams.orgUnit)
                                 .then(function (analyticsResults) {
                                     analyticsResults.data.rows.forEach(function (row) {
                                         //$scope.lastMonthOfQuarterData[row[0]] = row[3];
@@ -1043,8 +1083,10 @@ var appControllers = angular.module('appControllers', [])
                                     });
                                     $scope.progressValue = $scope.progressValue + progressFactor;
                                 }));
-                        } else {
-                            promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.lastMonthOfQuarter[i] + "&dimension=pe:" + str[0] + month + "&filter=ou:" + $routeParams.orgUnit)
+
+                        }
+                        if (NotWardLevel.length > 0) {
+                            promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + NotWardLevel.join(";") + "&dimension=pe:" + str[0] + month + "&filter=ou:" + $routeParams.orgUnit)
                                 .then(function (analyticsResults) {
                                     analyticsResults.data.rows.forEach(function (row) {
                                         $scope.lastMonthOfQuarterData[row[0]] = row[2];
@@ -1052,15 +1094,13 @@ var appControllers = angular.module('appControllers', [])
                                     $scope.progressValue = $scope.progressValue + progressFactor;
                                 }));
                         }
-
-
                     }
                 }
                 if ($scope.cumulativeToDate.length > 0) {
                     var periods = $scope.getCumulativeToDatePeriod();
-                    for (var i = 0; i < $scope.cumulativeToDate.length; i += common) {
+                    for (var i = 0; i < $scope.cumulativeToDate.length; i += batch) {
                         periods.forEach(function (period) {
-                            promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.cumulativeToDate.slice(i, i + common).join(";") + "&dimension=pe:" + period + "&filter=ou:" + $routeParams.orgUnit)
+                            promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.cumulativeToDate.slice(i, i + batch).join(";") + "&dimension=pe:" + period + "&filter=ou:" + $routeParams.orgUnit)
                                 .then(function (analyticsResults) {
                                     analyticsResults.data.rows.forEach(function (row) {
                                         if ($scope.cumulativeToDateData[row[0]]) {
@@ -1078,8 +1118,8 @@ var appControllers = angular.module('appControllers', [])
                     }
                 }
                 if ($scope.fourthQuarter.length > 0) {
-                    for (var i = 0; i < $scope.fourthQuarter.length; i += common) {
-                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.fourthQuarter.slice(i, i + common).join(";") + "&dimension=pe:" + (parseInt($routeParams.period.replace("July", "")) + 1) + "Q2&filter=ou:" + $routeParams.orgUnit)
+                    for (var i = 0; i < $scope.fourthQuarter.length; i += batch) {
+                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.fourthQuarter.slice(i, i + batch).join(";") + "&dimension=pe:" + (parseInt($routeParams.period.replace("July", "")) + 1) + "Q2&filter=ou:" + $routeParams.orgUnit)
                             .then(function (analyticsResults) {
                                 analyticsResults.data.rows.forEach(function (row) {
                                     $scope.fourthQuarterData[row[0]] = row[2];
@@ -1088,8 +1128,8 @@ var appControllers = angular.module('appControllers', [])
                         $scope.progressValue = $scope.progressValue + progressFactor;
                     }
                 }
-                for (var i = 0; i < $scope.nonAggregatedDataElements.length; i += common) {
-                    promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.nonAggregatedDataElements.slice(i, i + common).join(";") + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit + ";" + children.join(";"))
+                for (var i = 0; i < $scope.nonAggregatedDataElements.length; i += batch) {
+                    promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.nonAggregatedDataElements.slice(i, i + batch).join(";") + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit + ";" + children.join(";"))
                         .then(function (analyticsResults) {
                             analyticsResults.data.rows.forEach(function (row) {
                                 $scope.dataElementsData[row[0]] = row[2];
@@ -1097,8 +1137,8 @@ var appControllers = angular.module('appControllers', [])
                             $scope.progressValue = $scope.progressValue + progressFactor;
                         }));
                 }
-                for (var i = 0; i < $scope.nonAggregatedDataElementsDate.length; i += common) {
-                    promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.nonAggregatedDataElementsDate.slice(i, i + common).join(";") + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit + ";" + children.join(";"))
+                for (var i = 0; i < $scope.nonAggregatedDataElementsDate.length; i += batch) {
+                    promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.nonAggregatedDataElementsDate.slice(i, i + batch).join(";") + "&dimension=pe:" + $routeParams.period + "&filter=ou:" + $routeParams.orgUnit + ";" + children.join(";"))
                         .then(function (analyticsResults) {
                             analyticsResults.data.rows.forEach(function (row) {
                                 $scope.dataElementsData[row[0]] = row[2];
@@ -1191,8 +1231,25 @@ var appControllers = angular.module('appControllers', [])
             return deffered.promise;
         }
         var periodDate = ReportService.getPeriodDate($routeParams.period);
+        var loadedAutogrowing = [];
+        $scope.fetchWithCache = function(url){
+            var promise;
+            loadedAutogrowing.forEach(function(l){
+                if(l.url == url){
+                    promise = l.promise;
+                }
+            })
+            if(promise){
+                return promise;
+            }else{
+                var obj = {url:url,promise:$http.get(url)};
+                loadedAutogrowing.push(obj) ;
+                return obj.promise;
+            }
+        }
         $scope.fetchEventAnalytics = function (programId, length, period, other) {
-            return $http.get(DHIS2URL + "api/analytics/events/query/" + programId + "?dimension=pe:" + period + "&dimension=ou:" + $routeParams.orgUnit + "&dimension=" + $scope.autogrowingPrograms[programId].dataElements.join("&dimension="))
+            var url = DHIS2URL + "api/analytics/events/query/" + programId + "?dimension=pe:" + period + "&dimension=ou:" + $routeParams.orgUnit + "&dimension=" + $scope.autogrowingPrograms[programId].dataElements.join("&dimension=");
+            return $http.get(url)
                 .then(function (analyticsResults) {
                     analyticsResults.data.rows.forEach(function (row) {
                         var object = {};
