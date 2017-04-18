@@ -335,6 +335,9 @@ var appControllers = angular.module('appControllers', [])
             window.location.reload();
         }
 
+        $scope.downloadExcel = function(){
+            ReportService.downloadExcel($scope.dataSet.name,$scope.data.organisationUnit.name,$routeParams.period);
+        };
         $scope.user = {};
         $scope.data = {};
         $scope.load = function (url) {
