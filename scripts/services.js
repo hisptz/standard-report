@@ -5,7 +5,7 @@
 /* Services */
 
 var appServices = angular.module('appServices', ['ngResource'])
-    .factory("ReportService", function ($http, DHIS2URL, $location, $q) {
+    .factory("ReportService", function ($http, DHIS2URL, $location, $q,$timeout,Excel) {
         var userDeffered = $q.defer();
         var user = undefined;
         $http.get(DHIS2URL + "api/me.json?fields=:all,userCredentials[:all,userRoles[:all]]").then(function (results) {
@@ -1608,6 +1608,23 @@ var appServices = angular.module('appServices', ['ngResource'])
                     userDeffered.resolve(user);
                 }
                 return userDeffered.promise;
+            },
+            downloadExcel:function(dataSetName,organisationUnitName,period){
+                var date = new Date();
+                var dateStr = date.getDate();
+                if(dateStr < 10){
+                    dateStr = "0" + dateStr;
+                }
+                var monthStr = date.getDate() + 1;
+                if(monthStr < 10){
+                    monthStr = "0" + monthStr;
+                }
+                var exportHref=Excel.tableToExcel();
+                $timeout(function(){
+                    var link = document.createElement('a');
+                    link.download = dataSetName + " " + organisationUnitName + " " + period + " " + dateStr + "-" + monthStr + "-" + date.getFullYear() +".xlsx";
+                    link.href = exportHref;
+                    link.click();},100);
             }
         }
 
