@@ -879,8 +879,8 @@ var appDirectives = angular.module('appDirectives', [])
                         });
                         function dynamicSort(property) {
                             return function (obj1, obj2) {
-                                return obj1.children[property].innerHTML > obj2.children[property].innerHTML ? 1
-                                    : obj1.children[property].innerHTML < obj2.children[property].innerHTML ? -1 : 0;
+                                return obj1.children[property].innerHTML.trim().toLowerCase() > obj2.children[property].innerHTML.trim().toLowerCase() ? 1
+                                    : obj1.children[property].innerHTML.trim().toLowerCase() < obj2.children[property].innerHTML.trim().toLowerCase() ? -1 : 0;
                             }
                         }
 
@@ -911,7 +911,7 @@ var appDirectives = angular.module('appDirectives', [])
                                 {
                                     elem.find("td:nth-child(" + (dataElementIndex + 1) + ")").each(function (index, el) {
                                         if (row == index) {
-                                            adjacentString += $(el).html();
+                                            adjacentString += $(el).html().trim().toLowerCase();
                                         }
                                     })
                                 }
@@ -925,7 +925,7 @@ var appDirectives = angular.module('appDirectives', [])
                             if (scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id) > -1)
                             {
                                 elem.find("td:nth-child(" + i + ")").each(function (index, el) {
-                                    if ((previous == $(el).text() && $.inArray(index, firstColumnBrakes) === -1)) {
+                                    if ((previous == $(el).text().trim().toLowerCase() && $.inArray(index, firstColumnBrakes) === -1)) {
                                         $(el).addClass('hidden');
                                         cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
                                     } else {
@@ -933,7 +933,7 @@ var appDirectives = angular.module('appDirectives', [])
                                             firstColumnBrakes.push(index);
                                         }
                                         rowspan = 1;
-                                        previous = $(el).text();
+                                        previous = $(el).text().trim().toLowerCase();
                                         cellToExtend = $(el);
                                     }
                                 })
@@ -996,7 +996,7 @@ var appDirectives = angular.module('appDirectives', [])
                                     } else {
                                         rowspan = 1;
                                         //previous = $(el).text();
-                                        previous = adjacentToGroup(index, i);
+                                        previous = adjacentToGroup(index, i).trim().toLowerCase();
                                         cellToExtend = $(el);
                                     }
                                 })
