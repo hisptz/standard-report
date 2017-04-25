@@ -822,7 +822,7 @@ var appControllers = angular.module('appControllers', [])
                 return discendantDeffered.promise;
             }
             discendantDeffered = $q.defer();
-            $http.get(DHIS2URL + "api/organisationUnits.json?fields=id,name&level=4&filter=path:like:" + $routeParams.orgUnit).then(function (organisationUnits){
+            $http.get(DHIS2URL + "api/organisationUnits.json?paging=false&fields=id,name&level=4&filter=path:like:" + $routeParams.orgUnit).then(function (organisationUnits){
                 $scope.orgUnit.discendants = organisationUnits.data.organisationUnits;
                 discendantDeffered.resolve();
             }, function (error) {
