@@ -1564,20 +1564,20 @@ var appControllers = angular.module('appControllers', [])
         $scope.getPeriodName = function () {
             if ($scope.period.indexOf("July") > -1) {
                 if ($scope.dataSet == 'OBnVfEenAuW') {
-                    return "ANNUAL REPORT (DR03) ";
+                    return "ANNUAL REPORT ";//(DR03) ";
                 }
                 if ($scope.dataSet == 'HhyM40b8ma1') {
                     return "ANNUAL INTEGRATED REPORT ";
                 }
             } else if ($scope.period.indexOf("Q") > -1) {
                 if ($scope.dataSet == 'Znn30Q67yDO') {
-                    return "QUARTERLY REPORT (DR02) ";
+                    return "QUARTERLY REPORT ";//(DR02) ";
                 }
                 if ($scope.dataSet == 'QLoyT2aHGes') {
                     return "QUARTERLY INTEGRATED REPORT ";
                 }
             } else {
-                return "MONTHLY REPORT (DR01) ";
+                return "MONTHLY REPORT ";//(DR01) ";
 
             }
         }
