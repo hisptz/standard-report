@@ -40,7 +40,7 @@
             <input type="button" value="Print" style="width:140px" ng-click="printReport()">
             <input ng-if="preview =='excel-download'" type="button" value="Download Excel" style="width:140px" ng-click="downloadExcel()">
             <input type="button" ng-if="preview && createReport"
-                   ng-disabled="isNotAuthorized() || reportStatus == 'Executed' || reportStatus == 'Not Executed'"
+                   ng-disabled="isNotAuthorized() || orgUnit.level != 3 || reportStatus == 'Executed' || reportStatus == 'Not Executed'"
                    value="Create Report" style="width:120px" ng-click="createDataSetReport()" html-link=""><!--
             <input ng-if="state == 'preview'" type="button" value="Debug On" style="width:140px" ng-click="showDebug()">
             <input ng-if="state == 'debug'" type="button" value="Debug Off" style="width:140px"
