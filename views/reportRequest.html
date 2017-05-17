@@ -84,7 +84,9 @@
                         </td>
                         <td ng-if="$first"
                             ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)"
-                            ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1}">
+                            ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1) &&(dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1),
+                            green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1,
+                            yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1}">
                             <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1)">Not Created <button class="pull-right">Create</button></span>
                             <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1">Created</span>
                             <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1">In Progress <button class="pull-right">Cancel Creation</button></span>
