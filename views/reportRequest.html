@@ -54,7 +54,7 @@
                        ng-disabled="isNotAuthorized() || data.organisationUnit.level != 3 || consistsOfReport"
                        value="Create Report" style="width:120px" ng-click="createDataSetReport()" html-link="">
                 <input type="button" ng-disabled="isNotAuthorized()" value="Preview" ng-click="generateDataSetReport()">
-                <input type="button" ng-if="isNotAuthorized()" class="pull-right" value="Create All Reports">
+                <input type="button" ng-If="isSuperUser()" ng-click="createAllReports()" class="pull-right" value="Create All Reports">
                 <!--<input type="button" ng-disabled="isNotAuthorized()" value="Preview in Debug Mode"
                        ng-click="generateDataSetReportInDebug()">-->
             </div>
@@ -87,9 +87,22 @@
                             ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1) &&(dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1),
                             green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1,
                             yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1}">
-                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1)">Not Created <button class="pull-right">Create</button></span>
-                            <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1">Created</span>
-                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1">In Progress <button class="pull-right">Cancel Creation</button></span>
+                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+ organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1)">Not Created
+                                <button ng-If="isSuperUser()" ng-click="createDataSetReportParams(data.organisationUnit.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
+                                        class="pull-right"
+                                        ng-disabled="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'"
+                                ><span ng-if="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] != 'loading'">Create</span>
+                                    <span ng-if="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'">Loading...</span>
+                                </button></span>
+                            <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+ organisationUnitPeriod) > -1">Created</span>
+                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+ organisationUnitPeriod) > -1">In Progress
+                                <button ng-If="isSuperUser()" ng-click="cancelDataSetReportParams(data.organisationUnit.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
+                                        class="pull-right"
+                                        ng-disabled="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'"
+                                ><span ng-if="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] != 'loading'">Cancel Creation</span>
+                                    <span ng-if="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'">Loading...</span>
+                                </button>
+                            </span>
                         </td>
                     </tr>
                     <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
@@ -97,9 +110,22 @@
                             {{getPeriodName(organisationUnitPeriod)}}
                         </td>
                         <td ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1}">
-                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1)">Not Created <button class="pull-right">Create</button></span>
-                            <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1">Created</span>
-                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1">In Progress <button class="pull-right">Cancel Creation</button></span>
+                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+ organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1)">Not Created
+                                <button ng-If="isSuperUser()" ng-click="createDataSetReportParams(data.organisationUnit.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
+                                        class="pull-right"
+                                        ng-disabled="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'"
+                                ><span ng-if="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] != 'loading'">Create</span>
+                                    <span ng-if="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'">Loading...</span>
+                                </button></span>
+                            <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+ organisationUnitPeriod) > -1">Created</span>
+                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+ organisationUnitPeriod) > -1">In Progress
+                                <button ng-If="isSuperUser()" ng-click="cancelDataSetReportParams(data.organisationUnit.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
+                                        class="pull-right"
+                                        ng-disabled="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'"
+                                ><span ng-if="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] != 'loading'">Cancel Creation</span>
+                                    <span ng-if="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'">Loading...</span>
+                                </button>
+                            </span>
                         </td>
                     </tr>
                     <tbody ng-if="sourceDataSet.orgUnitLevel != data.organisationUnit.level"
@@ -114,7 +140,7 @@
                             ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)"
                             ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) > -1}">
                             <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1)">Not Created
-                                <button ng-if="false" ng-click="createDataSetReportParams(child.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
+                                <button ng-If="isSuperUser()" ng-click="createDataSetReportParams(child.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
                                         class="pull-right"
                                         ng-disabled="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'"
                                 ><span ng-if="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] != 'loading'">Create</span>
@@ -122,7 +148,7 @@
                                 </button></span>
                             <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) > -1">Created</span>
                             <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) > -1">In Progress
-                                <button ng-if="false" ng-click="cancelDataSetReportParams(child.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
+                                <button ng-If="isSuperUser()" ng-click="cancelDataSetReportParams(child.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
                                         class="pull-right"
                                         ng-disabled="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'"
                                 ><span ng-if="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] != 'loading'">Cancel Creation</span>
@@ -137,12 +163,21 @@
                         </td>
                         <td ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) > -1}">
                             <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1)">Not Created
-                                <button ng-if="false" ng-click="createDataSetReportParams(child.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
+                                <button ng-If="isSuperUser()" ng-click="createDataSetReportParams(child.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
                                         class="pull-right"
                                         ng-disabled="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'"
-                                >Create</button></span>
+                                ><span ng-if="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] != 'loading'">Create</span>
+                                    <span ng-if="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'">Loading...</span>
+                                </button></span>
                             <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) > -1">Created</span>
-                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) > -1">In Progress <button class="pull-right">Cancel Creation</button></span>
+                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) > -1">In Progress
+                                <button ng-If="isSuperUser()" ng-click="cancelDataSetReportParams(child.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
+                                        class="pull-right"
+                                        ng-disabled="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'"
+                                ><span ng-if="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] != 'loading'">Cancel Creation</span>
+                                    <span ng-if="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'">Loading...</span>
+                                </button>
+                            </span>
                         </td>
                     </tr>
                     </tbody>

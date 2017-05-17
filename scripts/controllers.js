@@ -330,7 +330,7 @@ var appControllers = angular.module('appControllers', [])
             })
         });
     })
-    .controller("ReportRequestController", function ($scope, $routeParams, $http, DHIS2URL, ReportService, $location, $sce, toaster, $route) {
+    .controller("ReportRequestController", function ($scope, $routeParams, $http, DHIS2URL, ReportService, $location, $sce, toaster, $route,$q) {
         $scope.reloadPage = function () {
             window.location.reload();
         }
@@ -376,7 +376,39 @@ var appControllers = angular.module('appControllers', [])
             });
         };
         $scope.status = {};
+        $scope.createAllReports = function(){
+            console.log("Sourec DataSet:",$scope.data);
+            var requests = [];
+            $scope.sourceDataSets.forEach(function(sourceDataSet){
+                if(sourceDataSet.isReport){
+                    $scope.getOrganisationUnitPeriods(sourceDataSet).forEach(function(organisationUnitPeriod){
+                        if(($scope.dataStore.executed.indexOf(sourceDataSet.id +'_'+ $scope.data.organisationUnit.id +'_'+ organisationUnitPeriod) == -1) &&
+                            ($scope.dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ $scope.data.organisationUnit.id +'_'+organisationUnitPeriod) == -1))
+                        requests.push({orgUnit:$scope.data.organisationUnit.id,source:sourceDataSet.id,period:organisationUnitPeriod})
+                    })
+                    if(sourceDataSet.orgUnitLevel != $scope.data.organisationUnit.level){
+                        $scope.data.organisationUnit.children.forEach(function(child){
+                            $scope.getOrganisationUnitPeriods(sourceDataSet).forEach(function(organisationUnitPeriod){
+                                if(($scope.dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) == -1) &&
+                                    ($scope.dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1))
+                                requests.push({orgUnit:child.id,source:sourceDataSet.id,period:organisationUnitPeriod})
+                            })
+                        })
+                    }
+                }
+            })
+            var promises = []
+            requests.forEach(function(request){
+                promises.push($scope.createDataSetReportParams(request.orgUnit,request.period,request.source,'notExecuted'))
+            })
+            $q.all(promises).then(function (result) {
+                console.log("Here");
+            }, function (result) {
+                console.log("Error");
+            })
+        }
         $scope.createDataSetReportParams = function (orgUnit,period,dataSet,st) {
+            var deffered = $q.defer();
             $scope.status[orgUnit + "_" + period + "_" + dataSet] = "loading";
             ReportService.createDataSetReport({
                 orgUnit: orgUnit,
@@ -385,7 +417,11 @@ var appControllers = angular.module('appControllers', [])
             }).then(function () {
                 $scope.status[orgUnit + "_" + period + "_" + dataSet] = undefined;
                 $scope.dataStore[st].push(dataSet +'_'+ orgUnit +'_'+ period);
+                deffered.resolve();
+            },function(error){
+                deffered.reject(error);
             });
+            return deffered.promise;
         };
         $scope.cancelDataSetReportParams = function (orgUnit,period,dataSet,st) {
             $scope.status[orgUnit + "_" + period + "_" + dataSet] = "loading";
@@ -588,9 +624,16 @@ var appControllers = angular.module('appControllers', [])
                                                                         }
                                                                     });
                                                                 });
+                                                                if($scope.isSuperUser()){
+                                                                    returnValue = false;
+                                                                }
+                                                                return returnValue;
+                                                            }
+                                                            $scope.isSuperUser = function () {
+                                                                var returnValue = false;
                                                                 $scope.user.userCredentials.userRoles.forEach(function (userRole) {
                                                                     if (userRole.authorities.indexOf("ALL") > -1 || userRole.name == "Superuser") {
-                                                                        returnValue = false;
+                                                                        returnValue = true;
                                                                     }
                                                                 })
                                                                 return returnValue;
