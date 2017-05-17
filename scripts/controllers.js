@@ -374,6 +374,29 @@ var appControllers = angular.module('appControllers', [])
                 $scope.reportStatus = "Not Executed";
             });
         };
+        $scope.status = {};
+        $scope.createDataSetReportParams = function (orgUnit,period,dataSet,st) {
+            $scope.status[orgUnit + "_" + period + "_" + dataSet] = "loading";
+            ReportService.createDataSetReport({
+                orgUnit: orgUnit,
+                period: period,
+                dataSet: dataSet
+            }).then(function () {
+                $scope.status[orgUnit + "_" + period + "_" + dataSet] = undefined;
+                $scope.dataStore[st].push(dataSet +'_'+ orgUnit +'_'+ period);
+            });
+        };
+        $scope.cancelDataSetReportParams = function (orgUnit,period,dataSet,st) {
+            $scope.status[orgUnit + "_" + period + "_" + dataSet] = "loading";
+            ReportService.cancelCreateDataSetReport({
+                orgUnit: orgUnit,
+                period: period,
+                dataSet: dataSet
+            }).then(function () {
+                $scope.status[orgUnit + "_" + period + "_" + dataSet] = undefined;
+                $scope.dataStore[st].splice($scope.dataStore[st].indexOf(dataSet +'_'+ orgUnit +'_'+ period), 1);
+            });
+        };
         $scope.undoDataSetReport = function () {
             $scope.loadFile = undefined;
             ReportService.undoDataSetReport({

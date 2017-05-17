@@ -1603,6 +1603,20 @@ var appServices = angular.module('appServices', ['ngResource'])
                 })
                 return deffered.promise;
             },
+            cancelCreateDataSetReport: function (data) {
+                var deffered = $q.defer();
+                $http.delete(DHIS2URL + "api/dataStore/notExecuted/" + data.dataSet + "_" + data.orgUnit + "_" + data.period).then(function () {
+                    deffered.resolve();
+                }, function (error) {
+                    console.log(error);
+                    if (error.data.httpStatusCode == 404) {
+                        deffered.resolve(error.data);
+                    } else {
+                        deffered.reject(error);
+                    }
+                })
+                return deffered.promise;
+            },
             getUser: function () {
                 if (user) {
                     userDeffered.resolve(user);
