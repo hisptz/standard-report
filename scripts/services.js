@@ -1629,7 +1629,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                 if(dateStr < 10){
                     dateStr = "0" + dateStr;
                 }
-                var monthStr = date.getDate() + 1;
+                var monthStr = date.getMonth() + 1;
                 if(monthStr < 10){
                     monthStr = "0" + monthStr;
                 }
