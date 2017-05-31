@@ -348,6 +348,16 @@ var appControllers = angular.module('appControllers', [])
             sendEvent("Report Download", $scope.dataSet.name, $location.$$absUrl.replace($location.$$protocol + "://", "").replace($location.$$host, "").replace(":" + $location.$$port, "").replace("#" + $location.$$path, ""), $routeParams.orgUnit, $routeParams.period, "");
         };
 
+        $scope.hasReports = function(){
+            var hasReport = false;
+            $scope.sourceDataSets.forEach(function(sourceDataSet){
+                if(sourceDataSet.isReport){
+                    hasReport = true;
+                }
+            })
+            return hasReport;
+        }
+
         $scope.generateDataSetReport = function () {
             $location.path("/dataSetReport/report/dataSet/" + $routeParams.dataSet + "/orgUnit/" + $routeParams.orgUnit + "/period/" + $routeParams.period + "/preview");
 
