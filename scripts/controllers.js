@@ -743,14 +743,14 @@ var appControllers = angular.module('appControllers', [])
                         }
                         parentPeriods.push($routeParams.period.substr(0,4) + "Q" + Math.ceil($routeParams.period.substr(4)/3));
                     }
-                    $http.get(DHIS2URL + 'api/dataSets.json?fields=id,name,periodType,attributeValues[value,attribute[name]]&filter=attributeValues.value:like:' + $routeParams.dataSet +'&filter=id:ne:' + $routeParams.dataSet).then(function (dataSetResult) {
+                    $http.get(DHIS2URL + 'api/dataSets.json?fields=id,name&filter=attributeValues.value:like:' + $routeParams.dataSet +'&filter=id:ne:' + $routeParams.dataSet).then(function (dataSetResult) {
                         console.log("Auch:",dataSetResult.data);
                         dataSetResult.data.dataSets.forEach(function(dataSet){
                             $http.get(DHIS2URL + "api/dataStore/approve").then(function (approvalResult) {
                                 approvalResult.data.forEach(function(approveUrl){
                                     organisationUnitChecks.forEach(function(orgUnitc){
                                         parentPeriods.forEach(function(p){
-                                            if(approveUrl == dataSet.id + "_" + orgUnitc.id +"_" + p){
+                                            if(approveUrl == dataSet.id + "_" + orgUnitc.id +"_" + p && dataSet.name.indexOf("Integrated") > -1){
                                                 $scope.parentApproved = true;
                                             }
                                         })
