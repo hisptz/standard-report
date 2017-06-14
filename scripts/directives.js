@@ -1143,6 +1143,9 @@ var appDirectives = angular.module('appDirectives', [])
                         }
                     });
                 }
+                if($scope.config.programId == "M68FQiWRSOU"){
+                    console.log($scope.$parent.orgUnit);
+                }
                 $scope.config.dataElements.forEach(function (dataElementId) {
                     if ($scope.config.dataElementsDetails) {
                         $scope.config.dataElementsDetails.forEach(function (dataElement, index) {
@@ -1157,7 +1160,11 @@ var appDirectives = angular.module('appDirectives', [])
                                         }
                                     });
                                     $scope.config.data.forEach(function (eventData) {
-                                        eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] + ")");
+                                        if($scope.$parent.orgUnit.level != 3){
+                                            eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + $scope.$parent.orgUnit.discendants.length + ")");
+                                        }else{
+                                            eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] + ")");
+                                        }
                                     })
                                 }
                             }
