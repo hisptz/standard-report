@@ -1143,9 +1143,6 @@ var appDirectives = angular.module('appDirectives', [])
                         }
                     });
                 }
-                if($scope.config.programId == "M68FQiWRSOU"){
-                    console.log($scope.$parent.orgUnit);
-                }
                 $scope.config.dataElements.forEach(function (dataElementId) {
                     if ($scope.config.dataElementsDetails) {
                         $scope.config.dataElementsDetails.forEach(function (dataElement, index) {

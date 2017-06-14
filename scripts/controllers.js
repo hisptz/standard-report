@@ -550,6 +550,8 @@ var appControllers = angular.module('appControllers', [])
             return returnValue;
         }
         //$scope.file = undefinde;
+        $scope.parentApproved = false;
+
         $scope.watchParameters = function () {
             $scope.loadingArchive = true;
             $scope.data.archive = undefined;
@@ -563,7 +565,7 @@ var appControllers = angular.module('appControllers', [])
                     if (error.data.httpStatusCode == 404) {
                         //Check if the report is in the executed namespace
                         $http.get(DHIS2URL + "api/dataStore/executed/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
-
+                            console.log("Data Set:",$routeParams.dataSet);
                             $scope.reportStatus = "Executed";
                             $http.get('../archive/' + $routeParams.dataSet + '_' + $routeParams.orgUnit + '_' + $routeParams.period + '.html', {headers: {'Cache-Control': 'no-cache'}}).then(function (result) {
                                 $scope.file = $sce.trustAsHtml(result.data);
@@ -717,9 +719,55 @@ var appControllers = angular.module('appControllers', [])
         }
         $http.get(DHIS2URL + "api/me.json?fields=:all,organisationUnits[id,level],userCredentials[userRoles[:all]]").then(function (results) {
             $scope.user = results.data;
-            $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,level,parent,children[id,name]")
+            $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,ancestors,level,parent,children[id,name]")
                 .then(function (results) {
                     $scope.data.organisationUnit = results.data;
+                    var organisationUnitChecks = results.data.ancestors;
+                    organisationUnitChecks.push({id:$routeParams.orgUnit});
+                    var parentPeriods = [];
+                    if($routeParams.period.indexOf("July") > -1){
+                        parentPeriods.push($routeParams.period);
+                    }else if($routeParams.period.indexOf("Q") > -1){
+                        parentPeriods.push($routeParams.period);
+                        if($routeParams.period.substr(5) == "1" || $routeParams.period.substr(5) == "2"){
+                            parentPeriods.push((parseInt($routeParams.period.substr(0,4)) - 1) + "July");
+                        }else{
+                            parentPeriods.push($routeParams.period.substr(0,4) + "July");
+                        }
+                    }else{
+                        parentPeriods.push($routeParams.period);
+                        if(parseInt($routeParams.period.substr(4)) >= 1 & parseInt($routeParams.period.substr(4)) <= 6){
+                            parentPeriods.push((parseInt($routeParams.period.substr(0,4)) - 1) + "July");
+                        }else{
+                            parentPeriods.push($routeParams.period.substr(0,4) + "July");
+                        }
+                        parentPeriods.push($routeParams.period.substr(0,4) + "Q" + Math.ceil($routeParams.period.substr(4)/3));
+                    }
+                    $http.get(DHIS2URL + 'api/dataSets.json?fields=id,name,periodType,attributeValues[value,attribute[name]]&filter=attributeValues.value:like:' + $routeParams.dataSet +'&filter=id:ne:' + $routeParams.dataSet).then(function (dataSetResult) {
+                        console.log("Auch:",dataSetResult.data);
+                        dataSetResult.data.dataSets.forEach(function(dataSet){
+                            $http.get(DHIS2URL + "api/dataStore/approve").then(function (approvalResult) {
+                                approvalResult.data.forEach(function(approveUrl){
+                                    organisationUnitChecks.forEach(function(orgUnitc){
+                                        parentPeriods.forEach(function(p){
+                                            if(approveUrl == dataSet.id + "_" + orgUnitc.id +"_" + p){
+                                                $scope.parentApproved = true;
+                                            }
+                                        })
+                                    })
+                                })
+                                /*result.data.forEach(function(dataSet){
+
+                                 })*/
+
+                            }, function (error) {
+
+                            })
+                        })
+
+                    }, function (error) {
+
+                    })
                     ReportService.sortOrganisationUnits($scope.data.organisationUnit);
                     $http.get(DHIS2URL + "api/dataStore/executed").then(function (results) {
                         $scope.dataStore.executed = results.data;
