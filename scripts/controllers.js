@@ -444,6 +444,15 @@ var appControllers = angular.module('appControllers', [])
                 $scope.dataStore[st].splice($scope.dataStore[st].indexOf(dataSet +'_'+ orgUnit +'_'+ period), 1);
             });
         };
+        $scope.cancelReport = function () {
+            ReportService.cancelCreateDataSetReport({
+                orgUnit: $routeParams.orgUnit,
+                period: $routeParams.period,
+                dataSet: $routeParams.dataSet
+            }).then(function () {
+                $route.reload();
+            });
+        };
         $scope.undoDataSetReport = function () {
             $scope.loadFile = undefined;
             ReportService.undoDataSetReport({
@@ -565,7 +574,6 @@ var appControllers = angular.module('appControllers', [])
                     if (error.data.httpStatusCode == 404) {
                         //Check if the report is in the executed namespace
                         $http.get(DHIS2URL + "api/dataStore/executed/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
-                            console.log("Data Set:",$routeParams.dataSet);
                             $scope.reportStatus = "Executed";
                             $http.get('../archive/' + $routeParams.dataSet + '_' + $routeParams.orgUnit + '_' + $routeParams.period + '.html', {headers: {'Cache-Control': 'no-cache'}}).then(function (result) {
                                 $scope.file = $sce.trustAsHtml(result.data);
@@ -744,13 +752,13 @@ var appControllers = angular.module('appControllers', [])
                         parentPeriods.push($routeParams.period.substr(0,4) + "Q" + Math.ceil($routeParams.period.substr(4)/3));
                     }
                     $http.get(DHIS2URL + 'api/dataSets.json?fields=id,name&filter=attributeValues.value:like:' + $routeParams.dataSet +'&filter=id:ne:' + $routeParams.dataSet).then(function (dataSetResult) {
-                        console.log("Auch:",dataSetResult.data);
                         dataSetResult.data.dataSets.forEach(function(dataSet){
                             $http.get(DHIS2URL + "api/dataStore/approve").then(function (approvalResult) {
                                 approvalResult.data.forEach(function(approveUrl){
                                     organisationUnitChecks.forEach(function(orgUnitc){
                                         parentPeriods.forEach(function(p){
-                                            if(approveUrl == dataSet.id + "_" + orgUnitc.id +"_" + p && dataSet.name.indexOf("Integrated") > -1){
+                                            //if(approveUrl == dataSet.id + "_" + orgUnitc.id +"_" + p && dataSet.name.indexOf("Integrated") > -1){
+                                            if((approveUrl == dataSet.id + "_" + orgUnitc.id +"_" + p)){
                                                 $scope.parentApproved = true;
                                             }
                                         })
@@ -786,60 +794,13 @@ var appControllers = angular.module('appControllers', [])
                     $scope.loadTracker = undefined;
                 });
         });
-        $scope.enableCommentEditBool = false;
-        $scope.enableCommentEdit = function () {
-            $scope.enableCommentEditBool = true;
-        }
-        $scope.savingComment = "commentLoad";
-        $http.get(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
-            $scope.savingComment = "";
-            $scope.commentData = results.data;
-        }, function (error) {
-            $scope.commentData = {};
-            $scope.savingComment = "";
-            //toaster.pop('info', "Information", "No comments where found.");
-        });
+
         $scope.printReport = function () {
             browserPrint2();
             //kendoPrint();
 
         }
-        $scope.saveComment = function () {
-            $scope.savingComment = "savingLoad";
-            if ($scope.commentData.lastCommenter) {
-                $scope.commentData.lastUpdated = new Date();
-                $scope.commentData.lastCommenter = $scope.user;
-                $http.put(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period, $scope.commentData).then(function (results) {
-                    $scope.savingComment = "";
-                    $scope.enableCommentEditBool = false;
-                    toaster.pop('success', "Success", "Saved Comments Successfully.");
-                }, function (error) {
-                    $scope.savingComment = "error";
-                    toaster.pop('error', "Failure", "Failed to post the comment. Please Try again.");
-                });
-            } else {
-                $scope.commentData = {
-                    comment: $scope.commentData.comment,
-                    lastUpdated: new Date(),
-                    lastCommenter: $scope.user
-                };
-                $http.post(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period, $scope.commentData).then(function (results) {
-                    $scope.savingComment = "";
-                    $scope.enableCommentEditBool = false;
-                    toaster.pop('success', "Success", "Saved Comments Successfully.");
-                }, function (error) {
-                    $scope.savingComment = "error";
-                    toaster.pop('error', "Failure", "Failed to post the comment. Please Try again.");
-                });
-            }
 
-        }
-        $scope.showComment = function () {
-
-            $scope.closeComment = function () {
-                $('#demo').collapse('toggle');
-            }
-        }
         $scope.approveData = {}
         $http.get(DHIS2URL + "api/dataStore/approve/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
             //$scope.savingComment = "";

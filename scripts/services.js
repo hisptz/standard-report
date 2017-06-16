@@ -1617,6 +1617,22 @@ var appServices = angular.module('appServices', ['ngResource'])
                 })
                 return deffered.promise;
             },
+            organisationUnitLevels:[],
+            getOrganisationUnitLevels: function () {
+                var deffered = $q.defer();
+                if(this.organisationUnitLevels.length > 0){
+                    deffered.resolve(this.organisationUnitLevels);
+                }else{
+                    var that = this;
+                    $http.get(DHIS2URL + "api/organisationUnitLevels.json?fields=id,level,name").then(function (results) {
+                        that.organisationUnitLevels = results.data.organisationUnitLevels;
+                        deffered.resolve(that.organisationUnitLevels);
+                    }, function (error) {
+                        deffered.reject(error);
+                    })
+                }
+                return deffered.promise;
+            },
             getUser: function () {
                 if (user) {
                     userDeffered.resolve(user);

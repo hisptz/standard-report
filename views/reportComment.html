@@ -1,0 +1,27 @@
+<div>
+    <div ng-if="savingComment == ''">
+        <div ng-repeat="comment in commentData">
+            <span ng-repeat="organisationUnitLevel in organisationUnitLevels">
+                <h4 ng-if="organisationUnitLevel.level == comment.level">{{organisationUnitLevel.name}} Officers Comments</h4>
+            </span>
+            <textarea ng-disabled="!(enableCommentEditBool && canEdit(comment.level))" placeholder="Write Your Comment Here"
+                      ng-model="comment.comment"  ng-change="commentEdited(comment)" style="width: 100%;">
+
+            </textarea>
+            <div ng-if="comment.lastUpdated">
+                <br/><br/>
+                <div class="alert alert-info" role="alert">
+                    <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                    <span class="sr-only">Error:</span>
+                    Last Updated on {{comment.lastUpdated | date}} by {{comment.lastCommenter.name}}
+                </div>
+            </div>
+        </div>
+        <button type="button" style="display:initial" ng-if="!enableCommentEditBool && !approveData.user"
+                class="btn btn-success" ng-click="enableCommentEdit()">Edit
+        </button>
+        <button type="button" style="display:initial" ng-if="enableCommentEditBool"  ng-disabled="!canSave"
+                class="btn btn-success" ng-click="saveComment()">Save Changes
+        </button>
+    </div>
+</div>

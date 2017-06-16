@@ -354,23 +354,7 @@
                 }
             </style>
             <criteria class="criteria1" ng-show="dataCriteria"></criteria>
-            <div ng-if="savingComment == ''">
-                <div ng-if="commentData.lastUpdated" class="alert alert-info" role="alert">
-                    <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-                    <span class="sr-only">Error:</span>
-                    Last Updated on {{commentData.lastUpdated | date}} by {{commentData.lastCommenter.name}}
-                </div>
-                    <textarea ng-disabled="!enableCommentEditBool" placeholder="Write Your Comment Here"
-                              ng-model="commentData.comment" style="width: 100%;">
-
-                    </textarea>
-                <br/><br/>
-                <button type="button" style="display:initial" ng-if="!enableCommentEditBool && !approveData.user"
-                            class="btn btn-success" ng-click="enableCommentEdit()">Edit
-                </button>
-                <button type="button" style="display:initial" ng-if="enableCommentEditBool"
-                        class="btn btn-success" ng-click="saveComment()">Save Changes
-                </button>
+            <div ng-if="data.organisationUnit && approveData" report-comment user="user" approve-data="approveData" org-unit="data.organisationUnit">
             </div>
             <div ng-bind-html="file" id="printablereport"></div>
         </div>
@@ -382,7 +366,7 @@
         <input type="button" value="Preview" ng-click="generateDataSetReport()"><!--
         <input type="button" ng-disabled="isNotAuthorized()" value="Preview in Debug Mode"
                ng-click="generateDataSetReportInDebug()">-->
-        <input type="button" value="Change Criteria" ng-click="dataCriteria = !dataCriteria"><input type="button" value="Cancel Report Creation">
+        <input type="button" value="Change Criteria" ng-click="dataCriteria = !dataCriteria"><input type="button" ng-click="cancelReport()" value="Cancel Report Creation">
         <criteria class="criteria" ng-show="dataCriteria"></criteria>
     </div>
 </div>
@@ -402,15 +386,17 @@
                     <img src="../../../images/ajax-loader-bar.gif"> Loading Previous Comments..
                 </div>
                 <div ng-if="savingComment == ''">
-                    <div ng-if="commentData.lastUpdated" class="alert alert-info" role="alert">
-                        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-                        <span class="sr-only">Error:</span>
-                        Last Updated on {{commentData.lastUpdated | date}} by {{commentData.lastCommenter.name}}
-                    </div>
+                    <div ng-repeat="comment in commentData">
+                        <div ng-if="comment.lastUpdated" class="alert alert-info" role="alert">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            <span class="sr-only">Error:</span>
+                            Last Updated on {{comment.lastUpdated | date}} by {{comment.lastCommenter.name}}
+                        </div>
                     <textarea ng-disabled="approveData.data" placeholder="Write Your Comment Here"
-                              ng-model="commentData.comment" style="width: 100%;">
+                              ng-model="comment.comment" style="width: 100%;">
 
                     </textarea>
+                    </div>
                 </div>
 
             </div>

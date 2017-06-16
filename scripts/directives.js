@@ -421,6 +421,89 @@ var appDirectives = angular.module('appDirectives', [])
             templateUrl: 'views/listByWard.html'
         }
     })
+    .directive("reportComment", function () {
+        return {
+            scope: {
+                orgUnit: '=',
+                approveData: '=',
+                user: '=',
+            },
+            replace: true,
+            controller: function ($scope, $routeParams,DHIS2URL,$http,ReportService,toaster) {
+                console.log("Org Unit:",$scope.orgUnit);
+                $scope.enableCommentEditBool = false;
+                $scope.enableCommentEdit = function () {
+                    $scope.enableCommentEditBool = true;
+                }
+                $scope.canEdit = function(level){
+                    var ret = false;
+                    $scope.user.organisationUnits.forEach(function(organisatioUnit){
+                        if(level >= organisatioUnit.level){
+                            ret = true;
+                        }
+                    })
+                    return ret;
+                }
+                $scope.canSave = false;
+                $scope.commentEdited = function(comment){
+                    comment.lastUpdated = new Date();
+                    comment.lastCommenter = {
+                        id:$scope.user.id,
+                        name:$scope.user.name,
+                        phoneNumber:$scope.user.phoneNumber,
+                        email:$scope.user.email
+                    };
+                    console.log(comment.user);
+                    $scope.canSave = true;
+                }
+                $scope.savingComment = "commentLoad";
+                $scope.commentData = [];
+                $scope.organisationUnitLevels = [];
+                var method = "post";
+                ReportService.getOrganisationUnitLevels().then(function(levels){
+                    $scope.organisationUnitLevels = levels;
+                    $http.get(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
+                        $scope.savingComment = "";
+                        console.log(results.data);
+                        if(Array.isArray(results.data)){
+                            $scope.commentData = results.data;
+                        }else{
+                            $scope.commentData.push({level:$scope.orgUnit.level - 1});
+                            results.data.level = $scope.orgUnit.level;
+                            $scope.commentData.push(results.data);
+                        }
+                        method = "put";
+                    }, function (error) {
+                        method = "post";
+                        $scope.commentData = [];
+                        $scope.savingComment = "";
+                        $scope.commentData.push({level:$scope.orgUnit.level - 1});
+                        $scope.commentData.push({level:$scope.orgUnit.level});
+                        //toaster.pop('info', "Information", "No comments where found.");
+                    });
+                })
+                $scope.saveComment = function () {
+                    $scope.savingComment = "savingLoad";
+                    $http[method](DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period, $scope.commentData).then(function (results) {
+                        $scope.savingComment = "";
+                        $scope.enableCommentEditBool = false;
+                        toaster.pop('success', "Success", "Saved Comments Successfully.");
+                    }, function (error) {
+                        $scope.savingComment = "error";
+                        toaster.pop('error', "Failure", "Failed to post the comment. Please Try again.");
+                    });
+
+                }
+                $scope.showComment = function () {
+
+                    $scope.closeComment = function () {
+                        $('#demo').collapse('toggle');
+                    }
+                }
+            },
+            templateUrl: 'views/reportComment.html'
+        }
+    })
     .directive("debug", function () {
         return {
             scope: {
