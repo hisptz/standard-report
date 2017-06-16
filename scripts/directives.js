@@ -453,7 +453,6 @@ var appDirectives = angular.module('appDirectives', [])
                         phoneNumber:$scope.user.phoneNumber,
                         email:$scope.user.email
                     };
-                    console.log(comment.user);
                     $scope.canSave = true;
                 }
                 $scope.savingComment = "commentLoad";
@@ -464,7 +463,6 @@ var appDirectives = angular.module('appDirectives', [])
                     $scope.organisationUnitLevels = levels;
                     $http.get(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
                         $scope.savingComment = "";
-                        console.log(results.data);
                         if(Array.isArray(results.data)){
                             $scope.commentData = results.data;
                         }else{

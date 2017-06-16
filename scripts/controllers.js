@@ -386,11 +386,17 @@ var appControllers = angular.module('appControllers', [])
             });
         };
         $scope.status = {};
+        $scope.cancelAllReportCreation = function(){
+            $scope.notCompleted = undefined;
+        }
         $scope.createAllReports = function(){
-            console.log("Sourec DataSet:",$scope.data);
+            $scope.createAllReportLoading = true;
+            console.log("Source DataSet:",$scope.dataSet);
+            var foundDistrictReports = false;
             var requests = [];
             $scope.sourceDataSets.forEach(function(sourceDataSet){
-                if(sourceDataSet.isReport){
+                if(sourceDataSet.isReport && sourceDataSet.displayName.indexOf('Integrated') == -1){
+                    foundDistrictReports = true;
                     $scope.getOrganisationUnitPeriods(sourceDataSet).forEach(function(organisationUnitPeriod){
                         if(($scope.dataStore.executed.indexOf(sourceDataSet.id +'_'+ $scope.data.organisationUnit.id +'_'+ organisationUnitPeriod) == -1) &&
                             ($scope.dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ $scope.data.organisationUnit.id +'_'+organisationUnitPeriod) == -1))
@@ -407,14 +413,111 @@ var appControllers = angular.module('appControllers', [])
                     }
                 }
             })
-            var promises = []
-            requests.forEach(function(request){
-                promises.push($scope.createDataSetReportParams(request.orgUnit,request.period,request.source,'notExecuted'))
+            if(foundDistrictReports){
+                var promises = []
+                requests.forEach(function(request){
+                    promises.push($scope.createDataSetReportParams(request.orgUnit,request.period,request.source,'notExecuted'))
+                })
+                $q.all(promises).then(function (result) {
+                    toaster.pop('success', "Report Created", "District Reports creation has been scheduled successfully.");
+                    $scope.createAllReportLoading = false;
+                }, function (result) {
+                    toaster.pop('success', "Report Created", "District Reports creation has been scheduled successfully.");
+                    $scope.createAllReportLoading = false;
+                })
+            }else{
+                $scope.notCompleted = {};
+                $scope.reportCreation = [];
+                $scope.idMapper = {};
+                var dataSetIds = [];
+                $scope.dataSet.attributeValues.forEach(function(attributeValue){
+                    if(attributeValue.attribute.name == "Source"){
+                        var json = eval("(" + attributeValue.value + ")");
+                        json.forEach(function(source){
+                            if(source.level == 3){
+                                source.sources.forEach(function(s){
+                                    dataSetIds.push(s.dataSet);
+                                })
+                            }
+                        })
+                    }
+                })
+                $http.get(DHIS2URL + "api/dataSets.json?filter=id:in:[" + dataSetIds.join(",") + "]&fields=id,name,periodType,attributeValues[value,attribute[name]]").then(function (dataSetResults) {
+                    $http.get(DHIS2URL + "api/organisationUnits.json?fields=id,name&filter=level:eq:3&filter=path:like:" + $routeParams.orgUnit).then(function (orgUnitResults) {
+                        var districtIds = [];
+                        orgUnitResults.data.organisationUnits.forEach(function(organisationUnit){
+                            districtIds.push(organisationUnit.id);
+                            $scope.idMapper[organisationUnit.id] = organisationUnit;
+                        })
+                        var formDataSets = [];
+                        dataSetResults.data.dataSets.forEach(function(dataSet){
+                            var isReport = false;
+                            dataSet.attributeValues.forEach(function(attributeValue){
+                                if(attributeValue.attribute.name == "Is Report" && attributeValue.value == "true"){
+                                    isReport = true;
+                                }
+                            })
+                            if(!isReport){
+                                formDataSets.push(dataSet.id);
+                                $scope.notCompleted[dataSet.id] = {};
+                                $scope.idMapper[dataSet.id] = dataSet;
+                                districtIds.forEach(function(id){
+                                    $scope.notCompleted[dataSet.id][id] = true;
+                                })
+                            }else{
+                                districtIds.forEach(function(id){
+                                    $scope.getOrganisationUnitPeriods(dataSet).forEach(function(organisationUnitPeriod){
+                                        $scope.reportCreation.push({
+                                            orgUnit: id,
+                                            period: organisationUnitPeriod,
+                                            dataSet: dataSet.id
+                                        })
+                                    })
+                                })
+
+                            }
+                        });
+
+                        $http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + formDataSets.join("&orgUnit=") + "&orgUnit=" +districtIds.join("&orgUnit=") + "&startDate=" + periodDate.startDate + "&endDate=" + periodDate.endDate).then(function (completenessResults) {
+                            console.log("completenessResults:",completenessResults.data);
+                            if(completenessResults.data.completeDataSetRegistrations){
+                                completenessResults.data.completeDataSetRegistrations.forEach(function(completeDataSetRegistration){
+                                    if($scope.notCompleted[completeDataSetRegistration.dataSet][completeDataSetRegistration.organisationUnit]){
+                                        $scope.notCompleted[completeDataSetRegistration.dataSet][completeDataSetRegistration.organisationUnit] = undefined;
+                                        if(Object.keys($scope.notCompleted[completeDataSetRegistration.dataSet]).length == 0){
+                                            $scope.notCompleted[completeDataSetRegistration.dataSet] = undefined;
+                                        }
+                                    }
+                                })
+                            }
+                            if(Object.keys($scope.notCompleted).length == 0){
+                                $scope.createDistrictReports();
+                            }else{
+                                $scope.createAllReportLoading = false;
+                            }
+                        }, function (error) {
+                            $scope.createAllReportLoading = false;
+                        });
+                    }, function (error) {
+                        $scope.createAllReportLoading = false;
+                    });
+                }, function (error) {
+                    $scope.createAllReportLoading = false;
+                });
+            }
+        }
+        $scope.createDistrictReports = function(){
+            $scope.createAllReportLoading = true;
+            var promises = [];
+            $scope.reportCreation.forEach(function(data){
+                promises.push($scope.createDataSetReportParams(data.orgUnit,data.period,data.dataSet,'notExecuted'))
             })
             $q.all(promises).then(function (result) {
-                console.log("Here");
+                toaster.pop('success', "Report Created", "District Reports creation has been scheduled successfully.");
+                $scope.createAllReportLoading = false;
             }, function (result) {
-                console.log("Error");
+                toaster.pop('success', "Report Created", "District Reports creation has been scheduled successfully.");
+                $scope.createAllReportLoading = false;
             })
         }
         $scope.createDataSetReportParams = function (orgUnit,period,dataSet,st) {
