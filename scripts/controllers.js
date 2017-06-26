@@ -1137,27 +1137,27 @@ var appControllers = angular.module('appControllers', [])
                 }
                 //Dealing with Weighted Averages
                 if($scope.weightedAverage.length > 0){
-                    promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.weightedAverage.join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:LEVEL-4;" + $routeParams.orgUnit)
+                    promises.push($http.get(DHIS2URL + "api/analytics.json?weit&dimension=dx:" + $scope.weightedAverage.join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:LEVEL-3;" + $routeParams.orgUnit)
                         .then(function (analyticsResults) {
                             analyticsResults.data.rows.forEach(function (row) {
                                 if ($scope.weightedAverageData[row[0]]) {
-                                    //$scope.dataElementsData[row[0]] = "" + (parseFloat($scope.dataElementsData[row[0]]) + parseFloat(row[3])).toFixed(1);// + ".0";
-                                    $scope.weightedAverageData[row[0]].sum = $scope.weightedAverageData[row[0]].sum + parseFloat(row[3]);
-                                    $scope.weightedAverageData[row[0]].count++;
+                                    $scope.weightedAverageData[row[0]][row[2]] = row[3];
                                 } else {
-                                    $scope.weightedAverageData[row[0]] = {
+                                    /*$scope.weightedAverageData[row[0]] = {
                                         sum:parseFloat(row[3]),
                                         count:1,
                                         value:""
-                                    }
+                                    }*/
+                                    $scope.weightedAverageData[row[0]] = {};
+                                    $scope.weightedAverageData[row[0]][row[2]] = row[3];
                                 }
                             });
                             $scope.progressValue = $scope.progressValue + progressFactor;
                         }));
-                    promises.push($http.get(DHIS2URL + "api/organisationUnits.json?pageSize=1&filter=path:like:" + $routeParams.orgUnit + "&dimension=pe:" + $routeParams.period + "&filter=level:eq:4")
+                    /*promises.push($http.get(DHIS2URL + "api/organisationUnits.json?pageSize=1&filter=path:like:" + $routeParams.orgUnit + "&dimension=pe:" + $routeParams.period + "&filter=level:eq:4")
                         .then(function (orgUnit) {
                             $scope.weightedAverageData.total = orgUnit.data.pager.total;
-                        }));
+                        }));*/
                 }
 
                 //Dealing with Last Month Indicators
@@ -1391,9 +1391,43 @@ var appControllers = angular.module('appControllers', [])
                         }
                     }
                     //Further calculation from loaded weighted average data
-                    for (var weightedAvg in $scope.weightedAverageData) {
-                        if(weightedAvg != 'total')
-                        $scope.weightedAverageData[weightedAvg].value = ($scope.weightedAverageData[weightedAvg].sum / $scope.weightedAverageData.total).toFixed(1) ;
+                    if($scope.orgUnit.level == 3){
+                        for (var weightedAvg in $scope.weightedAverageData) {
+                            $scope.weightedAverageData[weightedAvg].value = $scope.weightedAverageData[weightedAvg][$scope.orgUnit.id] ;
+                        }
+                    }else if($scope.orgUnit.level == 2){
+                        console.log("OrgUnit:",$scope.orgUnit,$scope.weightedAverageData);
+                        for (var weightedAvg in $scope.weightedAverageData) {
+                            var sum = 0;
+                            var sumOfChildren = 0;
+                            $scope.orgUnit.children.forEach(function(child){
+                                sum += ($scope.weightedAverageData[weightedAvg][child.id] * child.children.length);
+                                sumOfChildren += child.children.length;
+                            })
+                            console.log(weightedAvg,$scope.weightedAverageData)
+                            $scope.weightedAverageData[weightedAvg].value = (sum / sumOfChildren).toFixed(1) ;
+                        }
+                    }else if($scope.orgUnit.level == 1){
+                        console.log("OrgUnit:",$scope.orgUnit);
+                        for (var weightedAvg in $scope.weightedAverageData) {
+                            $scope.orgUnit.children.forEach(function(child1){
+                                var sum = 0;
+                                var sumOfChildren = 0;
+                                child1.children.forEach(function(child){
+                                    sum += ($scope.weightedAverageData[weightedAvg][child.id] * child.children.length);
+                                    sumOfChildren += child.children.length;
+                                })
+                                $scope.weightedAverageData[weightedAvg][child1.id] = (sum / sumOfChildren) ;
+                            })
+                            var sum = 0;
+                            var sumOfChildren = 0;
+                            $scope.orgUnit.children.forEach(function(child){
+                                sum += ($scope.weightedAverageData[weightedAvg][child.id] * child.children.length);
+                                sumOfChildren += child.children.length;
+                            })
+                            console.log(weightedAvg,$scope.weightedAverageData)
+                            $scope.weightedAverageData[weightedAvg].value = (sum / sumOfChildren).toFixed(1) ;
+                        }
                     }
 
                     //Further calculation from loaded Last Indicator data
@@ -1765,7 +1799,7 @@ var appControllers = angular.module('appControllers', [])
         $http.get(DHIS2URL + "api/me.json?fields=:all,organisationUnits[id,level],userCredentials[userRoles[:all]]").then(function (results) {
             $scope.progressValue = 5;
             $scope.user = results.data;
-            $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,level,children[id,name]").then(function (results) {
+            $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,level,children[id,name,children[id,children[id]]]").then(function (results) {
                 $scope.progressValue = 10;
                 $scope.orgUnit = results.data;
                 $scope.getReport().then(function () {
