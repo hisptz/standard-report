@@ -1807,6 +1807,12 @@ var appControllers = angular.module('appControllers', [])
                         $scope.progressValue = 100;
                         $scope.loadingReport = false;
                         $window.document.title = "Report Loaded";
+                        $.each($('td'), function () {
+                            if(!isNaN($(this).text()))
+                            {
+                                $(this).css('text-align', 'right');
+                            }
+                        });
                     });
                 }, function (error) {
                     $scope.error = "Hey";
