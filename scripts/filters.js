@@ -26,6 +26,15 @@ var appFilters = angular.module('appFilters', [])
             return input;
         };
     })
+    .filter('comma', function() {
+        return function(input) {
+            if(input){
+                return input.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }else{
+                return input;
+            }
+        };
+    })
 .filter('dataEntryForm', function() {
     return function(input,formSource) {
         var output = [];

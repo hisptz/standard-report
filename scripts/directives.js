@@ -945,7 +945,7 @@ var appDirectives = angular.module('appDirectives', [])
             scope: {
                 config: '='
             },
-            /*link: function (scope, elem, attrs, controller) {
+            link: function (scope, elem, attrs, controller) {
                 if (scope.config.groupBy) {
 
                     var arr = Array.prototype.slice.call(elem[0].rows);
@@ -1171,7 +1171,7 @@ var appDirectives = angular.module('appDirectives', [])
                         })
                     });
                 }
-            },*/
+            },
             replace: true,
             controller: function ($scope, $routeParams) {
                 if($scope.config.programId == "tJU3WhwU960"){

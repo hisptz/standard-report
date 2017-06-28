@@ -1550,7 +1550,7 @@ var appControllers = angular.module('appControllers', [])
             if (content.indexOf("lastDataElementsData['") == -1 && content.indexOf("dataElementsData['") == -1 && content.indexOf("fourthQuarterData['") == -1 && content.indexOf("lastMonthOfQuarterData['") == -1 && content.indexOf("cumulativeToDateData['") == -1) {
                 console.log(type, ":Outside:", content)
             }
-            var div = "<div gid='" + processed + "'>{{" + content + "}}";
+            var div = "<div gid='" + processed + "'>{{" + content + " |comma}}";
             if ($routeParams.preview == "debug") {
                 var addition = "";
                 if (content.indexOf("dataElementsData['") > -1) {
@@ -1638,9 +1638,9 @@ var appControllers = angular.module('appControllers', [])
                         } else {
                             //newHtml = newHtml.replace(match[0], $scope.getElementReplacment("dataElementsData['" + idMacth[1] + "." + idMacth[2] + "']", "dataElement"));
                             if (match[0].indexOf("integer") > -1) {
-                                newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "." + idMacth[2] + "\"]) |removeNaN}}</div>");
+                                newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "." + idMacth[2] + "\"]) |removeNaN |comma}}</div>");
                             } else {
-                                newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "." + idMacth[2] + "\"] | removeNaN}}</div>");
+                                newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "." + idMacth[2] + "\"] | removeNaN |comma}}</div>");
                             }
                             $scope.dataElements.push(idMacth[1] + "." + idMacth[2]);
                         }
@@ -1652,7 +1652,7 @@ var appControllers = angular.module('appControllers', [])
                             $scope.lastDataElements.push(idMacth[1] + "." + idMacth[2]);
                             newHtml = newHtml.replace(match[0], $scope.getElementReplacment("lastDataElementsData['" + idMacth[1] + "." + idMacth[2] + "']", "dataElement"));
                         }else if (isAverage) {
-                            newHtml = newHtml.replace(match[0], "<div>{{weightedAverageData[\"" + idMacth[1] + "." + idMacth[2] + "\"].value}}</div>");
+                            newHtml = newHtml.replace(match[0], "<div>{{weightedAverageData[\"" + idMacth[1] + "." + idMacth[2] + "\"].value |comma}}</div>");
                             $scope.weightedAverage.push(idMacth[1] + "." + idMacth[2]);
                         } else if (match[0].indexOf("list-by-ward") > -1) {//If it is last month of quarter
 
@@ -1690,16 +1690,16 @@ var appControllers = angular.module('appControllers', [])
                         }
                         $scope.lastMonthOfQuarter.push(idMacth[1]);
                     } else if (match[0].indexOf("cumulative-to-date") > -1) {//If it is last month of quarter
-                        newHtml = newHtml.replace(match[0], "<div>{{cumulativeToDateData['" + idMacth[1] +  "'] | removeNaN}}</div>");
+                        newHtml = newHtml.replace(match[0], "<div>{{cumulativeToDateData['" + idMacth[1] +  "'] | removeNaN |comma}}</div>");
                         $scope.cumulativeToDate.push(idMacth[1]);
                     } else {
                         if (match[0].indexOf("ward-level") > -1) {
                             $scope.wardLevelIndicator.push(idMacth[1]);
                         }
                         if (match[0].indexOf("integer") > -1) {
-                            newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "\"]) | removeNaN}}</div>");
+                            newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "\"]) | removeNaN |comma}}</div>");
                         } else {
-                            newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "\"] | removeNaN}}</div>");
+                            newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "\"] | removeNaN |comma}}</div>");
                         }
                         $scope.dataElements.push(idMacth[1]);
                     }
@@ -1714,19 +1714,19 @@ var appControllers = angular.module('appControllers', [])
                         $scope.fourthQuarter.push(idMacth[1]);
                     } else {
                         if (match[0].indexOf("integer") > -1) {
-                            newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "\"])  | removeNaN}}</div>");
+                            newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "\"])  | removeNaN |comma}}</div>");
                         } else {
-                            newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "\"] | removeNaN}}</div>");
+                            newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "\"] | removeNaN |comma}}</div>");
                         }
 
                         $scope.dataElements.push(idMacth[1]);
                     }
                 } else if ((idMacth = /lastindicator="(.*?)"/.exec(match[0])) !== null) {
                     $scope.lastIndicator.push(idMacth[1]);
-                    newHtml = newHtml.replace(match[0], "{{lastIndicatorData['" + idMacth[1] + "']}}");
+                    newHtml = newHtml.replace(match[0], "{{lastIndicatorData['" + idMacth[1] + "'] |comma}}");
                 } else if ((idMacth = /lastmonthindicator="(.*?)"/.exec(match[0])) !== null) {
                     $scope.lastMonthIndicator.push(idMacth[1]);
-                    newHtml = newHtml.replace(match[0], "{{lastMonthIndicatorData['" + idMacth[1] + "']}}");
+                    newHtml = newHtml.replace(match[0], "{{lastMonthIndicatorData['" + idMacth[1] + "'] |comma}}");
                 } else {
                     console.log("Unconsidered Match:",match);
                 }
@@ -1808,7 +1808,7 @@ var appControllers = angular.module('appControllers', [])
                         $scope.loadingReport = false;
                         $window.document.title = "Report Loaded";
                         $.each($('td'), function () {
-                            if(!isNaN($(this).text()))
+                            if(!isNaN($(this).text().split(",").join("")))
                             {
                                 $(this).css('text-align', 'right');
                             }
