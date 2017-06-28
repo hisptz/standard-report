@@ -1396,7 +1396,6 @@ var appControllers = angular.module('appControllers', [])
                             $scope.weightedAverageData[weightedAvg].value = $scope.weightedAverageData[weightedAvg][$scope.orgUnit.id] ;
                         }
                     }else if($scope.orgUnit.level == 2){
-                        console.log("OrgUnit:",$scope.orgUnit,$scope.weightedAverageData);
                         for (var weightedAvg in $scope.weightedAverageData) {
                             var sum = 0;
                             var sumOfChildren = 0;
@@ -1404,7 +1403,6 @@ var appControllers = angular.module('appControllers', [])
                                 sum += ($scope.weightedAverageData[weightedAvg][child.id] * child.children.length);
                                 sumOfChildren += child.children.length;
                             })
-                            console.log(weightedAvg,$scope.weightedAverageData)
                             $scope.weightedAverageData[weightedAvg].value = (sum / sumOfChildren).toFixed(1) ;
                         }
                     }else if($scope.orgUnit.level == 1){

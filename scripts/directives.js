@@ -945,7 +945,7 @@ var appDirectives = angular.module('appDirectives', [])
             scope: {
                 config: '='
             },
-            link: function (scope, elem, attrs, controller) {
+            /*link: function (scope, elem, attrs, controller) {
                 if (scope.config.groupBy) {
 
                     var arr = Array.prototype.slice.call(elem[0].rows);
@@ -1171,9 +1171,12 @@ var appDirectives = angular.module('appDirectives', [])
                         })
                     });
                 }
-            },
+            },*/
             replace: true,
             controller: function ($scope, $routeParams) {
+                if($scope.config.programId == "tJU3WhwU960"){
+                    console.log("tJU3WhwU960:",$scope.$parent.orgUnit.level)
+                }
                 $scope.data = {
                     dataElements: [],
                     events: []
@@ -1230,20 +1233,28 @@ var appDirectives = angular.module('appDirectives', [])
                             if (dataElement.id == dataElementId) {
                                 $scope.data.dataElements.push(dataElement);
                                 if (dataElement.aggregationType == "AVERAGE") {
-                                    $scope.config.data.forEach(function (eventData) {
-                                        if (averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]]) {
-                                            averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]]++;
-                                        } else {
-                                            averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] = 1;
-                                        }
-                                    });
-                                    $scope.config.data.forEach(function (eventData) {
-                                        if($scope.$parent.orgUnit.level != 3){
-                                            eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + $scope.$parent.orgUnit.discendants.length + ")");
-                                        }else{
-                                            eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] + ")");
-                                        }
-                                    })
+                                    if($scope.$parent.orgUnit.level == 3){
+                                        $scope.config.data.forEach(function (eventData) {
+                                            if (averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]]) {
+                                                averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]]++;
+                                            } else {
+                                                averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] = 1;
+                                            }
+                                        });
+                                        $scope.config.data.forEach(function (eventData) {
+                                            if($scope.$parent.orgUnit.level != 3){
+                                                eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + $scope.$parent.orgUnit.discendants.length + ")");
+                                            }else{
+                                                eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] + ")");
+                                            }
+                                        })
+                                    }else if($scope.$parent.orgUnit.level == 2){
+                                        $scope.$parent.orgUnit.children.forEach(function(child1){
+                                            child1.children
+                                        })
+                                        console.log("Data:",JSON.stringify($scope.config.data));
+                                        console.log($scope.$parent.orgUnit);
+                                    }
                                 }
                             }
                         });
