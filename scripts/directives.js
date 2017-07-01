@@ -959,9 +959,25 @@ var appDirectives = angular.module('appDirectives', [])
                             });
                         });
                         function dynamicSort(property) {
-                            return function (obj1, obj2) {
-                                return obj1.children[property].innerHTML.trim().toLowerCase() > obj2.children[property].innerHTML.trim().toLowerCase() ? 1
-                                    : obj1.children[property].innerHTML.trim().toLowerCase() < obj2.children[property].innerHTML.trim().toLowerCase() ? -1 : 0;
+                            if(scope.config.order){
+                                if(scope.config.order[scope.config.dataElements[property]]){
+                                    console.log(property,scope.config.order[scope.config.dataElements[property]]);
+                                    return function (obj1, obj2) {
+                                        //return scope.config.order[scope.config.dataElements[property]].indexOf(obj1.children[property].innerHTML.trim());
+                                        return scope.config.order[scope.config.dataElements[property]].indexOf(obj1.children[property].innerHTML.trim()) > scope.config.order[scope.config.dataElements[property]].indexOf(obj2.children[property].innerHTML.trim()) ? -1
+                                            : scope.config.order[scope.config.dataElements[property]].indexOf(obj1.children[property].innerHTML.trim()) < scope.config.order[scope.config.dataElements[property]].indexOf(obj2.children[property].innerHTML.trim()) ? 1 : 0;
+                                    }
+                                }else{
+                                    return function (obj1, obj2) {
+                                        return obj1.children[property].innerHTML.trim().toLowerCase() > obj2.children[property].innerHTML.trim().toLowerCase() ? 1
+                                            : obj1.children[property].innerHTML.trim().toLowerCase() < obj2.children[property].innerHTML.trim().toLowerCase() ? -1 : 0;
+                                    }
+                                }
+                            }else{
+                                return function (obj1, obj2) {
+                                    return obj1.children[property].innerHTML.trim().toLowerCase() > obj2.children[property].innerHTML.trim().toLowerCase() ? 1
+                                        : obj1.children[property].innerHTML.trim().toLowerCase() < obj2.children[property].innerHTML.trim().toLowerCase() ? -1 : 0;
+                                }
                             }
                         }
 
