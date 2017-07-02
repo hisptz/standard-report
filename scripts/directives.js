@@ -961,7 +961,6 @@ var appDirectives = angular.module('appDirectives', [])
                         function dynamicSort(property) {
                             if(scope.config.order){
                                 if(scope.config.order[scope.config.dataElements[property]]){
-                                    console.log(property,scope.config.order[scope.config.dataElements[property]]);
                                     return function (obj1, obj2) {
                                         //return scope.config.order[scope.config.dataElements[property]].indexOf(obj1.children[property].innerHTML.trim());
                                         return scope.config.order[scope.config.dataElements[property]].indexOf(obj1.children[property].innerHTML.trim()) > scope.config.order[scope.config.dataElements[property]].indexOf(obj2.children[property].innerHTML.trim()) ? -1

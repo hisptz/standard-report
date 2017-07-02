@@ -1137,7 +1137,7 @@ var appControllers = angular.module('appControllers', [])
                 }
                 //Dealing with Weighted Averages
                 if($scope.weightedAverage.length > 0){
-                    promises.push($http.get(DHIS2URL + "api/analytics.json?weit&dimension=dx:" + $scope.weightedAverage.join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:LEVEL-3;" + $routeParams.orgUnit)
+                    promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.weightedAverage.join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:LEVEL-3;" + $routeParams.orgUnit)
                         .then(function (analyticsResults) {
                             analyticsResults.data.rows.forEach(function (row) {
                                 if ($scope.weightedAverageData[row[0]]) {
@@ -1154,6 +1154,23 @@ var appControllers = angular.module('appControllers', [])
                             });
                             $scope.progressValue = $scope.progressValue + progressFactor;
                         }));
+                    $scope.data.dataSetForm.attributeValues.forEach(function(attributeValue){
+                        if(attributeValue.attribute.name == "Source"){
+                            var evaluate = eval("(" + attributeValue.value + ")");
+                            console.log(evaluate);
+                            evaluate.forEach(function(source){
+                                if(source.level == $scope.orgUnit.level){
+                                    source.sources.forEach(function(s){
+                                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + s.dataSet + ".ACTUAL_REPORTS&dimension=ou:LEVEL-3;" + $routeParams.orgUnit + "&filter=pe:" + $routeParams.period + "&displayProperty=NAME&skipMeta=true")
+                                            .then(function (actualReportResults) {
+                                                console.log("expectedReportResults:",actualReportResults.data);
+                                            }));
+                                    })
+                                }
+                            })
+                        }
+                    })
+                    /**/
                     /*promises.push($http.get(DHIS2URL + "api/organisationUnits.json?pageSize=1&filter=path:like:" + $routeParams.orgUnit + "&dimension=pe:" + $routeParams.period + "&filter=level:eq:4")
                         .then(function (orgUnit) {
                             $scope.weightedAverageData.total = orgUnit.data.pager.total;
@@ -1800,25 +1817,27 @@ var appControllers = angular.module('appControllers', [])
             $http.get(DHIS2URL + "api/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,level,children[id,name,children[id,children[id]]]").then(function (results) {
                 $scope.progressValue = 10;
                 $scope.orgUnit = results.data;
-                $scope.getReport().then(function () {
-                    var reportElement = document.getElementById("report");
-                    $compile(reportElement.children)($scope);
-                    $timeout(function () {
-                        $scope.progressValue = 100;
-                        $scope.loadingReport = false;
-                        $window.document.title = "Report Loaded";
-                        $.each($('td'), function () {
-                            if(!isNaN($(this).text().split(",").join("")))
-                            {
-                                $(this).text($(this).text().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                                $(this).css('text-align', 'right');
-                            }
+                $scope.getDescendants().then(function(organisationUnits){
+                    $scope.getReport().then(function () {
+                        var reportElement = document.getElementById("report");
+                        $compile(reportElement.children)($scope);
+                        $timeout(function () {
+                            $scope.progressValue = 100;
+                            $scope.loadingReport = false;
+                            $window.document.title = "Report Loaded";
+                            $.each($('td'), function () {
+                                if(!isNaN($(this).text().split(",").join("")))
+                                {
+                                    $(this).text($(this).text().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                                    $(this).css('text-align', 'right');
+                                }
+                            });
                         });
+                    }, function (error) {
+                        $scope.error = "Hey";
+                        toaster.pop('error', "Error", "Error Loading Data. Please try again.");
                     });
-                }, function (error) {
-                    $scope.error = "Hey";
-                    toaster.pop('error', "Error", "Error Loading Data. Please try again.");
-                });
+                })
             }, function (error) {
                 toaster.pop('error', "Error" + error.status, "Error Loading Organisation Unit.");
             });
