@@ -955,7 +955,7 @@ var appControllers = angular.module('appControllers', [])
                 .then(function (dataSetResults) {
                     var organisationUnitList = "";
                     console.log("organisationUnit:",dataSet,$scope.orgUnit)
-                    if($scope.orgUnit.level == 3){
+                    if($scope.orgUnit.level == 3 || $scope.orgUnit.level == 2){
                         organisationUnitList = "&orgUnit=" + newChildren.join("&orgUnit=");
                     }else{
                         organisationUnitList = "&orgUnit=" + newChildren.join("&orgUnit=") + "&children=true";
@@ -1293,14 +1293,20 @@ var appControllers = angular.module('appControllers', [])
                             if (attributeValue.attribute.name == "Source") {
                                 var sources = eval("(" + attributeValue.value + ")");
                                 sources.forEach(function (source) {
-                                    if(source.level)
+                                    if(source.level == 3)
                                     source.sources.forEach(function (source2) {
                                         //hLCbwDwbNYr
                                         if (loadedDataset.indexOf(source2.dataSet + $routeParams.orgUnit + $routeParams.period) == -1) {
-                                            var newChildren = []
-                                            $scope.orgUnit.children.forEach(function (child) {
-                                                newChildren.push(child.id);
-                                            })
+                                            var newChildren = [];
+                                            if($scope.orgUnit.level == 3){
+                                                $scope.orgUnit.children.forEach(function (child) {
+                                                    newChildren.push(child.id);
+                                                })
+                                            }else if($scope.orgUnit.level == 2 || $scope.orgUnit.level == 1){
+                                                $scope.orgUnit.discendants.forEach(function (child) {
+                                                    newChildren.push(child.id);
+                                                })
+                                            }
                                             loadedDataset.push(source2.dataSet + $routeParams.orgUnit + $routeParams.period);
                                             promises.push($scope.getListByWardData(source2.dataSet,newChildren));
                                         }
