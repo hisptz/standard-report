@@ -954,7 +954,8 @@ var appControllers = angular.module('appControllers', [])
             $http.get(DHIS2URL + "api/dataValueSets.json?dataSet=" + dataSet + "&orgUnit=" + $routeParams.orgUnit + "," + newChildren.join(",") + "&children=true&period=" + $routeParams.period)
                 .then(function (dataSetResults) {
                     var organisationUnitList = "";
-                    if($scope.orgUnit.level = 3){
+                    console.log("organisationUnit:",dataSet,$scope.orgUnit)
+                    if($scope.orgUnit.level == 3){
                         organisationUnitList = "&orgUnit=" + newChildren.join("&orgUnit=");
                     }else{
                         organisationUnitList = "&orgUnit=" + newChildren.join("&orgUnit=") + "&children=true";
