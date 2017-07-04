@@ -949,6 +949,59 @@ var appControllers = angular.module('appControllers', [])
         $scope.downloadExcel = function(){
             ReportService.downloadExcel($scope.dataSet.name,$scope.orgUnit.name,$routeParams.period);
         };
+        $scope.getListByWardData= function (dataSet,newChildren) {
+            var deffered = $q.defer();
+            $http.get(DHIS2URL + "api/dataValueSets.json?dataSet=" + dataSet + "&orgUnit=" + $routeParams.orgUnit + "," + newChildren.join(",") + "&children=true&period=" + $routeParams.period)
+                .then(function (dataSetResults) {
+                    var organisationUnitList = "";
+                    if($scope.orgUnit.level = 3){
+                        organisationUnitList = "&orgUnit=" + newChildren.join("&orgUnit=");
+                    }else{
+                        organisationUnitList = "&orgUnit=" + newChildren.join("&orgUnit=") + "&children=true";
+                    }
+                    $http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + dataSet + "&orgUnit=" + $routeParams.orgUnit + organisationUnitList + "&period=" + $routeParams.period)
+                        .then(function (dataSetCompletenessResults) {
+                            if (dataSetResults.data.dataValues) {
+                                dataSetResults.data.dataValues.forEach(function (value) {
+                                    if(dataSetCompletenessResults.data.completeDataSetRegistrations)
+                                    dataSetCompletenessResults.data.completeDataSetRegistrations.forEach(function(completeDataSetRegistration){
+                                        if ($scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo] && value.orgUnit == completeDataSetRegistration.organisationUnit) {
+                                            $scope.data.dataSetForm.dataSetElements.forEach(function (dataSetElement) {
+                                                if (dataSetElement.dataElement.id == value.dataElement) {
+                                                    $scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo].name = dataSetElement.dataElement.name;
+                                                }
+                                            })
+                                        }
+                                    })
+                                });
+                                dataSetResults.data.dataValues.forEach(function (value) {
+                                    if(dataSetCompletenessResults.data.completeDataSetRegistrations)
+                                    dataSetCompletenessResults.data.completeDataSetRegistrations.forEach(function(completeDataSetRegistration){
+                                        var listID = value.dataElement + "." + value.categoryOptionCombo;
+                                        if ($scope.listByWardData[listID] && value.orgUnit == completeDataSetRegistration.organisationUnit) {
+                                            var found = false;
+                                            $scope.listByWardData[listID].values.forEach(function (value1) {
+                                                if (value1.dataElement == value.dataElement && value1.period == value.period && value1.orgUnit == value.orgUnit && value1.categoryOptionCombo == value.categoryOptionCombo) {
+                                                    found = true;
+                                                }
+                                            })
+                                            if (!found) {
+                                                $scope.listByWardData[listID].values.push(value);
+                                            }
+                                        }
+                                    })
+
+                                });
+                            }
+                            deffered.resolve();
+                        }, function (error) {
+                            deffered.reject(error);
+                        })
+                }, function (error) {
+                    deffered.reject(error);
+                })
+            return deffered.promise;
+        }
         $scope.createReport = false;
         $http.get(DHIS2URL + "api/dataStore/notExecuted/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
 
@@ -1154,17 +1207,24 @@ var appControllers = angular.module('appControllers', [])
                             });
                             $scope.progressValue = $scope.progressValue + progressFactor;
                         }));
+                    var dataElementIds = [];
+                    $scope.weightedAverage.forEach(function(de){
+                        dataElementIds.push(de.substr(0,11))
+                    })
                     $scope.data.dataSetForm.attributeValues.forEach(function(attributeValue){
                         if(attributeValue.attribute.name == "Source"){
                             var evaluate = eval("(" + attributeValue.value + ")");
                             console.log(evaluate);
                             evaluate.forEach(function(source){
-                                if(source.level == $scope.orgUnit.level){
-                                    source.sources.forEach(function(s){
-                                        promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + s.dataSet + ".ACTUAL_REPORTS&dimension=ou:LEVEL-3;" + $routeParams.orgUnit + "&filter=pe:" + $routeParams.period + "&displayProperty=NAME&skipMeta=true")
+                                if(source.averageDataSetDependency){
+                                    source.averageDataSetDependency.forEach(function(s){
+                                        var date = new Date();
+                                        promises.push($http.get(DHIS2URL + "api/sqlViews/FIfbenVekHp/data.json?var=datasetId:" + s + "&var=orgUnitId:" + $routeParams.orgUnit + "&var=orgUnitChildrenLevel:3&var=period:" + $routeParams.period + "&var=reportGenarationDate:" + date.getFullYear() + "-" + (date.getMonth() + 1)+ "-1"+ date.getDate())
                                             .then(function (actualReportResults) {
-                                                console.log("expectedReportResults:",actualReportResults.data);
+                                                actualReportResults.data.rows = actualReportResults.data.rows.slice(0,actualReportResults.data.rows.length - 1);
+                                                console.log("expectedReportResults:",JSON.stringify(actualReportResults.data.rows));
                                             }));
+
                                     })
                                 }
                             })
@@ -1232,6 +1292,7 @@ var appControllers = angular.module('appControllers', [])
                             if (attributeValue.attribute.name == "Source") {
                                 var sources = eval("(" + attributeValue.value + ")");
                                 sources.forEach(function (source) {
+                                    if(source.level)
                                     source.sources.forEach(function (source2) {
                                         //hLCbwDwbNYr
                                         if (loadedDataset.indexOf(source2.dataSet + $routeParams.orgUnit + $routeParams.period) == -1) {
@@ -1240,37 +1301,7 @@ var appControllers = angular.module('appControllers', [])
                                                 newChildren.push(child.id);
                                             })
                                             loadedDataset.push(source2.dataSet + $routeParams.orgUnit + $routeParams.period);
-                                            promises.push($http.get(DHIS2URL + "api/dataValueSets.json?dataSet=" + source2.dataSet + "&orgUnit=" + $routeParams.orgUnit + "," + newChildren.join(",") + "&children=true&period=" + $routeParams.period)
-                                                .then(function (dataSetResults) {
-                                                    if (dataSetResults.data.dataValues) {
-                                                        $scope.getDescendants().then(function(organisationUnits){
-                                                            dataSetResults.data.dataValues.forEach(function (value) {
-                                                                if ($scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo]) {
-                                                                    $scope.data.dataSetForm.dataSetElements.forEach(function (dataSetElement) {
-                                                                        if (dataSetElement.dataElement.id == value.dataElement) {
-                                                                            $scope.listByWardData[value.dataElement + "." + value.categoryOptionCombo].name = dataSetElement.dataElement.name;
-                                                                        }
-                                                                    })
-                                                                }
-                                                            });
-                                                            dataSetResults.data.dataValues.forEach(function (value) {
-                                                                var listID = value.dataElement + "." + value.categoryOptionCombo;
-                                                                if ($scope.listByWardData[listID]) {
-                                                                    var found = false;
-                                                                    $scope.listByWardData[listID].values.forEach(function (value1) {
-                                                                        if (value1.dataElement == value.dataElement && value1.period == value.period && value1.orgUnit == value.orgUnit && value1.categoryOptionCombo == value.categoryOptionCombo) {
-                                                                            found = true;
-                                                                        }
-                                                                    })
-                                                                    if (!found) {
-                                                                        $scope.listByWardData[listID].values.push(value);
-                                                                    }
-                                                                }
-                                                            });
-                                                        })
-                                                    }
-                                                    $scope.progressValue = $scope.progressValue + progressFactor;
-                                                }));
+                                            promises.push($scope.getListByWardData(source2.dataSet,newChildren));
                                         }
                                     })
                                 });
