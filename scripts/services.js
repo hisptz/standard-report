@@ -1652,7 +1652,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                 var exportHref=Excel.tableToExcel();
                 $timeout(function(){
                     var link = document.createElement('a');
-                    link.download = dataSetName + " " + organisationUnitName + " " + period + " " + dateStr + "-" + monthStr + "-" + date.getFullYear() +".xlsx";
+                    link.download = dataSetName + " " + organisationUnitName + " " + period + " " + dateStr + "-" + monthStr + "-" + date.getFullYear() +".xls";
                     link.href = exportHref;
                     link.click();},100);
             }
