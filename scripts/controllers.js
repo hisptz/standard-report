@@ -621,7 +621,16 @@ var appControllers = angular.module('appControllers', [])
                 if ($routeParams.period.endsWith("July")) {
                     returnValue = [$routeParams.period.substr(0, 4) + "Q3", $routeParams.period.substr(0, 4) + "Q4", (parseInt($routeParams.period.substr(0, 4)) + 1) + "Q1", (parseInt($routeParams.period.substr(0, 4)) + 1) + "Q2"]
                 } else if ($routeParams.period.indexOf("Q")) {
-                    returnValue = [$routeParams.period]
+                    console.log("Period:",$routeParams.period.substr(5));
+                    if($routeParams.period.substr(5) == "1"){
+                        returnValue = [(parseInt($routeParams.period.substr(0,4)) - 1) + "Q3",(parseInt($routeParams.period.substr(0,4)) - 1) + "Q4",$routeParams.period.substr(0,4) + "Q1"];
+                    }else if($routeParams.period.substr(5) == "2"){
+                        returnValue = [(parseInt($routeParams.period.substr(0,4)) - 1) + "Q3",(parseInt($routeParams.period.substr(0,4)) - 1) + "Q4",$routeParams.period.substr(0,4) + "Q1",$routeParams.period.substr(0,4) + "Q2"];
+                    }else if($routeParams.period.substr(5) == "3"){
+                        returnValue = [$routeParams.period.substr(0,4) + "Q3"];
+                    }else if($routeParams.period.substr(5) == "4"){
+                        returnValue = [$routeParams.period.substr(0,4) + "Q3",$routeParams.period.substr(0,4) + "Q4"];
+                    }
                 }
             } else if (dataSet.periodType == "Monthly") {
                 if ($routeParams.period.endsWith("July")) {

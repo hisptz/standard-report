@@ -300,7 +300,8 @@
                         <tbody ng-if="sourceDataSet.orgUnitLevel != data.organisationUnit.level"
                                ng-repeat="orgUnit in data.organisationUnit.children">
                         <tr>
-                            <td rowspan="{{sourceDataSet.periodTypeValue/dataSet.periodTypeValue}}">{{orgUnit.name}}</td>
+                            <!--<td rowspan="{{sourceDataSet.periodTypeValue/dataSet.periodTypeValue}}">{{orgUnit.name}}</td>-->
+                            <td rowspan="{{getOrganisationUnitPeriods(sourceDataSet).length}}">{{orgUnit.name}}</td>
                             <td ng-repeat-start="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)"
                                 ng-if="$first">{{getPeriodName(organisationUnitPeriod)}}
                             </td>
@@ -317,7 +318,7 @@
                         </tr>
                         <tbody ng-if="sourceDataSet.orgUnitLevel == data.organisationUnit.level">
                         <tr>
-                            <td rowspan="{{sourceDataSet.periodTypeValue/dataSet.periodTypeValue}}">
+                            <td rowspan="{{getOrganisationUnitPeriods(sourceDataSet).length}}">
                                 {{data.organisationUnit.name}}
                             </td>
                             <td ng-repeat-start="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)"
