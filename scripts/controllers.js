@@ -1798,6 +1798,8 @@ var appControllers = angular.module('appControllers', [])
                         var reportElement = document.getElementById("report");
                         $compile(reportElement.children)($scope);
                         $timeout(function () {
+                            $scope.progressValue = 100;
+                            $scope.loadingReport = false;
                             $.each($('td'), function () {
                                 if(!isNaN($(this).text().split(",").join("")))
                                 {
@@ -1806,10 +1808,8 @@ var appControllers = angular.module('appControllers', [])
                                 }
                             });
                             $timeout(function () {
-                                $scope.progressValue = 100;
-                                $scope.loadingReport = false;
                                 $window.document.title = "Report Loaded";
-                            });
+                            },1000);
                         });
                     }, function (error) {
                         $scope.error = "Hey";
