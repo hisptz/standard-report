@@ -1361,7 +1361,6 @@ var appDirectives = angular.module('appDirectives', [])
             link: function (scope, elem, attrs, controller) {
                 $timeout(function () {
                     var arr = Array.prototype.slice.call(elem[0].rows);
-                    console.log(arr);
                     var firstColumnBrakes = [];
                     // iterate through the columns instead of passing each column as function parameter:
                     for(var i=1; i<=arr.length; i++){
@@ -1375,7 +1374,14 @@ var appDirectives = angular.module('appDirectives', [])
                                 if(i == 1){
 
                                 }else{
-                                    cellToExtend.html((parseFloat(cellToExtend.html()) + parseFloat(jthis.html())).toFixed(1))
+                                    var first = parseFloat(cellToExtend.html());
+                                    var second = parseFloat(jthis.html());
+                                    if(isNaN(first)){
+                                        first = 0.0
+                                    }else if(isNaN(second)){
+                                        second = 0.0
+                                    }
+                                    cellToExtend.html((first + second).toFixed(1) );
                                 }
                                 jthis.addClass('hidden');
                                 cellToExtend.attr("rowspan", (rowspan = rowspan+1));
@@ -1388,7 +1394,6 @@ var appDirectives = angular.module('appDirectives', [])
             },
             replace: true,
             controller: function ($scope, $routeParams) {
-                console.log($scope.grandtotal);
                 $scope.data = {
                     events:[]
                 }

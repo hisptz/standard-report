@@ -985,7 +985,6 @@ var appControllers = angular.module('appControllers', [])
             $http.get(DHIS2URL + "api/dataValueSets.json?dataSet=" + dataSet + "&orgUnit=" + $routeParams.orgUnit + "," + newChildren.join(",") + "&children=true&period=" + $routeParams.period)
                 .then(function (dataSetResults) {
                     var organisationUnitList = "";
-                    console.log("organisationUnit:",dataSet,$scope.orgUnit)
                     if($scope.orgUnit.level == 3 || $scope.orgUnit.level == 2){
                         organisationUnitList = "&orgUnit=" + newChildren.join("&orgUnit=");
                     }else{
@@ -1799,15 +1798,17 @@ var appControllers = angular.module('appControllers', [])
                         var reportElement = document.getElementById("report");
                         $compile(reportElement.children)($scope);
                         $timeout(function () {
-                            $scope.progressValue = 100;
-                            $scope.loadingReport = false;
-                            $window.document.title = "Report Loaded";
                             $.each($('td'), function () {
                                 if(!isNaN($(this).text().split(",").join("")))
                                 {
                                     $(this).text($(this).text().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                                     $(this).css('text-align', 'right');
                                 }
+                            });
+                            $timeout(function () {
+                                $scope.progressValue = 100;
+                                $scope.loadingReport = false;
+                                $window.document.title = "Report Loaded";
                             });
                         });
                     }, function (error) {
