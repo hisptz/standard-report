@@ -621,15 +621,20 @@ var appControllers = angular.module('appControllers', [])
                 if ($routeParams.period.endsWith("July")) {
                     returnValue = [$routeParams.period.substr(0, 4) + "Q3", $routeParams.period.substr(0, 4) + "Q4", (parseInt($routeParams.period.substr(0, 4)) + 1) + "Q1", (parseInt($routeParams.period.substr(0, 4)) + 1) + "Q2"]
                 } else if ($routeParams.period.indexOf("Q")) {
-                    console.log("Period:",$routeParams.period.substr(5));
-                    if($routeParams.period.substr(5) == "1"){
-                        returnValue = [(parseInt($routeParams.period.substr(0,4)) - 1) + "Q3",(parseInt($routeParams.period.substr(0,4)) - 1) + "Q4",$routeParams.period.substr(0,4) + "Q1"];
-                    }else if($routeParams.period.substr(5) == "2"){
-                        returnValue = [(parseInt($routeParams.period.substr(0,4)) - 1) + "Q3",(parseInt($routeParams.period.substr(0,4)) - 1) + "Q4",$routeParams.period.substr(0,4) + "Q1",$routeParams.period.substr(0,4) + "Q2"];
-                    }else if($routeParams.period.substr(5) == "3"){
-                        returnValue = [$routeParams.period.substr(0,4) + "Q3"];
-                    }else if($routeParams.period.substr(5) == "4"){
-                        returnValue = [$routeParams.period.substr(0,4) + "Q3",$routeParams.period.substr(0,4) + "Q4"];
+                    console.log("Period:",$scope.dataSet.name,$scope.data.organisationUnit.level);
+
+                    if($scope.dataSet.name.indexOf("Quarterly Integrated Report") > -1 && $scope.data.organisationUnit.level == 3){
+                        if($routeParams.period.substr(5) == "1"){
+                            returnValue = [(parseInt($routeParams.period.substr(0,4)) - 1) + "Q3",(parseInt($routeParams.period.substr(0,4)) - 1) + "Q4",$routeParams.period.substr(0,4) + "Q1"];
+                        }else if($routeParams.period.substr(5) == "2"){
+                            returnValue = [(parseInt($routeParams.period.substr(0,4)) - 1) + "Q3",(parseInt($routeParams.period.substr(0,4)) - 1) + "Q4",$routeParams.period.substr(0,4) + "Q1",$routeParams.period.substr(0,4) + "Q2"];
+                        }else if($routeParams.period.substr(5) == "3"){
+                            returnValue = [$routeParams.period.substr(0,4) + "Q3"];
+                        }else if($routeParams.period.substr(5) == "4"){
+                            returnValue = [$routeParams.period.substr(0,4) + "Q3",$routeParams.period.substr(0,4) + "Q4"];
+                        }
+                    }else{
+                        returnValue = [$routeParams.period];
                     }
                 }
             } else if (dataSet.periodType == "Monthly") {
@@ -648,14 +653,19 @@ var appControllers = angular.module('appControllers', [])
                         (parseInt($routeParams.period.substr(0, 4)) + 1) + "06"
                     ]
                 } else if ($routeParams.period.indexOf("Q") > -1) {
-                    var quarterLastMonth = parseInt($routeParams.period.substr(5)) * 3;
-                    for (var i = quarterLastMonth - 2; i <= quarterLastMonth; i++) {
-                        var monthVal = i;
-                        if (i < 10) {
-                            monthVal = "0" + i;
+                    if($scope.dataSet.name.indexOf("Quarterly Integrated Report") > -1 && $scope.data.organisationUnit.level == 3){
+                        if($routeParams.period.substr(5) == "1"){
+                            returnValue = returnValue.concat($scope.getMonthsByQuarter((parseInt($routeParams.period.substr(0,4)) - 1) + "Q3"));
+                            returnValue = returnValue.concat($scope.getMonthsByQuarter((parseInt($routeParams.period.substr(0,4)) - 1) + "Q4"));
+                        }else if($routeParams.period.substr(5) == "2"){
+                            returnValue = returnValue.concat($scope.getMonthsByQuarter((parseInt($routeParams.period.substr(0,4)) - 1) + "Q3"));
+                            returnValue = returnValue.concat($scope.getMonthsByQuarter((parseInt($routeParams.period.substr(0,4)) - 1) + "Q4"));
+                            returnValue = returnValue.concat($scope.getMonthsByQuarter($routeParams.period.substr(0,4) + "Q1"));
+                        }else if($routeParams.period.substr(5) == "4"){
+                            returnValue = returnValue.concat($scope.getMonthsByQuarter($routeParams.period.substr(0,4) + "Q3"));
                         }
-                        returnValue.push($routeParams.period.substr(0, 4) + monthVal);
                     }
+                    returnValue = returnValue.concat($scope.getMonthsByQuarter($routeParams.period));
                 } else {
                     returnValue.push($routeParams.period);
                 }
@@ -667,6 +677,18 @@ var appControllers = angular.module('appControllers', [])
                 } else {
                     returnValue.push($routeParams.period.substr(0, 4) + "07");
                 }
+            }
+            return returnValue;
+        }
+        $scope.getMonthsByQuarter = function(period){
+            var returnValue = [];
+            var quarterLastMonth = parseInt(period.substr(5)) * 3;
+            for (var i = quarterLastMonth - 2; i <= quarterLastMonth; i++) {
+                var monthVal = i;
+                if (i < 10) {
+                    monthVal = "0" + i;
+                }
+                returnValue.push(period.substr(0, 4) + monthVal);
             }
             return returnValue;
         }

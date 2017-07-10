@@ -262,20 +262,20 @@
                         <tr>
                             <td>1</td>
                             <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1">
-                                {{sourceDataSet.periodTypeValue/dataSet.periodTypeValue}}
+                                {{getOrganisationUnitPeriods(sourceDataSet).length}}
                             </td>
                             <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1">
                                 {{sourceDataSet.completeDataSetRegistrations.length *
-                                (sourceDataSet.periodTypeValue/dataSet.periodTypeValue)}}
+                                (getOrganisationUnitPeriods(sourceDataSet).length)}}
                             </td>
                             <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1">
-                                {{(sourceDataSet.periodTypeValue/dataSet.periodTypeValue) -
+                                {{(getOrganisationUnitPeriods(sourceDataSet).length) -
                                 sourceDataSet.completeDataSetRegistrations.length}}
                             </td>
                             <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1"
                                 ng-class="{red:(sourceDataSet.completeDataSetRegistrations.length) * 100 < 70,green:(sourceDataSet.completeDataSetRegistrations.length) * 100>= 70}">
                                 {{((sourceDataSet.completeDataSetRegistrations.length) *
-                                100)/(sourceDataSet.periodTypeValue/dataSet.periodTypeValue) | number : 2}}%
+                                100)/(getOrganisationUnitPeriods(sourceDataSet).length) | number : 2}}%
                             </td>
                             <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue < 1">1</td>
                             <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue < 1">
