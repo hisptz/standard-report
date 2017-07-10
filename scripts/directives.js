@@ -1256,11 +1256,7 @@ var appDirectives = angular.module('appDirectives', [])
                                         }
                                     });
                                     $scope.config.data.forEach(function (eventData) {
-                                        if($scope.$parent.orgUnit.level != 3){
-                                            eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + $scope.$parent.orgUnit.discendants.length + ")");
-                                        }else{
-                                            eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] + ")");
-                                        }
+                                        eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] + ")");
                                     })
                                 }
                             }

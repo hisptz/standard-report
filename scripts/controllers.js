@@ -1125,7 +1125,6 @@ var appControllers = angular.module('appControllers', [])
             $scope.listByWardData = {};
             $scope.lastIndicatorData = {};
             $scope.lastMonthIndicatorData = {};
-            $scope.weightedAverageData = {};
             $scope.loadingStatus = "Loading Organisation Units";
 
             var organisationUnit = $scope.orgUnit;
@@ -1219,54 +1218,6 @@ var appControllers = angular.module('appControllers', [])
                     }
 
 
-                }
-                //Dealing with Weighted Averages
-                if($scope.weightedAverage.length > 0){
-                    promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.weightedAverage.join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:LEVEL-3;" + $routeParams.orgUnit)
-                        .then(function (analyticsResults) {
-                            analyticsResults.data.rows.forEach(function (row) {
-                                if ($scope.weightedAverageData[row[0]]) {
-                                    $scope.weightedAverageData[row[0]][row[2]] = row[3];
-                                } else {
-                                    /*$scope.weightedAverageData[row[0]] = {
-                                        sum:parseFloat(row[3]),
-                                        count:1,
-                                        value:""
-                                    }*/
-                                    $scope.weightedAverageData[row[0]] = {};
-                                    $scope.weightedAverageData[row[0]][row[2]] = row[3];
-                                }
-                            });
-                            $scope.progressValue = $scope.progressValue + progressFactor;
-                        }));
-                    var dataElementIds = [];
-                    $scope.weightedAverage.forEach(function(de){
-                        dataElementIds.push(de.substr(0,11))
-                    })
-                    $scope.data.dataSetForm.attributeValues.forEach(function(attributeValue){
-                        if(attributeValue.attribute.name == "Source"){
-                            var evaluate = eval("(" + attributeValue.value + ")");
-                            console.log(evaluate);
-                            evaluate.forEach(function(source){
-                                if(source.averageDataSetDependency){
-                                    source.averageDataSetDependency.forEach(function(s){
-                                        var date = new Date();
-                                        promises.push($http.get(DHIS2URL + "api/sqlViews/FIfbenVekHp/data.json?var=datasetId:" + s + "&var=orgUnitId:" + $routeParams.orgUnit + "&var=orgUnitChildrenLevel:3&var=period:" + $routeParams.period + "&var=reportGenarationDate:" + date.getFullYear() + "-" + (date.getMonth() + 1)+ "-1"+ date.getDate())
-                                            .then(function (actualReportResults) {
-                                                actualReportResults.data.rows = actualReportResults.data.rows.slice(0,actualReportResults.data.rows.length - 1);
-                                                console.log("expectedReportResults:",JSON.stringify(actualReportResults.data.rows));
-                                            }));
-
-                                    })
-                                }
-                            })
-                        }
-                    })
-                    /**/
-                    /*promises.push($http.get(DHIS2URL + "api/organisationUnits.json?pageSize=1&filter=path:like:" + $routeParams.orgUnit + "&dimension=pe:" + $routeParams.period + "&filter=level:eq:4")
-                        .then(function (orgUnit) {
-                            $scope.weightedAverageData.total = orgUnit.data.pager.total;
-                        }));*/
                 }
 
                 //Dealing with Last Month Indicators
@@ -1476,43 +1427,6 @@ var appControllers = angular.module('appControllers', [])
                             promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, $routeParams.period));
                         }
                     }
-                    //Further calculation from loaded weighted average data
-                    if($scope.orgUnit.level == 3){
-                        for (var weightedAvg in $scope.weightedAverageData) {
-                            $scope.weightedAverageData[weightedAvg].value = $scope.weightedAverageData[weightedAvg][$scope.orgUnit.id] ;
-                        }
-                    }else if($scope.orgUnit.level == 2){
-                        for (var weightedAvg in $scope.weightedAverageData) {
-                            var sum = 0;
-                            var sumOfChildren = 0;
-                            $scope.orgUnit.children.forEach(function(child){
-                                sum += ($scope.weightedAverageData[weightedAvg][child.id] * child.children.length);
-                                sumOfChildren += child.children.length;
-                            })
-                            $scope.weightedAverageData[weightedAvg].value = (sum / sumOfChildren).toFixed(1) ;
-                        }
-                    }else if($scope.orgUnit.level == 1){
-                        console.log("OrgUnit:",$scope.orgUnit);
-                        for (var weightedAvg in $scope.weightedAverageData) {
-                            $scope.orgUnit.children.forEach(function(child1){
-                                var sum = 0;
-                                var sumOfChildren = 0;
-                                child1.children.forEach(function(child){
-                                    sum += ($scope.weightedAverageData[weightedAvg][child.id] * child.children.length);
-                                    sumOfChildren += child.children.length;
-                                })
-                                $scope.weightedAverageData[weightedAvg][child1.id] = (sum / sumOfChildren) ;
-                            })
-                            var sum = 0;
-                            var sumOfChildren = 0;
-                            $scope.orgUnit.children.forEach(function(child){
-                                sum += ($scope.weightedAverageData[weightedAvg][child.id] * child.children.length);
-                                sumOfChildren += child.children.length;
-                            })
-                            console.log(weightedAvg,$scope.weightedAverageData)
-                            $scope.weightedAverageData[weightedAvg].value = (sum / sumOfChildren).toFixed(1) ;
-                        }
-                    }
 
                     //Further calculation from loaded Last Indicator data
                     if ($scope.lastIndicator.length > 0) {
@@ -1628,7 +1542,6 @@ var appControllers = angular.module('appControllers', [])
         $scope.lastMonthIndicator = [];
         $scope.wardLevelIndicator = [];
         $scope.lastMonthOfQuarterWardLevel = [];
-        $scope.weightedAverage = [];
 
         //Replacement for debug purpose;
         $scope.getElementReplacment = function (content, type) {
@@ -1719,9 +1632,7 @@ var appControllers = angular.module('appControllers', [])
                                 newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' org-unit='orgUnit'></div>");
                             }
                             $scope.listByWard.push(idMacth[1] + "." + idMacth[2]);
-                        }else if (match[0].indexOf("weighted-average") > -1) {//If it is weighted average
-
-                        } else {
+                        }else {
                             //newHtml = newHtml.replace(match[0], $scope.getElementReplacment("dataElementsData['" + idMacth[1] + "." + idMacth[2] + "']", "dataElement"));
                             if (match[0].indexOf("integer") > -1) {
                                 newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "." + idMacth[2] + "\"]) |removeNaN |comma}}</div>");
@@ -1737,10 +1648,7 @@ var appControllers = angular.module('appControllers', [])
                         } else if (isLast) {
                             $scope.lastDataElements.push(idMacth[1] + "." + idMacth[2]);
                             newHtml = newHtml.replace(match[0], $scope.getElementReplacment("lastDataElementsData['" + idMacth[1] + "." + idMacth[2] + "']", "dataElement"));
-                        }else if (isAverage) {
-                            newHtml = newHtml.replace(match[0], "<div>{{weightedAverageData[\"" + idMacth[1] + "." + idMacth[2] + "\"].value |comma}}</div>");
-                            $scope.weightedAverage.push(idMacth[1] + "." + idMacth[2]);
-                        } else if (match[0].indexOf("list-by-ward") > -1) {//If it is last month of quarter
+                        }else if (match[0].indexOf("list-by-ward") > -1) {//If it is last month of quarter
 
                             var label = "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' org-unit='orgUnit'>";
                             //
