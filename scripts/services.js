@@ -1699,10 +1699,14 @@ var appServices = angular.module('appServices', ['ngResource'])
                 var tables = $(".excel-table");
                 var ctx = {worksheet: "Sheet 1"};
                 var str = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body>';
-                console.log("Title:",tables);
                 tables.each(function(index){
                     ($(this).find("td.hidden").each(function(index2){
                         this.remove();
+                    }));
+                    ($(this).find("td").each(function(index2){
+                        if($(this).css('display') == 'none'){
+                            this.remove();
+                        }
                     }));
                     ctx["table" + index] = this.innerHTML;
                     if(this.title == "no-border"){
