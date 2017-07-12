@@ -430,7 +430,6 @@ var appDirectives = angular.module('appDirectives', [])
             },
             replace: true,
             controller: function ($scope, $routeParams,DHIS2URL,$http,ReportService,toaster) {
-                console.log("Org Unit:",$scope.orgUnit);
                 $scope.enableCommentEditBool = false;
                 $scope.enableCommentEdit = function () {
                     $scope.enableCommentEditBool = true;

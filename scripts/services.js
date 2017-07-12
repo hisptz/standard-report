@@ -1539,7 +1539,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                 $http.get(DHIS2URL + "api/dataSets.json?fields=id,periodType&filter=attributeValues.value:like:" + data.dataSet)
                     .then(function (dataSetsResults) {
                         console.log(dataSetsResults.data.dataSets);
-                        $http.get(DHIS2URL + "api/organisationUnits/" + data.orgUnit + ".json?fields=id,ancestors")
+                        $http.get(DHIS2URL + "api/organisationUnits/" + data.orgUnit + ".json?fields=id,level,ancestors")
                             .then(function (orgUnitResults) {
                                 var promises = [];
                                 promises.push(that.delete(data.dataSet, data.orgUnit, data.period));
@@ -1579,7 +1579,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                                 $q.all(promises).then(function (result) {
                                     deffered.resolve(result);
                                 }, function (result) {
-                                    deffered.reject(result);
+                                    deffered.resolve(result);
                                 })
                             }, function () {
                                 deffered.reject();

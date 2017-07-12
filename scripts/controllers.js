@@ -369,7 +369,6 @@ var appControllers = angular.module('appControllers', [])
         $scope.getOrgUnitStatus = function (completeDataSetRegistrations, id, period) {
             var returnVal = "Incomplete";
             completeDataSetRegistrations.forEach(function (dataSet) {
-                console.log(dataSet.organisationUnit ,id,period,dataSet.period);
                 if (dataSet.organisationUnit == id && period == dataSet.period) {
                     returnVal = "Complete";
                 }
