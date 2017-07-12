@@ -35,6 +35,21 @@ var appFilters = angular.module('appFilters', [])
             }
         };
     })
+    .filter('withNotExecuted', function() {
+        return function(periods,notExecuted,dataSetId,orgUnitId) {
+            if(periods){
+                var returnPeriods = [];
+                periods.forEach(function(p){
+                    if(notExecuted.indexOf(dataSetId+ '_' + orgUnitId + '_' +p ) > -1){
+                        returnPeriods.push(p);
+                    }
+                })
+                return returnPeriods;
+            }else{
+                return inpuperiodst;
+            }
+        };
+    })
 .filter('dataEntryForm', function() {
     return function(input,formSource) {
         var output = [];

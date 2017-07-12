@@ -939,6 +939,60 @@ var appDirectives = angular.module('appDirectives', [])
             templateUrl: 'views/tree.html'
         }
     })
+    .directive("scheduledReports", function () {
+        return {
+            scope: {
+                config: '='
+            },
+            controller: function ($scope,$http,DHIS2URL,ReportService) {
+                $scope.loading ={};
+                $scope.cancelCreateDataSetReport = function(dataSet,orgUnit,period){
+                    $scope.loading[dataSet+"_"+orgUnit+"_"+period] = true;
+                    ReportService.cancelCreateDataSetReport({dataSet:dataSet,orgUnit:orgUnit,period:period}).then(function(){
+                        $scope.notExecuted.splice($scope.notExecuted.indexOf(dataSet+"_"+orgUnit+"_"+period),1);
+                    },function(){
+                        $scope.loading[dataSet+"_"+orgUnit+"_"+period] = false;
+                    })
+                }
+                $scope.getPeriodName = function (period) {
+                    if (period) {
+                        return ReportService.getPeriodName(period);
+                    }
+
+                }
+                $http.get(DHIS2URL + "api/dataStore/notExecuted").then(function (result) {
+                    console.log("Here:",result.data);
+                    $scope.notExecuted = result.data;
+                    $scope.dataSetIds = [];
+                    $scope.orgUnitIds = [];
+                    $scope.periodIds = [];
+                    result.data.forEach(function(id){
+                        var ids = id.split("_");
+                        if($scope.dataSetIds.indexOf(ids[0]) == -1)
+                        $scope.dataSetIds.push(ids[0]);
+                        if($scope.orgUnitIds.indexOf(ids[1]) == -1)
+                        $scope.orgUnitIds.push(ids[1]);
+                        if($scope.periodIds.indexOf(ids[2]) == -1)
+                        $scope.periodIds.push(ids[2]);
+                    })
+                    $http.get(DHIS2URL + "api/dataSets.json?filter=id:in:["+$scope.dataSetIds.join(",") +"]&fields=id,name").then(function (dataSetResult) {
+                        $scope.dataSets = {};
+                        dataSetResult.data.dataSets.forEach(function(dataSet){
+                            $scope.dataSets[dataSet.id] = dataSet;
+                        })
+                    });
+                    $http.get(DHIS2URL + "api/organisationUnits.json?filter=id:in:["+$scope.orgUnitIds.join(",") +"]&fields=id,name,ancestors[name]").then(function (orgUnitsResult) {
+                        $scope.orgUnits = {};
+                        console.log(orgUnitsResult.data);
+                        orgUnitsResult.data.organisationUnits.forEach(function(orgUnit){
+                            $scope.orgUnits[orgUnit.id] = orgUnit;
+                        })
+                    });
+                });
+            },
+            templateUrl: 'views/scheduledReports.html'
+        }
+    })
     .directive("autogrowing", function ($timeout, $compile) {
         return {
             scope: {

@@ -1,0 +1,30 @@
+<img ng-if="!dataSets || !orgUnits" src="../../../images/ajax-loader-bar.gif">
+<div ng-if="dataSets && orgUnits" class="row">
+    <div ng-repeat="dataSetId in dataSetIds" class="col-sm-6">
+        <h5>{{dataSets[dataSetId].name}}</h5>
+        <table class="table table-bordered">
+            <tr>
+                <th>Administrative Unit</th>
+                <th>Period</th>
+                <th>Action</th>
+            </tr>
+            <tbody ng-repeat="orgUnitId in orgUnitIds">
+            <tr>
+                <td rowspan="{{(periodIds | withNotExecuted:notExecuted:dataSetId:orgUnitId).length}}"><span ng-repeat="ancestor in orgUnits[orgUnitId].ancestors">{{ancestor.name}} - </span>{{orgUnits[orgUnitId].name}}</td>
+                <td ng-if="$first" ng-repeat="periodId in periodIds | withNotExecuted:notExecuted:dataSetId:orgUnitId">{{getPeriodName(periodId)}}</td>
+                <td>
+                    <button ng-if="!loading[dataSetId+'_'+orgUnitId+'_'+periodId]" ng-click="cancelCreateDataSetReport(dataSetId,orgUnitId,periodId)"><span>Cancel Report Creation</span></button>
+                    <span ng-if="loading[dataSetId+'_'+orgUnitId+'_'+periodId]">Loading..</span>
+                </td>
+            </tr>
+            <tr ng-if="!$first" ng-repeat="periodId in periodIds | withNotExecuted:notExecuted:dataSetId:orgUnitId">
+                <td>{{getPeriodName(periodId)}}</td>
+                <td>
+                    <button ng-if="!loading[dataSetId+'_'+orgUnitId+'_'+periodId]" ng-click="cancelCreateDataSetReport(dataSetId,orgUnitId,periodId)"><span>Cancel Report Creation</span></button>
+                    <span ng-if="loading[dataSetId+'_'+orgUnitId+'_'+periodId]">Loading..</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
