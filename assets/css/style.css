@@ -4,6 +4,15 @@ td[right-align=NUMBER] {
 td[right-align=INTEGER] {
     text-align: right;
 }
+td[right-align=INTEGER_POSITIVE] {
+    text-align: right;
+}
+td[right-align=INTEGER_NEGATIVE] {
+    text-align: right;
+}
+td[right-align=INTEGER_ZERO_OR_POSITIVE] {
+    text-align: right;
+}
 .top-bar {
     font-size: 16pt;
     font-weight: normal;
