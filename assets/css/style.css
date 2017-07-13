@@ -1,6 +1,9 @@
 td[right-align=NUMBER] {
     text-align: right;
 }
+td[right-align=INTEGER] {
+    text-align: right;
+}
 .top-bar {
     font-size: 16pt;
     font-weight: normal;
