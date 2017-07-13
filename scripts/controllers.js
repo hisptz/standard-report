@@ -1816,7 +1816,6 @@ var appControllers = angular.module('appControllers', [])
                             $.each($('td'), function () {
                                 if(!isNaN($(this).text().split(",").join("")))
                                 {
-                                    $(this).attr("class", "push-right");
                                     $(this).text($(this).text().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                                     $(this).css('text-align', 'right');
                                 }
