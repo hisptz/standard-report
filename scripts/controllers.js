@@ -1814,9 +1814,11 @@ var appControllers = angular.module('appControllers', [])
                             $scope.progressValue = 100;
                             $scope.loadingReport = false;
                             $.each($('td'), function () {
+                                $(this).addClass("push-right");
                                 if(!isNaN($(this).text().split(",").join("")))
                                 {
-                                    $(this).addClass("push-right");
+                                    console.log("some text", $(this).text())
+                                    // $(this).addClass("push-right");
                                     $(this).text($(this).text().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                                     $(this).css('text-align', 'right');
                                 }
