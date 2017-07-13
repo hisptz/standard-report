@@ -476,8 +476,15 @@ var appControllers = angular.module('appControllers', [])
 
                             }
                         });
-
-                        $http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + formDataSets.join("&orgUnit=") + "&orgUnit=" +districtIds.join("&orgUnit=") + "&startDate=" + periodDate.startDate + "&endDate=" + periodDate.endDate).then(function (completenessResults) {
+                        var startDate = periodDate.startDate;
+                        if($scope.dataSet.name.indexOf("DIR02") > -1){
+                            if($routeParams.period.indexOf("Q3") > -1 || $routeParams.period.indexOf("Q4") > -1){
+                                startDate = $routeParams.period.substr(0,4) + "-07-01";
+                            }else if($routeParams.period.indexOf("Q1") > -1 || $routeParams.period.indexOf("Q2") > -1){
+                                startDate = (parseInt($routeParams.period.substr(0,4))-1) + "-07-01";
+                            }
+                        }
+                        $http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + formDataSets.join("&orgUnit=") + "&orgUnit=" +districtIds.join("&orgUnit=") + "&startDate=" + startDate + "&endDate=" + periodDate.endDate).then(function (completenessResults) {
                             console.log("completenessResults:",completenessResults.data);
                             if(completenessResults.data.completeDataSetRegistrations){
                                 completenessResults.data.completeDataSetRegistrations.forEach(function(completeDataSetRegistration){
@@ -575,7 +582,16 @@ var appControllers = angular.module('appControllers', [])
         $scope.fetchCompleteness = function (dataSet, sourceLevels) {
             if (!dataSet.isReport) {
                 dataSet.orgUnitLevel = dataSet.organisationUnits[0].level;
-                $http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + dataSet.id + "&orgUnit=" + $routeParams.orgUnit + "&startDate=" + periodDate.startDate + "&endDate=" + periodDate.endDate + "&children=true").then(function (results) {
+                var startDate = periodDate.startDate;
+                if("Wtzj9Chl3HW" == dataSet.id){
+                    console.log("Yeye:",$routeParams.period)
+                    if($routeParams.period.indexOf("Q3") > -1 || $routeParams.period.indexOf("Q4") > -1){
+                        startDate = $routeParams.period.substr(0,4) + "-07-01";
+                    }else if($routeParams.period.indexOf("Q1") > -1 || $routeParams.period.indexOf("Q2") > -1){
+                        startDate = (parseInt($routeParams.period.substr(0,4))-1) + "-07-01";
+                    }
+                }
+                $http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + dataSet.id + "&orgUnit=" + $routeParams.orgUnit + "&startDate=" + startDate + "&endDate=" + periodDate.endDate + "&children=true").then(function (results) {
                     if (results.data.completeDataSetRegistrations) {
                         dataSet.completeDataSetRegistrations = results.data.completeDataSetRegistrations;
                     } else {
@@ -619,9 +635,7 @@ var appControllers = angular.module('appControllers', [])
 
                 if ($routeParams.period.endsWith("July")) {
                     returnValue = [$routeParams.period.substr(0, 4) + "Q3", $routeParams.period.substr(0, 4) + "Q4", (parseInt($routeParams.period.substr(0, 4)) + 1) + "Q1", (parseInt($routeParams.period.substr(0, 4)) + 1) + "Q2"]
-                } else if ($routeParams.period.indexOf("Q")) {
-                    console.log("Period:",$scope.dataSet.name,$scope.data.organisationUnit.level);
-
+                } else if ($routeParams.period.indexOf("Q") > -1) {
                     if($scope.dataSet.name.indexOf("Quarterly Integrated Report") > -1 && $scope.data.organisationUnit.level == 3){
                         if($routeParams.period.substr(5) == "1"){
                             returnValue = [(parseInt($routeParams.period.substr(0,4)) - 1) + "Q3",(parseInt($routeParams.period.substr(0,4)) - 1) + "Q4",$routeParams.period.substr(0,4) + "Q1"];
