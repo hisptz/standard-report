@@ -1650,6 +1650,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                     monthStr = "0" + monthStr;
                 }
                 var exportHref=Excel.tableToExcel();
+                console.log(dataSetName + " " + organisationUnitName + " " + period + " " + dateStr + "-" + monthStr + "-" + date.getFullYear() +".xls");
                 $timeout(function(){
                     var link = document.createElement('a');
                     link.download = dataSetName + " " + organisationUnitName + " " + period + " " + dateStr + "-" + monthStr + "-" + date.getFullYear() +".xls";

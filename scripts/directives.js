@@ -1229,7 +1229,7 @@ var appDirectives = angular.module('appDirectives', [])
                                             eventIndicator = eventIndicator.replace("#{" + dataElement.id + "}", value);
                                         }
                                     });
-                                    var valueCalculated = (eval('(' + eventIndicator + ')')).toFixed(1);
+                                    var valueCalculated = (eval('(' + eventIndicator.split(",").join("") + ')')).toFixed(1);
                                     if(isNaN(valueCalculated)){
                                         valueCalculated = "";
                                     }
