@@ -960,6 +960,7 @@ var appDirectives = angular.module('appDirectives', [])
                     }
 
                 }
+                $scope.noExecutedLoaded = true;
                 $http.get(DHIS2URL + "api/dataStore/notExecuted").then(function (result) {
                     console.log("Here:",result.data);
                     $scope.notExecuted = result.data;
@@ -988,6 +989,8 @@ var appDirectives = angular.module('appDirectives', [])
                             $scope.orgUnits[orgUnit.id] = orgUnit;
                         })
                     });
+                },function(){
+                    $scope.noExecutedLoaded = false;
                 });
             },
             templateUrl: 'views/scheduledReports.html'

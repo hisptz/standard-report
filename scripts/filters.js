@@ -40,8 +40,17 @@ var appFilters = angular.module('appFilters', [])
             if(periods){
                 var returnPeriods = [];
                 periods.forEach(function(p){
-                    if(notExecuted.indexOf(dataSetId+ '_' + orgUnitId + '_' +p ) > -1){
-                        returnPeriods.push(p);
+                    if(orgUnitId){
+                        if(notExecuted.indexOf(dataSetId+ '_' + orgUnitId + '_' +p ) > -1){
+                            returnPeriods.push(p);
+                        }
+                    }else{
+                        notExecuted.forEach(function(str){
+                            console.log(str.startsWith(dataSetId),str.endsWith(p))
+                            if(str.startsWith(dataSetId) && str.endsWith(p)){
+                                returnPeriods.push(p);
+                            }
+                        })
                     }
                 })
                 return returnPeriods;
