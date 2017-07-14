@@ -1,7 +1,7 @@
 /* global angular */
 
 'use strict';
-
+var htmlStsr = "";
 /* Services */
 
 var appServices = angular.module('appServices', ['ngResource'])
@@ -1649,13 +1649,13 @@ var appServices = angular.module('appServices', ['ngResource'])
                 if(monthStr < 10){
                     monthStr = "0" + monthStr;
                 }
-                var exportHref=Excel.tableToExcel();
-                console.log(dataSetName + " " + organisationUnitName + " " + period + " " + dateStr + "-" + monthStr + "-" + date.getFullYear() +".xls");
+                //var exportHref=Excel.tableToExcel();
                 $timeout(function(){
                     var link = document.createElement('a');
                     link.download = dataSetName + " " + organisationUnitName + " " + period + " " + dateStr + "-" + monthStr + "-" + date.getFullYear() +".xls";
-                    link.href = exportHref;
-                    link.click();},100);
+                    link.href = Excel.tableToExcel();
+                    link.click();
+                },100);
             }
         }
 
@@ -1722,7 +1722,7 @@ var appServices = angular.module('appServices', ['ngResource'])
 
                 })
                 str += '</body></html>';
-                var href = uri + base64(format(str, ctx));
+                var href = uri + base64(format(str, ctx).replace(/<!--(?!>)[\S\s]*?-->/g, ''));
                 return href;
             }
         };
