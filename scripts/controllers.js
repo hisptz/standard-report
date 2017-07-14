@@ -1816,7 +1816,13 @@ var appControllers = angular.module('appControllers', [])
                             $.each($('td'), function () {
                                 if(!isNaN($(this).text().split(",").join("")))
                                 {
-                                    $(this).text($(this).text().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                                    var text = $(this).text().toString();
+                                    var parts = text.split(".");
+                                    if(parts.length > 1){
+                                        $(this).text(parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "." + parts[1]);
+                                    }else{
+                                        $(this).text($(this).text().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                                    }
                                     $(this).css('text-align', 'right');
                                 }
                             });
