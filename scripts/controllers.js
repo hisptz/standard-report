@@ -390,7 +390,6 @@ var appControllers = angular.module('appControllers', [])
         }
         $scope.createAllReports = function(){
             $scope.createAllReportLoading = true;
-            console.log("Source DataSet:",$scope.dataSet);
             var foundDistrictReports = false;
             var requests = [];
             $scope.sourceDataSets.forEach(function(sourceDataSet){
@@ -485,7 +484,6 @@ var appControllers = angular.module('appControllers', [])
                             }
                         }
                         $http.get(DHIS2URL + "api/completeDataSetRegistrations.json?dataSet=" + formDataSets.join("&orgUnit=") + "&orgUnit=" +districtIds.join("&orgUnit=") + "&startDate=" + startDate + "&endDate=" + periodDate.endDate).then(function (completenessResults) {
-                            console.log("completenessResults:",completenessResults.data);
                             if(completenessResults.data.completeDataSetRegistrations){
                                 completenessResults.data.completeDataSetRegistrations.forEach(function(completeDataSetRegistration){
                                     if($scope.notCompleted[completeDataSetRegistration.dataSet][completeDataSetRegistration.organisationUnit]){
@@ -584,7 +582,6 @@ var appControllers = angular.module('appControllers', [])
                 dataSet.orgUnitLevel = dataSet.organisationUnits[0].level;
                 var startDate = periodDate.startDate;
                 if("Wtzj9Chl3HW" == dataSet.id){
-                    console.log("Yeye:",$routeParams.period)
                     if($routeParams.period.indexOf("Q3") > -1 || $routeParams.period.indexOf("Q4") > -1){
                         startDate = $routeParams.period.substr(0,4) + "-07-01";
                     }else if($routeParams.period.indexOf("Q1") > -1 || $routeParams.period.indexOf("Q2") > -1){
@@ -1112,7 +1109,6 @@ var appControllers = angular.module('appControllers', [])
                 $scope.orgUnit.discendants = organisationUnits.data.organisationUnits;
                 discendantDeffered.resolve();
             }, function (error) {
-                console.log(error);
                 if (error.data.httpStatusCode == 404) {
                     discendantDeffered.resolve(error.data);
                 } else {

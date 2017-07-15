@@ -1538,7 +1538,6 @@ var appServices = angular.module('appServices', ['ngResource'])
                 var that = this;
                 $http.get(DHIS2URL + "api/dataSets.json?fields=id,periodType&filter=attributeValues.value:like:" + data.dataSet)
                     .then(function (dataSetsResults) {
-                        console.log(dataSetsResults.data.dataSets);
                         $http.get(DHIS2URL + "api/organisationUnits/" + data.orgUnit + ".json?fields=id,level,ancestors")
                             .then(function (orgUnitResults) {
                                 var promises = [];
@@ -1593,16 +1592,13 @@ var appServices = angular.module('appServices', ['ngResource'])
                                                 if((parseInt(period.substr(4)) >= 7 && parseInt(period.substr(4)) <= 12)){
                                                     year++;
                                                 }
-                                                console.log("Start:");
                                                 for (var d = new Date(parseInt(period.substr(0,4)), parseInt(period.substr(4)), 1); d <= new Date(year,5,1); d.setMonth(d.getMonth() + 1)) {
-                                                    console.log("Month:",d.getMonth());
                                                     if(d.getMonth() < 9){
                                                         newPeriods.push(d.getFullYear() + "0" + (d.getMonth() + 1));
                                                     }else{
                                                         newPeriods.push(d.getFullYear() + "" + (d.getMonth() + 1));
                                                     }
                                                 }
-                                                console.log("End:");
 
                                             }
                                             newPeriods.forEach(function(newPeriod){
@@ -1641,7 +1637,6 @@ var appServices = angular.module('appServices', ['ngResource'])
                 $http.delete(DHIS2URL + "api/dataStore/executed/" + dataSet + "_" + orgUnit + "_" + period).then(function () {
                     deffered.resolve();
                 }, function (error) {
-                    console.log(error);
                     if (error.data.httpStatusCode == 404) {
                         deffered.resolve(error.data);
                     } else {
@@ -1655,7 +1650,6 @@ var appServices = angular.module('appServices', ['ngResource'])
                 $http.delete(DHIS2URL + "api/dataStore/notExecuted/" + data.dataSet + "_" + data.orgUnit + "_" + data.period).then(function () {
                     deffered.resolve();
                 }, function (error) {
-                    console.log(error);
                     if (error.data.httpStatusCode == 404) {
                         deffered.resolve(error.data);
                     } else {
