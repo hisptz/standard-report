@@ -1533,7 +1533,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                 })
                 return deffered.promise;
             },
-            undoDataSetReport: function (data) {
+            undoDataSetReport: function (data,goDeep) {
                 var deffered = $q.defer();
                 var that = this;
                 $http.get(DHIS2URL + "api/dataSets.json?fields=id,periodType&filter=attributeValues.value:like:" + data.dataSet)
@@ -1574,6 +1574,53 @@ var appServices = angular.module('appServices', ['ngResource'])
                                             //promises.push($http.delete(DHIS2URL + "api/dataStore/executed/" + dataSet.id + "_" + ancestor.id + "_" + period));
                                             promises.push(that.delete(dataSet.id, ancestor.id, period));
                                         })
+                                        if((dataSet.id == "QLoyT2aHGes" || dataSet.id == "cSC1VV8uMh9") && !goDeep){
+                                            var newPeriods = [];
+                                            if(period.indexOf("Q") > -1){
+                                                if(period.indexOf("Q1") > -1){
+                                                    newPeriods.push(period.substr(0,4) + "Q2")
+                                                }else if(period.indexOf("Q3") > -1){
+                                                    newPeriods.push(parseInt(0,4)  + "Q4");
+                                                    newPeriods.push((parseInt(0,4) + 1)  + "Q1");
+                                                    newPeriods.push((parseInt(0,4) + 1)  + "Q2")
+                                                }else if(period.indexOf("Q4") > -1){
+                                                    newPeriods.push((parseInt(0,4) + 1)  + "Q1");
+                                                    newPeriods.push((parseInt(0,4) + 1)  + "Q2")
+                                                }
+
+                                            }else if(period.indexOf("July") == -1){
+                                                var year = parseInt(period.substr(0,4));
+                                                if((parseInt(period.substr(4)) >= 7 && parseInt(period.substr(4)) <= 12)){
+                                                    year++;
+                                                }
+                                                console.log("Start:");
+                                                for (var d = new Date(parseInt(period.substr(0,4)), parseInt(period.substr(4)), 1); d <= new Date(year,5,1); d.setMonth(d.getMonth() + 1)) {
+                                                    console.log("Month:",d.getMonth());
+                                                    if(d.getMonth() < 9){
+                                                        newPeriods.push(d.getFullYear() + "0" + (d.getMonth() + 1));
+                                                    }else{
+                                                        newPeriods.push(d.getFullYear() + "" + (d.getMonth() + 1));
+                                                    }
+                                                }
+                                                console.log("End:");
+
+                                            }
+                                            newPeriods.forEach(function(newPeriod){
+                                                promises.push(that.undoDataSetReport({
+                                                    orgUnit: orgUnitResults.data.id,
+                                                    period: newPeriod,
+                                                    dataSet: dataSet.id
+                                                },true))
+                                                orgUnitResults.data.ancestors.forEach(function (ancestor) {
+                                                    //promises.push($http.delete(DHIS2URL + "api/dataStore/executed/" + dataSet.id + "_" + ancestor.id + "_" + period));
+                                                    promises.push(that.undoDataSetReport({
+                                                        orgUnit: ancestor.id,
+                                                        period: newPeriod,
+                                                        dataSet: dataSet.id
+                                                    },true))
+                                                })
+                                            })
+                                        }
                                     })
                                 })
                                 $q.all(promises).then(function (result) {
