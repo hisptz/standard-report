@@ -1587,7 +1587,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                                                     newPeriods.push((parseInt(0,4) + 1)  + "Q2")
                                                 }
 
-                                            }else if(period.indexOf("July") == -1){
+                                            }/*else if(period.indexOf("July") == -1){
                                                 var year = parseInt(period.substr(0,4));
                                                 if((parseInt(period.substr(4)) >= 7 && parseInt(period.substr(4)) <= 12)){
                                                     year++;
@@ -1600,7 +1600,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                                                     }
                                                 }
 
-                                            }
+                                            }*/
                                             newPeriods.forEach(function(newPeriod){
                                                 promises.push(that.undoDataSetReport({
                                                     orgUnit: orgUnitResults.data.id,
