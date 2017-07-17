@@ -1738,7 +1738,7 @@ var appServices = angular.module('appServices', ['ngResource'])
             };
         return {
             tableToExcel: function () {
-                var tables = $(".excel-table");
+                var tables = $(".excel-table").clone();
                 var ctx = {worksheet: "Sheet 1"};
                 var str = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body>';
                 tables.each(function(index){
@@ -1753,6 +1753,45 @@ var appServices = angular.module('appServices', ['ngResource'])
                                 this.remove();
                             }
                         }));
+                        var thatTable = this;
+                        var toRemove = [];
+                        ($(this).find("tbody[autogrowing] tr").each(function(index){
+                            /*$(this).find("td").each(function(){
+                                console.log(this.attr('rowspan'));
+                            })*/
+                            //console.log(this.children);
+                            var thatRow = this;
+                            var rowspan = undefined;
+                            var span = true;
+                            this.children.forEach(function(child){
+                                if(rowspan){
+                                    if(rowspan != $(child).attr('rowspan')){
+                                        span = false;
+                                    }
+                                }else{
+                                    rowspan = $(child).attr('rowspan');
+                                }
+
+                            })
+                            if(span){
+                                this.children.forEach(function(child,index2){
+                                    if(index2 == 0 && $(child).attr('rowspan') != '1'){
+                                        ($(thatTable).find("tbody[autogrowing] tr").each(function(thisIndex){
+                                            console.log(thisIndex,index,parseInt($(child).attr('rowspan')),(thisIndex > index && thisIndex < index + parseInt($(child).attr('rowspan'))));
+                                            if(thisIndex > index && thisIndex < index + parseInt($(child).attr('rowspan'))){
+                                                console.log("Any Removing");
+                                                toRemove.push(this);
+                                            }
+                                        }));
+                                    }
+                                    $(child).attr('rowspan','1')
+
+                                })
+                            }
+                        }));
+                        toRemove.forEach(function(row){
+                            row.remove();
+                        })
                         ctx["table" + index] = this.innerHTML;
                         if(this.title == "no-border"){
                             str += '<table>{' + "table" + index+'}</table><br />';
