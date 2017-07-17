@@ -1753,12 +1753,12 @@ var appServices = angular.module('appServices', ['ngResource'])
                                 this.remove();
                             }
                         }));
-                        var thatTable = this;
+                        /*var thatTable = this;
                         var toRemove = [];
                         ($(this).find("tbody[autogrowing] tr").each(function(index){
-                            /*$(this).find("td").each(function(){
+                            /!*$(this).find("td").each(function(){
                                 console.log(this.attr('rowspan'));
-                            })*/
+                            })*!/
                             //console.log(this.children);
                             var thatRow = this;
                             var rowspan = undefined;
@@ -1791,7 +1791,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                         }));
                         toRemove.forEach(function(row){
                             row.remove();
-                        })
+                        })*/
                         ctx["table" + index] = this.innerHTML;
                         if(this.title == "no-border"){
                             str += '<table>{' + "table" + index+'}</table><br />';
