@@ -1541,7 +1541,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                         $http.get(DHIS2URL + "api/organisationUnits/" + data.orgUnit + ".json?fields=id,level,ancestors")
                             .then(function (orgUnitResults) {
                                 var promises = [];
-                                //promises.push(that.delete(data.dataSet, data.orgUnit, data.period));
+                                promises.push(that.delete(data.dataSet, data.orgUnit, data.period));
                                 var periods = [];
                                 if (data.period.indexOf("July") > -1) {
                                     periods.push(data.period);
@@ -1566,10 +1566,10 @@ var appServices = angular.module('appServices', ['ngResource'])
 
                                 periods.forEach(function (period) {
                                     dataSetsResults.data.dataSets.forEach(function (dataSet) {
-                                        //promises.push(that.delete(dataSet.id, orgUnitResults.data.id, period));
+                                        promises.push(that.delete(dataSet.id, orgUnitResults.data.id, period));
                                         //console.log(dataSet.id, orgUnitResults.data.id, period);
                                         orgUnitResults.data.ancestors.forEach(function (ancestor) {
-                                            //promises.push(that.delete(dataSet.id, ancestor.id, period));
+                                            promises.push(that.delete(dataSet.id, ancestor.id, period));
                                         })
                                         if((dataSet.id == "QLoyT2aHGes" || dataSet.id == "cSC1VV8uMh9") && !goDeep){
                                             if(period.indexOf("Q") > -1){
