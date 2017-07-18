@@ -1541,7 +1541,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                         $http.get(DHIS2URL + "api/organisationUnits/" + data.orgUnit + ".json?fields=id,level,ancestors")
                             .then(function (orgUnitResults) {
                                 var promises = [];
-                                promises.push(that.delete(data.dataSet, data.orgUnit, data.period));
+                                //promises.push(that.delete(data.dataSet, data.orgUnit, data.period));
                                 var periods = [];
                                 if (data.period.indexOf("July") > -1) {
                                     periods.push(data.period);
@@ -1563,11 +1563,13 @@ var appServices = angular.module('appServices', ['ngResource'])
                                     }
                                     periods.push("July" + year);
                                 }
+
                                 periods.forEach(function (period) {
                                     dataSetsResults.data.dataSets.forEach(function (dataSet) {
-                                        promises.push(that.delete(dataSet.id, orgUnitResults.data.id, period));
+                                        //promises.push(that.delete(dataSet.id, orgUnitResults.data.id, period));
+                                        //console.log(dataSet.id, orgUnitResults.data.id, period);
                                         orgUnitResults.data.ancestors.forEach(function (ancestor) {
-                                            promises.push(that.delete(dataSet.id, ancestor.id, period));
+                                            //promises.push(that.delete(dataSet.id, ancestor.id, period));
                                         })
                                         if((dataSet.id == "QLoyT2aHGes" || dataSet.id == "cSC1VV8uMh9") && !goDeep){
                                             if(period.indexOf("Q") > -1){
@@ -1575,20 +1577,30 @@ var appServices = angular.module('appServices', ['ngResource'])
                                                 if(period.indexOf("Q1") > -1){
                                                     newPeriods.push(period.substr(0,4) + "Q2")
                                                 }else if(period.indexOf("Q3") > -1){
-                                                    newPeriods.push(parseInt(0,4)  + "Q4");
-                                                    newPeriods.push((parseInt(0,4) + 1)  + "Q1");
-                                                    newPeriods.push((parseInt(0,4) + 1)  + "Q2")
+                                                    newPeriods.push(parseInt(period.substr(0,4))  + "Q4");
+                                                    newPeriods.push((parseInt(period.substr(0,4)) + 1)  + "Q1");
+                                                    newPeriods.push((parseInt(period.substr(0,4)) + 1)  + "Q2")
                                                 }else if(period.indexOf("Q4") > -1){
-                                                    newPeriods.push((parseInt(0,4) + 1)  + "Q1");
-                                                    newPeriods.push((parseInt(0,4) + 1)  + "Q2")
+                                                    newPeriods.push((parseInt(period.substr(0,4)) + 1)  + "Q1");
+                                                    newPeriods.push((parseInt(period.substr(0,4)) + 1)  + "Q2")
                                                 }
                                                 newPeriods.forEach(function(newPeriod){
+                                                    console.log("Periods:",{
+                                                        orgUnit: orgUnitResults.data.id,
+                                                        period: newPeriod,
+                                                        dataSet: "QLoyT2aHGes"
+                                                    });
                                                     promises.push(that.undoDataSetReport({
                                                         orgUnit: orgUnitResults.data.id,
                                                         period: newPeriod,
                                                         dataSet: dataSet.id
                                                     },true))
                                                     orgUnitResults.data.ancestors.forEach(function (ancestor) {
+                                                        console.log("Periods2:",{
+                                                            orgUnit: ancestor.id,
+                                                            period: newPeriod,
+                                                            dataSet: "QLoyT2aHGes"
+                                                        });
                                                         promises.push(that.undoDataSetReport({
                                                             orgUnit: ancestor.id,
                                                             period: newPeriod,
@@ -1596,7 +1608,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                                                         },true))
                                                     })
                                                 })
-                                            }else if(period.indexOf("July") == -1){
+                                            }/*else if(period.indexOf("July") == -1){
                                                 var newPeriods = [];
                                                 var currentQuarter = Math.ceil(parseInt(period.substr(4)) / 3);
                                                 if(currentQuarter == 1){
@@ -1624,7 +1636,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                                                         },true))
                                                     })
                                                 })
-                                            }
+                                            }*/
                                         }
                                     })
                                 })
