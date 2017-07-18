@@ -46,7 +46,6 @@ var appFilters = angular.module('appFilters', [])
                         }
                     }else{
                         notExecuted.forEach(function(str){
-                            console.log(str.startsWith(dataSetId),str.endsWith(p))
                             if(str.startsWith(dataSetId) && str.endsWith(p)){
                                 returnPeriods.push(p);
                             }
