@@ -996,7 +996,7 @@ var appDirectives = angular.module('appDirectives', [])
             templateUrl: 'views/scheduledReports.html'
         }
     })
-    .directive("autogrowing", function ($timeout, $compile) {
+    .directive("autogrowing", function ($timeout, $filter) {
         return {
             scope: {
                 config: '='
@@ -1134,9 +1134,10 @@ var appDirectives = angular.module('appDirectives', [])
                                                     }
                                                 }else{
                                                     if(scope.config.dataElementsDetails[i - 1].aggregationType == "AVERAGE"){
-                                                        cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")"));
+                                                        console.log("Ouch",firstValue.split(",").join("") + " + " + secondValue.split(",").join(""));
+                                                        cellToExtend.html(eval("(" + firstValue.split(",").join("") + " + " + secondValue.split(",").join("") +")"));
                                                     }else{
-                                                        cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")").toFixed(1));
+                                                        cellToExtend.html(eval("(" + firstValue.split(",").join("") + " + " + secondValue.split(",").join("") +")").toFixed(1));
                                                     }
                                                 }
                                             }
@@ -1155,6 +1156,20 @@ var appDirectives = angular.module('appDirectives', [])
                             }
 
                         }
+                        scope.config.dataElements.forEach(function (dataElementId){
+                            scope.config.dataElementsDetails.forEach(function (dataElement, index) {
+                                if (dataElement.id == dataElementId) {
+                                    if (dataElement.aggregationType == "AVERAGE") {
+                                        elem.find("tr").each(function (trIndex, trElement){
+                                            if(trElement.children[index]){
+                                                console.log(parseFloat(trElement.children[index].innerText) / trElement.children[index].rowSpan);
+                                                trElement.children[index].innerText = $filter('comma')(parseFloat(trElement.children[index].innerText) / trElement.children[index].rowSpan);
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        })
                         if(scope.config.valueTypes){
                             for (var i = 1; i <= scope.data.dataElements.length; i++) {
                                 elem.find("td:nth-child(" + i + ")").each(function (index, el) {
@@ -1312,7 +1327,7 @@ var appDirectives = angular.module('appDirectives', [])
                                         }
                                     });
                                     $scope.config.data.forEach(function (eventData) {
-                                        eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] + ")");
+                                        //eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] + ")");
                                     })
                                 }
                             }
