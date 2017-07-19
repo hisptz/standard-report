@@ -1134,7 +1134,6 @@ var appDirectives = angular.module('appDirectives', [])
                                                     }
                                                 }else{
                                                     if(scope.config.dataElementsDetails[i - 1].aggregationType == "AVERAGE"){
-                                                        console.log("Ouch",firstValue.split(",").join("") + " + " + secondValue.split(",").join(""));
                                                         cellToExtend.html(eval("(" + firstValue.split(",").join("") + " + " + secondValue.split(",").join("") +")"));
                                                     }else{
                                                         cellToExtend.html(eval("(" + firstValue.split(",").join("") + " + " + secondValue.split(",").join("") +")").toFixed(1));
@@ -1156,14 +1155,15 @@ var appDirectives = angular.module('appDirectives', [])
                             }
 
                         }
-                        scope.config.dataElements.forEach(function (dataElementId){
+                        scope.config.dataElements.forEach(function (dataElementId,deIndex){
                             scope.config.dataElementsDetails.forEach(function (dataElement, index) {
                                 if (dataElement.id == dataElementId) {
                                     if (dataElement.aggregationType == "AVERAGE") {
                                         elem.find("tr").each(function (trIndex, trElement){
-                                            if(trElement.children[index]){
-                                                console.log(parseFloat(trElement.children[index].innerText) / trElement.children[index].rowSpan);
-                                                trElement.children[index].innerText = $filter('comma')(parseFloat(trElement.children[index].innerText) / trElement.children[index].rowSpan);
+                                            if(trElement.children[deIndex]){
+                                                if(scope.config.programId == "G2z6vC1bn2F")
+                                                console.log(trElement.children[deIndex],parseFloat(trElement.children[deIndex].innerText), trElement.children[deIndex].rowSpan);
+                                                trElement.children[deIndex].innerText = $filter('comma')((parseFloat(trElement.children[deIndex].innerText) / trElement.children[deIndex].rowSpan).toFixed(1));
                                             }
                                         });
                                     }
