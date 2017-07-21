@@ -2265,7 +2265,7 @@ var appControllers = angular.module('appControllers', [])
         $scope.show_estimation_box = false;
         $scope.pull_updates = true;
         $scope.agrigation_is_run = false;
-        $scope.agrigation_fineshed = false;
+        $scope.reports_done = 'no';
         //$http.get(DHIS2URL + 'api/dataStore/estimation/status').success(function(analytics_response){
         //    if(analytics_response.is_running = "Yes"){
         //        $scope.show_estimation_box = true;
@@ -2292,6 +2292,7 @@ var appControllers = angular.module('appControllers', [])
 
         $scope.startAggregation = function () {
             $scope.agrigation_is_run = true;
+            $scope.reports_done = 'yes';
             var today = new Date();
             var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
             var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
@@ -2316,7 +2317,7 @@ var appControllers = angular.module('appControllers', [])
                             $scope.activities = analytics_response;
                             if (analytics_response.is_running = "No") {
                                 $scope.pull_updates = false;
-                            }if (analytics_response.status = "No") {
+                            }if (analytics_response.status = "done") {
                                 $scope.agrigation_fineshed = true;
                             }
                         })

@@ -942,10 +942,12 @@ var appDirectives = angular.module('appDirectives', [])
     .directive("scheduledReports", function () {
         return {
             scope: {
-                config: '='
+                config: '=',
+                done:'='
             },
             controller: function ($scope,$http,DHIS2URL,ReportService) {
                 $scope.loading ={};
+                console.log($scope.done)
                 $scope.cancelCreateDataSetReport = function(dataSet,orgUnit,period){
                     $scope.loading[dataSet+"_"+orgUnit+"_"+period] = true;
                     ReportService.cancelCreateDataSetReport({dataSet:dataSet,orgUnit:orgUnit,period:period}).then(function(){
