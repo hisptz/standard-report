@@ -13,7 +13,7 @@
                 <td rowspan="{{(periodIds | withNotExecuted:notExecuted:dataSetId:orgUnitId).length}}"><span ng-repeat="ancestor in orgUnits[orgUnitId].ancestors">{{ancestor.name}} - </span>{{orgUnits[orgUnitId].name}}</td>
                 <td ng-if="$first" ng-repeat="periodId in periodIds | withNotExecuted:notExecuted:dataSetId:orgUnitId">{{getPeriodName(periodId)}}</td>
                 <td ng-if="$first" ng-repeat="periodId in periodIds | withNotExecuted:notExecuted:dataSetId:orgUnitId">
-                    <button ng-if="!loading[dataSetId+'_'+orgUnitId+'_'+periodId]" ng-click="cancelCreateDataSetReport(dataSetId,orgUnitId,periodId)"><span>Cancel Report Creation</span></button>
+                    <button ng-if="!loading[dataSetId+'_'+orgUnitId+'_'+periodId] && !agrigation_fineshed" ng-click="cancelCreateDataSetReport(dataSetId,orgUnitId,periodId)"><span>Cancel Report Creation</span></button>
                     <span ng-if="loading[dataSetId+'_'+orgUnitId+'_'+periodId]">Loading..</span>
                 </td>
             </tr>
