@@ -1133,6 +1133,7 @@ var appControllers = angular.module('appControllers', [])
             $scope.listByWardData = {};
             $scope.lastIndicatorData = {};
             $scope.lastMonthIndicatorData = {};
+            $scope.districtIndicatorData = {};
             $scope.loadingStatus = "Loading Organisation Units";
 
             var organisationUnit = $scope.orgUnit;
@@ -1376,6 +1377,21 @@ var appControllers = angular.module('appControllers', [])
                     }
                 }
                 //Dealing with fourth Quarter
+                if ($scope.districtIndicator.length > 0) {
+                    console.log("Yey",$scope.districtIndicator.join(";"))
+                    promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.districtIndicator.join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:LEVEL-3;" + $routeParams.orgUnit)
+                        .then(function (analyticsResults) {
+                            analyticsResults.data.rows.forEach(function (row) {
+                                if($scope.districtIndicatorData[row[0]]){
+                                    console.log("Found:",row[2]);
+                                    $scope.districtIndicatorData[row[0]] = "" + (parseFloat($scope.districtIndicatorData[row[0]]) + parseFloat(row[3])).toFixed(1);
+                                }else{
+                                    $scope.districtIndicatorData[row[0]] = row[3];
+                                }
+                            });
+                        }));
+                }
+                //Dealing with fourth Quarter
                 if ($scope.fourthQuarter.length > 0) {
                     for (var i = 0; i < $scope.fourthQuarter.length; i += batch) {
                         promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.fourthQuarter.slice(i, i + batch).join(";") + "&dimension=pe:" + (parseInt($routeParams.period.replace("July", "")) + 1) + "Q2&filter=ou:" + $routeParams.orgUnit)
@@ -1550,6 +1566,7 @@ var appControllers = angular.module('appControllers', [])
         $scope.lastMonthIndicator = [];
         $scope.wardLevelIndicator = [];
         $scope.lastMonthOfQuarterWardLevel = [];
+        $scope.districtIndicator = []
 
         //Replacement for debug purpose;
         $scope.getElementReplacment = function (content, type) {
@@ -1694,6 +1711,9 @@ var appControllers = angular.module('appControllers', [])
                     } else if (match[0].indexOf("cumulative-to-date") > -1) {//If it is last month of quarter
                         newHtml = newHtml.replace(match[0], "<div>{{cumulativeToDateData['" + idMacth[1] +  "'] | removeNaN |comma}}</div>");
                         $scope.cumulativeToDate.push(idMacth[1]);
+                    }else if (match[0].indexOf("districtIndicator") > -1) {//If it is last month of quarter
+                        newHtml = newHtml.replace(match[0], "<div>{{districtIndicatorData['" + idMacth[1] +  "'] | removeNaN |comma}}</div>");
+                        $scope.districtIndicator.push(idMacth[1]);
                     } else {
                         if (match[0].indexOf("ward-level") > -1) {
                             $scope.wardLevelIndicator.push(idMacth[1]);

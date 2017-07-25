@@ -1162,7 +1162,6 @@ var appDirectives = angular.module('appDirectives', [])
                                         elem.find("tr").each(function (trIndex, trElement){
                                             if(trElement.children[deIndex]){
                                                 if(scope.config.programId == "G2z6vC1bn2F")
-                                                console.log(trElement.children[deIndex],parseFloat(trElement.children[deIndex].innerText), trElement.children[deIndex].rowSpan);
                                                 trElement.children[deIndex].innerText = $filter('comma')((parseFloat(trElement.children[deIndex].innerText) / trElement.children[deIndex].rowSpan).toFixed(1));
                                             }
                                         });
