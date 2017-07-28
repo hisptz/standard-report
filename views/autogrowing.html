@@ -11,6 +11,6 @@
     <td ng-class="{'hide-text':config.hide.indexOf($index) > -1}" style="border:1px solid lightgrey" right-align="{{dataElement.valueType}}"
         ng-if="event[dataElement.name] != undefined && dataElement.valueType != 'NA' && dataElement.valueType != 'TEXT'" align="right"
         ng-repeat="dataElement in data.dataElements track by $index">{{event[dataElement.name] | removeNaN:dataElement}}</td>
-    <td ng-if="config.na">N/A</td><td ng-if="config.na">N/A</td>
+    <td ng-if="config.na" align="right">N/A</td><td ng-if="config.na" align="right">N/A</td>
 </tr>
 </tbody>
