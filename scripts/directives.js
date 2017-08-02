@@ -1163,7 +1163,6 @@ var appDirectives = angular.module('appDirectives', [])
                                     if (dataElement.aggregationType == "AVERAGE") {
                                         elem.find("tr").each(function (trIndex, trElement){
                                             if(trElement.children[deIndex]){
-                                                if(scope.config.programId == "G2z6vC1bn2F")
                                                 trElement.children[deIndex].innerText = $filter('comma')((parseFloat(trElement.children[deIndex].innerText) / trElement.children[deIndex].rowSpan).toFixed(1));
                                             }
                                         });
