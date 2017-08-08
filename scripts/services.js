@@ -1759,10 +1759,19 @@ var appServices = angular.module('appServices', ['ngResource'])
             };
         return {
             tableToExcel: function () {
+                $('*').contents().each(function() {
+                    if(this.nodeType === Node.COMMENT_NODE) {
+                        $(this).remove();
+                    }
+                });
                 var tables = $(".excel-table").clone();
                 var ctx = {worksheet: "Sheet 1"};
                 var str = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body>';
+                var length = 0;
                 tables.each(function(index){
+
+                    length += $(this).html().length;
+
                     if($(this).hasClass( "not-in-excel" )){
 
                     }else{
@@ -1775,44 +1784,39 @@ var appServices = angular.module('appServices', ['ngResource'])
                             }
                         }));
                         /*var thatTable = this;
-                        var toRemove = [];
-                        ($(this).find("tbody[autogrowing] tr").each(function(index){
-                            /!*$(this).find("td").each(function(){
-                                console.log(this.attr('rowspan'));
-                            })*!/
-                            //console.log(this.children);
-                            var thatRow = this;
-                            var rowspan = undefined;
-                            var span = true;
-                            this.children.forEach(function(child){
-                                if(rowspan){
-                                    if(rowspan != $(child).attr('rowspan')){
-                                        span = false;
-                                    }
-                                }else{
-                                    rowspan = $(child).attr('rowspan');
-                                }
+                         var toRemove = [];
+                         ($(this).find("tbody[autogrowing] tr").each(function(index){
+                         /!*$(this).find("td").each(function(){
+                         console.log(this.attr('rowspan'));
+                         })*!/
+                         //console.log(this.children);
+                         var thatRow = this;
+                         var rowspan = undefined;
+                         var span = true;
+                         this.children.forEach(function(child,i){
+                         if(rowspan){
+                         if(rowspan != $(child).attr('rowspan')){
+                         span = false;
+                         }
+                         }else if(i == 0){
+                         rowspan = $(child).attr('rowspan');
+                         }
 
-                            })
-                            if(span){
-                                this.children.forEach(function(child,index2){
-                                    if(index2 == 0 && $(child).attr('rowspan') != '1'){
-                                        ($(thatTable).find("tbody[autogrowing] tr").each(function(thisIndex){
-                                            console.log(thisIndex,index,parseInt($(child).attr('rowspan')),(thisIndex > index && thisIndex < index + parseInt($(child).attr('rowspan'))));
-                                            if(thisIndex > index && thisIndex < index + parseInt($(child).attr('rowspan'))){
-                                                console.log("Any Removing");
-                                                toRemove.push(this);
-                                            }
-                                        }));
-                                    }
-                                    $(child).attr('rowspan','1')
-
-                                })
-                            }
-                        }));
-                        toRemove.forEach(function(row){
-                            row.remove();
-                        })*/
+                         })
+                         if(span && rowspan != undefined){
+                         ($(thatTable).find("tbody[autogrowing] tr").each(function(thisIndex,tr){
+                         if(thisIndex > index && thisIndex < (index + parseInt(rowspan))){
+                         toRemove.push(this);
+                         }
+                         }));
+                         this.children.forEach(function(child){
+                         $(child).attr('rowspan',"1");
+                         })
+                         }
+                         }));
+                         toRemove.forEach(function(row){
+                         row.remove();
+                         })*/
                         ctx["table" + index] = this.innerHTML;
                         if(this.title == "no-border"){
                             str += '<table>{' + "table" + index+'}</table><br />';
@@ -1822,10 +1826,73 @@ var appServices = angular.module('appServices', ['ngResource'])
                     }
 
                 })
+                console.log("Length:",length);
                 str += '</body></html>';
                 var href = uri + base64(format(str, ctx).replace(/<!--(?!>)[\S\s]*?-->/g, ''));
                 return href;
-            }
+            },
         };
+    })
+    .factory('Excel2', function ($window) {
+        var uri = 'data:application/vnd.ms-excel;base64,'
+            , tmplWorkbookXML = '<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'
+            + '<DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"><Author>Axel Richter</Author><Created>{created}</Created></DocumentProperties>'
+            + '<Styles>'
+            + '<Style ss:ID="Currency"><NumberFormat ss:Format="Currency"></NumberFormat></Style>'
+            + '<Style ss:ID="Date"><NumberFormat ss:Format="Medium Date"></NumberFormat></Style>'
+            + '</Styles>'
+            + '{worksheets}</Workbook>'
+            , tmplWorksheetXML = '<Worksheet ss:Name="{nameWS}"><Table>{rows}</Table></Worksheet>'
+            , tmplCellXML = '<Cell{attributeStyleID}{attributeFormula}><Data ss:Type="{nameType}">{data}</Data></Cell>'
+            , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+            , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+        return {
+            tableToExcel:function() {
+                $('*').contents().each(function() {
+                    if(this.nodeType === Node.COMMENT_NODE) {
+                        $(this).remove();
+                    }
+                });
+                var appname = '';
+                var tables = $(".excel-table").clone();
+                var ctx = "";
+                var workbookXML = "";
+                var worksheetsXML = "";
+                var rowsXML = "";
+
+                for (var i = 0; i < tables.length; i++) {
+                    if (!tables[i].nodeType) tables[i] = document.getElementById(tables[i]);
+                    console.log(tables[i]);
+                    if(tables[i].rows)
+                    for (var j = 0; j < tables[i].rows.length; j++) {
+                        rowsXML += '<Row>'
+                        for (var k = 0; k < tables[i].rows[j].cells.length; k++) {
+                            var dataType = tables[i].rows[j].cells[k].getAttribute("data-type");
+                            var dataStyle = tables[i].rows[j].cells[k].getAttribute("data-style");
+                            var dataValue = tables[i].rows[j].cells[k].getAttribute("data-value");
+                            dataValue = (dataValue)?dataValue:tables[i].rows[j].cells[k].innerHTML;
+                            var dataFormula = tables[i].rows[j].cells[k].getAttribute("data-formula");
+                            dataFormula = (dataFormula)?dataFormula:(appname=='Calc' && dataType=='DateTime')?dataValue:null;
+                            ctx = {  attributeStyleID: (dataStyle=='Currency' || dataStyle=='Date')?' ss:StyleID="'+dataStyle+'"':''
+                                , nameType: (dataType=='Number' || dataType=='DateTime' || dataType=='Boolean' || dataType=='Error')?dataType:'String'
+                                , data: (dataFormula)?'':dataValue
+                                , attributeFormula: (dataFormula)?' ss:Formula="'+dataFormula+'"':''
+                            };
+                            rowsXML += format(tmplCellXML, ctx);
+                        }
+                        rowsXML += '</Row>'
+                    }
+                    ctx = {rows: rowsXML, nameWS: 'Sheet' + i};
+                    worksheetsXML += format(tmplWorksheetXML, ctx);
+                    rowsXML = "";
+                }
+
+                ctx = {created: (new Date()).getTime(), worksheets: worksheetsXML};
+                workbookXML = format(tmplWorkbookXML, ctx);
+
+                console.log(workbookXML);
+                return uri + base64(workbookXML);
+            }
+        }
     })
 

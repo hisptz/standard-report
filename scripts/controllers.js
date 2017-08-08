@@ -1378,12 +1378,10 @@ var appControllers = angular.module('appControllers', [])
                 }
                 //Dealing with fourth Quarter
                 if ($scope.districtIndicator.length > 0) {
-                    console.log("Yey",$scope.districtIndicator.join(";"))
                     promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.districtIndicator.join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:LEVEL-3;" + $routeParams.orgUnit)
                         .then(function (analyticsResults) {
                             analyticsResults.data.rows.forEach(function (row) {
                                 if($scope.districtIndicatorData[row[0]]){
-                                    console.log("Found:",row[2]);
                                     $scope.districtIndicatorData[row[0]] = "" + (parseFloat($scope.districtIndicatorData[row[0]]) + parseFloat(row[3])).toFixed(1);
                                 }else{
                                     $scope.districtIndicatorData[row[0]] = row[3];
