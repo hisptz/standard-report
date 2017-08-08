@@ -1,92 +1,141 @@
 <style type="text/css">
 
-#cde table, #cde th, #cde td {
-    border: 1px solid #c0c0c0;
-}
-
-#cde td, #cde th {
-    height: 10px;
-    padding: 5px;
-    margin: 5px;
-    word-wrap: break-word;
-}
-
-.cde-greyfield {
-    background-color: #e0e0e0;
-}
-    .tabSpace{
-        padding-left:40px
+    #cde table, #cde th, #cde td {
+        border: 1px solid #c0c0c0;
     }
-    u{
-        padding:5px;
+
+    #cde td, #cde th {
+        height: 10px;
+        padding: 5px;
+        margin: 5px;
+        word-wrap: break-word;
+    }
+
+    .cde-greyfield {
+        background-color: #e0e0e0;
+    }
+
+    .tabSpace {
+        padding-left: 40px
+    }
+
+    u {
+        padding: 5px;
+    }
+    @media print{
+        .headingr{
+            font-size:20px;
+        }
+        .administrative table tr td{
+            font-size:14px;
+        }
     }
 </style>
 </p>
+<div >
+    <div class="text text-center">
+        <h2 class="headingr"><strong>UNITED REPUBLIC OF TANZANIA</strong></h2>
+    </div>
 
-<div class="text text-center ng-scope">
-    <h2><strong>UNITED REPUBLIC OF TANZANIA</strong></h2>
-</div>
+    <div class="text text-center">
+        <h2 class="headingr"><strong>PRESIDENT'S OFFICE - REGIONAL ADMINISTRATION AND LOCAL GOVERNMENT (PO-RALG)</strong></h2>
+    </div>
 
-<div class="text text-center ng-scope">
-    <h2><strong>PRESIDENT'S OFFICE - REGIONAL ADMINISTRATION AND LOCAL GOVERNMENT (PO-RALG)</strong></h2>
-</div>
+    <div class="nembo text text-center"><img class="img-rounded"
+                                                      src="../../../dhis-web-commons/css/portalImages/nembo.png"
+                                                      style="height:120px;width:100px"></div>
 
-<div class="nembo text text-center ng-scope"><img class="img-rounded" src="../../../dhis-web-commons/css/portalImages/nembo.png" style="height:120px;width:100px"></div>
+    <div class="interReport text text-center">
+        <h2 class="headingr"><strong>AGRICULTURE SECTOR DEVELOPMENT PROGRAMME (ASDP)</strong></h2>
+    </div>
 
-<div class="interReport text text-center ng-scope">
-    <h2><strong>AGRICULTURE SECTOR DEVELOPMENT PROGRAMME (ASDP)</strong></h2>
-</div>
-
-<div class="interReport text text-center ng-scope">
-    <h2><strong>{{organisationUnit.organisationUnitLevel.displayName | uppercase}} <span>{{getPeriodName()}}</span>
-        <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'District' && dataSet == 'OBnVfEenAuW'"> (DR03)</span>
-        <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'District' && dataSet == 'Znn30Q67yDO'"> (DR02)</span>
-        <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'District' && dataSet == 'cSC1VV8uMh9'"> (DR01)</span>
-        <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'Regional' && dataSet == 'OBnVfEenAuW'"> (RR03)</span>
-        <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'Regional' && dataSet == 'Znn30Q67yDO'"> (RR02)</span>
-        <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'Regional' && dataSet == 'cSC1VV8uMh9'"> (RR01)</span>
-        <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'District' && dataSet == 'QLoyT2aHGes'"> (DIR02)</span>
-        <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'District' && dataSet == 'HhyM40b8ma1'"> (DIR03)</span>
-        <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'National' && dataSet == 'QLoyT2aHGes'"> (NIR02)</span>
-        <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'National' && dataSet == 'HhyM40b8ma1'"> (NIR03)</span>
-        <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'Regional' && dataSet == 'QLoyT2aHGes'"> (RIR02)</span>
-        <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'Regional' && dataSet == 'HhyM40b8ma1'"> (RIR03)</span>
-    </strong></h2>
-</div>
-<div class="interReport text text-center ng-scope">
-    <h2><strong>{{organisationUnit.name | uppercase}}</strong></h2>
-</div>
+    <div class="interReport text text-center">
+        <h2 class="headingr"><strong>{{organisationUnit.organisationUnitLevel.displayName | uppercase}} <span>{{getPeriodName()}}</span>
+            <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'District' && dataSet == 'OBnVfEenAuW'"> (DR03)</span>
+            <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'District' && dataSet == 'Znn30Q67yDO'"> (DR02)</span>
+            <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'District' && dataSet == 'cSC1VV8uMh9'"> (DR01)</span>
+            <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'Regional' && dataSet == 'OBnVfEenAuW'"> (RR03)</span>
+            <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'Regional' && dataSet == 'Znn30Q67yDO'"> (RR02)</span>
+            <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'Regional' && dataSet == 'cSC1VV8uMh9'"> (RR01)</span>
+            <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'District' && dataSet == 'QLoyT2aHGes'"> (DIR02)</span>
+            <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'District' && dataSet == 'HhyM40b8ma1'"> (DIR03)</span>
+            <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'National' && dataSet == 'QLoyT2aHGes'"> (NIR02)</span>
+            <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'National' && dataSet == 'HhyM40b8ma1'"> (NIR03)</span>
+            <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'Regional' && dataSet == 'QLoyT2aHGes'"> (RIR02)</span>
+            <span ng-if="organisationUnit.organisationUnitLevel.displayName == 'Regional' && dataSet == 'HhyM40b8ma1'"> (RIR03)</span>
+        </strong></h2>
+    </div>
+    <div class="interReport text text-center">
+        <h2 class="headingr"><strong>{{organisationUnit.name | uppercase}}</strong></h2>
+    </div>
 
 
-<br /><br /><br />
-<div class="text ng-scope">
-    <h3 class="adminstrative">
-        <table style="margin-left:100px">
-            <tr><td colspan="2">IDENTIFICATION DETAILS</td></tr>
-            <tr ng-if="region"><td>Region:</td><td class="underline">{{region}}</td></tr>
-            <tr ng-if="district"><td>District:</td><td class="underline">{{district}}</td></tr>
-            <tr ng-if="dataSetDetails.periodType == 'FinancialJuly'"><td>Financial Year:</td><td class="underline">{{periodString}}</td></tr>
-            <tr ng-if="dataSetDetails.periodType == 'Monthly'"><td>Month:</td><td class="underline">{{periodString}}</td></tr>
-            <tr ng-if="dataSetDetails.periodType == 'Quarterly'"><td>Quartely:</td>
-                <td class="underline">
-                    {{periodString}}
-                </td>
-            </tr>
-            <tr><td>Name (contact person)</td><td class="underline"></td></tr>
-            <tr><td>Address</td><td>P.O. Box</td><td class="underline"></td></tr>
-            <tr><td></td><td>E-mail</td><td style="width:250px" class="underline"></td></tr>
-            <tr><td></td><td>Mobile</td><td class="underline"></td></tr>
-            <tr><td>Date of submission</td><td class="underline"></td></tr>
-            <tr><td>Number of submitted wards</td><td class="underline"></td></tr>
-        </table>
-    </h3>
-</div>
-<br /><br /><br />
-<div class="annually text text-center ng-scope">
-    <address>
-        <h3><strong>ASDP Monitoring &amp; Evaluation Thematic Working Group </strong></h3>
-        <h4>P.O. Box 9192, Dar es Salaam</h4>
-        <h4>Tel & Fax: +255 22 286 4460</h4>
-        <h4>E-mail: doo@kilimo.go.tz</h4>
-    </address>
+    <br/><br/><br/>
+    <div class="text">
+        <h3 class="adminstrative">
+            <table style="margin-left:100px">
+                <tr>
+                    <td colspan="2">IDENTIFICATION DETAILS</td>
+                </tr>
+                <tr ng-if="region">
+                    <td>Region:</td>
+                    <td class="underline">{{region}}</td>
+                </tr>
+                <tr ng-if="district">
+                    <td>District:</td>
+                    <td class="underline">{{district}}</td>
+                </tr>
+                <tr ng-if="dataSetDetails.periodType == 'FinancialJuly'">
+                    <td>Financial Year:</td>
+                    <td class="underline">{{periodString}}</td>
+                </tr>
+                <tr ng-if="dataSetDetails.periodType == 'Monthly'">
+                    <td>Month:</td>
+                    <td class="underline">{{periodString}}</td>
+                </tr>
+                <tr ng-if="dataSetDetails.periodType == 'Quarterly'">
+                    <td>Quartely:</td>
+                    <td class="underline">
+                        {{periodString}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Name (contact person)</td>
+                    <td class="underline"></td>
+                </tr>
+                <tr>
+                    <td>Address</td>
+                    <td>P.O. Box</td>
+                    <td class="underline"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>E-mail</td>
+                    <td style="width:250px" class="underline"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Mobile</td>
+                    <td class="underline"></td>
+                </tr>
+                <tr>
+                    <td>Date of submission</td>
+                    <td class="underline"></td>
+                </tr>
+                <tr>
+                    <td>Number of submitted wards</td>
+                    <td class="underline"></td>
+                </tr>
+            </table>
+        </h3>
+    </div>
+    <br/><br/><br/>
+    <div class="annually text text-center">
+        <address>
+            <h3 class="headingr"><strong>ASDP Monitoring &amp; Evaluation Thematic Working Group </strong></h3>
+            <h4>P.O. Box 9192, Dar es Salaam</h4>
+            <h4>Tel & Fax: +255 22 286 4460</h4>
+            <h4>E-mail: doo@kilimo.go.tz</h4>
+        </address>
+    </div>
 </div>
