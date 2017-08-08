@@ -1431,11 +1431,11 @@ var appDirectives = angular.module('appDirectives', [])
             },
             link: function (scope, elem, attrs, controller) {
                 $timeout(function () {
+                    console.log(elem[0].rows[0].children.length);
                     var arr = Array.prototype.slice.call(elem[0].rows);
-                    var firstColumnBrakes = [];
                     // iterate through the columns instead of passing each column as function parameter:
-                    for(var i=1; i<=arr.length; i++){
-                        var previous = null, cellToExtend = null, rowspan = 1;
+                    for(var i=1; i<=elem[0].rows[0].children.length; i++){
+                        var cellToExtend = null, rowspan = 1;
                         elem.find("td:nth-child(" + i + ")").each(function(index, e){
                             var jthis = $(this);
                             if(index == 0){
@@ -1453,6 +1453,9 @@ var appDirectives = angular.module('appDirectives', [])
                                         second = 0.0
                                     }
                                     cellToExtend.html((first + second).toFixed(1) );
+                                    if(isNaN(parseFloat(cellToExtend.html()))){
+                                        cellToExtend.html("" );
+                                    }
                                 }
                                 jthis.addClass('hidden');
                                 cellToExtend.attr("rowspan", (rowspan = rowspan+1));
