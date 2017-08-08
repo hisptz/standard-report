@@ -63,3 +63,6 @@ c-tree .list-group .list-group-item {
         top: 0;
     }
 }
+.align-right{
+    text-align: right;
+}
