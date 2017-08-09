@@ -1746,7 +1746,7 @@ var appServices = angular.module('appServices', ['ngResource'])
             }
         };
     })
-    .factory('Excel', function ($window) {
+    .factory('Excel1', function ($window) {
         var uri = 'data:application/vnd.ms-excel;base64,',
             template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table border="1">{table}</table><br /><table border="1">{table}</table></body></html>',
             base64 = function (s) {
@@ -1843,7 +1843,7 @@ var appServices = angular.module('appServices', ['ngResource'])
             + '</Styles>'
             + '{worksheets}</Workbook>'
             , tmplWorksheetXML = '<Worksheet ss:Name="{nameWS}"><Table>{rows}</Table></Worksheet>'
-            , tmplCellXML = '<Cell{attributeStyleID}{attributeFormula}><Data ss:Type="{nameType}">{data}</Data></Cell>'
+            , tmplCellXML = '<Cell><Data ss:Type="{nameType}">{data}</Data></Cell>'
             , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
             , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
         return {
@@ -1870,13 +1870,14 @@ var appServices = angular.module('appServices', ['ngResource'])
                             var dataType = tables[i].rows[j].cells[k].getAttribute("data-type");
                             var dataStyle = tables[i].rows[j].cells[k].getAttribute("data-style");
                             var dataValue = tables[i].rows[j].cells[k].getAttribute("data-value");
-                            dataValue = (dataValue)?dataValue:tables[i].rows[j].cells[k].innerHTML;
+                            dataValue = (dataValue)?dataValue:tables[i].rows[j].cells[k].innerText;
                             var dataFormula = tables[i].rows[j].cells[k].getAttribute("data-formula");
                             dataFormula = (dataFormula)?dataFormula:(appname=='Calc' && dataType=='DateTime')?dataValue:null;
-                            ctx = {  attributeStyleID: (dataStyle=='Currency' || dataStyle=='Date')?' ss:StyleID="'+dataStyle+'"':''
-                                , nameType: (dataType=='Number' || dataType=='DateTime' || dataType=='Boolean' || dataType=='Error')?dataType:'String'
-                                , data: (dataFormula)?'':dataValue
-                                , attributeFormula: (dataFormula)?' ss:Formula="'+dataFormula+'"':''
+                            ctx = {
+                                //attributeStyleID: (dataStyle=='Currency' || dataStyle=='Date')?' ss:StyleID="'+dataStyle+'"':''
+                                 nameType: (dataType=='Number' || dataType=='DateTime' || dataType=='Boolean' || dataType=='Error')?dataType:'String'
+                                ,data: (dataFormula)?'':dataValue
+                                //, attributeFormula: (dataFormula)?' ss:Formula="'+dataFormula+'"':''
                             };
                             rowsXML += format(tmplCellXML, ctx);
                         }
