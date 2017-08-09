@@ -947,7 +947,6 @@ var appDirectives = angular.module('appDirectives', [])
             },
             controller: function ($scope,$http,DHIS2URL,ReportService) {
                 $scope.loading ={};
-                console.log($scope.done)
                 $scope.cancelCreateDataSetReport = function(dataSet,orgUnit,period){
                     $scope.loading[dataSet+"_"+orgUnit+"_"+period] = true;
                     ReportService.cancelCreateDataSetReport({dataSet:dataSet,orgUnit:orgUnit,period:period}).then(function(){
@@ -964,7 +963,6 @@ var appDirectives = angular.module('appDirectives', [])
                 }
                 $scope.noExecutedLoaded = true;
                 $http.get(DHIS2URL + "api/dataStore/notExecuted").then(function (result) {
-                    console.log("Here:",result.data);
                     $scope.notExecuted = result.data;
                     $scope.dataSetIds = [];
                     $scope.orgUnitIds = [];
@@ -986,7 +984,6 @@ var appDirectives = angular.module('appDirectives', [])
                     });
                     $http.get(DHIS2URL + "api/organisationUnits.json?filter=id:in:["+$scope.orgUnitIds.join(",") +"]&fields=id,name,ancestors[name]").then(function (orgUnitsResult) {
                         $scope.orgUnits = {};
-                        console.log(orgUnitsResult.data);
                         orgUnitsResult.data.organisationUnits.forEach(function(orgUnit){
                             $scope.orgUnits[orgUnit.id] = orgUnit;
                         })
@@ -1260,9 +1257,6 @@ var appDirectives = angular.module('appDirectives', [])
             },
             replace: true,
             controller: function ($scope, $routeParams) {
-                if($scope.config.programId == "tJU3WhwU960"){
-                    console.log("tJU3WhwU960:",$scope.$parent.orgUnit.level)
-                }
                 $scope.data = {
                     dataElements: [],
                     events: []
@@ -1431,7 +1425,6 @@ var appDirectives = angular.module('appDirectives', [])
             },
             link: function (scope, elem, attrs, controller) {
                 $timeout(function () {
-                    console.log(elem[0].rows[0].children.length);
                     var arr = Array.prototype.slice.call(elem[0].rows);
                     // iterate through the columns instead of passing each column as function parameter:
                     for(var i=1; i<=elem[0].rows[0].children.length; i++){

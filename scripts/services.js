@@ -1817,7 +1817,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                          toRemove.forEach(function(row){
                          row.remove();
                          })*/
-                        ctx["table" + index] = this.innerHTML;
+                        ctx["table" + index] = this.innerHTML.split("& ").join("&amp; ");
                         if(this.title == "no-border"){
                             str += '<table>{' + "table" + index+'}</table><br />';
                         }else{
@@ -1859,35 +1859,50 @@ var appServices = angular.module('appServices', ['ngResource'])
                 var workbookXML = "";
                 var worksheetsXML = "";
                 var rowsXML = "";
-
-                for (var i = 0; i < tables.length; i++) {
-                    if (!tables[i].nodeType) tables[i] = document.getElementById(tables[i]);
-                    console.log(tables[i]);
-                    if(tables[i].rows)
-                    for (var j = 0; j < tables[i].rows.length; j++) {
-                        rowsXML += '<Row>'
-                        for (var k = 0; k < tables[i].rows[j].cells.length; k++) {
-                            var dataType = tables[i].rows[j].cells[k].getAttribute("data-type");
-                            var dataStyle = tables[i].rows[j].cells[k].getAttribute("data-style");
-                            var dataValue = tables[i].rows[j].cells[k].getAttribute("data-value");
-                            dataValue = (dataValue)?dataValue:tables[i].rows[j].cells[k].innerText;
-                            var dataFormula = tables[i].rows[j].cells[k].getAttribute("data-formula");
-                            dataFormula = (dataFormula)?dataFormula:(appname=='Calc' && dataType=='DateTime')?dataValue:null;
-                            ctx = {
-                                //attributeStyleID: (dataStyle=='Currency' || dataStyle=='Date')?' ss:StyleID="'+dataStyle+'"':''
-                                 nameType: (dataType=='Number' || dataType=='DateTime' || dataType=='Boolean' || dataType=='Error')?dataType:'String'
-                                ,data: (dataFormula)?'':dataValue
-                                //, attributeFormula: (dataFormula)?' ss:Formula="'+dataFormula+'"':''
-                            };
-                            rowsXML += format(tmplCellXML, ctx);
-                        }
-                        rowsXML += '</Row>'
-                    }
-                    ctx = {rows: rowsXML, nameWS: 'Sheet' + i};
+                var sheetNumber = 1;
+                var numberOrRows = 0;
+                function createSheet(){
+                    ctx = {rows: rowsXML, nameWS: 'Sheet ' + sheetNumber};
                     worksheetsXML += format(tmplWorksheetXML, ctx);
                     rowsXML = "";
+                    sheetNumber++;
                 }
+                for (var i = 0; i < tables.length; i++) {
+                    if (!tables[i].nodeType) tables[i] = document.getElementById(tables[i]);
+                    if(tables[i].rows){
+                        if(Math.ceil((tables[i].rows.length + numberOrRows)/500) > sheetNumber){
+                            createSheet();
+                        }
+                        for (var j = 0; j < tables[i].rows.length; j++) {
+                            rowsXML += '<Row>'
+                            for (var k = 0; k < tables[i].rows[j].cells.length; k++) {
+                                var dataType = tables[i].rows[j].cells[k].getAttribute("data-type");
+                                var dataStyle = tables[i].rows[j].cells[k].getAttribute("data-style");
+                                var dataValue = tables[i].rows[j].cells[k].getAttribute("data-value");
+                                dataValue = (dataValue)?dataValue:tables[i].rows[j].cells[k].innerText;
+                                var dataFormula = tables[i].rows[j].cells[k].getAttribute("data-formula");
+                                dataFormula = (dataFormula)?dataFormula:(appname=='Calc' && dataType=='DateTime')?dataValue:null;
+                                ctx = {
+                                    //attributeStyleID: (dataStyle=='Currency' || dataStyle=='Date')?' ss:StyleID="'+dataStyle+'"':''
+                                    nameType: (dataType=='Number' || dataType=='DateTime' || dataType=='Boolean' || dataType=='Error')?dataType:'String'
+                                    ,data: (dataFormula)?'':dataValue
+                                    //, attributeFormula: (dataFormula)?' ss:Formula="'+dataFormula+'"':''
+                                };
+                                rowsXML += format(tmplCellXML, ctx);
+                            }
+                            rowsXML += '</Row>';
+                            numberOrRows++
+                        }
+                        rowsXML += '<Row></Row>';
+                        numberOrRows++;
+                    }
 
+
+                }
+                if(worksheetsXML.indexOf("Sheet " + sheetNumber) == -1){
+                    createSheet();
+                }
+                console.log("Number of Rows:",numberOrRows);
                 ctx = {created: (new Date()).getTime(), worksheets: worksheetsXML};
                 workbookXML = format(tmplWorkbookXML, ctx);
 
