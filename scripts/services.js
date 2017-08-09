@@ -1780,7 +1780,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                             this.remove();
                         }));
                         ($(this).find("td").each(function (index2) {
-                            if($(this).text().indexOf("&") > -1 || $(this).text().indexOf("'") > -1  || $(this).text().indexOf("") > -1 ){
+                            if($(this).text().indexOf("&") > -1 || $(this).text().indexOf("'") > -1  || $(this).text().indexOf('"') > -1 ){
                                 $(this).text($(this).text().replace(/&/g, "&amp;")).replace(/"/g, '&quot;')
                                     .replace(/'/g, '&apos;');
                             }
