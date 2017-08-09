@@ -1820,7 +1820,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                         })*/
 
                         ctx["table" + index] = this.innerHTML//.split("& ").join("&amp; ");
-                        //console.log(ctx["table" + index])
+                        console.log(ctx["table" + index])
                         if (this.title == "no-border") {
                             str += '<table>{' + "table" + index + '}</table><br />';
                         } else {
