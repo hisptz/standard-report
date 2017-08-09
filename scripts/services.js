@@ -5,7 +5,7 @@ var htmlStsr = "";
 /* Services */
 
 var appServices = angular.module('appServices', ['ngResource'])
-    .factory("ReportService", function ($http, DHIS2URL, $location, $q,$timeout,Excel) {
+    .factory("ReportService", function ($http, DHIS2URL, $location, $q, $timeout, Excel) {
         var userDeffered = $q.defer();
         var user = undefined;
         $http.get(DHIS2URL + "api/me.json?fields=:all,userCredentials[:all,userRoles[:all]]").then(function (results) {
@@ -1533,7 +1533,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                 })
                 return deffered.promise;
             },
-            undoDataSetReport: function (data,goDeep) {
+            undoDataSetReport: function (data, goDeep) {
                 var deffered = $q.defer();
                 var that = this;
                 $http.get(DHIS2URL + "api/dataSets.json?fields=id,periodType&filter=attributeValues.value:like:" + data.dataSet)
@@ -1571,21 +1571,21 @@ var appServices = angular.module('appServices', ['ngResource'])
                                         orgUnitResults.data.ancestors.forEach(function (ancestor) {
                                             promises.push(that.delete(dataSet.id, ancestor.id, period));
                                         })
-                                        if((dataSet.id == "QLoyT2aHGes" || dataSet.id == "cSC1VV8uMh9") && !goDeep){
-                                            if(period.indexOf("Q") > -1){
+                                        if ((dataSet.id == "QLoyT2aHGes" || dataSet.id == "cSC1VV8uMh9") && !goDeep) {
+                                            if (period.indexOf("Q") > -1) {
                                                 var newPeriods = [];
-                                                if(period.indexOf("Q1") > -1){
-                                                    newPeriods.push(period.substr(0,4) + "Q2")
-                                                }else if(period.indexOf("Q3") > -1){
-                                                    newPeriods.push(parseInt(period.substr(0,4))  + "Q4");
-                                                    newPeriods.push((parseInt(period.substr(0,4)) + 1)  + "Q1");
-                                                    newPeriods.push((parseInt(period.substr(0,4)) + 1)  + "Q2")
-                                                }else if(period.indexOf("Q4") > -1){
-                                                    newPeriods.push((parseInt(period.substr(0,4)) + 1)  + "Q1");
-                                                    newPeriods.push((parseInt(period.substr(0,4)) + 1)  + "Q2")
+                                                if (period.indexOf("Q1") > -1) {
+                                                    newPeriods.push(period.substr(0, 4) + "Q2")
+                                                } else if (period.indexOf("Q3") > -1) {
+                                                    newPeriods.push(parseInt(period.substr(0, 4)) + "Q4");
+                                                    newPeriods.push((parseInt(period.substr(0, 4)) + 1) + "Q1");
+                                                    newPeriods.push((parseInt(period.substr(0, 4)) + 1) + "Q2")
+                                                } else if (period.indexOf("Q4") > -1) {
+                                                    newPeriods.push((parseInt(period.substr(0, 4)) + 1) + "Q1");
+                                                    newPeriods.push((parseInt(period.substr(0, 4)) + 1) + "Q2")
                                                 }
-                                                newPeriods.forEach(function(newPeriod){
-                                                    console.log("Periods:",{
+                                                newPeriods.forEach(function (newPeriod) {
+                                                    console.log("Periods:", {
                                                         orgUnit: orgUnitResults.data.id,
                                                         period: newPeriod,
                                                         dataSet: "QLoyT2aHGes"
@@ -1594,9 +1594,9 @@ var appServices = angular.module('appServices', ['ngResource'])
                                                         orgUnit: orgUnitResults.data.id,
                                                         period: newPeriod,
                                                         dataSet: dataSet.id
-                                                    },true))
+                                                    }, true))
                                                     orgUnitResults.data.ancestors.forEach(function (ancestor) {
-                                                        console.log("Periods2:",{
+                                                        console.log("Periods2:", {
                                                             orgUnit: ancestor.id,
                                                             period: newPeriod,
                                                             dataSet: "QLoyT2aHGes"
@@ -1605,38 +1605,39 @@ var appServices = angular.module('appServices', ['ngResource'])
                                                             orgUnit: ancestor.id,
                                                             period: newPeriod,
                                                             dataSet: dataSet.id
-                                                        },true))
+                                                        }, true))
                                                     })
                                                 })
-                                            }/*else if(period.indexOf("July") == -1){
-                                                var newPeriods = [];
-                                                var currentQuarter = Math.ceil(parseInt(period.substr(4)) / 3);
-                                                if(currentQuarter == 1){
-                                                    newPeriods.push(period.substr(0,4) + "Q2")
-                                                }else if(currentQuarter == 3){
-                                                    newPeriods.push(period.substr(0,4) + "Q4")
-                                                    newPeriods.push((parseInt(period.substr(0,4)) + 1) + "Q1")
-                                                    newPeriods.push((parseInt(period.substr(0,4)) + 1) + "Q2")
-                                                }else if(currentQuarter == 4){
-                                                    newPeriods.push((parseInt(period.substr(0,4)) + 1) + "Q1")
-                                                    newPeriods.push((parseInt(period.substr(0,4)) + 1) + "Q2")
-                                                }
-                                                newPeriods.forEach(function(newPeriod){
-                                                    promises.push(that.undoDataSetReport({
-                                                        orgUnit: orgUnitResults.data.id,
-                                                        period: newPeriod,
-                                                        dataSet: "QLoyT2aHGes"
-                                                    },true))
-                                                    orgUnitResults.data.ancestors.forEach(function (ancestor) {
-                                                        //promises.push($http.delete(DHIS2URL + "api/dataStore/executed/" + dataSet.id + "_" + ancestor.id + "_" + period));
-                                                        promises.push(that.undoDataSetReport({
-                                                            orgUnit: ancestor.id,
-                                                            period: newPeriod,
-                                                            dataSet: "QLoyT2aHGes"
-                                                        },true))
-                                                    })
-                                                })
-                                            }*/
+                                            }
+                                            /*else if(period.indexOf("July") == -1){
+                                             var newPeriods = [];
+                                             var currentQuarter = Math.ceil(parseInt(period.substr(4)) / 3);
+                                             if(currentQuarter == 1){
+                                             newPeriods.push(period.substr(0,4) + "Q2")
+                                             }else if(currentQuarter == 3){
+                                             newPeriods.push(period.substr(0,4) + "Q4")
+                                             newPeriods.push((parseInt(period.substr(0,4)) + 1) + "Q1")
+                                             newPeriods.push((parseInt(period.substr(0,4)) + 1) + "Q2")
+                                             }else if(currentQuarter == 4){
+                                             newPeriods.push((parseInt(period.substr(0,4)) + 1) + "Q1")
+                                             newPeriods.push((parseInt(period.substr(0,4)) + 1) + "Q2")
+                                             }
+                                             newPeriods.forEach(function(newPeriod){
+                                             promises.push(that.undoDataSetReport({
+                                             orgUnit: orgUnitResults.data.id,
+                                             period: newPeriod,
+                                             dataSet: "QLoyT2aHGes"
+                                             },true))
+                                             orgUnitResults.data.ancestors.forEach(function (ancestor) {
+                                             //promises.push($http.delete(DHIS2URL + "api/dataStore/executed/" + dataSet.id + "_" + ancestor.id + "_" + period));
+                                             promises.push(that.undoDataSetReport({
+                                             orgUnit: ancestor.id,
+                                             period: newPeriod,
+                                             dataSet: "QLoyT2aHGes"
+                                             },true))
+                                             })
+                                             })
+                                             }*/
                                         }
                                     })
                                 })
@@ -1679,12 +1680,12 @@ var appServices = angular.module('appServices', ['ngResource'])
                 })
                 return deffered.promise;
             },
-            organisationUnitLevels:[],
+            organisationUnitLevels: [],
             getOrganisationUnitLevels: function () {
                 var deffered = $q.defer();
-                if(this.organisationUnitLevels.length > 0){
+                if (this.organisationUnitLevels.length > 0) {
                     deffered.resolve(this.organisationUnitLevels);
-                }else{
+                } else {
                     var that = this;
                     $http.get(DHIS2URL + "api/organisationUnitLevels.json?fields=id,level,name").then(function (results) {
                         that.organisationUnitLevels = results.data.organisationUnitLevels;
@@ -1701,23 +1702,23 @@ var appServices = angular.module('appServices', ['ngResource'])
                 }
                 return userDeffered.promise;
             },
-            downloadExcel:function(dataSetName,organisationUnitName,period){
+            downloadExcel: function (dataSetName, organisationUnitName, period) {
                 var date = new Date();
                 var dateStr = date.getDate();
-                if(dateStr < 10){
+                if (dateStr < 10) {
                     dateStr = "0" + dateStr;
                 }
                 var monthStr = date.getMonth() + 1;
-                if(monthStr < 10){
+                if (monthStr < 10) {
                     monthStr = "0" + monthStr;
                 }
                 //var exportHref=Excel.tableToExcel();
-                $timeout(function(){
+                $timeout(function () {
                     var link = document.createElement('a');
-                    link.download = dataSetName + " " + organisationUnitName + " " + period + " " + dateStr + "-" + monthStr + "-" + date.getFullYear() +".xls";
+                    link.download = dataSetName + " " + organisationUnitName + " " + period + " " + dateStr + "-" + monthStr + "-" + date.getFullYear() + ".xls";
                     link.href = Excel.tableToExcel();
                     link.click();
-                },100);
+                }, 100);
             }
         }
 
@@ -1759,8 +1760,8 @@ var appServices = angular.module('appServices', ['ngResource'])
             };
         return {
             tableToExcel: function () {
-                $('*').contents().each(function() {
-                    if(this.nodeType === Node.COMMENT_NODE) {
+                $('*').contents().each(function () {
+                    if (this.nodeType === Node.COMMENT_NODE) {
                         $(this).remove();
                     }
                 });
@@ -1768,65 +1769,63 @@ var appServices = angular.module('appServices', ['ngResource'])
                 var ctx = {worksheet: "Sheet 1"};
                 var str = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body>';
                 var length = 0;
-                tables.each(function(index){
+                tables.each(function (index) {
 
                     length += $(this).html().length;
 
-                    if($(this).hasClass( "not-in-excel" )){
+                    if ($(this).hasClass("not-in-excel")) {
 
-                    }else{
-                        ($(this).find("td.hidden").each(function(index2){
+                    } else {
+                        ($(this).find("td.hidden").each(function (index2) {
                             this.remove();
                         }));
-                        ($(this).find("td").each(function(index2){
-                            if($(this).css('display') == 'none'){
+                        ($(this).find("td").each(function (index2) {
+                            if ($(this).css('display') == 'none') {
                                 this.remove();
                             }
                         }));
                         /*var thatTable = this;
-                         var toRemove = [];
-                         ($(this).find("tbody[autogrowing] tr").each(function(index){
-                         /!*$(this).find("td").each(function(){
-                         console.log(this.attr('rowspan'));
-                         })*!/
-                         //console.log(this.children);
-                         var thatRow = this;
-                         var rowspan = undefined;
-                         var span = true;
-                         this.children.forEach(function(child,i){
-                         if(rowspan){
-                         if(rowspan != $(child).attr('rowspan')){
-                         span = false;
-                         }
-                         }else if(i == 0){
-                         rowspan = $(child).attr('rowspan');
-                         }
+                        var toRemove = [];
+                        ($(this).find("tbody[autogrowing] tr").each(function (index) {
+                            /!*$(this).find("td").each(function(){
+                             console.log(this.attr('rowspan'));
+                             })*!/
+                            //console.log(this.children);
+                            var thatRow = this;
+                            var rowspan = $(this.children[0]).attr('rowspan');
+                            var removeSpan = true;
+                            this.children.forEach(function (child, i) {
+                                if (i > 0 && $(child).attr('rowspan') != rowspan) {
+                                    removeSpan = false;
+                                }
 
-                         })
-                         if(span && rowspan != undefined){
-                         ($(thatTable).find("tbody[autogrowing] tr").each(function(thisIndex,tr){
-                         if(thisIndex > index && thisIndex < (index + parseInt(rowspan))){
-                         toRemove.push(this);
-                         }
-                         }));
-                         this.children.forEach(function(child){
-                         $(child).attr('rowspan',"1");
-                         })
-                         }
-                         }));
-                         toRemove.forEach(function(row){
-                         row.remove();
-                         })*/
+                            })
+                            if (removeSpan) {
+                                ($(thatTable).find("tbody[autogrowing] tr").each(function (thisIndex, tr) {
+                                    if (thisIndex > index && thisIndex < (index + parseInt(rowspan))) {
+                                        toRemove.push(this);
+                                    }
+                                }));
+                                this.children.forEach(function (child) {
+                                    $(child).attr('rowspan', "1");
+                                })
+                            }
+                        }));
+                        toRemove.forEach(function (row) {
+                            row.remove();
+                        })*/
+
                         ctx["table" + index] = this.innerHTML.split("& ").join("&amp; ");
-                        if(this.title == "no-border"){
-                            str += '<table>{' + "table" + index+'}</table><br />';
-                        }else{
-                            str += '<table border="1">{' + "table" + index+'}</table><br />';
+                        console.log(ctx["table" + index])
+                        if (this.title == "no-border") {
+                            str += '<table>{' + "table" + index + '}</table><br />';
+                        } else {
+                            str += '<table border="1">{' + "table" + index + '}</table><br />';
                         }
                     }
 
                 })
-                console.log("Length:",length);
+                console.log("Length:", length);
                 str += '</body></html>';
                 var href = uri + base64(format(str, ctx).replace(/<!--(?!>)[\S\s]*?-->/g, ''));
                 return href;
@@ -1844,12 +1843,18 @@ var appServices = angular.module('appServices', ['ngResource'])
             + '{worksheets}</Workbook>'
             , tmplWorksheetXML = '<Worksheet ss:Name="{nameWS}"><Table>{rows}</Table></Worksheet>'
             , tmplCellXML = '<Cell><Data ss:Type="{nameType}">{data}</Data></Cell>'
-            , base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
-            , format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+            , base64 = function (s) {
+            return window.btoa(unescape(encodeURIComponent(s)))
+        }
+            , format = function (s, c) {
+            return s.replace(/{(\w+)}/g, function (m, p) {
+                return c[p];
+            })
+        }
         return {
-            tableToExcel:function() {
-                $('*').contents().each(function() {
-                    if(this.nodeType === Node.COMMENT_NODE) {
+            tableToExcel: function () {
+                $('*').contents().each(function () {
+                    if (this.nodeType === Node.COMMENT_NODE) {
                         $(this).remove();
                     }
                 });
@@ -1861,16 +1866,18 @@ var appServices = angular.module('appServices', ['ngResource'])
                 var rowsXML = "";
                 var sheetNumber = 1;
                 var numberOrRows = 0;
-                function createSheet(){
+
+                function createSheet() {
                     ctx = {rows: rowsXML, nameWS: 'Sheet ' + sheetNumber};
                     worksheetsXML += format(tmplWorksheetXML, ctx);
                     rowsXML = "";
                     sheetNumber++;
                 }
+
                 for (var i = 0; i < tables.length; i++) {
                     if (!tables[i].nodeType) tables[i] = document.getElementById(tables[i]);
-                    if(tables[i].rows){
-                        if(Math.ceil((tables[i].rows.length + numberOrRows)/500) > sheetNumber){
+                    if (tables[i].rows) {
+                        if (Math.ceil((tables[i].rows.length + numberOrRows) / 500) > sheetNumber) {
                             createSheet();
                         }
                         for (var j = 0; j < tables[i].rows.length; j++) {
@@ -1879,13 +1886,13 @@ var appServices = angular.module('appServices', ['ngResource'])
                                 var dataType = tables[i].rows[j].cells[k].getAttribute("data-type");
                                 var dataStyle = tables[i].rows[j].cells[k].getAttribute("data-style");
                                 var dataValue = tables[i].rows[j].cells[k].getAttribute("data-value");
-                                dataValue = (dataValue)?dataValue:tables[i].rows[j].cells[k].innerText;
+                                dataValue = (dataValue) ? dataValue : tables[i].rows[j].cells[k].innerText;
                                 var dataFormula = tables[i].rows[j].cells[k].getAttribute("data-formula");
-                                dataFormula = (dataFormula)?dataFormula:(appname=='Calc' && dataType=='DateTime')?dataValue:null;
+                                dataFormula = (dataFormula) ? dataFormula : (appname == 'Calc' && dataType == 'DateTime') ? dataValue : null;
                                 ctx = {
                                     //attributeStyleID: (dataStyle=='Currency' || dataStyle=='Date')?' ss:StyleID="'+dataStyle+'"':''
-                                    nameType: (dataType=='Number' || dataType=='DateTime' || dataType=='Boolean' || dataType=='Error')?dataType:'String'
-                                    ,data: (dataFormula)?'':dataValue
+                                    nameType: (dataType == 'Number' || dataType == 'DateTime' || dataType == 'Boolean' || dataType == 'Error') ? dataType : 'String'
+                                    , data: (dataFormula) ? '' : dataValue
                                     //, attributeFormula: (dataFormula)?' ss:Formula="'+dataFormula+'"':''
                                 };
                                 rowsXML += format(tmplCellXML, ctx);
@@ -1899,10 +1906,10 @@ var appServices = angular.module('appServices', ['ngResource'])
 
 
                 }
-                if(worksheetsXML.indexOf("Sheet " + sheetNumber) == -1){
+                if (worksheetsXML.indexOf("Sheet " + sheetNumber) == -1) {
                     createSheet();
                 }
-                console.log("Number of Rows:",numberOrRows);
+                console.log("Number of Rows:", numberOrRows);
                 ctx = {created: (new Date()).getTime(), worksheets: worksheetsXML};
                 workbookXML = format(tmplWorkbookXML, ctx);
 
