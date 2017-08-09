@@ -1780,8 +1780,10 @@ var appServices = angular.module('appServices', ['ngResource'])
                             this.remove();
                         }));
                         ($(this).find("td").each(function (index2) {
-                            //console.log($(this).html($(this).html().replace(/&/g, "&amp;")));
-                            $(this).html($(this).html().replace(/&/g, "&amp;"))
+                            if($(this).text().indexOf("&") > -1 || $(this).text().indexOf("'") > -1  || $(this).text().indexOf("") > -1 ){
+                                $(this).text($(this).text().replace(/&/g, "&amp;")).replace(/"/g, '&quot;')
+                                    .replace(/'/g, '&apos;');
+                            }
                             if ($(this).css('display') == 'none') {
                                 this.remove();
                             }
@@ -1818,7 +1820,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                         })*/
 
                         ctx["table" + index] = this.innerHTML//.split("& ").join("&amp; ");
-                        console.log(ctx["table" + index])
+                        //console.log(ctx["table" + index])
                         if (this.title == "no-border") {
                             str += '<table>{' + "table" + index + '}</table><br />';
                         } else {
