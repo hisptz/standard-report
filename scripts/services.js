@@ -1780,6 +1780,8 @@ var appServices = angular.module('appServices', ['ngResource'])
                             this.remove();
                         }));
                         ($(this).find("td").each(function (index2) {
+                            //console.log($(this).html($(this).html().replace(/&/g, "&amp;")));
+                            $(this).html($(this).html().replace(/&/g, "&amp;"))
                             if ($(this).css('display') == 'none') {
                                 this.remove();
                             }
@@ -1815,7 +1817,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                             row.remove();
                         })*/
 
-                        ctx["table" + index] = this.innerHTML.split("& ").join("&amp; ");
+                        ctx["table" + index] = this.innerHTML//.split("& ").join("&amp; ");
                         console.log(ctx["table" + index])
                         if (this.title == "no-border") {
                             str += '<table>{' + "table" + index + '}</table><br />';
