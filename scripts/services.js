@@ -1760,17 +1760,17 @@ var appServices = angular.module('appServices', ['ngResource'])
             };
         return {
             tableToExcel: function () {
-                $('*').contents().each(function () {
-                    if (this.nodeType === Node.COMMENT_NODE) {
-                        $(this).remove();
-                    }
-                });
+                $('*')
                 var tables = $(".excel-table").clone();
                 var ctx = {worksheet: "Sheet 1"};
                 var str = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body>';
                 var length = 0;
                 tables.each(function (index) {
-
+                    $(this).contents().each(function () {
+                        if (this.nodeType === Node.COMMENT_NODE) {
+                            $(this).remove();
+                        }
+                    });
                     length += $(this).html().length;
 
                     if ($(this).hasClass("not-in-excel")) {
