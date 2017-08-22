@@ -1797,7 +1797,8 @@ var appServices = angular.module('appServices', ['ngResource'])
                             var tbody = this;
                             ["Do2HI9tvLGC","V8tLhRm35cD","Mz5daHozMlm","kPhYyWEOfNO","wYu5X3rIrRW","caJD8NDPwfi",
                                 "tIhjn9FPYJa","M68FQiWRSOU","r2CTnGsqLOi","G2z6vC1bn2F","c7AaVbVSi7G","sBlTo9nprB0",
-                            "jICR3PYG4Ft","EnJcWSuOYxB","ErXFQ5q9tDm","iu2eZ5fQtX7"].forEach(function(programId){
+                            "jICR3PYG4Ft","EnJcWSuOYxB","ErXFQ5q9tDm","iu2eZ5fQtX7","f5Nm7CO12eP","kZT7dVTVYZ3","fKvH449kdvg",
+                            "tJU3WhwU960"].some(function(programId){
                                 if($(tbody).attr('config')){
                                     if($(tbody).attr('config').indexOf(programId) > -1){
                                         var toRemove = [];
@@ -1827,6 +1828,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                                         toRemove.forEach(function (row) {
                                             row.remove();
                                         })
+                                        return true;
                                     }
                                 }
                             })
