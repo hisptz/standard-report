@@ -1792,6 +1792,45 @@ var appServices = angular.module('appServices', ['ngResource'])
                                 this.remove();
                             }
                         }));
+                        //Remove rowspans in excel
+                        ($(this).find("tbody[autogrowing]").each(function (index) {
+                            var tbody = this;
+                            ["Do2HI9tvLGC","V8tLhRm35cD","Mz5daHozMlm","kPhYyWEOfNO","wYu5X3rIrRW","caJD8NDPwfi",
+                                "tIhjn9FPYJa","M68FQiWRSOU","r2CTnGsqLOi","G2z6vC1bn2F","c7AaVbVSi7G","sBlTo9nprB0",
+                            "jICR3PYG4Ft","EnJcWSuOYxB","ErXFQ5q9tDm","iu2eZ5fQtX7"].forEach(function(programId){
+                                if($(tbody).attr('config')){
+                                    if($(tbody).attr('config').indexOf(programId) > -1){
+                                        var toRemove = [];
+                                        tbody.children.forEach(function(child,index){
+                                            var removeSpan = true;
+                                            var rowspan = $(child.children[0]).attr('rowspan');
+                                            child.children.forEach(function(child1,i){
+                                                if (i > 0 && rowspan && $(child1).attr('rowspan') != rowspan) {
+                                                    removeSpan = false;
+                                                }
+                                            })
+                                            if (removeSpan) {
+                                                var removeRows = 0;
+                                                tbody.children.forEach(function(child,thisIndex){
+                                                    if (thisIndex > index && thisIndex < (index + parseInt(rowspan))) {
+                                                        if(child.children.length == 0){
+                                                            removeRows++;
+                                                            toRemove.push(child);
+                                                        }
+                                                    }
+                                                })
+                                                child.children.forEach(function (child) {
+                                                    $(child).attr('rowspan', "" + (parseInt($(child).attr('rowspan')) - removeRows));
+                                                })
+                                            }
+                                        })
+                                        toRemove.forEach(function (row) {
+                                            row.remove();
+                                        })
+                                    }
+                                }
+                            })
+                        }))
                         /*var thatTable = this;
                         var toRemove = [];
                         ($(this).find("tbody[autogrowing] tr").each(function (index) {
