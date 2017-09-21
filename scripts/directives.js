@@ -368,10 +368,13 @@ var appDirectives = angular.module('appDirectives', [])
             controller: function ($scope, $routeParams,$timeout) {
                 $scope.show = false;
                 $scope.params = $routeParams;
+                $scope.data = {
+
+                };
                 if ($scope.count) {
-                    $scope.data = {};
+                    $scope.data.data = {};
                 } else {
-                    $scope.data = [];
+                    $scope.data.data = [];
                 }
                 if ($scope.listByWard){
                     var found = false;
@@ -396,26 +399,26 @@ var appDirectives = angular.module('appDirectives', [])
                             $scope.orgUnit.discendants.forEach(function (orgUnit) {
                                 if (orgUnit.id == value.orgUnit) {
                                     if ($scope.count) {
-                                        if ($scope.data[value.value]) {
-                                            $scope.data[value.value]++;
+                                        if ($scope.data.data[value.value]) {
+                                            $scope.data.data[value.value]++;
                                         } else {
-                                            $scope.data[value.value] = 1;
+                                            $scope.data.data[value.value] = 1;
                                         }
                                     } else {
-                                        $scope.data.push({name: orgUnit.name, value: value.value});
+                                        $scope.data.data.push({name: orgUnit.name, value: value.value});
                                     }
 
                                 }
                             })
                             if ($scope.orgUnit.id == value.orgUnit) {
                                 if ($scope.count) {
-                                    if ($scope.data[value.value]) {
-                                        $scope.data[value.value]++;
+                                    if ($scope.data.data[value.value]) {
+                                        $scope.data.data[value.value]++;
                                     } else {
-                                        $scope.data[value.value] = 1;
+                                        $scope.data.data[value.value] = 1;
                                     }
                                 } else {
-                                    $scope.data.push({name: $scope.orgUnit.name, value: value.value});
+                                    $scope.data.data.push({name: $scope.orgUnit.name, value: value.value});
                                 }
 
                             }
@@ -425,7 +428,7 @@ var appDirectives = angular.module('appDirectives', [])
                 $timeout(function(){
                     $scope.show = true;
                     if(found){
-                        console.log(JSON.stringify($scope.data));
+                        console.log(JSON.stringify($scope.data.data));
                     }
                 })
             },
