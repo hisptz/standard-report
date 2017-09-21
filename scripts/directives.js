@@ -374,6 +374,7 @@ var appDirectives = angular.module('appDirectives', [])
                     $scope.data = [];
                 }
                 if ($scope.listByWard){
+                    var found = false;
                     if($scope.choice){
                         $scope.valueMap = {
                             '1':0,
@@ -388,6 +389,9 @@ var appDirectives = angular.module('appDirectives', [])
                         })
                     }else{
                         $scope.listByWard.values.forEach(function (value) {
+                            if(value.dataElement == "PENn2JCPxKr"){
+                                found = true;
+                            }
                             //value[]
                             $scope.orgUnit.discendants.forEach(function (orgUnit) {
                                 if (orgUnit.id == value.orgUnit) {
@@ -420,6 +424,9 @@ var appDirectives = angular.module('appDirectives', [])
                 }
                 $timeout(function(){
                     $scope.show = true;
+                    if(found){
+                        console.log(JSON.stringify($scope.data));
+                    }
                 })
             },
             templateUrl: 'views/listByWard.html'
