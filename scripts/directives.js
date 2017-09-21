@@ -365,7 +365,8 @@ var appDirectives = angular.module('appDirectives', [])
                 choice:'='
             },
             replace: true,
-            controller: function ($scope, $routeParams) {
+            controller: function ($scope, $routeParams,$timeout) {
+                $scope.show = false;
                 $scope.params = $routeParams;
                 if ($scope.count) {
                     $scope.data = {};
@@ -417,6 +418,9 @@ var appDirectives = angular.module('appDirectives', [])
                         })
                     }
                 }
+                $timeout(function(){
+                    $scope.show = true;
+                })
             },
             templateUrl: 'views/listByWard.html'
         }
