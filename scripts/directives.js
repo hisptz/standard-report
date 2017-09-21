@@ -428,7 +428,7 @@ var appDirectives = angular.module('appDirectives', [])
                 $timeout(function(){
                     $scope.show = true;
                     if(found){
-                        console.log(JSON.stringify($scope.data.data));
+                        console.log("Here:",JSON.stringify($scope.data.data));
                     }
                 })
             },
