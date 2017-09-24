@@ -366,6 +366,10 @@ var appDirectives = angular.module('appDirectives', [])
             },
             replace: true,
             controller: function ($scope, $routeParams,$timeout) {
+                if($scope.choice){
+                    console.log($scope.listByWard);
+                    console.log(JSON.stringify($scope.listByWard));
+                }
                 $scope.show = false;
                 $scope.params = $routeParams;
                 $scope.data = {
