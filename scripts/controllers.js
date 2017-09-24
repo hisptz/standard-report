@@ -1672,7 +1672,7 @@ var appControllers = angular.module('appControllers', [])
                             if ($routeParams.preview == "debug") {
                                 newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' org-unit='orgUnit'></div><debug report='dataSet' list-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' dg-id='" + idMacth[1] + "." + idMacth[2] + "' type='dataElement'></debug>");
                             } else {
-                                newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' org-unit='orgUnit'></div>");
+                                newHtml = newHtml.replace(match[0], "G<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' org-unit='orgUnit'></div>G");
                             }
                             $scope.listByWard.push(idMacth[1] + "." + idMacth[2]);
                         }else if (match[0].indexOf("list-by-ward") > -1) {//If it is last month of quarter
