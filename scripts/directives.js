@@ -364,7 +364,6 @@ var appDirectives = angular.module('appDirectives', [])
                 count: '=',
                 choice:'='
             },
-            replace: true,
             controller: function ($scope, $routeParams,$timeout) {
                 if($scope.choice){
                     console.log($scope.listByWard);
