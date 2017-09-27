@@ -23,11 +23,9 @@ function browserPrint2() {
     mywindow.document.write(document.getElementById("printablereport").innerHTML);
     mywindow.document.write('</body></html>');
 
-    mywindow.document.close(); // necessary for IE >= 10
-    mywindow.focus(); // necessary for IE >= 10*!/
-    setInterval(function(){
+    setTimeout(function(){
         mywindow.print();
-        mywindow.close();
+        //mywindow.close();
     })
     return true;
 }

@@ -1567,7 +1567,6 @@ var appServices = angular.module('appServices', ['ngResource'])
                                 periods.forEach(function (period) {
                                     dataSetsResults.data.dataSets.forEach(function (dataSet) {
                                         promises.push(that.delete(dataSet.id, orgUnitResults.data.id, period));
-                                        //console.log(dataSet.id, orgUnitResults.data.id, period);
                                         orgUnitResults.data.ancestors.forEach(function (ancestor) {
                                             promises.push(that.delete(dataSet.id, ancestor.id, period));
                                         })
@@ -1585,22 +1584,12 @@ var appServices = angular.module('appServices', ['ngResource'])
                                                     newPeriods.push((parseInt(period.substr(0, 4)) + 1) + "Q2")
                                                 }
                                                 newPeriods.forEach(function (newPeriod) {
-                                                    console.log("Periods:", {
-                                                        orgUnit: orgUnitResults.data.id,
-                                                        period: newPeriod,
-                                                        dataSet: "QLoyT2aHGes"
-                                                    });
                                                     promises.push(that.undoDataSetReport({
                                                         orgUnit: orgUnitResults.data.id,
                                                         period: newPeriod,
                                                         dataSet: dataSet.id
                                                     }, true))
                                                     orgUnitResults.data.ancestors.forEach(function (ancestor) {
-                                                        console.log("Periods2:", {
-                                                            orgUnit: ancestor.id,
-                                                            period: newPeriod,
-                                                            dataSet: "QLoyT2aHGes"
-                                                        });
                                                         promises.push(that.undoDataSetReport({
                                                             orgUnit: ancestor.id,
                                                             period: newPeriod,
@@ -1782,8 +1771,6 @@ var appServices = angular.module('appServices', ['ngResource'])
                         ($(this).find("td").each(function (index2) {
                             if($(this).html().indexOf("&amp;") > -1 ){
                                 $(this).html($(this).html().replace(/&amp;/g, ''))
-                                console.log(this);
-                                //$(this).text($(this).text().replace(/&/g, "&amp;").replace(/"/g, '&quot;').replace(/'/g, '&apos;'));
                             }
                             if($(this).text().indexOf("&") > -1 || $(this).text().indexOf("'") > -1  || $(this).text().indexOf('"') > -1 ){
                                 $(this).text($(this).text().replace(/&/g, "&amp;").replace(/"/g, '&quot;'));//.replace(/'/g, '&apos;'));
@@ -1835,7 +1822,6 @@ var appServices = angular.module('appServices', ['ngResource'])
                         }))
 
                         ctx["table" + index] = this.innerHTML//.split("& ").join("&amp; ");
-                        //console.log(ctx["table" + index])
                         if (this.title == "no-border") {
                             str += '<table>{' + "table" + index + '}</table><br />';
                         } else {
@@ -1844,7 +1830,6 @@ var appServices = angular.module('appServices', ['ngResource'])
                     }
 
                 })
-                console.log("Length:", length);
                 str += '</body></html>';
                 var href = uri + base64(format(str, ctx).replace(/<!--(?!>)[\S\s]*?-->/g, ''));
                 return href;
@@ -1928,11 +1913,9 @@ var appServices = angular.module('appServices', ['ngResource'])
                 if (worksheetsXML.indexOf("Sheet " + sheetNumber) == -1) {
                     createSheet();
                 }
-                console.log("Number of Rows:", numberOrRows);
                 ctx = {created: (new Date()).getTime(), worksheets: worksheetsXML};
                 workbookXML = format(tmplWorkbookXML, ctx);
 
-                console.log(workbookXML);
                 return uri + base64(workbookXML);
             }
         }
