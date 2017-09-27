@@ -1786,7 +1786,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                                 //$(this).text($(this).text().replace(/&/g, "&amp;").replace(/"/g, '&quot;').replace(/'/g, '&apos;'));
                             }
                             if($(this).text().indexOf("&") > -1 || $(this).text().indexOf("'") > -1  || $(this).text().indexOf('"') > -1 ){
-                                $(this).text($(this).text().replace(/&/g, "&amp;").replace(/"/g, '&quot;').replace(/'/g, '&apos;'));
+                                $(this).text($(this).text().replace(/&/g, "&amp;").replace(/"/g, '&quot;'));//.replace(/'/g, '&apos;'));
                             }
                             if ($(this).css('display') == 'none') {
                                 this.remove();
@@ -1833,36 +1833,6 @@ var appServices = angular.module('appServices', ['ngResource'])
                                 }
                             })
                         }))
-                        /*var thatTable = this;
-                        var toRemove = [];
-                        ($(this).find("tbody[autogrowing] tr").each(function (index) {
-                            /!*$(this).find("td").each(function(){
-                             console.log(this.attr('rowspan'));
-                             })*!/
-                            //console.log(this.children);
-                            var thatRow = this;
-                            var rowspan = $(this.children[0]).attr('rowspan');
-                            var removeSpan = true;
-                            this.children.forEach(function (child, i) {
-                                if (i > 0 && $(child).attr('rowspan') != rowspan) {
-                                    removeSpan = false;
-                                }
-
-                            })
-                            if (removeSpan) {
-                                ($(thatTable).find("tbody[autogrowing] tr").each(function (thisIndex, tr) {
-                                    if (thisIndex > index && thisIndex < (index + parseInt(rowspan))) {
-                                        toRemove.push(this);
-                                    }
-                                }));
-                                this.children.forEach(function (child) {
-                                    $(child).attr('rowspan', "1");
-                                })
-                            }
-                        }));
-                        toRemove.forEach(function (row) {
-                            row.remove();
-                        })*/
 
                         ctx["table" + index] = this.innerHTML//.split("& ").join("&amp; ");
                         //console.log(ctx["table" + index])
