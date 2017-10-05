@@ -42,6 +42,13 @@ NodeList.prototype.remove = HTMLCollection.prototype.remove = function () {
         }
     }
 }
+function elementFind(elem, i, callback) {
+    elem.children.forEach(function (trElement, index) {
+        if (trElement.children[i]) {
+            callback(index, trElement.children[i])
+        }
+    })
+}
 var link = function (scope, elem, attrs, controller) {
     if (scope.config.groupBy) {
 
@@ -362,40 +369,38 @@ var appDirectives = angular.module('appDirectives', [])
                 listByWard: '=',
                 orgUnit: '=',
                 count: '=',
-                choice:'='
+                choice: '='
             },
-            controller: function ($scope, $routeParams,$timeout) {
-                if($scope.choice){
+            controller: function ($scope, $routeParams, $timeout) {
+                if ($scope.choice) {
                     console.log($scope.listByWard);
                     console.log(JSON.stringify($scope.listByWard));
                 }
                 $scope.show = false;
                 $scope.params = $routeParams;
-                $scope.data = {
-
-                };
+                $scope.data = {};
                 if ($scope.count) {
                     $scope.data.data = {};
                 } else {
                     $scope.data.data = [];
                 }
-                if ($scope.listByWard){
+                if ($scope.listByWard) {
                     var found = false;
-                    if($scope.choice){
+                    if ($scope.choice) {
                         $scope.valueMap = {
-                            '1':0,
-                            '2':0,
-                            '3':0,
-                            '4':0,
-                            '5':0,
-                            '6':0,
+                            '1': 0,
+                            '2': 0,
+                            '3': 0,
+                            '4': 0,
+                            '5': 0,
+                            '6': 0,
                         };
                         $scope.listByWard.values.forEach(function (value) {
                             $scope.valueMap[value.value]++;
                         })
-                    }else{
+                    } else {
                         $scope.listByWard.values.forEach(function (value) {
-                            if(value.dataElement == "PENn2JCPxKr"){
+                            if (value.dataElement == "PENn2JCPxKr") {
                                 found = true;
                             }
                             //value[]
@@ -428,10 +433,10 @@ var appDirectives = angular.module('appDirectives', [])
                         })
                     }
                 }
-                $timeout(function(){
+                $timeout(function () {
                     $scope.show = true;
-                    if(found){
-                        console.log("Here:",JSON.stringify($scope.data.data));
+                    if (found) {
+                        console.log("Here:", JSON.stringify($scope.data.data));
                     }
                 })
             },
@@ -446,28 +451,28 @@ var appDirectives = angular.module('appDirectives', [])
                 user: '=',
             },
             replace: true,
-            controller: function ($scope, $routeParams,DHIS2URL,$http,ReportService,toaster) {
+            controller: function ($scope, $routeParams, DHIS2URL, $http, ReportService, toaster) {
                 $scope.enableCommentEditBool = false;
                 $scope.enableCommentEdit = function () {
                     $scope.enableCommentEditBool = true;
                 }
-                $scope.canEdit = function(level){
+                $scope.canEdit = function (level) {
                     var ret = false;
-                    $scope.user.organisationUnits.forEach(function(organisatioUnit){
-                        if(level >= organisatioUnit.level){
+                    $scope.user.organisationUnits.forEach(function (organisatioUnit) {
+                        if (level >= organisatioUnit.level) {
                             ret = true;
                         }
                     })
                     return ret;
                 }
                 $scope.canSave = false;
-                $scope.commentEdited = function(comment){
+                $scope.commentEdited = function (comment) {
                     comment.lastUpdated = new Date();
                     comment.lastCommenter = {
-                        id:$scope.user.id,
-                        name:$scope.user.name,
-                        phoneNumber:$scope.user.phoneNumber,
-                        email:$scope.user.email
+                        id: $scope.user.id,
+                        name: $scope.user.name,
+                        phoneNumber: $scope.user.phoneNumber,
+                        email: $scope.user.email
                     };
                     $scope.canSave = true;
                 }
@@ -475,14 +480,14 @@ var appDirectives = angular.module('appDirectives', [])
                 $scope.commentData = [];
                 $scope.organisationUnitLevels = [];
                 var method = "post";
-                ReportService.getOrganisationUnitLevels().then(function(levels){
+                ReportService.getOrganisationUnitLevels().then(function (levels) {
                     $scope.organisationUnitLevels = levels;
                     $http.get(DHIS2URL + "api/dataStore/comments/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
                         $scope.savingComment = "";
-                        if(Array.isArray(results.data)){
+                        if (Array.isArray(results.data)) {
                             $scope.commentData = results.data;
-                        }else{
-                            $scope.commentData.push({level:$scope.orgUnit.level - 1});
+                        } else {
+                            $scope.commentData.push({level: $scope.orgUnit.level - 1});
                             results.data.level = $scope.orgUnit.level;
                             $scope.commentData.push(results.data);
                         }
@@ -491,8 +496,8 @@ var appDirectives = angular.module('appDirectives', [])
                         method = "post";
                         $scope.commentData = [];
                         $scope.savingComment = "";
-                        $scope.commentData.push({level:$scope.orgUnit.level - 1});
-                        $scope.commentData.push({level:$scope.orgUnit.level});
+                        $scope.commentData.push({level: $scope.orgUnit.level - 1});
+                        $scope.commentData.push({level: $scope.orgUnit.level});
                         //toaster.pop('info', "Information", "No comments where found.");
                     });
                 })
@@ -543,10 +548,10 @@ var appDirectives = angular.module('appDirectives', [])
                         templateUrl: 'myModalContent.html',
                         controller: function ($scope, parentScope, $modalInstance, DebugService, ReportService, $q, toaster) {
 
-                            $scope.undefined = function(data){
-                                if(data == undefined){
+                            $scope.undefined = function (data) {
+                                if (data == undefined) {
                                     return true;
-                                }else if(data == ""){
+                                } else if (data == "") {
                                     return true;
                                 }
                                 return false;
@@ -960,16 +965,20 @@ var appDirectives = angular.module('appDirectives', [])
         return {
             scope: {
                 config: '=',
-                done:'='
+                done: '='
             },
-            controller: function ($scope,$http,DHIS2URL,ReportService) {
-                $scope.loading ={};
-                $scope.cancelCreateDataSetReport = function(dataSet,orgUnit,period){
-                    $scope.loading[dataSet+"_"+orgUnit+"_"+period] = true;
-                    ReportService.cancelCreateDataSetReport({dataSet:dataSet,orgUnit:orgUnit,period:period}).then(function(){
-                        $scope.notExecuted.splice($scope.notExecuted.indexOf(dataSet+"_"+orgUnit+"_"+period),1);
-                    },function(){
-                        $scope.loading[dataSet+"_"+orgUnit+"_"+period] = false;
+            controller: function ($scope, $http, DHIS2URL, ReportService) {
+                $scope.loading = {};
+                $scope.cancelCreateDataSetReport = function (dataSet, orgUnit, period) {
+                    $scope.loading[dataSet + "_" + orgUnit + "_" + period] = true;
+                    ReportService.cancelCreateDataSetReport({
+                        dataSet: dataSet,
+                        orgUnit: orgUnit,
+                        period: period
+                    }).then(function () {
+                        $scope.notExecuted.splice($scope.notExecuted.indexOf(dataSet + "_" + orgUnit + "_" + period), 1);
+                    }, function () {
+                        $scope.loading[dataSet + "_" + orgUnit + "_" + period] = false;
                     })
                 }
                 $scope.getPeriodName = function (period) {
@@ -984,28 +993,28 @@ var appDirectives = angular.module('appDirectives', [])
                     $scope.dataSetIds = [];
                     $scope.orgUnitIds = [];
                     $scope.periodIds = [];
-                    result.data.forEach(function(id){
+                    result.data.forEach(function (id) {
                         var ids = id.split("_");
-                        if($scope.dataSetIds.indexOf(ids[0]) == -1)
-                        $scope.dataSetIds.push(ids[0]);
-                        if($scope.orgUnitIds.indexOf(ids[1]) == -1)
-                        $scope.orgUnitIds.push(ids[1]);
-                        if($scope.periodIds.indexOf(ids[2]) == -1)
-                        $scope.periodIds.push(ids[2]);
+                        if ($scope.dataSetIds.indexOf(ids[0]) == -1)
+                            $scope.dataSetIds.push(ids[0]);
+                        if ($scope.orgUnitIds.indexOf(ids[1]) == -1)
+                            $scope.orgUnitIds.push(ids[1]);
+                        if ($scope.periodIds.indexOf(ids[2]) == -1)
+                            $scope.periodIds.push(ids[2]);
                     })
-                    $http.get(DHIS2URL + "api/dataSets.json?filter=id:in:["+$scope.dataSetIds.join(",") +"]&fields=id,name").then(function (dataSetResult) {
+                    $http.get(DHIS2URL + "api/dataSets.json?filter=id:in:[" + $scope.dataSetIds.join(",") + "]&fields=id,name").then(function (dataSetResult) {
                         $scope.dataSets = {};
-                        dataSetResult.data.dataSets.forEach(function(dataSet){
+                        dataSetResult.data.dataSets.forEach(function (dataSet) {
                             $scope.dataSets[dataSet.id] = dataSet;
                         })
                     });
-                    $http.get(DHIS2URL + "api/organisationUnits.json?filter=id:in:["+$scope.orgUnitIds.join(",") +"]&fields=id,name,ancestors[name]").then(function (orgUnitsResult) {
+                    $http.get(DHIS2URL + "api/organisationUnits.json?filter=id:in:[" + $scope.orgUnitIds.join(",") + "]&fields=id,name,ancestors[name]").then(function (orgUnitsResult) {
                         $scope.orgUnits = {};
-                        orgUnitsResult.data.organisationUnits.forEach(function(orgUnit){
+                        orgUnitsResult.data.organisationUnits.forEach(function (orgUnit) {
                             $scope.orgUnits[orgUnit.id] = orgUnit;
                         })
                     });
-                },function(){
+                }, function () {
                     $scope.noExecutedLoaded = false;
                 });
             },
@@ -1031,20 +1040,20 @@ var appDirectives = angular.module('appDirectives', [])
                             });
                         });
                         function dynamicSort(property) {
-                            if(scope.config.order){
-                                if(scope.config.order[scope.config.dataElements[property]]){
+                            if (scope.config.order) {
+                                if (scope.config.order[scope.config.dataElements[property]]) {
                                     return function (obj1, obj2) {
                                         //return scope.config.order[scope.config.dataElements[property]].indexOf(obj1.children[property].innerHTML.trim());
                                         return scope.config.order[scope.config.dataElements[property]].indexOf(obj1.children[property].innerHTML.trim()) > scope.config.order[scope.config.dataElements[property]].indexOf(obj2.children[property].innerHTML.trim()) ? -1
                                             : scope.config.order[scope.config.dataElements[property]].indexOf(obj1.children[property].innerHTML.trim()) < scope.config.order[scope.config.dataElements[property]].indexOf(obj2.children[property].innerHTML.trim()) ? 1 : 0;
                                     }
-                                }else{
+                                } else {
                                     return function (obj1, obj2) {
                                         return obj1.children[property].innerHTML.trim().toLowerCase() > obj2.children[property].innerHTML.trim().toLowerCase() ? 1
                                             : obj1.children[property].innerHTML.trim().toLowerCase() < obj2.children[property].innerHTML.trim().toLowerCase() ? -1 : 0;
                                     }
                                 }
-                            }else{
+                            } else {
                                 return function (obj1, obj2) {
                                     return obj1.children[property].innerHTML.trim().toLowerCase() > obj2.children[property].innerHTML.trim().toLowerCase() ? 1
                                         : obj1.children[property].innerHTML.trim().toLowerCase() < obj2.children[property].innerHTML.trim().toLowerCase() ? -1 : 0;
@@ -1072,6 +1081,7 @@ var appDirectives = angular.module('appDirectives', [])
 
                         var firstColumnBrakes = [];
                         var toFixed = [];
+
                         function adjacentToGroup(row, column) {
                             var adjacentString = "";
                             dataElementIndexes.forEach(function (dataElementIndex) {
@@ -1086,12 +1096,12 @@ var appDirectives = angular.module('appDirectives', [])
                             });
                             return adjacentString;
                         }
+
                         for (var i = 1; i <= scope.data.dataElements.length; i++) {
                             var dataIndex = i - 1;
                             var previous = null, previousFromFirst = null, cellToExtend = null, rowspan = 1;
                             //if ((scope.data.dataElements[dataIndex].valueType == "TEXT" || scope.data.dataElements[dataIndex].valueType == "LONG_TEXT") && scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id) > -1)
-                            if (scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id) > -1)
-                            {
+                            if (scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id) > -1) {
                                 elem.find("td:nth-child(" + i + ")").each(function (index, el) {
                                     if ((previous == $(el).text().trim().toLowerCase() && $.inArray(index, firstColumnBrakes) === -1)) {
                                         $(el).addClass('hidden');
@@ -1111,52 +1121,51 @@ var appDirectives = angular.module('appDirectives', [])
 
                                     if (previous == adjacentToGroup(index, i)) {
                                         $(el).addClass('hidden');
-                                        if(scope.config.valueTypes){
-                                            if(scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'min' ||
-                                                scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'max'){
+                                        if (scope.config.valueTypes) {
+                                            if (scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'min' ||
+                                                scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'max') {
                                                 cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
                                                 return;
                                             }
                                         }
-                                        var firstValue = cellToExtend.html(),secondValue = $(el).html();
+                                        var firstValue = cellToExtend.html(), secondValue = $(el).html();
                                         var firstValueSet = false, secondValueSet = false;
-                                        if(firstValue == ""){
+                                        if (firstValue == "") {
                                             firstValue = 0.0;
                                             firstValueSet = true;
                                         }
-                                        if(secondValue == ""){
+                                        if (secondValue == "") {
                                             secondValue = 0.0;
                                             secondValueSet = true;
                                         }
-                                        try{
-                                            if(scope.config.valueTypes){
-                                                if(scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'int'){
-                                                    cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")"));
-                                                }else if(scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'min' ||
-                                                    scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'max'){
+                                        try {
+                                            if (scope.config.valueTypes) {
+                                                if (scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'int') {
+                                                    cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")"));
+                                                } else if (scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'min' ||
+                                                    scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'max') {
 
-                                                }else{
-                                                    cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")").toFixed(1));
+                                                } else {
+                                                    cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")").toFixed(1));
                                                 }
-                                            }else
-                                            {
-                                                if(scope.config.list){
-                                                    if(scope.config.list == scope.config.dataElements[i - 1]){
-                                                        if(firstValue.indexOf(secondValue) == -1){
+                                            } else {
+                                                if (scope.config.list) {
+                                                    if (scope.config.list == scope.config.dataElements[i - 1]) {
+                                                        if (firstValue.indexOf(secondValue) == -1) {
                                                             cellToExtend.html(firstValue + "<br /> " + secondValue);
                                                         }
-                                                    }else{
-                                                        cellToExtend.html(eval("(" + firstValue + " + " + secondValue +")").toFixed(1));
+                                                    } else {
+                                                        cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")").toFixed(1));
                                                     }
-                                                }else{
-                                                    if(scope.config.dataElementsDetails[i - 1].aggregationType == "AVERAGE"){
-                                                        cellToExtend.html(eval("(" + firstValue.split(",").join("") + " + " + secondValue.split(",").join("") +")"));
-                                                    }else{
-                                                        cellToExtend.html(eval("(" + firstValue.split(",").join("") + " + " + secondValue.split(",").join("") +")").toFixed(1));
+                                                } else {
+                                                    if (scope.config.dataElementsDetails[i - 1].aggregationType == "AVERAGE") {
+                                                        cellToExtend.html(eval("(" + firstValue.split(",").join("") + " + " + secondValue.split(",").join("") + ")"));
+                                                    } else {
+                                                        cellToExtend.html(eval("(" + firstValue.split(",").join("") + " + " + secondValue.split(",").join("") + ")").toFixed(1));
                                                     }
                                                 }
                                             }
-                                        }catch(e){
+                                        } catch (e) {
                                             //alert("Catch:" + scope.config.dataElements[i]);
                                         }
 
@@ -1171,12 +1180,12 @@ var appDirectives = angular.module('appDirectives', [])
                             }
 
                         }
-                        scope.config.dataElements.forEach(function (dataElementId,deIndex){
+                        scope.config.dataElements.forEach(function (dataElementId, deIndex) {
                             scope.config.dataElementsDetails.forEach(function (dataElement, index) {
                                 if (dataElement.id == dataElementId) {
                                     if (dataElement.aggregationType == "AVERAGE") {
-                                        elem.find("tr").each(function (trIndex, trElement){
-                                            if(trElement.children[deIndex]){
+                                        elem.find("tr").each(function (trIndex, trElement) {
+                                            if (trElement.children[deIndex]) {
                                                 trElement.children[deIndex].innerText = $filter('comma')((parseFloat(trElement.children[deIndex].innerText) / trElement.children[deIndex].rowSpan).toFixed(1));
                                             }
                                         });
@@ -1184,21 +1193,22 @@ var appDirectives = angular.module('appDirectives', [])
                                 }
                             });
                         })
-                        if(scope.config.valueTypes){
+                        if (scope.config.valueTypes) {
                             for (var i = 1; i <= scope.data.dataElements.length; i++) {
                                 elem.find("td:nth-child(" + i + ")").each(function (index, el) {
 
-                                    if((scope.config.valueTypes[scope.config.dataElements[i]] == 'min' || scope.config.valueTypes[scope.config.dataElements[i]] == 'max')&& $(el).attr('rowspan') != null){
-                                        for(var counter = index + 1;counter <= (index + ($(el).attr('rowspan') - 1));counter++){
+                                    if ((scope.config.valueTypes[scope.config.dataElements[i]] == 'min' || scope.config.valueTypes[scope.config.dataElements[i]] == 'max') && $(el).attr('rowspan') != null) {
+                                        for (var counter = index + 1; counter <= (index + ($(el).attr('rowspan') - 1)); counter++) {
                                             var topHtml = parseFloat($(elem[0].children[index].children[i]).html());
                                             var current = parseFloat($(elem[0].children[counter].children[i]).html());
 
-                                            if(scope.config.valueTypes[scope.config.dataElements[i]] == 'min'){
-                                                if(topHtml > current){
+                                            if (scope.config.valueTypes[scope.config.dataElements[i]] == 'min') {
+                                                if (topHtml > current) {
                                                     $(elem[0].children[index].children[i]).html(current.toFixed(1));
                                                 }
-                                            }if(scope.config.valueTypes[scope.config.dataElements[i]] == 'max'){
-                                                if(topHtml < current){
+                                            }
+                                            if (scope.config.valueTypes[scope.config.dataElements[i]] == 'max') {
+                                                if (topHtml < current) {
                                                     $(elem[0].children[index].children[i]).html(current.toFixed(1));
                                                 }
                                             }
@@ -1207,34 +1217,35 @@ var appDirectives = angular.module('appDirectives', [])
                                 })
                             }
                         }
-                        if(scope.config.dec){
+
+                        if (scope.config.dec) {
                             for (var i = 1; i <= scope.data.dataElements.length; i++) {
                                 elem.find("td:nth-child(" + i + ")").each(function (index, el) {
-                                    if(scope.config.dec == scope.config.dataElements[i]){
+                                    if (scope.config.dec == scope.config.dataElements[i]) {
                                         $(elem[0].children[index].children[i]).html(parseFloat($(elem[0].children[index].children[i]).html()).toFixed(1));
                                     }
                                 })
                             }
                         }
 
-                        if(scope.config.groupAdd){
+                        if (scope.config.groupAdd) {
                             firstColumnBrakes = [];
-                            scope.config.groupAdd.forEach(function(dataElementId){
-                                scope.data.dataElements.forEach(function(dataElement,i){
-                                    if(dataElementId == dataElement.id)
-                                    {
-                                        elem.find("td:nth-child(" + i + ")").each(function (index, el) {
-                                            if(elem[0].children[index].children[i - 1].getAttribute('rowspan') != null){
+                            scope.config.groupAdd.forEach(function (dataElementId) {
+                                scope.data.dataElements.forEach(function (dataElement, i) {
+                                    if (dataElementId == dataElement.id) {
+                                        elementFind(elem[0],i,function(index, el){
+                                        //elem.find("td:nth-child(" + i + ")").each(function (index, el) {
+                                            if (elem[0].children[index].children[i - 1].getAttribute('rowspan') != null) {
                                                 var span = parseInt(elem[0].children[index].children[i - 1].getAttribute('rowspan'));
-                                                elem[0].children[index].children[i].setAttribute('rowspan',span);
                                                 var previousVal = "";
-                                                for(var counter = 1;counter < span;counter++){
-                                                    $(elem[0].children[index + counter].children[i]).addClass('hidden');
-                                                    if(elem[0].children[index + counter].children[i + 1].innerHTML != previousVal){
+                                                for (var counter = 1; counter < span; counter++) {
+                                                    if (elem[0].children[index + counter].children[i + 1].innerHTML != previousVal && !$(elem[0].children[index + counter].children[i]).hasClass('hidden')) {
                                                         elem[0].children[index].children[i].innerHTML = (parseFloat(elem[0].children[index].children[i].innerHTML) + parseFloat(elem[0].children[index + counter].children[i].innerHTML)).toFixed(1);
                                                     }
+                                                    $(elem[0].children[index + counter].children[i]).addClass('hidden');
                                                     previousVal = elem[0].children[index + counter].children[i + 1].innerHTML;
                                                 }
+                                                elem[0].children[index].children[i].setAttribute('rowspan',span);
                                             }
                                         })
                                     }
@@ -1244,11 +1255,11 @@ var appDirectives = angular.module('appDirectives', [])
                         //re-calculate indicator values after merging rows
                         if (scope.config.indicators) {
                             scope.config.indicators.forEach(function (indicator) {
-                                if(indicator.position){
+                                if (indicator.position) {
                                     scope.config.dataElements.splice(indicator.position, 0, indicator.position);
                                 }
                             });
-                            elem.find("tr").each(function (trIndex, trElement){
+                            elem.find("tr").each(function (trIndex, trElement) {
                                 scope.config.indicators.forEach(function (indicator) {
                                     var eventIndicator = "(" + indicator.numerator + ")/(" + indicator.denominator + ")";
                                     scope.data.dataElements.forEach(function (dataElement) {
@@ -1259,14 +1270,14 @@ var appDirectives = angular.module('appDirectives', [])
                                         }
                                     });
                                     var valueCalculated = (eval('(' + eventIndicator.split(",").join("") + ')')).toFixed(1);
-                                    if(isNaN(valueCalculated)){
+                                    if (isNaN(valueCalculated)) {
                                         valueCalculated = "";
                                     }
                                     trElement.children[indicator.position].innerText = valueCalculated;
                                 });
                             });
                         }
-                        toFixed.forEach(function(child){
+                        toFixed.forEach(function (child) {
                             child.html(parseFloat(child.html()).toFixed(1));
                         })
                     });
@@ -1316,7 +1327,7 @@ var appDirectives = angular.module('appDirectives', [])
                         if ($scope.config.valueTypes[dataElement.id] == "int") {
                             $scope.config.data.forEach(function (eventData) {
                                 var value = parseInt(eventData[dataElement.name]);
-                                if(isNaN(value)){
+                                if (isNaN(value)) {
                                     value = 0;
                                 }
                                 eventData[dataElement.name] = value + "";
@@ -1405,7 +1416,10 @@ var appDirectives = angular.module('appDirectives', [])
                 if ($scope.config.indicators) {
 
                     $scope.config.indicators.forEach(function (indicator, index) {
-                        $scope.data.dataElements.splice(indicator.position, 0, {name:"Inidicator" + index,valueType:"NUMBER"});
+                        $scope.data.dataElements.splice(indicator.position, 0, {
+                            name: "Inidicator" + index,
+                            valueType: "NUMBER"
+                        });
                         //$scope.data.dataElements.push({name: "Inidicator" + index});
                         $scope.data.events.forEach(function (event) {
                             var eventIndicator = "(" + indicator.numerator + ")/(" + indicator.denominator + ")";
@@ -1444,31 +1458,31 @@ var appDirectives = angular.module('appDirectives', [])
                 $timeout(function () {
                     var arr = Array.prototype.slice.call(elem[0].rows);
                     // iterate through the columns instead of passing each column as function parameter:
-                    for(var i=1; i<=elem[0].rows[0].children.length; i++){
+                    for (var i = 1; i <= elem[0].rows[0].children.length; i++) {
                         var cellToExtend = null, rowspan = 1;
-                        elem.find("td:nth-child(" + i + ")").each(function(index, e){
+                        elem.find("td:nth-child(" + i + ")").each(function (index, e) {
                             var jthis = $(this);
-                            if(index == 0){
+                            if (index == 0) {
                                 rowspan = 1;
                                 cellToExtend = jthis;
-                            }else{
-                                if(i == 1){
+                            } else {
+                                if (i == 1) {
 
-                                }else{
+                                } else {
                                     var first = parseFloat(cellToExtend.html());
                                     var second = parseFloat(jthis.html());
-                                    if(isNaN(first)){
+                                    if (isNaN(first)) {
                                         first = 0.0
-                                    }else if(isNaN(second)){
+                                    } else if (isNaN(second)) {
                                         second = 0.0
                                     }
-                                    cellToExtend.html((first + second).toFixed(1) );
-                                    if(isNaN(parseFloat(cellToExtend.html()))){
-                                        cellToExtend.html("" );
+                                    cellToExtend.html((first + second).toFixed(1));
+                                    if (isNaN(parseFloat(cellToExtend.html()))) {
+                                        cellToExtend.html("");
                                     }
                                 }
                                 jthis.addClass('hidden');
-                                cellToExtend.attr("rowspan", (rowspan = rowspan+1));
+                                cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
                             }
                         });
                     }
@@ -1479,19 +1493,19 @@ var appDirectives = angular.module('appDirectives', [])
             replace: true,
             controller: function ($scope, $routeParams) {
                 $scope.data = {
-                    events:[]
+                    events: []
                 }
                 $scope.config = {
-                    groupBy:[]
+                    groupBy: []
                 }
-                $scope.grandtotal.forEach(function(autogrowing){
-                    autogrowing.data.forEach(function(event){
+                $scope.grandtotal.forEach(function (autogrowing) {
+                    autogrowing.data.forEach(function (event) {
 
                         var newEvent = [];
-                        Object.keys(event).forEach(function(key){
+                        Object.keys(event).forEach(function (key) {
 
-                            if(["$$hashKey","Event","Program stage","Event date","Longitude","Latitude",
-                                    "Organisation unit name","Organisation unit code","Organisation unit"].indexOf(key) == -1){
+                            if (["$$hashKey", "Event", "Program stage", "Event date", "Longitude", "Latitude",
+                                    "Organisation unit name", "Organisation unit code", "Organisation unit"].indexOf(key) == -1) {
 
                                 newEvent.push(event[key]);
                             }
@@ -1513,7 +1527,7 @@ var appDirectives = angular.module('appDirectives', [])
                 if (scope.config.groupBy) {
 
                     var arr = Array.prototype.slice.call(elem[0].rows);
-                    scope.initLink = function(){
+                    scope.initLink = function () {
                         $timeout(function () {
                             var dataElementIndexes = [];
                             scope.config.groupBy.forEach(function (group, index) {
@@ -1555,11 +1569,11 @@ var appDirectives = angular.module('appDirectives', [])
                             elem[0].children.sort(dynamicSortMultiple(dataElementIndexes));
 
                             var firstColumnBrakes = [];
+
                             function adjacentToGroup(row, column) {
                                 var adjacentString = "";
                                 dataElementIndexes.forEach(function (dataElementIndex) {
-                                    if (column > (dataElementIndex + 1))
-                                    {
+                                    if (column > (dataElementIndex + 1)) {
                                         elem.find("td:nth-child(" + (dataElementIndex + 1) + ")").each(function (index, el) {
                                             if (row == index) {
                                                 adjacentString += $(el).html();
@@ -1574,8 +1588,7 @@ var appDirectives = angular.module('appDirectives', [])
                                 var dataIndex = i - 1;
                                 var previous = null, previousFromFirst = null, cellToExtend = null, rowspan = 1;
                                 //if ((scope.data.dataElements[dataIndex].valueType == "TEXT" || scope.data.dataElements[dataIndex].valueType == "LONG_TEXT") && scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id) > -1)
-                                if (scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id) > -1)
-                                {
+                                if (scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id) > -1) {
                                     elem.find("td:nth-child(" + i + ")").each(function (index, el) {
                                         if ((previous == $(el).text() && $.inArray(index, firstColumnBrakes) === -1)) {
                                             $(el).addClass('hidden');
@@ -1591,13 +1604,13 @@ var appDirectives = angular.module('appDirectives', [])
                                     })
                                 }
                             }
-                            scope.data.dataElements.forEach(function(dataElement,i){
+                            scope.data.dataElements.forEach(function (dataElement, i) {
                                 {
                                     elem.find("td:nth-child(" + i + ")").each(function (index, el) {
-                                        if(elem[0].children[index].children[0].getAttribute('rowspan') != null){
+                                        if (elem[0].children[index].children[0].getAttribute('rowspan') != null) {
                                             var span = parseInt(elem[0].children[index].children[0].getAttribute('rowspan'));
-                                            elem[0].children[index].children[i].setAttribute('rowspan',span);
-                                            for(var counter = 1;counter < span;counter++){
+                                            elem[0].children[index].children[i].setAttribute('rowspan', span);
+                                            for (var counter = 1; counter < span; counter++) {
                                                 $(elem[0].children[index + counter].children[i]).addClass('hidden');
                                                 elem[0].children[index].children[i].innerHTML = (parseFloat(elem[0].children[index].children[i].innerHTML) + parseFloat(elem[0].children[index + counter].children[i].innerHTML)).toFixed(1);
                                             }
@@ -1611,13 +1624,13 @@ var appDirectives = angular.module('appDirectives', [])
                 }
             },
             replace: true,
-            controller: function ($scope, $routeParams,DHIS2URL,$http,$q) {
+            controller: function ($scope, $routeParams, DHIS2URL, $http, $q) {
                 $scope.data = {
                     dataElements: [],
                     events: []
                 };
                 var promises = [];
-                $scope.mergePrograms = function(program){
+                $scope.mergePrograms = function (program) {
                     promises.push($http.get(DHIS2URL + "api/analytics/events/query/" + program.id + "?merge&dimension=pe:" + $routeParams.period + "&dimension=ou:" + $routeParams.orgUnit + "&dimension=" + program.dataElements.join("&dimension="))
                         .then(function (analyticsResults) {
                             analyticsResults.data.rows.forEach(function (row) {
@@ -1625,32 +1638,32 @@ var appDirectives = angular.module('appDirectives', [])
                                 analyticsResults.data.headers.forEach(function (header, index) {
                                     object[header.name] = row[index];
                                 });
-                                $scope.config.programs.forEach(function(program2){
-                                   if(program2.id != program.id){
-                                       program2.dataElements.forEach(function(dataElementID){
-                                           if($scope.config.merge[dataElementID]){
-                                               object[dataElementID] = object[$scope.config.merge[dataElementID]];
-                                           }else{
-                                               object[dataElementID] = "0.0";
-                                           }
-                                       })
-                                   }
+                                $scope.config.programs.forEach(function (program2) {
+                                    if (program2.id != program.id) {
+                                        program2.dataElements.forEach(function (dataElementID) {
+                                            if ($scope.config.merge[dataElementID]) {
+                                                object[dataElementID] = object[$scope.config.merge[dataElementID]];
+                                            } else {
+                                                object[dataElementID] = "0.0";
+                                            }
+                                        })
+                                    }
                                 })
                                 $scope.data.events.push(object);
                             });
-                        },function(){
+                        }, function () {
                             $scope.error = true;
                             toaster.pop('error', "Error" + error.status, "Error Loading Data from Server. Please try again");
                         }))
                 }
-                $scope.config.programs.forEach(function(program){
+                $scope.config.programs.forEach(function (program) {
                     $scope.mergePrograms(program);
                 })
                 promises.push($http.get(DHIS2URL + "api/dataElements.json?filter=id:in:[" + $scope.config.dataElements.join(",") + "]&fields=id,name,displayName,valueType")
                     .then(function (dataElementResults) {
-                        $scope.config.dataElements.forEach(function(dataElementID){
-                            dataElementResults.data.dataElements.forEach(function(dataElement){
-                                if(dataElement.id == dataElementID){
+                        $scope.config.dataElements.forEach(function (dataElementID) {
+                            dataElementResults.data.dataElements.forEach(function (dataElement) {
+                                if (dataElement.id == dataElementID) {
                                     $scope.data.dataElements.push(dataElement);
                                 }
                             })
