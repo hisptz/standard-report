@@ -1132,6 +1132,7 @@ var appControllers = angular.module('appControllers', [])
             $scope.lastIndicatorData = {};
             $scope.lastMonthIndicatorData = {};
             $scope.districtIndicatorData = {};
+            $scope.autogrowingOg = {};
             $scope.loadingStatus = "Loading Organisation Units";
 
             var organisationUnit = $scope.orgUnit;
@@ -1462,6 +1463,12 @@ var appControllers = angular.module('appControllers', [])
                             $scope.getFourthQuarterPeriod().forEach(function (period) {
                                 promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, period, true));
                             })
+                        }else if ($scope.autogrowingPrograms[programId].lastMonthOfQuarter) {
+                            var month = parseInt($routeParams.period.substr(5)) * 3;
+                            if(month < 10){
+                                month = "0" + month;
+                            }
+                            promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, $routeParams.period.substr(0,4) + "" + month));
                         } else {
                             promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, $routeParams.period));
                         }
@@ -1820,7 +1827,14 @@ var appControllers = angular.module('appControllers', [])
                         if ($routeParams.preview == "debug") {
                             directive = "autogrowing-debug a-debug= '" + JSON.stringify(config) + "'";
                         }
-                        newHtml = newHtml.replace(match[0], "<tbody " + directive + " config='autogrowingPrograms[\"" + config.programId + "\"]'></tbody>");
+                        var original = "";
+                        if(match[0].indexOf("original") > -1){
+                            var og = "og" + (Object.keys($scope.autogrowingOg).length + 1);
+                            $scope.autogrowingOg[og] = Object.assign({},config);
+                            original = " original='autogrowingOg[\"" + og + "\"]' ";
+                            directive = "autogrowingsplit";
+                        }
+                        newHtml = newHtml.replace(match[0], "<tbody " + directive + original + " config='autogrowingPrograms[\"" + config.programId + "\"]'></tbody>");
                     }
                 }
             }

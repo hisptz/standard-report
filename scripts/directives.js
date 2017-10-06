@@ -372,10 +372,6 @@ var appDirectives = angular.module('appDirectives', [])
                 choice: '='
             },
             controller: function ($scope, $routeParams, $timeout) {
-                if ($scope.choice) {
-                    console.log($scope.listByWard);
-                    console.log(JSON.stringify($scope.listByWard));
-                }
                 $scope.show = false;
                 $scope.params = $routeParams;
                 $scope.data = {};
@@ -1416,6 +1412,409 @@ var appDirectives = angular.module('appDirectives', [])
                 if ($scope.config.indicators) {
 
                     $scope.config.indicators.forEach(function (indicator, index) {
+                        $scope.data.dataElements.splice(indicator.position, 0, {
+                            name: "Inidicator" + index,
+                            valueType: "NUMBER"
+                        });
+                        //$scope.data.dataElements.push({name: "Inidicator" + index});
+                        $scope.data.events.forEach(function (event) {
+                            var eventIndicator = "(" + indicator.numerator + ")/(" + indicator.denominator + ")";
+                            //Get indcator dataelements
+                            $scope.data.dataElements.forEach(function (dataElement) {
+                                if (eventIndicator.indexOf(dataElement.id) > -1) {
+                                    //Replace formula with data value
+                                    var value = "0";
+                                    if (event[dataElement.name]) {
+                                        value = event[dataElement.name];
+                                    }
+                                    eventIndicator = eventIndicator.replace("#{" + dataElement.id + "}", value);
+                                }
+                            });
+                            //Evaluate Indicator
+
+                            try {
+                                event["Inidicator" + index] = eval('(' + eventIndicator + ')');
+                            } catch (e) {
+
+                            }
+                        })
+                    });
+
+                }
+            },
+            templateUrl: 'views/autogrowing.html'
+        }
+    })
+    .directive("autogrowingsplit", function ($timeout, $filter) {
+        return {
+            scope: {
+                config: '=',
+                original:'='
+            },
+            link: function (scope, elem, attrs, controller) {
+                if (scope.original.groupBy) {
+
+                    var arr = Array.prototype.slice.call(elem[0].rows);
+                    $timeout(function () {
+                        var dataElementIndexes = [];
+                        scope.original.groupBy.forEach(function (group, index) {
+                            scope.data.dataElements.forEach(function (dataElement, cindex) {
+                                if (scope.original.groupBy[index] == dataElement.id) {
+                                    dataElementIndexes.push(cindex);
+                                }
+                            });
+                        });
+                        function dynamicSort(property) {
+                            if (scope.config.order) {
+                                if (scope.config.order[scope.config.dataElements[property]]) {
+                                    return function (obj1, obj2) {
+                                        //return scope.config.order[scope.config.dataElements[property]].indexOf(obj1.children[property].innerHTML.trim());
+                                        return scope.config.order[scope.config.dataElements[property]].indexOf(obj1.children[property].innerHTML.trim()) > scope.config.order[scope.config.dataElements[property]].indexOf(obj2.children[property].innerHTML.trim()) ? -1
+                                            : scope.config.order[scope.config.dataElements[property]].indexOf(obj1.children[property].innerHTML.trim()) < scope.config.order[scope.config.dataElements[property]].indexOf(obj2.children[property].innerHTML.trim()) ? 1 : 0;
+                                    }
+                                } else {
+                                    return function (obj1, obj2) {
+                                        return obj1.children[property].innerHTML.trim().toLowerCase() > obj2.children[property].innerHTML.trim().toLowerCase() ? 1
+                                            : obj1.children[property].innerHTML.trim().toLowerCase() < obj2.children[property].innerHTML.trim().toLowerCase() ? -1 : 0;
+                                    }
+                                }
+                            } else {
+                                return function (obj1, obj2) {
+                                    return obj1.children[property].innerHTML.trim().toLowerCase() > obj2.children[property].innerHTML.trim().toLowerCase() ? 1
+                                        : obj1.children[property].innerHTML.trim().toLowerCase() < obj2.children[property].innerHTML.trim().toLowerCase() ? -1 : 0;
+                                }
+                            }
+                        }
+
+                        function dynamicSortMultiple(indexes) {
+                            //save the arguments object as it will be overwritten
+                            //note that arguments object is an array-like object
+                            //consisting of the names of the properties to sort by
+                            return function (obj1, obj2) {
+                                var i = 0, result = 0;
+                                //try getting a different result from 0 (equal)
+                                //as long as we have extra properties to compare
+                                while (result === 0 && i < indexes.length) {
+                                    result = dynamicSort(indexes[i])(obj1, obj2);
+                                    i++;
+                                }
+                                return result;
+                            }
+                        }
+                        elem[0].children.sort(dynamicSortMultiple(dataElementIndexes));
+
+                        var firstColumnBrakes = [];
+                        var toFixed = [];
+
+                        function adjacentToGroup(row, column) {
+                            var adjacentString = "";
+                            dataElementIndexes.forEach(function (dataElementIndex) {
+                                //if (column > (dataElementIndex + 1))
+                                {
+                                    elem.find("td:nth-child(" + (dataElementIndex + 1) + ")").each(function (index, el) {
+                                        if (row == index) {
+                                            adjacentString += $(el).html().trim().toLowerCase();
+                                        }
+                                    })
+                                }
+                            });
+                            return adjacentString;
+                        }
+
+                        for (var i = 1; i <= scope.data.dataElements.length; i++) {
+                            var dataIndex = i - 1;
+                            var previous = null, previousFromFirst = null, cellToExtend = null, rowspan = 1;
+                            //if ((scope.data.dataElements[dataIndex].valueType == "TEXT" || scope.data.dataElements[dataIndex].valueType == "LONG_TEXT") && scope.config.groupBy.indexOf(scope.data.dataElements[dataIndex].id) > -1)
+                            if (scope.original.groupBy.indexOf(scope.data.dataElements[dataIndex].id) > -1) {
+                                elem.find("td:nth-child(" + i + ")").each(function (index, el) {
+                                    if ((previous == $(el).text().trim().toLowerCase() && $.inArray(index, firstColumnBrakes) === -1)) {
+                                        $(el).addClass('hidden');
+                                        cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
+                                    } else {
+                                        if ($.inArray(index, firstColumnBrakes) === -1) {
+                                            firstColumnBrakes.push(index);
+                                        }
+                                        rowspan = 1;
+                                        previous = $(el).text().trim().toLowerCase();
+                                        cellToExtend = $(el);
+                                    }
+                                })
+                            } else //if(scope.config.continuous)
+                            {
+                                elem.find("td:nth-child(" + i + ")").each(function (index, el) {
+
+                                    if (previous == adjacentToGroup(index, i)) {
+                                        $(el).addClass('hidden');
+                                        if (scope.original.valueTypes) {
+                                            if (scope.original.valueTypes[scope.original.dataElements[i - 1]] == 'min' ||
+                                                scope.original.valueTypes[scope.original.dataElements[i - 1]] == 'max') {
+                                                cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
+                                                return;
+                                            }
+                                        }
+                                        var firstValue = cellToExtend.html(), secondValue = $(el).html();
+                                        var firstValueSet = false, secondValueSet = false;
+                                        if (firstValue == "") {
+                                            firstValue = 0.0;
+                                            firstValueSet = true;
+                                        }
+                                        if (secondValue == "") {
+                                            secondValue = 0.0;
+                                            secondValueSet = true;
+                                        }
+                                        try {
+                                            if (scope.original.valueTypes) {
+                                                if (scope.original.valueTypes[scope.original.dataElements[i - 1]] == 'int') {
+                                                    cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")"));
+                                                } else if (scope.original.valueTypes[scope.original.dataElements[i - 1]] == 'min' ||
+                                                    scope.original.valueTypes[scope.original.dataElements[i - 1]] == 'max') {
+
+                                                } else {
+                                                    cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")").toFixed(1));
+                                                }
+                                            } else {
+                                                if (scope.config.list) {
+                                                    if (scope.config.list == scope.config.dataElements[i - 1]) {
+                                                        if (firstValue.indexOf(secondValue) == -1) {
+                                                            cellToExtend.html(firstValue + "<br /> " + secondValue);
+                                                        }
+                                                    } else {
+                                                        cellToExtend.html(eval("(" + firstValue + " + " + secondValue + ")").toFixed(1));
+                                                    }
+                                                } else {
+                                                    if (scope.config.dataElementsDetails[i - 1].aggregationType == "AVERAGE") {
+                                                        cellToExtend.html(eval("(" + firstValue.split(",").join("") + " + " + secondValue.split(",").join("") + ")"));
+                                                    } else {
+                                                        cellToExtend.html(eval("(" + firstValue.split(",").join("") + " + " + secondValue.split(",").join("") + ")").toFixed(1));
+                                                    }
+                                                }
+                                            }
+                                        } catch (e) {
+                                            //alert("Catch:" + scope.config.dataElements[i]);
+                                        }
+
+                                        cellToExtend.attr("rowspan", (rowspan = rowspan + 1));
+                                    } else {
+                                        rowspan = 1;
+                                        //previous = $(el).text();
+                                        previous = adjacentToGroup(index, i).trim().toLowerCase();
+                                        cellToExtend = $(el);
+                                    }
+                                })
+                            }
+
+                        }
+                        scope.original.dataElements.forEach(function (dataElementId, deIndex) {
+                            scope.original.dataElementsDetails.forEach(function (dataElement, index) {
+                                if (dataElement.id == dataElementId) {
+                                    if (dataElement.aggregationType == "AVERAGE") {
+                                        elem.find("tr").each(function (trIndex, trElement) {
+                                            if (trElement.children[deIndex]) {
+                                                trElement.children[deIndex].innerText = $filter('comma')((parseFloat(trElement.children[deIndex].innerText) / trElement.children[deIndex].rowSpan).toFixed(1));
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        })
+                        if (scope.config.valueTypes) {
+                            for (var i = 1; i <= scope.data.dataElements.length; i++) {
+                                elem.find("td:nth-child(" + i + ")").each(function (index, el) {
+
+                                    if ((scope.config.valueTypes[scope.config.dataElements[i]] == 'min' || scope.config.valueTypes[scope.config.dataElements[i]] == 'max') && $(el).attr('rowspan') != null) {
+                                        for (var counter = index + 1; counter <= (index + ($(el).attr('rowspan') - 1)); counter++) {
+                                            var topHtml = parseFloat($(elem[0].children[index].children[i]).html());
+                                            var current = parseFloat($(elem[0].children[counter].children[i]).html());
+
+                                            if (scope.config.valueTypes[scope.config.dataElements[i]] == 'min') {
+                                                if (topHtml > current) {
+                                                    $(elem[0].children[index].children[i]).html(current.toFixed(1));
+                                                }
+                                            }
+                                            if (scope.config.valueTypes[scope.config.dataElements[i]] == 'max') {
+                                                if (topHtml < current) {
+                                                    $(elem[0].children[index].children[i]).html(current.toFixed(1));
+                                                }
+                                            }
+                                        }
+                                    }
+                                })
+                            }
+                        }
+
+                        if (scope.config.dec) {
+                            for (var i = 1; i <= scope.data.dataElements.length; i++) {
+                                elem.find("td:nth-child(" + i + ")").each(function (index, el) {
+                                    if (scope.config.dec == scope.config.dataElements[i]) {
+                                        $(elem[0].children[index].children[i]).html(parseFloat($(elem[0].children[index].children[i]).html()).toFixed(1));
+                                    }
+                                })
+                            }
+                        }
+
+                        if (scope.config.groupAdd) {
+                            firstColumnBrakes = [];
+                            scope.config.groupAdd.forEach(function (dataElementId) {
+                                scope.data.dataElements.forEach(function (dataElement, i) {
+                                    if (dataElementId == dataElement.id) {
+                                        elementFind(elem[0],i,function(index, el){
+                                            //elem.find("td:nth-child(" + i + ")").each(function (index, el) {
+                                            if (elem[0].children[index].children[i - 1].getAttribute('rowspan') != null) {
+                                                var span = parseInt(elem[0].children[index].children[i - 1].getAttribute('rowspan'));
+                                                var previousVal = "";
+                                                for (var counter = 1; counter < span; counter++) {
+                                                    if (elem[0].children[index + counter].children[i + 1].innerHTML != previousVal && !$(elem[0].children[index + counter].children[i]).hasClass('hidden')) {
+                                                        elem[0].children[index].children[i].innerHTML = (parseFloat(elem[0].children[index].children[i].innerHTML) + parseFloat(elem[0].children[index + counter].children[i].innerHTML)).toFixed(1);
+                                                    }
+                                                    $(elem[0].children[index + counter].children[i]).addClass('hidden');
+                                                    previousVal = elem[0].children[index + counter].children[i + 1].innerHTML;
+                                                }
+                                                elem[0].children[index].children[i].setAttribute('rowspan',span);
+                                            }
+                                        })
+                                    }
+                                })
+                            })
+                        }
+                        //re-calculate indicator values after merging rows
+                        if (scope.original.indicators) {
+                            scope.original.indicators.forEach(function (indicator) {
+                                if (indicator.position) {
+                                    scope.original.dataElements.splice(indicator.position, 0, indicator.position);
+                                }
+                            });
+                            elem.find("tr").each(function (trIndex, trElement) {
+                                scope.original.indicators.forEach(function (indicator) {
+                                    var eventIndicator = "(" + indicator.numerator + ")/(" + indicator.denominator + ")";
+                                    scope.data.dataElements.forEach(function (dataElement) {
+                                        if (eventIndicator.indexOf(dataElement.id) > -1) {
+                                            var dataElementIndex = scope.original.dataElements.indexOf(dataElement.id);
+                                            var value = trElement.children[dataElementIndex].innerText;
+                                            eventIndicator = eventIndicator.replace("#{" + dataElement.id + "}", value);
+                                        }
+                                    });
+                                    var valueCalculated = (eval('(' + eventIndicator.split(",").join("") + ')')).toFixed(1);
+                                    if (isNaN(valueCalculated)) {
+                                        valueCalculated = "";
+                                    }
+                                    trElement.children[indicator.position].innerText = valueCalculated;
+                                });
+                            });
+                        }
+                        toFixed.forEach(function (child) {
+                            child.html(parseFloat(child.html()).toFixed(1));
+                        })
+                    });
+                }
+            },
+            replace: true,
+            controller: function ($scope, $routeParams) {
+                $scope.config.dataElements = $scope.original.dataElements;
+                $scope.original.dataElementsDetails = [];
+                $scope.original.data = [];
+                $scope.config.dataElementsDetails.forEach(function (dataElement) {
+                    if ($scope.original.dataElements.indexOf(dataElement.id) > -1) {
+                        $scope.original.dataElementsDetails.push(dataElement);
+                    }
+                });
+                $scope.config.data.forEach(function (data) {
+                    $scope.original.data.push(data);
+                });
+                $scope.data = {
+                    dataElements: [],
+                    events: []
+                };
+                $scope.getDataElementName = function (id) {
+                    var name = "";
+                    $scope.original.dataElementsDetails.forEach(function (dataElement) {
+                        if (dataElement.id == id) {
+                            name = dataElement.name;
+                        }
+                    });
+                    return name;
+                };
+                var averagingOccurences = {};
+                $scope.original.dataElements.forEach(function (dataElementId) {
+                    if ($scope.original.dataElementsDetails) {
+                        $scope.original.dataElementsDetails.forEach(function (dataElement, index) {
+                            if (dataElement.id == dataElementId) {
+                                $scope.data.dataElements.push(dataElement);
+                                if (dataElement.aggregationType == "AVERAGE") {
+                                    $scope.original.data.forEach(function (eventData) {
+                                        if (averagingOccurences[eventData[$scope.original.dataElementsDetails[0].name]]) {
+                                            averagingOccurences[eventData[$scope.original.dataElementsDetails[0].name]]++;
+                                        } else {
+                                            averagingOccurences[eventData[$scope.original.dataElementsDetails[0].name]] = 1;
+                                        }
+                                    });
+                                    $scope.original.data.forEach(function (eventData) {
+                                        //eventData[dataElement.name] = eval("(" + eventData[dataElement.name] + "/" + averagingOccurences[eventData[$scope.config.dataElementsDetails[0].name]] + ")");
+                                    })
+                                }
+                            }
+                        });
+                    }
+
+                });
+                if ($scope.original.groupBy) {//If grouping is required
+                    //$scope.data.groupedEvents = [];
+                    $scope.foundDataValues = {};
+
+
+                    $scope.original.groupBy.forEach(function (group, index) {
+                        if (index == 0) {
+                            //if($scope.config.data)
+                            {
+                                $scope.original.data.forEach(function (eventData) {
+                                    $scope.data.events.push(eventData);
+                                })
+                            }
+                        }
+
+                    });
+                    if ($scope.original.fourthQuarter) {
+                        $scope.original.groupBy.forEach(function (group, index) {
+                            if (index == 0) {
+                                $scope.config.otherData.forEach(function (eventData) {
+                                    $scope.data.events.push(eventData);
+                                })
+                            }
+
+                        });
+                    }
+                } else {
+
+                    $scope.data.events = [];
+                    $scope.original.data.forEach(function (eventData) {
+
+                        if ($scope.config.cumulativeToDate) {
+                            var eventName = $scope.getDataElementName($scope.config.dataElements[0]);
+                            $scope.config.otherData.forEach(function (otherEvent) {
+                                if (otherEvent[eventName] == eventData[eventName]) {
+                                    $scope.config.cumulativeToDate.forEach(function (cDataElement) {
+                                        $scope.config.dataElements.forEach(function (dataElementId, index) {
+                                            if (dataElementId.indexOf(cDataElement.dataElement) != -1 && cDataElement.dataElement.length < dataElementId.length) {
+                                                var otherDataEventName = $scope.getDataElementName(dataElementId);
+                                                var initialOtherDataEventName = $scope.getDataElementName(cDataElement.dataElement);
+                                                if (eventData[otherDataEventName]) {
+                                                    eventData[otherDataEventName] = eval("(" + eventData[otherDataEventName] + "+" + otherEvent[initialOtherDataEventName] + ")").toFixed(1) + "";
+                                                } else {
+                                                    eventData[otherDataEventName] = otherEvent[initialOtherDataEventName];
+                                                }
+                                            }
+                                        })
+                                    })
+                                }
+                            });
+                        }
+
+                        $scope.data.events.push(eventData);
+                    })
+                }
+                //Evaluate indicators if there calculations that need to be made
+                if ($scope.original.indicators) {
+
+                    $scope.original.indicators.forEach(function (indicator, index) {
                         $scope.data.dataElements.splice(indicator.position, 0, {
                             name: "Inidicator" + index,
                             valueType: "NUMBER"
