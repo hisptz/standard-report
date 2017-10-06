@@ -1718,7 +1718,14 @@ var appDirectives = angular.module('appDirectives', [])
                     }
                 });
                 $scope.config.data.forEach(function (data) {
-                    $scope.original.data.push(data);
+                    if($scope.original.lastMonthOfQuarter){
+                        console.log();
+                        if(parseInt(data["Event date"].substr(5,2))%3 == 0){
+                            $scope.original.data.push(data);
+                        }
+                    }else{
+                        $scope.original.data.push(data);
+                    }
                 });
                 $scope.data = {
                     dataElements: [],

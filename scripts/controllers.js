@@ -1463,13 +1463,13 @@ var appControllers = angular.module('appControllers', [])
                             $scope.getFourthQuarterPeriod().forEach(function (period) {
                                 promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, period, true));
                             })
-                        }else if ($scope.autogrowingPrograms[programId].lastMonthOfQuarter) {
+                        }/*else if ($scope.autogrowingPrograms[programId].lastMonthOfQuarter) {
                             var month = parseInt($routeParams.period.substr(5)) * 3;
                             if(month < 10){
                                 month = "0" + month;
                             }
                             promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, $routeParams.period.substr(0,4) + "" + month));
-                        } else {
+                        }*/ else {
                             promises.push($scope.fetchEventAnalytics(programId, Object.keys($scope.autogrowingPrograms).length, $routeParams.period));
                         }
                     }
