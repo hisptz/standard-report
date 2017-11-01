@@ -270,7 +270,7 @@ var appControllers = angular.module('appControllers', [])
             })
             ReportService.getUser().then(function (results) {
                 var orgUnitIds = [];
-                results.organisationUnits.forEach(function (orgUnit) {
+                results.dataViewOrganisationUnits.forEach(function (orgUnit) {
                     orgUnitIds.push(orgUnit.id);
                 });
                 $http.get(DHIS2URL + "api/organisationUnits.json?filter=id:in:[" + orgUnitIds + "]&fields=id,name,level,children[id,name,level,children[id,name,level,children[id,name,level,children[id,name,level,children]]]]")
@@ -321,9 +321,15 @@ var appControllers = angular.module('appControllers', [])
         $scope.allowAnalytics = false;
         ReportService.getUser().then(function (user) {
             $scope.user = user;
+            console.log("User:",user)
             $scope.user.userCredentials.userRoles.forEach(function (role) {
                 if ((role.authorities.indexOf("F_DATA_MART_ADMIN") > -1) || (role.authorities.indexOf("ALL") > -1)) {
-                    $scope.allowAnalytics = true;
+                    $scope.user.organisationUnits.forEach(function(organisationUnit){
+                        console.log(organisationUnit);
+                        if(organisationUnit.level == 1){
+                            $scope.allowAnalytics = true;
+                        }
+                    })
                 }
             })
         });
