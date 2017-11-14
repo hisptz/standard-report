@@ -246,7 +246,7 @@ var appControllers = angular.module('appControllers', [])
             })
             return returnVal;
         }
-        $http.get(DHIS2URL + "api/dataSets.json?fields=id,name,periodType,attributeValues[value,attribute[name]],organisationUnits[id]&filter=attributeValues.value:eq:true&filter=attributeValues.attribute.name:eq:Is Report").then(function (results) {
+        $http.get(DHIS2URL + "api/dataSets.json?fields=id,name,code,periodType,attributeValues[value,attribute[name]],organisationUnits[id]&filter=attributeValues.value:eq:true&filter=attributeValues.attribute.name:eq:Is Report").then(function (results) {
             $scope.data.dataSets = results.data.dataSets;
             $scope.loadTracker = undefined;
 
@@ -255,17 +255,6 @@ var appControllers = angular.module('appControllers', [])
                     if (dataSet.id == $routeParams.dataSet) {
                         $scope.data.dataSet = dataSet;
                     }
-                }
-                if (dataSet.id == "cSC1VV8uMh9") {
-                    dataSet.sortOrder = 1;
-                } else if (dataSet.id == "Znn30Q67yDO") {
-                    dataSet.sortOrder = 2;
-                } else if (dataSet.id == "OBnVfEenAuW") {
-                    dataSet.sortOrder = 3;
-                } else if (dataSet.id == "QLoyT2aHGes") {
-                    dataSet.sortOrder = 4;
-                } else if (dataSet.id == "HhyM40b8ma1") {
-                    dataSet.sortOrder = 5;
                 }
             })
             ReportService.getUser().then(function (results) {

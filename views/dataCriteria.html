@@ -18,7 +18,7 @@
 
     <div class="inputSection" style="margin-top: 0px;">
         <label>Report</label><br>
-        <select ng-disabled="loadTracker" ng-options="dataSet as dataSet.name for dataSet in data.dataSets | orderBy:'sortOrder'" style="width:330px"
+        <select ng-disabled="loadTracker" ng-options="dataSet as dataSet.name for dataSet in data.dataSets | orderBy:'code'" style="width:330px"
                 ng-model="data.dataSet">
             <option value="">[ Select Report ]</option>
         </select>
