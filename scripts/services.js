@@ -1702,12 +1702,14 @@ var appServices = angular.module('appServices', ['ngResource'])
                     monthStr = "0" + monthStr;
                 }
                 //var exportHref=Excel.tableToExcel();
-                var link = document.createElement('a');
-                link.download = dataSetName + " " + organisationUnitName + " " + period + " " + dateStr + "-" + monthStr + "-" + date.getFullYear() + ".xls";
-                link.href = Excel.tableToExcel();
-                document.body.appendChild(link);
                 $timeout(function () {
-                    link.click();
+                    var link = document.createElement('a');
+                    link.download = dataSetName + " " + organisationUnitName + " " + period + " " + dateStr + "-" + monthStr + "-" + date.getFullYear() + ".xls";
+                    link.href = Excel.tableToExcel();
+                    document.body.appendChild(link);
+                    $timeout(function () {
+                        link.click();
+                    }, 100);
                 }, 100);
             }
         }
