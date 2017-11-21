@@ -1268,11 +1268,6 @@ var appControllers = angular.module('appControllers', [])
                 }
                 //Dealing with tables for listing by wards
                 if($scope.listByWardChoice.length > 0){
-                    $scope.listByWardChoice.forEach(function(dx){
-                        if($scope.listByWard.indexOf(dx) > -1){
-                            alert("Found")
-                        }
-                    })
                     promises.push($http.get(DHIS2URL + "api/analytics.json?dimension=dx:" + $scope.listByWardChoice.join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:LEVEL-3;" + $routeParams.orgUnit)
                         .then(function (analyticsResults) {
                             analyticsResults.data.rows.forEach(function(row){
@@ -1692,7 +1687,6 @@ var appControllers = angular.module('appControllers', [])
                                 newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' count='true' org-unit='orgUnit'></div>");
                             } else {
                                 if (match[0].indexOf("choice") > -1) {
-                                    //alert("Choice");
                                     newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' choice='true' org-unit='orgUnit'></div>");
                                 } else {
                                     newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' org-unit='orgUnit'></div>");
