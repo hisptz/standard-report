@@ -22,7 +22,7 @@ var sendEvent = function (theObjects,ObjectNames,ObjectUrls,OrgUnitDimensions,Pe
         var theObject   =   theObjects;
         var RequestDateTime = null;
         var PeriodDimension = PeriodDimensions;
-
+        console.log("Date Value:",PeriodDimension);
         var d = new Date();
         var curr_date	= d.getDate();
         var curr_month	= d.getMonth()+1;
@@ -57,19 +57,6 @@ var sendEvent = function (theObjects,ObjectNames,ObjectUrls,OrgUnitDimensions,Pe
              * Preparing custom post function to handle addition of new even
              *
              * */
-                //$.postJSON = function(url, data, callback,failureCallback) {
-                //    return jQuery.ajax({
-                //        contentType:'application/json',
-                //        'type': 'POST',
-                //        'url': url,
-                //        'data': JSON.stringify(data),
-                //        'dataType': 'json',
-                //        //'success': callback,
-                //        //'failure':failureCallback
-                //    });
-                //};
-
-
             $.getJSON( "http://jsonip.com",
                 function(data){
 
@@ -108,11 +95,10 @@ var sendEvent = function (theObjects,ObjectNames,ObjectUrls,OrgUnitDimensions,Pe
                         }
                     });
 
-
                 }
             ).done(function() {
 
-                })
+            })
                 .fail(function() {
                     var event= {
                         "program": "qxlSpGyl4zR",
@@ -308,6 +294,7 @@ function monitorLoadedReport(){
     var period = null;
     var html_link = "";
     $("input[value='Get report']").bind("click",function(){
+        alert("Yey")
         sendGetReportEvent();
     });
     $("input[value='Print'],input[value='Download as PDF']").bind("click",function(){
@@ -325,10 +312,10 @@ function monitorLoadedReport(){
 }
 function sendGetReportEvent(){
     console.log("Sending Report Event");
-    objectName = $("select#dataSetId").find("option[value='"+dhis2.dsr.currentDataSetReport['ds']+"']").text();
-    period = dhis2.dsr.currentDataSetReport['pe'];
-    orgUnitDimension = dhis2.dsr.currentDataSetReport['ou'];
-    theObject = "Report View";
+    var objectName = $("select#dataSetId").find("option[value='"+dhis2.dsr.currentDataSetReport['ds']+"']").text();
+    var period = dhis2.dsr.currentDataSetReport['pe'];
+    var orgUnitDimension = dhis2.dsr.currentDataSetReport['ou'];
+    var theObject = "Report View";
 
     sendEvent(theObject,objectName,objectUrl,orgUnitDimension,period,html_link);
 }

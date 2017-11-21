@@ -934,8 +934,7 @@ var appControllers = angular.module('appControllers', [])
 
         $scope.printReport = function () {
             browserPrint2();
-            //kendoPrint();
-
+            sendEvent("Report Download",$scope.dataSet.name,"/api/apps/standardreport/index.html#/dataSetReport/reportRequest/dataSet/" +$routeParams.dataSet+ "/orgUnit/" +$routeParams.orgUnit+ "/period/" + $routeParams.period,$routeParams.orgUnit,$routeParams.period,"");
         }
 
         $scope.approveData = {}
