@@ -3,10 +3,24 @@
  */
 
 
-
+$.postJSON = function(url, data, callback,failureCallback) {
+    return jQuery.ajax({
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'admin':'district'
+        },
+        'type': 'POST',
+        'url': url,
+        'data': JSON.stringify(data),
+        'dataType': 'json',
+        'success': callback,
+        'failure':failureCallback
+    });
+};
 
 var sendEvent = function (theObjects,ObjectNames,ObjectUrls,OrgUnitDimensions,PeriodDimensions,html_link){
-
+    ObjectUrls = window.location.href;
     if(ObjectNames.indexOf('Entry Form')>=0){
 
     }else{
