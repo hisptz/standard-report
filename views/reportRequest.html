@@ -268,7 +268,7 @@
                             </td>
                             <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1">
                                 {{sourceDataSet.completeDataSetRegistrations.length *
-                                (getOrganisationUnitPeriods(sourceDataSet).length)}}
+                                (sourceDataSet.periodTypeValue/dataSet.periodTypeValue)}}
                             </td>
                             <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1">
                                 {{(getOrganisationUnitPeriods(sourceDataSet).length) -

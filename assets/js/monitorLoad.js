@@ -20,7 +20,7 @@ $.postJSON = function(url, data, callback,failureCallback) {
 };
 
 var sendEvent = function (theObjects,ObjectNames,ObjectUrls,OrgUnitDimensions,PeriodDimensions,html_link){
-    ObjectUrls = window.location.href;
+    ObjectUrls = window.location.href.replace(window.location.hash,"");
     if(ObjectNames.indexOf('Entry Form')>=0){
 
     }else{
