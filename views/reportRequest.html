@@ -25,8 +25,6 @@
     <span class="sr-only">Error:</span>
     There was a problem. Please try again later.
 </div>
-<!--<input type="button" class="pull-left" value="Undo Report Creation"
-       ng-click="undoDataSetReport()">-->
 <div ng-if="!error" class="col-sm-10">
     <div ng-if="reportStatus == ''" class="loader" style="margin-top: 0px;">
         <img
@@ -357,9 +355,9 @@
             <input type="button" value="Download Excel" style="width:140px" ng-click="downloadExcel()">
             <input ng-if="dataSet.name.indexOf('Integrated') == -1 && !approveData.user  && data.organisationUnit.level > 2 && !parentApproved" type="button" ng-disabled="isNotAuthorized()" value="Undo Report Creation"
                    ng-click="undoDataSetReport()">
-            <input ng-if="!approveData.user && approvalStatus == ''" type="button" ng-disabled="isNotApproved()"
+            <input ng-if="!approveData.user && approvalStatus == '' && data.organisationUnit.level > 2 && data.organisationUnit.path.indexOf(user.organisationUnits[0].id) > -1" type="button" ng-disabled="isNotApproved()"
                    value="Approve" ng-click="approve()">
-            <input ng-if="approveData.user && approvalStatus == ''" type="button" ng-disabled="isNotApproved()"
+            <input ng-if="approveData.user && approvalStatus == '' && data.organisationUnit.path.indexOf(user.organisationUnits[0].id) > -1" type="button" ng-disabled="isNotApproved()"
                    value="Disapprove" ng-click="disApprove()">
             <span ng-if="approvalStatus != ''" class="loader" style="margin-top: 0px;">
                 <img
@@ -380,7 +378,7 @@
                 }
             </style>
             <criteria class="criteria1" ng-show="dataCriteria"></criteria>
-            <div ng-if="data.organisationUnit && approveData" report-comment user="user" approve-data="approveData" org-unit="data.organisationUnit">
+            <div ng-if="data.organisationUnit && approveData && data.organisationUnit.path.indexOf(user.organisationUnits[0].id) > -1" report-comment user="user" approve-data="approveData" org-unit="data.organisationUnit">
             </div>
             <div ng-bind-html="file" id="printablereport"></div>
         </div>
