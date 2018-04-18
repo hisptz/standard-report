@@ -861,7 +861,7 @@ var appDirectives = angular.module('appDirectives', [])
                                     }
                                     childrenUrl = childrenUrl.replace(",{}", "")
                                     function getEstimation(dataSet) {
-                                        $http.get(DHIS2URL + "api/apps/archive/estimation/" + dataSet.id + "_" + $routeParams.orgUnit + "_" + $routeParams.period + ".json").then(function (results) {
+                                        $http.get(DHIS2URL + "api/apps/ARDS-Archive/estimation/" + dataSet.id + "_" + $routeParams.orgUnit + "_" + $routeParams.period + ".json").then(function (results) {
                                             dataSet.estimation = results.data;
                                             var dataElements = [];
                                             for (var key in dataSet.estimation) {
