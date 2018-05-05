@@ -1242,6 +1242,7 @@ var appControllers = angular.module('appControllers', [])
                 }
                 //Dealing with last data elements
                 for (var i = 0; i < $scope.lastDataElements.length; i += batch) {
+                    console.log($scope.lastDataElements.slice(i, i + batch));
                     promises.push($http.get(DHIS2URL + "api/26/analytics.json?dimension=dx:" + $scope.lastDataElements.slice(i, i + batch).join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:" + level4String  + $routeParams.orgUnit)
                         .then(function (analyticsResults) {
                             analyticsResults.data.rows.forEach(function (row) {
