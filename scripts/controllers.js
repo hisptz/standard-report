@@ -2372,7 +2372,7 @@ var appControllers = angular.module('appControllers', [])
                             }
                         })
 
-                        $http.get(DHIS2URL + 'api/system/tasks/ANALYTICSTABLE_UPDATE?' + Math.floor((Math.random() * 10000000000) + 1)).success(function (analytics_status) {
+                        $http.get(DHIS2URL + 'api/system/tasks/ANALYTICS_TABLE?' + Math.floor((Math.random() * 10000000000) + 1)).success(function (analytics_status) {
                             $scope.analytics_activities = analytics_status;
                         })
                     }, 2000);
