@@ -1,6 +1,6 @@
 {
     "version": "0.1",
-    "name": "Reports App",
+    "name": "standardreport",
     "description": "Report App",
     "launch_path": "index.html",
     "icons": {

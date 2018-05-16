@@ -310,11 +310,9 @@ var appControllers = angular.module('appControllers', [])
         $scope.allowAnalytics = false;
         ReportService.getUser().then(function (user) {
             $scope.user = user;
-            console.log("User:",user)
             $scope.user.userCredentials.userRoles.forEach(function (role) {
                 if ((role.authorities.indexOf("F_DATA_MART_ADMIN") > -1) || (role.authorities.indexOf("ALL") > -1)) {
                     $scope.user.organisationUnits.forEach(function(organisationUnit){
-                        console.log(organisationUnit);
                         if(organisationUnit.level == 1){
                             $scope.allowAnalytics = true;
                         }
@@ -1074,17 +1072,35 @@ var appControllers = angular.module('appControllers', [])
         $scope.loadingReport = false;
         $scope.preview = $routeParams.preview;
         $scope.getCumulativeToDatePeriod = function () {
-            var str = $routeParams.period.split("Q");
-            var quarter = parseInt(str[1]);
             var periods = [];
-            if (quarter == 3) {
-                periods = [$routeParams.period];
-            } else if (quarter == 4) {
-                periods = [$routeParams.period, str[0] + "Q3"];
-            } else if (quarter == 1) {
-                periods = [$routeParams.period, (parseInt(str[0]) - 1) + "Q4", (parseInt(str[0]) - 1) + "Q3"];
-            } else if (quarter == 2) {
-                periods = [$routeParams.period, str[0] + "Q1", (parseInt(str[0]) - 1) + "Q4", (parseInt(str[0]) - 1) + "Q3"];
+            if($routeParams.period.indexOf("Q") > -1){
+                var str = $routeParams.period.split("Q");
+                var quarter = parseInt(str[1]);
+                if (quarter == 3) {
+                    periods = [$routeParams.period];
+                } else if (quarter == 4) {
+                    periods = [$routeParams.period, str[0] + "Q3"];
+                } else if (quarter == 1) {
+                    periods = [$routeParams.period, (parseInt(str[0]) - 1) + "Q4", (parseInt(str[0]) - 1) + "Q3"];
+                } else if (quarter == 2) {
+                    periods = [$routeParams.period, str[0] + "Q1", (parseInt(str[0]) - 1) + "Q4", (parseInt(str[0]) - 1) + "Q3"];
+                }
+            }else{
+                var year = parseInt($routeParams.period.substr(0,4));
+                var month = parseInt($routeParams.period.substr(4));
+                periods.push($routeParams.period);
+                month--;
+                while(month != 5){
+                    if(month == 0){
+                        month = 12
+                    }
+                    var monthStr = month;
+                    if(month < 10){
+                        monthStr = "0"+month;
+                    }
+                    periods.push(year + "" + monthStr);
+                    month--;
+                }
             }
             return periods;
         }
@@ -1242,7 +1258,6 @@ var appControllers = angular.module('appControllers', [])
                 }
                 //Dealing with last data elements
                 for (var i = 0; i < $scope.lastDataElements.length; i += batch) {
-                    console.log($scope.lastDataElements.slice(i, i + batch));
                     promises.push($http.get(DHIS2URL + "api/26/analytics.json?dimension=dx:" + $scope.lastDataElements.slice(i, i + batch).join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:" + level4String  + $routeParams.orgUnit)
                         .then(function (analyticsResults) {
                             analyticsResults.data.rows.forEach(function (row) {
@@ -1369,6 +1384,7 @@ var appControllers = angular.module('appControllers', [])
                 //Dealing with cumulative to date data elements
                 if ($scope.cumulativeToDate.length > 0) {
                     var periods = $scope.getCumulativeToDatePeriod();
+                    console.warn("Cumulative to date Periods:",periods);
                     for (var i = 0; i < $scope.cumulativeToDate.length; i += batch) {
                         periods.forEach(function (period) {
                             promises.push($http.get(DHIS2URL + "api/26/analytics.json?dimension=dx:" + $scope.cumulativeToDate.slice(i, i + batch).join(";") + "&dimension=pe:" + period + "&filter=ou:" + $routeParams.orgUnit)
@@ -1732,6 +1748,7 @@ var appControllers = angular.module('appControllers', [])
                         }
                         $scope.lastMonthOfQuarter.push(idMacth[1]);
                     } else if (match[0].indexOf("cumulative-to-date") > -1) {//If it is last month of quarter
+                        console.log("Redering Cumulative to Date:",match[0])
                         newHtml = newHtml.replace(match[0], "<div>{{cumulativeToDateData['" + idMacth[1] +  "'] | removeNaN |comma}}</div>");
                         $scope.cumulativeToDate.push(idMacth[1]);
                     }else if (match[0].indexOf("districtIndicator") > -1) {//If it is last month of quarter
@@ -1773,7 +1790,7 @@ var appControllers = angular.module('appControllers', [])
                     $scope.lastMonthIndicator.push(idMacth[1]);
                     newHtml = newHtml.replace(match[0], "{{lastMonthIndicatorData['" + idMacth[1] + "'] |comma}}");
                 } else {
-                    console.log("Unconsidered Match:",match);
+                    console.log("Unconsidered Match:",match[0]);
                 }
             }
             //Render autogrowing taables
