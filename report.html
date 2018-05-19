@@ -96,6 +96,17 @@
         table {
             border-collapse: separate;
         }
+        .yellow {
+            background-color: yellow;
+        }
+
+        .red {
+            background-color: lightcoral;
+        }
+
+        .green {
+            background-color: darkseagreen;
+        }
     </style>
 
 </head>
@@ -108,6 +119,11 @@
 
     </div>
 </div>-->
+<div ng-if="dataSet">
+    <breakdown-point user="user" organisation-unit="orgUnit" set-data-set="dataSet">
+
+    </breakdown-point>
+</div>
 <div class="break-enable">
     <div ng-view></div>
 </div>

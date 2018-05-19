@@ -1384,7 +1384,6 @@ var appControllers = angular.module('appControllers', [])
                 //Dealing with cumulative to date data elements
                 if ($scope.cumulativeToDate.length > 0) {
                     var periods = $scope.getCumulativeToDatePeriod();
-                    console.warn("Cumulative to date Periods:",periods);
                     for (var i = 0; i < $scope.cumulativeToDate.length; i += batch) {
                         periods.forEach(function (period) {
                             promises.push($http.get(DHIS2URL + "api/26/analytics.json?dimension=dx:" + $scope.cumulativeToDate.slice(i, i + batch).join(";") + "&dimension=pe:" + period + "&filter=ou:" + $routeParams.orgUnit)

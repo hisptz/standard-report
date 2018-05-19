@@ -87,7 +87,12 @@
                     Note: This report will not be created until the forms have been completed.
                 </div>
             </div>
-            <div class="col-sm-12" ng-repeat="sourceDataSet in sourceDataSets">
+            <div ng-if="dataSet">
+                <breakdown-point user="user" organisation-unit="data.organisationUnit" set-data-set="dataSet">
+
+                </breakdown-point>
+            </div>
+            <!--<div class="col-sm-12" ng-repeat="sourceDataSet in sourceDataSets">
                 <div ng-if="!(dataSet.name.indexOf('Integrated') > -1 && sourceDataSet.orgUnitLevel == 4)">
                     <br/>
                     <h4>{{sourceDataSet.displayName}} <span ng-if="sourceDataSet.isReport">Report</span><span
@@ -300,7 +305,7 @@
                         <tbody ng-if="sourceDataSet.orgUnitLevel != data.organisationUnit.level"
                                ng-repeat="orgUnit in data.organisationUnit.children">
                         <tr>
-                            <!--<td rowspan="{{sourceDataSet.periodTypeValue/dataSet.periodTypeValue}}">{{orgUnit.name}}</td>-->
+                            &lt;!&ndash;<td rowspan="{{sourceDataSet.periodTypeValue/dataSet.periodTypeValue}}">{{orgUnit.name}}</td>&ndash;&gt;
                             <td rowspan="{{getOrganisationUnitPeriods(sourceDataSet).length}}">{{orgUnit.name}}</td>
                             <td ng-repeat-start="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)"
                                 ng-if="$first">{{getPeriodName(organisationUnitPeriod)}}
@@ -338,7 +343,7 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div>-->
         </div>
 
 

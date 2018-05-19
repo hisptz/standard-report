@@ -439,6 +439,227 @@ var appDirectives = angular.module('appDirectives', [])
             templateUrl: 'views/listByWard.html'
         }
     })
+    .directive("breakdownPoint", function () {
+        return {
+            scope: {
+                setDataSet: '=',
+                user:"=",
+                organisationUnit:"="
+            },
+            controller: function ($scope, $http,DHIS2URL,$routeParams,ReportService) {
+                console.log("DataSet String:",$scope);
+                //$scope.dataStore = $scope.store;
+                var periodDate = ReportService.getPeriodDate($routeParams.period);
+                $scope.fetchCompleteness = function (dataSet, sourceLevels) {
+                    if (!dataSet.isReport) {
+                        dataSet.orgUnitLevel = dataSet.organisationUnits[0].level;
+                        var startDate = periodDate.startDate;
+                        if("Wtzj9Chl3HW" == dataSet.id){
+                            if($routeParams.period.indexOf("Q3") > -1 || $routeParams.period.indexOf("Q4") > -1){
+                                startDate = $routeParams.period.substr(0,4) + "-07-01";
+                            }else if($routeParams.period.indexOf("Q1") > -1 || $routeParams.period.indexOf("Q2") > -1){
+                                startDate = (parseInt($routeParams.period.substr(0,4))-1) + "-07-01";
+                            }
+                        }
+                        $http.get(DHIS2URL + "api/26/completeDataSetRegistrations.json?dataSet=" + dataSet.id + "&orgUnit=" + $routeParams.orgUnit + "&startDate=" + startDate + "&endDate=" + periodDate.endDate + "&children=true").then(function (results) {
+                            if (results.data.completeDataSetRegistrations) {
+                                dataSet.completeDataSetRegistrations = results.data.completeDataSetRegistrations;
+                            } else {
+                                dataSet.completeDataSetRegistrations = [];
+                            }
+                        }, function (error) {
+                            //$scope.error = "heye";
+                            dataSet.completeDataSetRegistrations = [];
+                        });
+                    } else {
+
+                    }
+                };
+                $scope.isSuperUser = function () {
+                    var returnValue = false;
+                    $scope.user.userCredentials.userRoles.forEach(function (userRole) {
+                        if (userRole.authorities.indexOf("ALL") > -1 || userRole.name == "Superuser") {
+                            returnValue = true;
+                        }
+                    })
+                    return returnValue;
+                }
+                $scope.setPeriodTypeValues = function (dataSet) {
+                    console.log("DataSet:",dataSet);
+                    if (dataSet.periodType == "Quarterly") {
+                        dataSet.periodTypeValue = 4;
+                    } else if (dataSet.periodType == "Yearly" || dataSet.periodType == "FinancialJuly") {
+                        dataSet.periodTypeValue = 1;
+                    } else if (dataSet.periodType == "Monthly") {
+                        dataSet.periodTypeValue = 12;
+                    }
+                }
+                $scope.completeDataSetRegistrationsLoading = true;
+
+                $scope.setPeriodTypeValues($scope.setDataSet);
+                $scope.getPeriodName = function () {
+                    return ReportService.getPeriodName($routeParams.period);
+                }
+                $scope.getOrgUnitStatus = function (completeDataSetRegistrations, id, period) {
+                    var returnVal = "Incomplete";
+                    completeDataSetRegistrations.forEach(function (dataSet) {
+                        if (dataSet.organisationUnit == id && period == dataSet.period) {
+                            returnVal = "Complete";
+                        }
+                    });
+                    return returnVal;
+                };
+                $scope.init = function(){
+                    if ($scope.setDataSet.attributeValues.length > 0) {
+                        var dataSetFound = false;
+                        $scope.setDataSet.attributeValues.forEach(function (attributeValue) {
+                            if (attributeValue.attribute.name == "Source") {
+                                var sourceArray = eval("(" + attributeValue.value + ")");
+
+                                sourceArray.forEach(function (source) {
+                                    if (source.level == $scope.organisationUnit.level) {
+                                        var sourceIds = [];
+                                        var sourceLevels = {};
+                                        source.sources.forEach(function (dataSource) {
+                                            sourceIds.push(dataSource.dataSet);
+                                            sourceLevels[dataSource.dataSet] = dataSource.level;
+                                        })
+
+                                        $http.get(DHIS2URL + "api/26/dataSets.json?filter=id:in:[" + sourceIds + "]&fields=id,periodType,displayName,attributeValues[value,attribute[name]],organisationUnits[id,level]").then(function (results) {
+                                            $scope.sourceDataSets = results.data.dataSets;
+                                            $scope.consistsOfReport = false;
+                                            $scope.sourceDataSets.forEach(function (dataSet) {
+                                                dataSet.orgUnitLevel = sourceLevels[dataSet.id];
+
+                                                $scope.setPeriodTypeValues(dataSet);
+                                                var isReport = false;
+                                                dataSet.attributeValues.forEach(function (attributeValue) {
+                                                    if (attributeValue.attribute.name == "Is Report") {
+                                                        if (attributeValue.value == "true") {
+                                                            isReport = true;
+                                                            $scope.consistsOfReport = true;
+                                                        }
+                                                    }
+                                                })
+                                                dataSet.isReport = isReport;
+                                                $scope.fetchCompleteness(dataSet, sourceLevels);
+
+                                            })
+                                            $scope.isNotAuthorized = function () {
+                                                var returnValue = true;
+                                                $scope.setDataSet.organisationUnits.forEach(function (dataSetOrgUnit) {
+                                                    $scope.user.organisationUnits.forEach(function (userOrgUnit) {
+                                                        if (dataSetOrgUnit.id == userOrgUnit.id && userOrgUnit.level == "3") {
+                                                            returnValue = false;
+                                                        }
+                                                    });
+                                                });
+                                                if($scope.isSuperUser()){
+                                                    returnValue = false;
+                                                }
+                                                return returnValue;
+                                            }
+                                        }, function (error) {
+                                            $scope.error = "heye";
+                                            $scope.completeDataSetRegistrationsLoading = false;
+                                            toaster.pop('error', "Error" + error.status, "Error Loading Archive. Please try again");
+                                        });
+                                    }
+                                })
+                            }
+                        });
+                        if (!dataSetFound) {
+                            $scope.completeDataSetRegistrations = [];
+                            $scope.completeDataSetRegistrationsLoading = false;
+                        }
+                    } else {
+                        $scope.completeDataSetRegistrations = [];
+                        $scope.completeDataSetRegistrationsLoading = false;
+                    }
+                }
+                $scope.dataStore = {};
+                $http.get(DHIS2URL + "api/26/dataStore/executed").then(function (results) {
+                    $scope.dataStore.executed = results.data;
+                    $http.get(DHIS2URL + "api/26/dataStore/notExecuted").then(function (results) {
+                        $scope.dataStore.notExecuted = results.data;
+                        $scope.init();
+                    }, function () {
+                        $scope.dataStore.notExecuted = [];
+                        $scope.init();
+                    });
+                }, function () {
+                    $scope.dataStore.notExecuted = [];
+                    $scope.dataStore.executed = [];
+                    $scope.init();
+                });
+                $scope.getOrganisationUnitPeriods = function (dataSet) {
+                    var returnValue = [];
+                    if (dataSet.periodType == "Quarterly") {
+
+                        if ($routeParams.period.endsWith("July")) {
+                            returnValue = [$routeParams.period.substr(0, 4) + "Q3", $routeParams.period.substr(0, 4) + "Q4", (parseInt($routeParams.period.substr(0, 4)) + 1) + "Q1", (parseInt($routeParams.period.substr(0, 4)) + 1) + "Q2"]
+                        } else if ($routeParams.period.indexOf("Q") > -1) {
+                            if($scope.setDataSet.name.indexOf("Quarterly Integrated Report") > -1 && $scope.organisationUnit.level == 3){
+                                if($routeParams.period.substr(5) == "1"){
+                                    returnValue = [(parseInt($routeParams.period.substr(0,4)) - 1) + "Q3",(parseInt($routeParams.period.substr(0,4)) - 1) + "Q4",$routeParams.period.substr(0,4) + "Q1"];
+                                }else if($routeParams.period.substr(5) == "2"){
+                                    returnValue = [(parseInt($routeParams.period.substr(0,4)) - 1) + "Q3",(parseInt($routeParams.period.substr(0,4)) - 1) + "Q4",$routeParams.period.substr(0,4) + "Q1",$routeParams.period.substr(0,4) + "Q2"];
+                                }else if($routeParams.period.substr(5) == "3"){
+                                    returnValue = [$routeParams.period.substr(0,4) + "Q3"];
+                                }else if($routeParams.period.substr(5) == "4"){
+                                    returnValue = [$routeParams.period.substr(0,4) + "Q3",$routeParams.period.substr(0,4) + "Q4"];
+                                }
+                            }else{
+                                returnValue = [$routeParams.period];
+                            }
+                        }
+                    } else if (dataSet.periodType == "Monthly") {
+                        if ($routeParams.period.endsWith("July")) {
+                            returnValue = [$routeParams.period.substr(0, 4) + "07",
+                                $routeParams.period.substr(0, 4) + "08",
+                                $routeParams.period.substr(0, 4) + "09",
+                                $routeParams.period.substr(0, 4) + "10",
+                                $routeParams.period.substr(0, 4) + "11",
+                                $routeParams.period.substr(0, 4) + "12",
+                                (parseInt($routeParams.period.substr(0, 4)) + 1) + "01",
+                                (parseInt($routeParams.period.substr(0, 4)) + 1) + "02",
+                                (parseInt($routeParams.period.substr(0, 4)) + 1) + "03",
+                                (parseInt($routeParams.period.substr(0, 4)) + 1) + "04",
+                                (parseInt($routeParams.period.substr(0, 4)) + 1) + "05",
+                                (parseInt($routeParams.period.substr(0, 4)) + 1) + "06"
+                            ]
+                        } else if ($routeParams.period.indexOf("Q") > -1) {
+                            if($scope.setDataSet.name.indexOf("Quarterly Integrated Report") > -1 && $scope.organisationUnit.level == 3){
+                                if($routeParams.period.substr(5) == "1"){
+                                    returnValue = returnValue.concat($scope.getMonthsByQuarter((parseInt($routeParams.period.substr(0,4)) - 1) + "Q3"));
+                                    returnValue = returnValue.concat($scope.getMonthsByQuarter((parseInt($routeParams.period.substr(0,4)) - 1) + "Q4"));
+                                }else if($routeParams.period.substr(5) == "2"){
+                                    returnValue = returnValue.concat($scope.getMonthsByQuarter((parseInt($routeParams.period.substr(0,4)) - 1) + "Q3"));
+                                    returnValue = returnValue.concat($scope.getMonthsByQuarter((parseInt($routeParams.period.substr(0,4)) - 1) + "Q4"));
+                                    returnValue = returnValue.concat($scope.getMonthsByQuarter($routeParams.period.substr(0,4) + "Q1"));
+                                }else if($routeParams.period.substr(5) == "4"){
+                                    returnValue = returnValue.concat($scope.getMonthsByQuarter($routeParams.period.substr(0,4) + "Q3"));
+                                }
+                            }
+                            returnValue = returnValue.concat($scope.getMonthsByQuarter($routeParams.period));
+                        } else {
+                            returnValue.push($routeParams.period);
+                        }
+                    } else if (dataSet.periodType == "FinancialJuly") {
+                        if ($routeParams.period.indexOf("Q") > -1) {
+                            returnValue.push($routeParams.period);
+                        } else if ($routeParams.period.endsWith("July")) {
+                            returnValue.push($routeParams.period);
+                        } else {
+                            returnValue.push($routeParams.period.substr(0, 4) + "07");
+                        }
+                    }
+                    return returnValue;
+                }
+            },
+            templateUrl: 'views/data-point.html'
+        }
+    })
     .directive("reportComment", function () {
         return {
             scope: {
