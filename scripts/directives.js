@@ -447,11 +447,11 @@ var appDirectives = angular.module('appDirectives', [])
                 organisationUnit:"="
             },
             controller: function ($scope, $http,DHIS2URL,$routeParams,ReportService) {
-                console.log("DataSet String:",$scope);
-                //$scope.dataStore = $scope.store;
                 var periodDate = ReportService.getPeriodDate($routeParams.period);
                 $scope.fetchCompleteness = function (dataSet, sourceLevels) {
+                    console.log("Dataset:",dataSet.isReport);
                     if (!dataSet.isReport) {
+                        console.log("Dataset:",dataSet);
                         dataSet.orgUnitLevel = dataSet.organisationUnits[0].level;
                         var startDate = periodDate.startDate;
                         if("Wtzj9Chl3HW" == dataSet.id){
@@ -485,7 +485,6 @@ var appDirectives = angular.module('appDirectives', [])
                     return returnValue;
                 }
                 $scope.setPeriodTypeValues = function (dataSet) {
-                    console.log("DataSet:",dataSet);
                     if (dataSet.periodType == "Quarterly") {
                         dataSet.periodTypeValue = 4;
                     } else if (dataSet.periodType == "Yearly" || dataSet.periodType == "FinancialJuly") {
@@ -497,8 +496,13 @@ var appDirectives = angular.module('appDirectives', [])
                 $scope.completeDataSetRegistrationsLoading = true;
 
                 $scope.setPeriodTypeValues($scope.setDataSet);
-                $scope.getPeriodName = function () {
-                    return ReportService.getPeriodName($routeParams.period);
+                $scope.getPeriodName = function (period) {
+                    if (period) {
+                        return ReportService.getPeriodName(period);
+                    } else {
+                        return ReportService.getPeriodName($routeParams.period);
+                    }
+
                 }
                 $scope.getOrgUnitStatus = function (completeDataSetRegistrations, id, period) {
                     var returnVal = "Incomplete";
@@ -560,7 +564,7 @@ var appDirectives = angular.module('appDirectives', [])
                                                 return returnValue;
                                             }
                                         }, function (error) {
-                                            $scope.error = "heye";
+                                            $scope.error = error;
                                             $scope.completeDataSetRegistrationsLoading = false;
                                             toaster.pop('error', "Error" + error.status, "Error Loading Archive. Please try again");
                                         });
@@ -576,6 +580,18 @@ var appDirectives = angular.module('appDirectives', [])
                         $scope.completeDataSetRegistrations = [];
                         $scope.completeDataSetRegistrationsLoading = false;
                     }
+                }
+                $scope.getMonthsByQuarter = function(period){
+                    var returnValue = [];
+                    var quarterLastMonth = parseInt(period.substr(5)) * 3;
+                    for (var i = quarterLastMonth - 2; i <= quarterLastMonth; i++) {
+                        var monthVal = i;
+                        if (i < 10) {
+                            monthVal = "0" + i;
+                        }
+                        returnValue.push(period.substr(0, 4) + monthVal);
+                    }
+                    return returnValue;
                 }
                 $scope.dataStore = {};
                 $http.get(DHIS2URL + "api/26/dataStore/executed").then(function (results) {
@@ -643,7 +659,24 @@ var appDirectives = angular.module('appDirectives', [])
                             }
                             returnValue = returnValue.concat($scope.getMonthsByQuarter($routeParams.period));
                         } else {
-                            returnValue.push($routeParams.period);
+                            if(dataSet.id == $routeParams.dataSet && $routeParams.dataSet == "cSC1VV8uMh9"){
+                                var month = $routeParams.period.substr(4);
+                                var year = $routeParams.period.substr(0,4);
+                                while(month != 6){
+                                    month--;
+                                    if(month == 0){
+                                        month = 12;
+                                        year--;
+                                    }
+                                    var monthStr = month;
+                                    if(monthStr < 10){
+                                        monthStr = "0" + monthStr;
+                                    }
+                                    returnValue.push(year + "" + monthStr);
+                                }
+                            }else{
+                                returnValue.push($routeParams.period);
+                            }
                         }
                     } else if (dataSet.periodType == "FinancialJuly") {
                         if ($routeParams.period.indexOf("Q") > -1) {
