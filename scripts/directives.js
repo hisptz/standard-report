@@ -820,7 +820,7 @@ var appDirectives = angular.module('appDirectives', [])
                             if(dataSet.id == $routeParams.dataSet && $routeParams.dataSet == "cSC1VV8uMh9"){
                                 var month = $routeParams.period.substr(4);
                                 var year = $routeParams.period.substr(0,4);
-                                while(month != 6){
+                                while(month != 7){
                                     month--;
                                     if(month == 0){
                                         month = 12;
