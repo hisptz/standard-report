@@ -758,6 +758,8 @@ var appControllers = angular.module('appControllers', [])
 
                                                                 $scope.setPeriodTypeValues(dataSet);
                                                                 var isReport = false;
+                                                                console.log("DataSet:",dataSet);
+                                                                if(dataSet.id != "cSC1VV8uMh9")
                                                                 dataSet.attributeValues.forEach(function (attributeValue) {
                                                                     if (attributeValue.attribute.name == "Is Report") {
                                                                         if (attributeValue.value == "true") {
