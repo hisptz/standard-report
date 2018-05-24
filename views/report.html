@@ -57,9 +57,9 @@
         <criteria class="criteria noPrint" ng-show="dataCriteria"></criteria>
         <div>
             <div ng-if="dataSet">
-                <breakdown-point user="user" organisation-unit="orgUnit" set-data-set="dataSet" on-done="completenessDone">
+                <div breakdown-point user="user" organisation-unit="orgUnit" set-data-set="dataSet" on-done="completenessDone">
 
-                </breakdown-point>
+                </div>
             </div>
             <div ng-class="{'hideReport':loadingReport}" id="report" ng-if="trustedHtml" ng-bind-html="trustedHtml">
 
