@@ -1094,7 +1094,8 @@ var appControllers = angular.module('appControllers', [])
                 month--;
                 while(month != 5){
                     if(month == 0){
-                        month = 12
+                        month = 12;
+                        year--;
                     }
                     var monthStr = month;
                     if(month < 10){
@@ -1749,7 +1750,6 @@ var appControllers = angular.module('appControllers', [])
                         }
                         $scope.lastMonthOfQuarter.push(idMacth[1]);
                     } else if (match[0].indexOf("cumulative-to-date") > -1) {//If it is last month of quarter
-                        console.log("Redering Cumulative to Date:",match[0])
                         newHtml = newHtml.replace(match[0], "<div>{{cumulativeToDateData['" + idMacth[1] +  "'] | removeNaN |comma}}</div>");
                         $scope.cumulativeToDate.push(idMacth[1]);
                     }else if (match[0].indexOf("districtIndicator") > -1) {//If it is last month of quarter
@@ -1864,6 +1864,19 @@ var appControllers = angular.module('appControllers', [])
 
         //User fetching for access integrity
         $scope.user = {};
+        $scope.finishDone = {
+            completeness:false,
+            rendering:false
+        };
+        $scope.completenessDone = function(){
+            $scope.finishDone.completeness = true;
+            $scope.checkFinish();
+        }
+        $scope.checkFinish = function(){
+            if($scope.finishDone.completeness && $scope.finishDone.rendering){
+                $window.document.title = "Report Loaded";
+            }
+        }
         $http.get(DHIS2URL + "api/26/me.json?fields=:all,organisationUnits[id,level],userCredentials[userRoles[:all]]").then(function (results) {
             $scope.progressValue = 5;
             $scope.user = results.data;
@@ -1891,7 +1904,8 @@ var appControllers = angular.module('appControllers', [])
                                 }
                             });
                             $timeout(function () {
-                                $window.document.title = "Report Loaded";
+                                $scope.finishDone.rendering = true;
+                                $scope.checkFinish();
                             },1000);
                         });
                     }, function (error) {

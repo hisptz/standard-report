@@ -57,7 +57,7 @@
         <criteria class="criteria noPrint" ng-show="dataCriteria"></criteria>
         <div>
             <div ng-if="dataSet">
-                <breakdown-point user="user" organisation-unit="orgUnit" set-data-set="dataSet">
+                <breakdown-point user="user" organisation-unit="orgUnit" set-data-set="dataSet" on-done="completenessDone">
 
                 </breakdown-point>
             </div>

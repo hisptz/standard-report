@@ -445,7 +445,8 @@ var appDirectives = angular.module('appDirectives', [])
                 setDataSet: '=',
                 user:"=",
                 status:"=",
-                organisationUnit:"="
+                organisationUnit:"=",
+                onDone:"="
             },
             controller: function ($scope, $http,DHIS2URL,$routeParams,ReportService,$q,toaster) {
                 //$scope.status = {};
@@ -625,12 +626,13 @@ var appDirectives = angular.module('appDirectives', [])
                             } else {
                                 dataSet.completeDataSetRegistrations = [];
                             }
+                            $scope.onDone();
                         }, function (error) {
                             //$scope.error = "heye";
                             dataSet.completeDataSetRegistrations = [];
                         });
                     } else {
-
+                        $scope.onDone();
                     }
                 };
                 $scope.isSuperUser = function () {
@@ -733,10 +735,12 @@ var appDirectives = angular.module('appDirectives', [])
                         if (!dataSetFound) {
                             $scope.completeDataSetRegistrations = [];
                             $scope.completeDataSetRegistrationsLoading = false;
+                            $scope.onDone();
                         }
                     } else {
                         $scope.completeDataSetRegistrations = [];
                         $scope.completeDataSetRegistrationsLoading = false;
+                        $scope.onDone();
                     }
                 }
                 $scope.getMonthsByQuarter = function(period){
