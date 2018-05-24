@@ -1873,7 +1873,9 @@ var appControllers = angular.module('appControllers', [])
         }
         $scope.checkFinish = function(){
             if($scope.finishDone.completeness && $scope.finishDone.rendering){
-                $window.document.title = "Report Loaded";
+                $timeout(function () {
+                    $window.document.title = "Report Loaded";
+                },1000);
             }
         }
         $http.get(DHIS2URL + "api/26/me.json?fields=:all,organisationUnits[id,level],userCredentials[userRoles[:all]]").then(function (results) {
