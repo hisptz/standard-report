@@ -695,13 +695,26 @@ var appControllers = angular.module('appControllers', [])
         }
         //$scope.file = undefinde;
         $scope.parentApproved = false;
-
         $scope.watchParameters = function () {
             $scope.loadingArchive = true;
             $scope.data.archive = undefined;
             $scope.completeDataSetRegistrations = undefined;
             $http.get(DHIS2URL + "api/26/dataSets/" + $routeParams.dataSet + ".json?fields=name,periodType,attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
                 $scope.dataSet = results.data;
+                $scope.isNotAuthorized = function () {
+                    var returnValue = true;
+                    $scope.dataSet.organisationUnits.forEach(function (dataSetOrgUnit) {
+                        $scope.user.organisationUnits.forEach(function (userOrgUnit) {
+                            if (dataSetOrgUnit.id == userOrgUnit.id && userOrgUnit.level == "3") {
+                                returnValue = false;
+                            }
+                        });
+                    });
+                    if($scope.isSuperUser()){
+                        returnValue = false;
+                    }
+                    return returnValue;
+                }
                 //Check if the report is in the not executed namespace
                 $http.get(DHIS2URL + "api/26/dataStore/notExecuted/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
                     $scope.reportStatus = "Not Executed";
@@ -772,29 +785,6 @@ var appControllers = angular.module('appControllers', [])
                                                                 $scope.fetchCompleteness(dataSet, sourceLevels);
 
                                                             })
-                                                            $scope.isNotAuthorized = function () {
-                                                                var returnValue = true;
-                                                                $scope.dataSet.organisationUnits.forEach(function (dataSetOrgUnit) {
-                                                                    $scope.user.organisationUnits.forEach(function (userOrgUnit) {
-                                                                        if (dataSetOrgUnit.id == userOrgUnit.id && userOrgUnit.level == "3") {
-                                                                            returnValue = false;
-                                                                        }
-                                                                    });
-                                                                });
-                                                                if($scope.isSuperUser()){
-                                                                    returnValue = false;
-                                                                }
-                                                                return returnValue;
-                                                            }
-                                                            $scope.isSuperUser = function () {
-                                                                var returnValue = false;
-                                                                $scope.user.userCredentials.userRoles.forEach(function (userRole) {
-                                                                    if (userRole.authorities.indexOf("ALL") > -1 || userRole.name == "Superuser") {
-                                                                        returnValue = true;
-                                                                    }
-                                                                })
-                                                                return returnValue;
-                                                            }
                                                         }, function (error) {
                                                             $scope.error = "heye";
                                                             $scope.completeDataSetRegistrationsLoading = false;
@@ -864,6 +854,15 @@ var appControllers = angular.module('appControllers', [])
         }
         $http.get(DHIS2URL + "api/26/me.json?fields=:all,organisationUnits[id,level],userCredentials[userRoles[:all]]").then(function (results) {
             $scope.user = results.data;
+            $scope.isSuperUser = function () {
+                var returnValue = false;
+                $scope.user.userCredentials.userRoles.forEach(function (userRole) {
+                    if (userRole.authorities.indexOf("ALL") > -1 || userRole.name == "Superuser") {
+                        returnValue = true;
+                    }
+                })
+                return returnValue;
+            }
             $http.get(DHIS2URL + "api/26/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,path,ancestors,level,parent,children[id,name]")
                 .then(function (results) {
                     $scope.data.organisationUnit = results.data;

@@ -626,13 +626,15 @@ var appDirectives = angular.module('appDirectives', [])
                             } else {
                                 dataSet.completeDataSetRegistrations = [];
                             }
-                            $scope.onDone();
+                            if($scope.onDone)
+                                $scope.onDone();
                         }, function (error) {
                             //$scope.error = "heye";
                             dataSet.completeDataSetRegistrations = [];
                         });
                     } else {
-                        $scope.onDone();
+                        if($scope.onDone)
+                                $scope.onDone();
                     }
                 };
                 $scope.isSuperUser = function () {
@@ -735,12 +737,14 @@ var appDirectives = angular.module('appDirectives', [])
                         if (!dataSetFound) {
                             $scope.completeDataSetRegistrations = [];
                             $scope.completeDataSetRegistrationsLoading = false;
-                            $scope.onDone();
+                            if($scope.onDone)
+                                $scope.onDone();
                         }
                     } else {
                         $scope.completeDataSetRegistrations = [];
                         $scope.completeDataSetRegistrationsLoading = false;
-                        $scope.onDone();
+                        if($scope.onDone)
+                                $scope.onDone();
                     }
                 }
                 $scope.getMonthsByQuarter = function(period){
