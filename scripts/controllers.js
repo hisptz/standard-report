@@ -1094,7 +1094,7 @@ var appControllers = angular.module('appControllers', [])
                 var month = parseInt($routeParams.period.substr(4));
                 periods.push($routeParams.period);
                 month--;
-                while(month != 5){
+                while(month != 6){
                     if(month == 0){
                         month = 12;
                         year--;
