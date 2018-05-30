@@ -35,16 +35,16 @@
                     <th>Period</th>
                     <th>Report Status</th>
                 </tr>
-                <tr ng-if="sourceDataSet.orgUnitLevel == organisationUnit.level">
-                    <td rowspan="{{getOrganisationUnitPeriods(sourceDataSet).length}}">
+                <tr ng-if="sourceDataSet.orgUnitLevel == organisationUnit.level || (sourceDataSet.id == setDataSet.id && sourceDataSet.id == 'cSC1VV8uMh9')">
+                    <td rowspan="{{orgUnitPeriods[sourceDataSet.id].length}}">
                         {{organisationUnit.name}}
                     </td>
                     <td ng-if="$first"
-                        ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
+                        ng-repeat="organisationUnitPeriod in orgUnitPeriods[sourceDataSet.id]">
                         {{getPeriodName(organisationUnitPeriod)}}
                     </td>
                     <td ng-if="$first"
-                        ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)"
+                        ng-repeat="organisationUnitPeriod in orgUnitPeriods[sourceDataSet.id]"
                         ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ organisationUnit.id +'_'+organisationUnitPeriod) == -1) &&(dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ organisationUnit.id +'_'+organisationUnitPeriod) == -1),
                             green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ organisationUnit.id +'_'+organisationUnitPeriod) > -1,
                             yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ organisationUnit.id +'_'+organisationUnitPeriod) > -1}">
@@ -66,7 +66,7 @@
                             </span>
                     </td>
                 </tr>
-                <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
+                <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in orgUnitPeriods[sourceDataSet.id]">
                     <td>
                         {{getPeriodName(organisationUnitPeriod)}}
                     </td>
@@ -92,13 +92,13 @@
                 <tbody ng-if="sourceDataSet.orgUnitLevel != organisationUnit.level"
                        ng-repeat="child in organisationUnit.children">
                 <tr>
-                    <td rowspan="{{getOrganisationUnitPeriods(sourceDataSet).length}}">{{child.name}}</td>
+                    <td rowspan="{{orgUnitPeriods[sourceDataSet.id].length}}">{{child.name}}</td>
                     <td ng-if="$first"
-                        ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
+                        ng-repeat="organisationUnitPeriod in orgUnitPeriods[sourceDataSet.id]">
                         {{getPeriodName(organisationUnitPeriod)}}
                     </td>
                     <td ng-if="$first"
-                        ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)"
+                        ng-repeat="organisationUnitPeriod in orgUnitPeriods[sourceDataSet.id]"
                         ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) > -1}">
                             <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1)">Not Created
                                 <button ng-If="isSuperUser() && sourceDataSet.displayName.indexOf('Integrated') == -1" ng-click="createDataSetReportParams(child.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
@@ -118,7 +118,7 @@
                             </span>
                     </td>
                 </tr>
-                <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
+                <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in orgUnitPeriods[sourceDataSet.id]">
                     <td>
                         {{getPeriodName(organisationUnitPeriod)}}
                     </td>
@@ -199,20 +199,20 @@
                 <tr>
                     <td>1</td>
                     <td ng-if="sourceDataSet.periodTypeValue/setDataSet.periodTypeValue >= 1">
-                        {{getOrganisationUnitPeriods(sourceDataSet).length}}
+                        {{orgUnitPeriods[sourceDataSet.id].length}}
                     </td>
                     <td ng-if="sourceDataSet.periodTypeValue/setDataSet.periodTypeValue >= 1">
                         {{sourceDataSet.completeDataSetRegistrations.length *
                         (sourceDataSet.periodTypeValue/setDataSet.periodTypeValue)}}
                     </td>
                     <td ng-if="sourceDataSet.periodTypeValue/setDataSet.periodTypeValue >= 1">
-                        {{(getOrganisationUnitPeriods(sourceDataSet).length) -
+                        {{(orgUnitPeriods[sourceDataSet.id].length) -
                         sourceDataSet.completeDataSetRegistrations.length}}
                     </td>
                     <td ng-if="sourceDataSet.periodTypeValue/setDataSet.periodTypeValue >= 1"
                         ng-class="{red:(sourceDataSet.completeDataSetRegistrations.length) * 100 < 70,green:(sourceDataSet.completeDataSetRegistrations.length) * 100>= 70}">
                         {{((sourceDataSet.completeDataSetRegistrations.length) *
-                        100)/(getOrganisationUnitPeriods(sourceDataSet).length) | number : 2}}%
+                        100)/(orgUnitPeriods[sourceDataSet.id].length) | number : 2}}%
                     </td>
                     <td ng-if="sourceDataSet.periodTypeValue/setDataSet.periodTypeValue < 1">1</td>
                     <td ng-if="sourceDataSet.periodTypeValue/setDataSet.periodTypeValue < 1">
@@ -238,8 +238,8 @@
                        ng-repeat="orgUnit in organisationUnit.children">
                 <tr>
                     <!--<td rowspan="{{sourceDataSet.periodTypeValue/setDataSet.periodTypeValue}}">{{orgUnit.name}}</td>-->
-                    <td rowspan="{{getOrganisationUnitPeriods(sourceDataSet).length}}">{{orgUnit.name}}</td>
-                    <td ng-repeat-start="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)"
+                    <td rowspan="{{orgUnitPeriods[sourceDataSet.id].length}}">{{orgUnit.name}}</td>
+                    <td ng-repeat-start="organisationUnitPeriod in orgUnitPeriods[sourceDataSet.id]"
                         ng-if="$first">{{getPeriodName(organisationUnitPeriod)}}
                     </td>
                     <td ng-repeat-end ng-if="$first"
@@ -247,7 +247,7 @@
                         {{getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)}}
                     </td>
                 </tr>
-                <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
+                <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in orgUnitPeriods[sourceDataSet.id]">
                     <td>{{getPeriodName(organisationUnitPeriod)}}</td>
                     <td ng-class="{red:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)=='Incomplete',green:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)=='Complete'}">
                         {{getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)}}
@@ -255,10 +255,10 @@
                 </tr>
                 <tbody ng-if="sourceDataSet.orgUnitLevel == organisationUnit.level">
                 <tr>
-                    <td rowspan="{{getOrganisationUnitPeriods(sourceDataSet).length}}">
+                    <td rowspan="{{orgUnitPeriods[sourceDataSet.id].length}}">
                         {{organisationUnit.name}}
                     </td>
-                    <td ng-repeat-start="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)"
+                    <td ng-repeat-start="organisationUnitPeriod in orgUnitPeriods[sourceDataSet.id]"
                         ng-if="$first">{{getPeriodName(organisationUnitPeriod)}}
                     </td>
                     <td ng-repeat-end ng-if="$first"
@@ -266,7 +266,7 @@
                         {{getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,organisationUnit.id,organisationUnitPeriod)}}
                     </td>
                 </tr>
-                <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
+                <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in orgUnitPeriods[sourceDataSet.id]">
                     <td>{{getPeriodName(organisationUnitPeriod)}}</td>
                     <td ng-class="{red:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,organisationUnit.id,organisationUnitPeriod)=='Incomplete',green:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,organisationUnit.id,organisationUnitPeriod)=='Complete'}">
                         {{getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,organisationUnit.id,organisationUnitPeriod)}}

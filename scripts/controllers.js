@@ -699,7 +699,7 @@ var appControllers = angular.module('appControllers', [])
             $scope.loadingArchive = true;
             $scope.data.archive = undefined;
             $scope.completeDataSetRegistrations = undefined;
-            $http.get(DHIS2URL + "api/26/dataSets/" + $routeParams.dataSet + ".json?fields=name,periodType,attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
+            $http.get(DHIS2URL + "api/26/dataSets/" + $routeParams.dataSet + ".json?fields=id,name,periodType,attributeValues[value,attribute[name]],organisationUnits[id]").then(function (results) {
                 $scope.dataSet = results.data;
                 $scope.isNotAuthorized = function () {
                     var returnValue = true;
@@ -724,7 +724,8 @@ var appControllers = angular.module('appControllers', [])
                         $http.get(DHIS2URL + "api/26/dataStore/executed/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
                             $scope.reportStatus = "Executed";
                             $http.get(
-                                '../ARDS-Archive/' + $routeParams.dataSet + '_' + $routeParams.orgUnit + '_' + $routeParams.period + '.html',
+                                /*'../ARDS-Archive/' + $routeParams.dataSet + '_' + $routeParams.orgUnit + '_' + $routeParams.period + '.html',*/
+                                'print.html',
                                 {headers: {'Cache-Control': 'no-cache'}}).then(function (result) {
                                 $scope.file = $sce.trustAsHtml(result.data);
                                 $scope.loadFile = true;

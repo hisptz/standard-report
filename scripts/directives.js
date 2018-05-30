@@ -675,6 +675,7 @@ var appDirectives = angular.module('appDirectives', [])
                     });
                     return returnVal;
                 };
+                $scope.orgUnitPeriods = {};
                 $scope.init = function(){
                     if ($scope.setDataSet.attributeValues.length > 0) {
                         var dataSetFound = false;
@@ -708,6 +709,7 @@ var appDirectives = angular.module('appDirectives', [])
                                                     }
                                                 })
                                                 dataSet.isReport = isReport;
+                                                $scope.orgUnitPeriods[dataSet.id] = $scope.getOrganisationUnitPeriods(dataSet);
                                                 $scope.fetchCompleteness(dataSet, sourceLevels);
 
                                             })
