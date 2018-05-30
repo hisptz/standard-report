@@ -724,8 +724,7 @@ var appControllers = angular.module('appControllers', [])
                         $http.get(DHIS2URL + "api/26/dataStore/executed/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
                             $scope.reportStatus = "Executed";
                             $http.get(
-                                /*'../ARDS-Archive/' + $routeParams.dataSet + '_' + $routeParams.orgUnit + '_' + $routeParams.period + '.html',*/
-                                'print.html',
+                                '../ARDS-Archive/' + $routeParams.dataSet + '_' + $routeParams.orgUnit + '_' + $routeParams.period + '.html',
                                 {headers: {'Cache-Control': 'no-cache'}}).then(function (result) {
                                 $scope.file = $sce.trustAsHtml(result.data);
                                 $scope.loadFile = true;
