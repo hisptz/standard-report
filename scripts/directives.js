@@ -467,6 +467,19 @@ var appDirectives = angular.module('appDirectives', [])
                     })
                     return hasReport;
                 }
+                $scope.getLevelName = function (level) {
+                    var name = "";
+                    $scope.organisationUnitLevels.forEach(function (organisationUnitLevel) {
+                        if (organisationUnitLevel.level == level) {
+                            name = organisationUnitLevel.name;
+                        }
+                    })
+                    return name;
+                }
+                $http.get(DHIS2URL + "api/27/organisationUnitLevels.json?fields=name,level").then(function (results) {
+                    $scope.organisationUnitLevels = results.data.organisationUnitLevels;
+                }, function (error) {
+                });
                 $scope.createAllReports = function(){
                     $scope.createAllReportLoading = true;
                     var foundDistrictReports = false;
