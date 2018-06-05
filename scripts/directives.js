@@ -648,14 +648,14 @@ var appDirectives = angular.module('appDirectives', [])
                                 dataSet.completeDataSetRegistrations = [];
                             }
                             if($scope.onDone)
-                                $scope.onDone();
+                                $scope.onDone($scope.statusReturn);
                         }, function (error) {
                             //$scope.error = "heye";
                             dataSet.completeDataSetRegistrations = [];
                         });
                     } else {
                         if($scope.onDone)
-                                $scope.onDone();
+                                $scope.onDone($scope.statusReturn);
                     }
                 };
                 $scope.isSuperUser = function () {
@@ -761,13 +761,13 @@ var appDirectives = angular.module('appDirectives', [])
                             $scope.completeDataSetRegistrations = [];
                             $scope.completeDataSetRegistrationsLoading = false;
                             if($scope.onDone)
-                                $scope.onDone();
+                                $scope.onDone($scope.statusReturn);
                         }
                     } else {
                         $scope.completeDataSetRegistrations = [];
                         $scope.completeDataSetRegistrationsLoading = false;
                         if($scope.onDone)
-                                $scope.onDone();
+                                $scope.onDone($scope.statusReturn);
                     }
                 }
                 $scope.getMonthsByQuarter = function(period){
@@ -783,8 +783,18 @@ var appDirectives = angular.module('appDirectives', [])
                     return returnValue;
                 }
                 $scope.dataStore = {};
+                $scope.statusReturn = {
+                    canCreate:true
+                }
                 $http.get(DHIS2URL + "api/26/dataStore/executed").then(function (results) {
                     $scope.dataStore.executed = results.data;
+                    console.log("Organisation Units:",$scope.organisationUnit);
+                    $scope.getOrganisationUnitPeriods($scope.setDataSet).forEach(function(period){
+                        console.log("Periods:",period);
+                        if($scope.dataStore.executed.indexOf($scope.setDataSet.id + "_" + $scope.organisationUnit.id + "_" + period) == -1){
+                            $scope.statusReturn.canCreate = false;
+                        }
+                    })
                     $http.get(DHIS2URL + "api/26/dataStore/notExecuted").then(function (results) {
                         $scope.dataStore.notExecuted = results.data;
                         $scope.init();

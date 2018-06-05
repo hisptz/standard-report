@@ -50,6 +50,7 @@
         <div ng-if="!(!completeDataSetRegistrations && completeDataSetRegistrationsLoading)">
             <div class="col-sm-12" style="margin-bottom:20px">
                 <input type="button" value="Change Criteria" ng-click="dataCriteria = !dataCriteria">
+                <!--{{isNotAuthorized()}} || {{data.organisationUnit.level != 3}} || {{consistsOfReport}}-->
                 <input ng-if="dataSet.name.indexOf('Integrated') == -1" type="button"
                        ng-disabled="isNotAuthorized() || data.organisationUnit.level != 3 || consistsOfReport"
                        value="Create Report" style="width:120px" ng-click="createDataSetReport()" html-link="">
@@ -61,8 +62,13 @@
                 }
             </style>
             <criteria class="criteria" ng-show="dataCriteria"></criteria>
+            <div ng-if="!statusReturn.canCreate && statusReturn.create" class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                <span class="sr-only">Error:</span>
+                Error creating Report. To create this report make sure the previous reports have been created.
+            </div>
             <div ng-if="dataSet">
-                <breakdown-point user="user" status="status" organisation-unit="data.organisationUnit" set-data-set="dataSet">
+                <breakdown-point on-done="onDone" user="user" status="status" organisation-unit="data.organisationUnit" set-data-set="dataSet">
 
                 </breakdown-point>
             </div>

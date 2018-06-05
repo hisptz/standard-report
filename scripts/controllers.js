@@ -366,14 +366,28 @@ var appControllers = angular.module('appControllers', [])
             });
             return returnVal;
         };
+        $scope.statusReturn = {
+            canCreate:true,
+            create:false
+        }
+        $scope.onDone = function(statusReturn){
+            $scope.statusReturn.canCreate = statusReturn.canCreate;
+        }
         $scope.createDataSetReport = function () {
-            ReportService.createDataSetReport({
-                orgUnit: $routeParams.orgUnit,
-                period: $routeParams.period,
-                dataSet: $routeParams.dataSet
-            }).then(function () {
-                $scope.reportStatus = "Not Executed";
-            });
+            $scope.statusReturn.create = true;
+            if($scope.statusReturn.canCreate){
+                ReportService.createDataSetReport({
+                    orgUnit: $routeParams.orgUnit,
+                    period: $routeParams.period,
+                    dataSet: $routeParams.dataSet
+                }).then(function () {
+                    $scope.reportStatus = "Not Executed";
+                }, function () {
+                    toaster.pop('error', "Error", "Error Loading Data. Please try again.");
+                });
+            }else{
+                toaster.pop('error', "Error", "Error creating Report. To create this reports make sure the previous reports have been created.");
+            }
         };
         $scope.status = {};
         $scope.cancelAllReportCreation = function(){
