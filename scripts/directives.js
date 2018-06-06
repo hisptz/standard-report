@@ -787,7 +787,7 @@ var appDirectives = angular.module('appDirectives', [])
                 $http.get(DHIS2URL + "api/26/dataStore/executed").then(function (results) {
                     $scope.dataStore.executed = results.data;
                     $scope.getOrganisationUnitPeriods($scope.setDataSet).forEach(function(period){
-                        if($scope.dataStore.executed.indexOf($scope.setDataSet.id + "_" + $scope.organisationUnit.id + "_" + period) == -1){
+                        if($scope.dataStore.executed.indexOf($scope.setDataSet.id + "_" + $scope.organisationUnit.id + "_" + period) == -1 && $scope.setDataSet.id == ""){
                             $scope.statusReturn.canCreate = false;
                         }
                     })
