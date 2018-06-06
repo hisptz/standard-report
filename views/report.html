@@ -22,6 +22,11 @@
         text-align: right;
     }
 </style>
+<div ng-if="dataSet" style="page-break-after: always;">
+    <completeness organisation-unit="orgUnit" set-data-set="dataSet" on-done="completenessDone">
+
+    </completeness>
+</div>
 <div id="printablereport">
     <div ng-if="preview" class="alert alert-info" role="alert">
         <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
@@ -56,11 +61,11 @@
         <br/>
         <criteria class="criteria noPrint" ng-show="dataCriteria"></criteria>
         <div>
-            <div ng-if="dataSet">
+            <!--<div ng-if="dataSet">
                 <div breakdown-point user="user" organisation-unit="orgUnit" set-data-set="dataSet" on-done="completenessDone">
 
                 </div>
-            </div>
+            </div>-->
             <div ng-class="{'hideReport':loadingReport}" id="report" ng-if="trustedHtml" ng-bind-html="trustedHtml">
 
             </div>

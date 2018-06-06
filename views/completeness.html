@@ -1,0 +1,18 @@
+<table ng-repeat="c in completeness" class="table table-bordered">
+    <tr>
+        <th>{{getLevelName(organisationUnit.level + 1)}} Total</th>
+        <th>Number of Periods</th>
+        <th>{{getLevelName(organisationUnit.level + 1)}} For All Periods Completed</th>
+        <th>{{getLevelName(organisationUnit.level + 1)}} For All Periods Not Completed</th>
+        <th>Completion Percentage</th>
+    </tr>
+    <tr>
+        <td>{{c.sum}}</td>
+        <td>{{c.expected/c.sum}}</td>
+        <td>{{c.completed}}</td>
+        <td>{{c.expected}}</td>
+        <td ng-class="{red:((c.completed/c.expected) * 100) < 70,green:((c.completed/c.expected) * 100) >= 70}">
+        {{((c.completed/c.expected) * 100).toFixed(2)}}%
+        </td>
+    </tr>
+</table>

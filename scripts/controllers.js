@@ -787,7 +787,6 @@ var appControllers = angular.module('appControllers', [])
 
                                                                 $scope.setPeriodTypeValues(dataSet);
                                                                 var isReport = false;
-                                                                console.log("DataSet:",dataSet);
                                                                 if(dataSet.id != "cSC1VV8uMh9")
                                                                 dataSet.attributeValues.forEach(function (attributeValue) {
                                                                     if (attributeValue.attribute.name == "Is Report") {
@@ -1402,23 +1401,46 @@ var appControllers = angular.module('appControllers', [])
                 //Dealing with cumulative to date data elements
                 if ($scope.cumulativeToDate.length > 0) {
                     var periods = $scope.getCumulativeToDatePeriod();
-                    for (var i = 0; i < $scope.cumulativeToDate.length; i += batch) {
-                        periods.forEach(function (period) {
-                            promises.push($http.get(DHIS2URL + "api/26/analytics.json?dimension=dx:" + $scope.cumulativeToDate.slice(i, i + batch).join(";") + "&dimension=pe:" + period + "&filter=ou:" + $routeParams.orgUnit)
-                                .then(function (analyticsResults) {
-                                    analyticsResults.data.rows.forEach(function (row) {
-                                        if ($scope.cumulativeToDateData[row[0]]) {
-                                            $scope.cumulativeToDateData[row[0]] = (parseFloat($scope.cumulativeToDateData[row[0]]) + parseFloat(row[2])).toFixed(1) + 1;
-                                            $scope.cumulativeToDateData[row[0]] = "" + parseFloat($scope.cumulativeToDateData[row[0]]).toFixed(1);
-                                        } else {
-                                            $scope.cumulativeToDateData[row[0]] = "" + parseFloat(row[2]).toFixed(1);
-                                        }
+                    var level = "";
+                    if($scope.dataSet.id == "cSC1VV8uMh9"){
+                        level = "LEVEL-4;";
+                        for (var i = 0; i < $scope.cumulativeToDate.length; i += batch) {
+                            periods.forEach(function (period) {
+                                promises.push($http.get(DHIS2URL + "api/26/analytics.json?dimension=dx:" + $scope.cumulativeToDate.slice(i, i + batch).join(";") + "&dimension=pe:" + period + "&dimension=ou:" + level + $routeParams.orgUnit)
+                                    .then(function (analyticsResults) {
+                                        analyticsResults.data.rows.forEach(function (row) {
+                                            if ($scope.cumulativeToDateData[row[0]]) {
+                                                $scope.cumulativeToDateData[row[0]] = (parseFloat($scope.cumulativeToDateData[row[0]]) + parseFloat(row[3])).toFixed(1) + 1;
+                                                $scope.cumulativeToDateData[row[0]] = "" + parseFloat($scope.cumulativeToDateData[row[0]]).toFixed(1);
+                                            } else {
+                                                $scope.cumulativeToDateData[row[0]] = "" + parseFloat(row[3]).toFixed(1);
+                                            }
 
-                                    });
-                                    $scope.progressValue = $scope.progressValue + progressFactor;
-                                }));
+                                        });
+                                        $scope.progressValue = $scope.progressValue + progressFactor;
+                                    }));
 
-                        });
+                            });
+                        }
+                    }else{
+                        for (var i = 0; i < $scope.cumulativeToDate.length; i += batch) {
+                            periods.forEach(function (period) {
+                                promises.push($http.get(DHIS2URL + "api/26/analytics.json?dimension=dx:" + $scope.cumulativeToDate.slice(i, i + batch).join(";") + "&dimension=pe:" + period + "&filter=ou:" + level + $routeParams.orgUnit)
+                                    .then(function (analyticsResults) {
+                                        analyticsResults.data.rows.forEach(function (row) {
+                                            if ($scope.cumulativeToDateData[row[0]]) {
+                                                $scope.cumulativeToDateData[row[0]] = (parseFloat($scope.cumulativeToDateData[row[0]]) + parseFloat(row[2])).toFixed(1) + 1;
+                                                $scope.cumulativeToDateData[row[0]] = "" + parseFloat($scope.cumulativeToDateData[row[0]]).toFixed(1);
+                                            } else {
+                                                $scope.cumulativeToDateData[row[0]] = "" + parseFloat(row[2]).toFixed(1);
+                                            }
+
+                                        });
+                                        $scope.progressValue = $scope.progressValue + progressFactor;
+                                    }));
+
+                            });
+                        }
                     }
                 }
                 //Dealing with fourth Quarter

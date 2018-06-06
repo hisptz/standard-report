@@ -439,9 +439,6 @@ var appDirectives = angular.module('appDirectives', [])
                 }
                 $timeout(function () {
                     $scope.show = true;
-                    if (found) {
-                        console.log("Here:", JSON.stringify($scope.data.data));
-                    }
                 })
             },
             templateUrl: 'views/listByWard.html'
@@ -454,7 +451,8 @@ var appDirectives = angular.module('appDirectives', [])
                 user:"=",
                 status:"=",
                 organisationUnit:"=",
-                onDone:"="
+                onDone:"=",
+                showReports:"="
             },
             controller: function ($scope, $http,DHIS2URL,$routeParams,ReportService,$q,toaster) {
                 //$scope.status = {};
@@ -788,9 +786,7 @@ var appDirectives = angular.module('appDirectives', [])
                 }
                 $http.get(DHIS2URL + "api/26/dataStore/executed").then(function (results) {
                     $scope.dataStore.executed = results.data;
-                    console.log("Organisation Units:",$scope.organisationUnit);
                     $scope.getOrganisationUnitPeriods($scope.setDataSet).forEach(function(period){
-                        console.log("Periods:",period);
                         if($scope.dataStore.executed.indexOf($scope.setDataSet.id + "_" + $scope.organisationUnit.id + "_" + period) == -1){
                             $scope.statusReturn.canCreate = false;
                         }
@@ -890,6 +886,88 @@ var appDirectives = angular.module('appDirectives', [])
                 }
             },
             templateUrl: 'views/data-point.html'
+        }
+    })
+    .directive("completeness", function () {
+        return {
+            scope: {
+                setDataSet: '=',
+                user:"=",
+                status:"=",
+                organisationUnit:"=",
+                onDone:"=",
+                showReports:"="
+            },
+            controller: function ($scope, $http,DHIS2URL,$routeParams,ReportService,$q,toaster) {
+                console.log("$scope.setDataSet:",$scope.setDataSet);
+                $http.get(DHIS2URL + "api/27/organisationUnitLevels.json?fields=name,level").then(function (results) {
+                    $scope.organisationUnitLevels = results.data.organisationUnitLevels;
+                }, function (error) {
+                });
+                //$scope.status = {};
+                $scope.getLevelName = function (level) {
+                    var name = "";
+                    $scope.organisationUnitLevels.forEach(function (organisationUnitLevel) {
+                        if (organisationUnitLevel.level == level) {
+                            name = organisationUnitLevel.name;
+                        }
+                    })
+                    return name;
+                }
+                $scope.get = function(data){
+                    var deffered = $q.defer();
+                    $http.get(DHIS2URL + "api/sqlViews/FIfbenVekHp/data.json?var=datasetId:" + data.dataSet + "&var=orgUnitId:" + $routeParams.orgUnit + "&var=orgUnitChildrenLevel:" + data.level + "&var=period:" + $routeParams.period + "&var=reportGenarationDate:" + (new Date()).toISOString().substr(0,10)).then(function (results) {
+
+                        var deleteIndex = -1;
+                        results.data.rows.forEach(function(row,i){
+                            results.data.headers.forEach(function(header,index){
+                                if(header.column == "uid" && row[index] == $routeParams.orgUnit){
+                                    deleteIndex = i;
+                                }
+                            })
+                        })
+                        if(deleteIndex != -1){
+                            results.data.rows.splice(deleteIndex,1);
+                        }
+                        var data = {
+                            sum:results.data.rows.length,
+                            completed:0,
+                            expected:0
+                        };
+                        results.data.rows.forEach(function(row){
+                            results.data.headers.forEach(function(header,index){
+                                if(header.column == "completed"){
+                                    data.completed += parseInt(row[index]);
+                                }else if(header.column == "expected"){
+                                    data.expected += parseInt(row[index]);
+                                }
+                            })
+                        })
+                        $scope.completeness.push(data);
+                        deffered.resolve();
+                    }, function () {
+                        deffered.reject(error);
+                    });
+                    return deffered.promise;
+                }
+                $scope.completeness = [];
+                var promises = [];
+                $scope.setDataSet.attributeValues.forEach(function(attributeValue){
+                    if(attributeValue.attribute.name == "Completeness"){
+                        $scope.completenessStructure = JSON.parse(attributeValue.value);
+                        $scope.completenessStructure.forEach(function(data){
+                            promises.push($scope.get(data));
+                        })
+                    }
+                })
+                $q.all(promises).then(function (result) {
+                    if($scope.onDone){
+                        $scope.onDone();
+                    }
+                }, function (result) {
+                })
+            },
+            templateUrl: 'views/completeness.html'
         }
     })
     .directive("reportComment", function () {

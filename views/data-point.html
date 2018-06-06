@@ -27,9 +27,9 @@
 
         <div ng-if="!(setDataSet.name.indexOf('Integrated') > -1 && sourceDataSet.orgUnitLevel == 4)">
             <br/>
-            <h4>{{sourceDataSet.displayName}} <span ng-if="sourceDataSet.isReport">Report</span><span
+            <h4>{{sourceDataSet.displayName}} <span ng-if="sourceDataSet.isReport && showReports">Report</span><span
                     ng-if="!sourceDataSet.isReport">Completeness</span> Status </h4>
-            <table ng-if="sourceDataSet.isReport" class="table table-bordered">
+            <table ng-if="sourceDataSet.isReport && showReports" class="table table-bordered">
                 <tr>
                     <th>Administrative Unit</th>
                     <th>Period</th>
