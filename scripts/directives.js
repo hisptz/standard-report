@@ -913,6 +913,18 @@ var appDirectives = angular.module('appDirectives', [])
                     };
                 }, function (error) {
                 });
+                $scope.getMonthsByQuarter = function(period){
+                    var returnValue = [];
+                    var quarterLastMonth = parseInt(period.substr(5)) * 3;
+                    for (var i = quarterLastMonth - 2; i <= quarterLastMonth; i++) {
+                        var monthVal = i;
+                        if (i < 10) {
+                            monthVal = "0" + i;
+                        }
+                        returnValue.push(period.substr(0, 4) + monthVal);
+                    }
+                    return returnValue;
+                }
                 //$scope.status = {};
                 $scope.getOrganisationUnitPeriods = function (dataSet) {
                     var returnValue = [];
