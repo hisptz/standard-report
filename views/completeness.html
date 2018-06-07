@@ -12,7 +12,7 @@
             <td>{{c.sum}}</td>
             <td>{{c.expected/c.sum}}</td>
             <td>{{c.completed}}</td>
-            <td>{{c.expected}}</td>
+            <td>{{c.expected - c.completed}}</td>
             <td ng-class="{red:((c.completed/c.expected) * 100) < 70,green:((c.completed/c.expected) * 100) >= 70}">
                 {{((c.completed/c.expected) * 100).toFixed(2)}}%
             </td>
