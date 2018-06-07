@@ -899,7 +899,7 @@ var appDirectives = angular.module('appDirectives', [])
                 showReports:"="
             },
             controller: function ($scope, $http,DHIS2URL,$routeParams,ReportService,$q,toaster) {
-                console.log("$scope.setDataSet:",$scope.setDataSet);
+                $scope.show = false;
                 $http.get(DHIS2URL + "api/27/organisationUnitLevels.json?fields=name,level").then(function (results) {
                     $scope.organisationUnitLevels = results.data.organisationUnitLevels;
                     $scope.getLevelName = function (level) {
@@ -1079,6 +1079,7 @@ var appDirectives = angular.module('appDirectives', [])
                         if($scope.onDone){
                             $scope.onDone();
                         }
+                        $scope.show = true;
                     }, function (result) {
                     })
 

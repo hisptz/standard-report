@@ -1,4 +1,4 @@
-<div ng-repeat="(key, c) in dataSets">
+<div ng-if="show" ng-repeat="(key, c) in dataSets">
     <h4>{{c.dataSet.name}} Completeness Status </h4>
     <table class="table table-bordered">
         <tr>
