@@ -1823,7 +1823,7 @@ var appControllers = angular.module('appControllers', [])
                         }
                         $scope.lastMonthOfQuarter.push(idMacth[1]);
                     } else if (match[0].indexOf("cumulative-to-date") > -1) {//If it is last month of quarter
-                        if(match[0].indexOf("ward-level") > -1){
+                        if(match[0].indexOf("ward-level") > -1 && $scope.dataSet.id == "QLoyT2aHGes"){
                             newHtml = newHtml.replace(match[0], "<div>{{cumulativeToDateData['" + idMacth[1] +  "'] | removeNaN |comma}}</div>");
                             $scope.cumulativeToDateWardLevel.push(idMacth[1]);
                         }else{
