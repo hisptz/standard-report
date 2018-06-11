@@ -710,7 +710,7 @@ var appDirectives = angular.module('appDirectives', [])
                                             sourceIds.push(dataSource.dataSet);
                                             sourceLevels[dataSource.dataSet] = dataSource.level;
                                         })
-
+                                        dataSetFound = sourceIds.length > 0;
                                         $http.get(DHIS2URL + "api/26/dataSets.json?filter=id:in:[" + sourceIds + "]&fields=id,periodType,displayName,attributeValues[value,attribute[name]],organisationUnits[id,level]").then(function (results) {
                                             $scope.sourceDataSets = results.data.dataSets;
                                             $scope.consistsOfReport = false;
@@ -787,7 +787,8 @@ var appDirectives = angular.module('appDirectives', [])
                 $http.get(DHIS2URL + "api/26/dataStore/executed").then(function (results) {
                     $scope.dataStore.executed = results.data;
                     $scope.getOrganisationUnitPeriods($scope.setDataSet).forEach(function(period){
-                        if($scope.dataStore.executed.indexOf($scope.setDataSet.id + "_" + $scope.organisationUnit.id + "_" + period) == -1 && $scope.setDataSet.id == ""){
+                        console.log();
+                        if($scope.dataStore.executed.indexOf($scope.setDataSet.id + "_" + $scope.organisationUnit.id + "_" + period) == -1 && $scope.setDataSet.id == "cSC1VV8uMh9"){
                             $scope.statusReturn.canCreate = false;
                         }
                     })
