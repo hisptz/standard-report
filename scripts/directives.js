@@ -1677,7 +1677,6 @@ var appDirectives = angular.module('appDirectives', [])
             },
             link: function (scope, elem, attrs, controller) {
                 if (scope.config.groupBy) {
-
                     var arr = Array.prototype.slice.call(elem[0].rows);
                     $timeout(function () {
                         var dataElementIndexes = [];
@@ -1693,8 +1692,13 @@ var appDirectives = angular.module('appDirectives', [])
                                 if (scope.config.order[scope.config.dataElements[property]]) {
                                     return function (obj1, obj2) {
                                         //return scope.config.order[scope.config.dataElements[property]].indexOf(obj1.children[property].innerHTML.trim());
-                                        return scope.config.order[scope.config.dataElements[property]].indexOf(obj1.children[property].innerHTML.trim()) > scope.config.order[scope.config.dataElements[property]].indexOf(obj2.children[property].innerHTML.trim()) ? -1
-                                            : scope.config.order[scope.config.dataElements[property]].indexOf(obj1.children[property].innerHTML.trim()) < scope.config.order[scope.config.dataElements[property]].indexOf(obj2.children[property].innerHTML.trim()) ? 1 : 0;
+                                        if(scope.config.order[scope.config.dataElements[property]].indexOf(obj1.children[property].innerHTML.trim()) == -1 && scope.config.order[scope.config.dataElements[property]].indexOf(obj1.children[property].innerHTML.trim()) == scope.config.order[scope.config.dataElements[property]].indexOf(obj2.children[property].innerHTML.trim())){
+                                            return obj1.children[property].innerHTML.trim().toLowerCase() > obj2.children[property].innerHTML.trim().toLowerCase() ? 1
+                                                : obj1.children[property].innerHTML.trim().toLowerCase() < obj2.children[property].innerHTML.trim().toLowerCase() ? -1 : 0;
+                                        }else{
+                                            return scope.config.order[scope.config.dataElements[property]].indexOf(obj1.children[property].innerHTML.trim()) > scope.config.order[scope.config.dataElements[property]].indexOf(obj2.children[property].innerHTML.trim()) ? -1
+                                                : scope.config.order[scope.config.dataElements[property]].indexOf(obj1.children[property].innerHTML.trim()) < scope.config.order[scope.config.dataElements[property]].indexOf(obj2.children[property].innerHTML.trim()) ? 1 : 0;
+                                        }
                                     }
                                 } else {
                                     return function (obj1, obj2) {
