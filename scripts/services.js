@@ -1562,10 +1562,31 @@ var appServices = angular.module('appServices', ['ngResource'])
                                         year--;
                                     }
                                     periods.push("July" + year);
+                                    if (data.dataSet == "cSC1VV8uMh9"){
+                                        month = parseInt(data.period.substr(4)) + 1;
+                                        year = parseInt(data.period.substr(0,4));
+                                        while(month != 7){
+                                            if(month == 13){
+                                                month == 1;
+                                                year++;
+                                            }
+                                            var monthStr = month;
+                                            if(monthStr < 10){
+                                                monthStr = "0" + monthStr;
+                                            }
+                                            periods.push(year +""+monthStr);
+                                            month++;
+                                        }
+                                    }
                                 }
 
                                 periods.forEach(function (period) {
                                     dataSetsResults.data.dataSets.forEach(function (dataSet) {
+                                        console.log({
+                                            orgUnit: orgUnitResults.data.id,
+                                            period: period,
+                                            dataSet: dataSet.id
+                                        });
                                         promises.push(that.delete(dataSet.id, orgUnitResults.data.id, period));
                                         orgUnitResults.data.ancestors.forEach(function (ancestor) {
                                             promises.push(that.delete(dataSet.id, ancestor.id, period));
@@ -1598,35 +1619,6 @@ var appServices = angular.module('appServices', ['ngResource'])
                                                     })
                                                 })
                                             }
-                                            /*else if(period.indexOf("July") == -1){
-                                             var newPeriods = [];
-                                             var currentQuarter = Math.ceil(parseInt(period.substr(4)) / 3);
-                                             if(currentQuarter == 1){
-                                             newPeriods.push(period.substr(0,4) + "Q2")
-                                             }else if(currentQuarter == 3){
-                                             newPeriods.push(period.substr(0,4) + "Q4")
-                                             newPeriods.push((parseInt(period.substr(0,4)) + 1) + "Q1")
-                                             newPeriods.push((parseInt(period.substr(0,4)) + 1) + "Q2")
-                                             }else if(currentQuarter == 4){
-                                             newPeriods.push((parseInt(period.substr(0,4)) + 1) + "Q1")
-                                             newPeriods.push((parseInt(period.substr(0,4)) + 1) + "Q2")
-                                             }
-                                             newPeriods.forEach(function(newPeriod){
-                                             promises.push(that.undoDataSetReport({
-                                             orgUnit: orgUnitResults.data.id,
-                                             period: newPeriod,
-                                             dataSet: "QLoyT2aHGes"
-                                             },true))
-                                             orgUnitResults.data.ancestors.forEach(function (ancestor) {
-                                             //promises.push($http.delete(DHIS2URL + "api/dataStore/executed/" + dataSet.id + "_" + ancestor.id + "_" + period));
-                                             promises.push(that.undoDataSetReport({
-                                             orgUnit: ancestor.id,
-                                             period: newPeriod,
-                                             dataSet: "QLoyT2aHGes"
-                                             },true))
-                                             })
-                                             })
-                                             }*/
                                         }
                                     })
                                 })
