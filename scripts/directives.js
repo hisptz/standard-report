@@ -600,7 +600,8 @@ var appDirectives = angular.module('appDirectives', [])
                         });
                     }
                 }
-                $scope.cancelDataSetReportParams = function (orgUnit,period,dataSet,st) {
+                $scope.cancelDataSetReportParamsSingle = function (orgUnit,period,dataSet,st) {
+                    var deffered = $q.defer();
                     $scope.status[orgUnit + "_" + period + "_" + dataSet] = "loading";
                     ReportService.cancelCreateDataSetReport({
                         orgUnit: orgUnit,
@@ -609,9 +610,68 @@ var appDirectives = angular.module('appDirectives', [])
                     }).then(function () {
                         $scope.status[orgUnit + "_" + period + "_" + dataSet] = undefined;
                         $scope.dataStore[st].splice($scope.dataStore[st].indexOf(dataSet +'_'+ orgUnit +'_'+ period), 1);
+                        deffered.resolve();
+                    },function(error){
+                        deffered.reject(error);
                     });
+                    return deffered.promise;
                 };
-                $scope.createDataSetReportParams = function (orgUnit,period,dataSet,st) {
+                $scope.cancelDataSetReportParams = function (orgUnit,period,dataSet,st) {
+                    var deffered = $q.defer();
+                    var promises = [];
+                    var requests = [{
+                        orgUnit: orgUnit,
+                        period: period,
+                        dataSet: dataSet
+                    }];
+                    if(dataSet == "cSC1VV8uMh9"){
+                        var year = parseInt(period.substr(0,4));
+                        var month = parseInt(period.substr(4));
+                        if($scope.dataStore.executed.indexOf(dataSet +'_'+ orgUnit +'_'+period) == -1 &&
+                            ($scope.dataStore.notExecuted.indexOf(dataSet +'_'+ orgUnit +'_'+period) == -1)){
+                            while(month != 7){
+                                month--;
+                                if(month == 0){
+                                    month = 12;
+                                    year--;
+                                }
+                                var monthStr = month;
+                                if(month < 10){
+                                    monthStr = "0"+month;
+                                }
+                                if($scope.dataStore.executed.indexOf(dataSet +'_'+ orgUnit +'_'+year+""+monthStr) == -1 &&
+                                    ($scope.dataStore.notExecuted.indexOf(dataSet +'_'+ orgUnit +'_'+year+""+monthStr) == -1)){
+                                    promises.push($scope.cancelDataSetReportParamsSingle(orgUnit,year+""+monthStr,dataSet,st));
+                                }
+                            }
+                        }else if($scope.dataStore.notExecuted.indexOf(dataSet +'_'+ orgUnit +'_'+period) > -1){
+                            while(month != 6){
+                                month++;
+                                if(month == 13){
+                                    month = 1;
+                                    year++;
+                                }
+                                var monthStr = month;
+                                if(month < 10){
+                                    monthStr = "0"+month;
+                                }
+                                if($scope.dataStore.notExecuted.indexOf(dataSet +'_'+ orgUnit +'_'+year+""+monthStr) > -1){
+                                    promises.push($scope.cancelDataSetReportParamsSingle(orgUnit,year+""+monthStr,dataSet,st));
+                                }
+                            }
+                        }
+                    }
+                    requests.forEach(function(r){
+                        promises.push($scope.cancelDataSetReportParamsSingle(orgUnit,r.period,dataSet,st));
+                    })
+                    $q.all(promises).then(function(){
+                        deffered.resolve();
+                    },function(error){
+                        deffered.reject(error);
+                    })
+                    return deffered.promise;
+                };
+                $scope.createDataSetReportParamsSingle = function (orgUnit,period,dataSet,st) {
                     var deffered = $q.defer();
                     $scope.status[orgUnit + "_" + period + "_" + dataSet] = "loading";
                     ReportService.createDataSetReport({
@@ -625,6 +685,62 @@ var appDirectives = angular.module('appDirectives', [])
                     },function(error){
                         deffered.reject(error);
                     });
+
+                    return deffered.promise;
+                };
+                $scope.createDataSetReportParams = function (orgUnit,period,dataSet,st) {
+                    var deffered = $q.defer();
+                    var promises = [];
+                    var requests = [{
+                        orgUnit: orgUnit,
+                        period: period,
+                        dataSet: dataSet
+                    }];
+                    if(dataSet == "cSC1VV8uMh9"){
+                        var year = parseInt(period.substr(0,4));
+                        var month = parseInt(period.substr(4));
+                        if($scope.dataStore.executed.indexOf(dataSet +'_'+ orgUnit +'_'+period) == -1 &&
+                            ($scope.dataStore.notExecuted.indexOf(dataSet +'_'+ orgUnit +'_'+period) == -1)){
+                            while(month != 7){
+                                month--;
+                                if(month == 0){
+                                    month = 12;
+                                    year--;
+                                }
+                                var monthStr = month;
+                                if(month < 10){
+                                    monthStr = "0"+month;
+                                }
+                                if($scope.dataStore.executed.indexOf(dataSet +'_'+ orgUnit +'_'+year+""+monthStr) == -1 &&
+                                    ($scope.dataStore.notExecuted.indexOf(dataSet +'_'+ orgUnit +'_'+year+""+monthStr) == -1)){
+                                    promises.push($scope.createDataSetReportParamsSingle(orgUnit,year+""+monthStr,dataSet,st));
+                                }
+                            }
+                        }else if($scope.dataStore.notExecuted.indexOf(dataSet +'_'+ orgUnit +'_'+period) > -1){
+                            while(month != 6){
+                                month++;
+                                if(month == 13){
+                                    month = 1;
+                                    year++;
+                                }
+                                var monthStr = month;
+                                if(month < 10){
+                                    monthStr = "0"+month;
+                                }
+                                if($scope.dataStore.notExecuted.indexOf(dataSet +'_'+ orgUnit +'_'+year+""+monthStr) > -1){
+                                    promises.push($scope.createDataSetReportParamsSingle(orgUnit,year+""+monthStr,dataSet,st));
+                                }
+                            }
+                        }
+                    }
+                    requests.forEach(function(r){
+                        promises.push($scope.createDataSetReportParamsSingle(orgUnit,r.period,dataSet,st));
+                    })
+                    $q.all(promises).then(function(){
+                        deffered.resolve();
+                    },function(error){
+                        deffered.reject(error);
+                    })
                     return deffered.promise;
                 };
                 var periodDate = ReportService.getPeriodDate($routeParams.period);
