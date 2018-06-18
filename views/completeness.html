@@ -1,21 +1,23 @@
-<div ng-if="show" ng-repeat="(key, c) in dataSets">
-    <h4>{{c.dataSet.name}} Completeness Status </h4>
-    <table class="table table-bordered">
-        <tr>
-            <th>{{getLevelName(c.level)}} Total</th>
-            <th>Number of Periods</th>
-            <th>{{getLevelName(c.level)}} For All Periods Completed</th>
-            <th>{{getLevelName(c.level)}} For All Periods Not Completed</th>
-            <th>Completion Percentage</th>
-        </tr>
-        <tr>
-            <td>{{c.sum}}</td>
-            <td>{{c.expected/c.sum}}</td>
-            <td>{{c.completed}}</td>
-            <td>{{c.expected - c.completed}}</td>
-            <td ng-class="{red:((c.completed/c.expected) * 100) < 70,green:((c.completed/c.expected) * 100) >= 70}">
-                {{((c.completed/c.expected) * 100).toFixed(2)}}%
-            </td>
-        </tr>
-    </table>
+<div ng-if="show">
+    <div ng-repeat="(key, c) in dataSets" ng-if="c.dataSet.id != 'Wtzj9Chl3HW'">
+        <h4>{{c.dataSet.name}} Completeness Status </h4>
+        <table class="table table-bordered">
+            <tr>
+                <th>{{getLevelName(c.level)}} Total</th>
+                <th>Number of Periods</th>
+                <th>{{getLevelName(c.level)}} For All Periods Completed</th>
+                <th>{{getLevelName(c.level)}} For All Periods Not Completed</th>
+                <th>Completion Percentage</th>
+            </tr>
+            <tr>
+                <td>{{c.sum}}</td>
+                <td>{{c.expected/c.sum}}</td>
+                <td>{{c.completed}}</td>
+                <td>{{c.expected - c.completed}}</td>
+                <td ng-class="{red:((c.completed/c.expected) * 100) < 70,green:((c.completed/c.expected) * 100) >= 70}">
+                    {{((c.completed/c.expected) * 100).toFixed(2)}}%
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>
