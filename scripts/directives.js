@@ -452,6 +452,7 @@ var appDirectives = angular.module('appDirectives', [])
                 status:"=",
                 organisationUnit:"=",
                 onDone:"=",
+                onReportsCreated:"=",
                 showReports:"="
             },
             controller: function ($scope, $http,DHIS2URL,$routeParams,ReportService,$q,toaster) {
@@ -509,9 +510,15 @@ var appDirectives = angular.module('appDirectives', [])
                         $q.all(promises).then(function (result) {
                             toaster.pop('success', "Report Created", "District Reports creation has been scheduled successfully.");
                             $scope.createAllReportLoading = false;
+                            if($scope.onReportsCreated){
+                                $scope.onReportsCreated();
+                            }
                         }, function (result) {
                             toaster.pop('success', "Report Created", "District Reports creation has been scheduled successfully.");
                             $scope.createAllReportLoading = false;
+                            if($scope.onReportsCreated){
+                                $scope.onReportsCreated();
+                            }
                         })
                     }else{
                         $scope.notCompleted = {};
