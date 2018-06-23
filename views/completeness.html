@@ -1,5 +1,5 @@
 <div ng-if="show">
-    <div ng-repeat="(key, c) in dataSets" ng-if="c.dataSet.id != 'Wtzj9Chl3HW'">
+    <div ng-repeat="(key, c) in dataSets" ng-if="c.level > 3">
         <h4>{{c.dataSet.name}} Completeness Status </h4>
         <table class="table table-bordered">
             <tr>
