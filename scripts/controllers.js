@@ -1198,6 +1198,18 @@ var appControllers = angular.module('appControllers', [])
                 if($scope.orgUnit.level == 3 && $scope.orgUnit.children.length == 0){
                     level4String = "";
                 }
+                $scope.getMonthsByQuarter = function(period){
+                    var returnValue = [];
+                    var quarterLastMonth = parseInt(period.substr(5)) * 3;
+                    for (var i = quarterLastMonth - 2; i <= quarterLastMonth; i++) {
+                        var monthVal = i;
+                        if (i < 10) {
+                            monthVal = "0" + i;
+                        }
+                        returnValue.push(period.substr(0, 4) + monthVal);
+                    }
+                    return returnValue;
+                }
                 for (var i = 0; i < $scope.dataElements.length / batch; i++) {
                     var wardLevel = [];
                     var NotWardLevel = [];
@@ -1209,7 +1221,13 @@ var appControllers = angular.module('appControllers', [])
                         }
                     })
                     if (wardLevel.length > 0) {
-                        promises.push($http.get(DHIS2URL + "api/26/analytics.json?dimension=dx:" + wardLevel.join(";") + "&dimension=pe:" + $routeParams.period + "&dimension=ou:" + level4String  + $routeParams.orgUnit)
+                        var periods =[];
+                        if($routeParams.period.indexOf("Q") > -1){
+                            periods = periods.concat($scope.getMonthsByQuarter($routeParams.period));
+                        }else{
+                            periods.push($routeParams.period);
+                        }
+                        promises.push($http.get(DHIS2URL + "api/26/analytics.json?dimension=dx:" + wardLevel.join(";") + "&dimension=pe:" + periods.join(";") + "&dimension=ou:" + level4String  + $routeParams.orgUnit)
                             .then(function (analyticsResults) {
                                 analyticsResults.data.rows.forEach(function (row) {
                                     if ($scope.dataElementsData[row[0]]) {
@@ -1444,18 +1462,6 @@ var appControllers = angular.module('appControllers', [])
                     }
                 }
                 if ($scope.cumulativeToDateWardLevel.length > 0) {
-                    $scope.getMonthsByQuarter = function(period){
-                        var returnValue = [];
-                        var quarterLastMonth = parseInt(period.substr(5)) * 3;
-                        for (var i = quarterLastMonth - 2; i <= quarterLastMonth; i++) {
-                            var monthVal = i;
-                            if (i < 10) {
-                                monthVal = "0" + i;
-                            }
-                            returnValue.push(period.substr(0, 4) + monthVal);
-                        }
-                        return returnValue;
-                    }
                     var periods = $scope.getCumulativeToDatePeriod();
                     var level = "LEVEL-4;";
                     for (var i = 0; i < $scope.cumulativeToDateWardLevel.length; i += batch) {
