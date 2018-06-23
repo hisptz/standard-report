@@ -1565,9 +1565,10 @@ var appServices = angular.module('appServices', ['ngResource'])
                                     if (data.dataSet == "cSC1VV8uMh9"){
                                         month = parseInt(data.period.substr(4)) + 1;
                                         year = parseInt(data.period.substr(0,4));
+                                        var val = 1;
                                         while(month != 7){
                                             if(month == 13){
-                                                month == 1;
+                                                month = 1;
                                                 year++;
                                             }
                                             var monthStr = month;
@@ -1576,6 +1577,12 @@ var appServices = angular.module('appServices', ['ngResource'])
                                             }
                                             periods.push(year +""+monthStr);
                                             month++;
+                                            val++;
+                                            if(val == 20){
+                                                break;
+                                            }else{
+                                                console.log(month);
+                                            }
                                         }
                                     }
                                 }
