@@ -2015,7 +2015,7 @@ var appDirectives = angular.module('appDirectives', [])
                                                 var span = parseInt(elem[0].children[index].children[i - 1].getAttribute('rowspan'));
                                                 var previousVal = "";
                                                 for (var counter = 1; counter < span; counter++) {
-                                                    if (elem[0].children[index + counter].children[i + 1].innerHTML != previousVal && !$(elem[0].children[index + counter].children[i]).hasClass('hidden')) {
+                                                    if (!$(elem[0].children[index + counter].children[i]).hasClass('hidden')) {
                                                         elem[0].children[index].children[i].innerHTML = (parseFloat(elem[0].children[index].children[i].innerHTML) + parseFloat(elem[0].children[index + counter].children[i].innerHTML)).toFixed(1);
                                                     }
                                                     $(elem[0].children[index + counter].children[i]).addClass('hidden');
