@@ -509,6 +509,12 @@ var appDirectives = angular.module('appDirectives', [])
                         })
                         $q.all(promises).then(function (result) {
                             toaster.pop('success', "Report Created", "District Reports creation has been scheduled successfully.");
+                            $scope.statusReturn.canCreate = true;
+                            $scope.getOrganisationUnitPeriods($scope.setDataSet).forEach(function(period){
+                                if($scope.dataStore.executed.indexOf($scope.setDataSet.id + "_" + $scope.organisationUnit.id + "_" + period) == -1 && $scope.setDataSet.id == "cSC1VV8uMh9"){
+                                    $scope.statusReturn.canCreate = false;
+                                }
+                            })
                             $scope.createAllReportLoading = false;
                             if($scope.onReportsCreated){
                                 $scope.onReportsCreated();
@@ -909,14 +915,17 @@ var appDirectives = angular.module('appDirectives', [])
                 }
                 $http.get(DHIS2URL + "api/26/dataStore/executed").then(function (results) {
                     $scope.dataStore.executed = results.data;
-                    $scope.getOrganisationUnitPeriods($scope.setDataSet).forEach(function(period){
-                        console.log();
-                        if($scope.dataStore.executed.indexOf($scope.setDataSet.id + "_" + $scope.organisationUnit.id + "_" + period) == -1 && $scope.setDataSet.id == "cSC1VV8uMh9"){
-                            $scope.statusReturn.canCreate = false;
-                        }
-                    })
                     $http.get(DHIS2URL + "api/26/dataStore/notExecuted").then(function (results) {
                         $scope.dataStore.notExecuted = results.data;
+                        $scope.getOrganisationUnitPeriods($scope.setDataSet).forEach(function(period){
+                            if(!($scope.dataStore.executed.indexOf($scope.setDataSet.id + "_" + $scope.organisationUnit.id + "_" + period) > -1
+                                || $scope.dataStore.notExecuted.indexOf($scope.setDataSet.id + "_" + $scope.organisationUnit.id + "_" + period) > -1
+                                )
+                                && $scope.setDataSet.id == "cSC1VV8uMh9"){
+                                console.log($scope.setDataSet.id + "_" + $scope.organisationUnit.id + "_" + period);
+                                $scope.statusReturn.canCreate = false;
+                            }
+                        })
                         $scope.init();
                     }, function () {
                         $scope.dataStore.notExecuted = [];
