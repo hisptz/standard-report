@@ -385,6 +385,7 @@ var appControllers = angular.module('appControllers', [])
                 }, function () {
                     toaster.pop('error', "Error", "Error Loading Data. Please try again.");
                 });
+                $scope.control.createAllReports();
             }else{
                 toaster.pop('error', "Error", "Error creating Report. To create this reports make sure the previous reports have been created.");
             }
@@ -393,6 +394,7 @@ var appControllers = angular.module('appControllers', [])
         $scope.cancelAllReportCreation = function(){
             $scope.notCompleted = undefined;
         }
+        $scope.control = {};
         $scope.createAllReports = function(){
             $scope.createAllReportLoading = true;
             var foundDistrictReports = false;

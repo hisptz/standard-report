@@ -453,7 +453,8 @@ var appDirectives = angular.module('appDirectives', [])
                 organisationUnit:"=",
                 onDone:"=",
                 onReportsCreated:"=",
-                showReports:"="
+                showReports:"=",
+                control:"="
             },
             controller: function ($scope, $http,DHIS2URL,$routeParams,ReportService,$q,toaster) {
                 //$scope.status = {};
@@ -613,6 +614,8 @@ var appDirectives = angular.module('appDirectives', [])
                         });
                     }
                 }
+                if($scope.control)
+                    $scope.control.createAllReports = $scope.createAllReports;
                 $scope.cancelDataSetReportParamsSingle = function (orgUnit,period,dataSet,st) {
                     var deffered = $q.defer();
                     $scope.status[orgUnit + "_" + period + "_" + dataSet] = "loading";
