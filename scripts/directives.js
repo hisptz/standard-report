@@ -696,7 +696,7 @@ var appDirectives = angular.module('appDirectives', [])
                         $scope.dataStore[st].push(dataSet +'_'+ orgUnit +'_'+ period);
                         deffered.resolve();
                     },function(error){
-                        deffered.reject(error);
+                        deffered.resolve();
                     });
 
                     return deffered.promise;
@@ -726,7 +726,9 @@ var appDirectives = angular.module('appDirectives', [])
                                 }
                                 if($scope.dataStore.executed.indexOf(dataSet +'_'+ orgUnit +'_'+year+""+monthStr) == -1 &&
                                     ($scope.dataStore.notExecuted.indexOf(dataSet +'_'+ orgUnit +'_'+year+""+monthStr) == -1)){
-                                    promises.push($scope.createDataSetReportParamsSingle(orgUnit,year+""+monthStr,dataSet,st));
+                                    if(!($scope.organisationUnit.id === orgUnit && $scope.organisationUnit.level < 3)){
+                                        promises.push($scope.createDataSetReportParamsSingle(orgUnit,year+""+monthStr,dataSet,st));
+                                    }
                                 }
                             }
                         }else if($scope.dataStore.notExecuted.indexOf(dataSet +'_'+ orgUnit +'_'+period) > -1){
@@ -741,18 +743,22 @@ var appDirectives = angular.module('appDirectives', [])
                                     monthStr = "0"+month;
                                 }
                                 if($scope.dataStore.notExecuted.indexOf(dataSet +'_'+ orgUnit +'_'+year+""+monthStr) > -1){
-                                    promises.push($scope.createDataSetReportParamsSingle(orgUnit,year+""+monthStr,dataSet,st));
+                                    if(!($scope.organisationUnit.id === orgUnit && $scope.organisationUnit.level < 3)){
+                                        promises.push($scope.createDataSetReportParamsSingle(orgUnit,year+""+monthStr,dataSet,st));
+                                    }
                                 }
                             }
                         }
                     }
                     requests.forEach(function(r){
-                        promises.push($scope.createDataSetReportParamsSingle(orgUnit,r.period,dataSet,st));
+                        if(!($scope.organisationUnit.id === orgUnit && $scope.organisationUnit.level < 3)){
+                            promises.push($scope.createDataSetReportParamsSingle(orgUnit,r.period,dataSet,st));
+                        }
                     })
                     $q.all(promises).then(function(){
                         deffered.resolve();
                     },function(error){
-                        deffered.reject(error);
+                        deffered.resolve();
                     })
                     return deffered.promise;
                 };
