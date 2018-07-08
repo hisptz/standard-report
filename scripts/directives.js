@@ -802,7 +802,7 @@ var appDirectives = angular.module('appDirectives', [])
                 $scope.isSuperUser = function () {
                     var returnValue = false;
                     $scope.user.userCredentials.userRoles.forEach(function (userRole) {
-                        if (userRole.authorities.indexOf("ALL") > -1 || userRole.name == "Superuser") {
+                        if (userRole.authorities.indexOf("ALL") > -1 || userRole.name.split(" ").join("").toLowerCase() == "superuser") {
                             returnValue = true;
                         }
                     })
