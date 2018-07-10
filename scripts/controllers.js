@@ -1229,7 +1229,7 @@ var appControllers = angular.module('appControllers', [])
                         }else{
                             periods.push($routeParams.period);
                         }
-                        promises.push($http.get(DHIS2URL + "api/26/analytics.json?dimension=dx:" + wardLevel.join(";") + "&dimension=pe:" + periods.join(";") + "&dimension=ou:" + level4String  + $routeParams.orgUnit)
+                        promises.push($http.get(DHIS2URL + "api/26/analytics.json?dimension=dx:" + wardLevel.join(";") + "&dimension=pe:" + periods.join(";") + "&dimension=ou:" + level4String  + $routeParams.orgUnit + "&skipRounding=true")
                             .then(function (analyticsResults) {
                                 analyticsResults.data.rows.forEach(function (row) {
                                     if ($scope.dataElementsData[row[0]]) {
