@@ -1233,7 +1233,7 @@ var appControllers = angular.module('appControllers', [])
                             .then(function (analyticsResults) {
                                 analyticsResults.data.rows.forEach(function (row) {
                                     if ($scope.dataElementsData[row[0]]) {
-                                        $scope.dataElementsData[row[0]] = "" + (parseFloat($scope.dataElementsData[row[0]]) + parseFloat(row[3])).toFixed(1);// + ".0";
+                                        $scope.dataElementsData[row[0]] = "" + (parseFloat($scope.dataElementsData[row[0]]) + parseFloat(row[3]));// + ".0";
                                     } else {
                                         $scope.dataElementsData[row[0]] = row[3];
                                     }
