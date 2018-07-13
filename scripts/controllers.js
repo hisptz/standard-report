@@ -731,35 +731,34 @@ var appControllers = angular.module('appControllers', [])
                     }
                     return returnValue;
                 }
-                //Check if the report is in the not executed namespace
-                $http.get(DHIS2URL + "api/26/dataStore/notExecuted/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
-                    $scope.reportStatus = "Not Executed";
+                $http.get(DHIS2URL + "api/26/dataStore/executed/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
+                    $scope.reportStatus = "Executed";
+                    $http.get(
+                        '../ARDS-Archive/' + $routeParams.dataSet + '_' + $routeParams.orgUnit + '_' + $routeParams.period + '.html',
+                        {headers: {'Cache-Control': 'no-cache'}}).then(function (result) {
+                        $scope.file = $sce.trustAsHtml(result.data);
+                        $scope.loadFile = true;
+
+                    }, function (error) {
+                        $scope.loadFile = true;
+                        if (error.status) {
+                            if (error.status == 404) {
+                                toaster.pop('error', "Error" + error.status, "Archive not available.");
+                            }
+                        } else {
+                            if (error.data.httpStatusCode == 403) {
+                                toaster.pop('error', "Error" + error.status, "Access to archive is denied. Please contact Administrator for access.");
+                            }
+                        }
+
+                    })
                 }, function (error) {
                     if (error.data.httpStatusCode == 404) {
-                        //Check if the report is in the executed namespace
-                        $http.get(DHIS2URL + "api/26/dataStore/executed/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
-                            $scope.reportStatus = "Executed";
-                            $http.get(
-                                '../ARDS-Archive/' + $routeParams.dataSet + '_' + $routeParams.orgUnit + '_' + $routeParams.period + '.html',
-                                {headers: {'Cache-Control': 'no-cache'}}).then(function (result) {
-                                $scope.file = $sce.trustAsHtml(result.data);
-                                $scope.loadFile = true;
-
-                            }, function (error) {
-                                $scope.loadFile = true;
-                                if (error.status) {
-                                    if (error.status == 404) {
-                                        toaster.pop('error', "Error" + error.status, "Archive not available.");
-                                    }
-                                } else {
-                                    if (error.data.httpStatusCode == 403) {
-                                        toaster.pop('error', "Error" + error.status, "Access to archive is denied. Please contact Administrator for access.");
-                                    }
-                                }
-
-                            })
+                        $http.get(DHIS2URL + "api/26/dataStore/notExecuted/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
+                            $scope.reportStatus = "Not Executed";
                         }, function (error) {
                             if (error.data.httpStatusCode == 404) {
+                                //Check if the report is in the executed namespace
                                 $scope.reportStatus = "Starting";
                                 $scope.loadingArchive = false;
                                 if (!$scope.data.archive) {
@@ -790,14 +789,14 @@ var appControllers = angular.module('appControllers', [])
                                                                 $scope.setPeriodTypeValues(dataSet);
                                                                 var isReport = false;
                                                                 if(dataSet.id != "cSC1VV8uMh9")
-                                                                dataSet.attributeValues.forEach(function (attributeValue) {
-                                                                    if (attributeValue.attribute.name == "Is Report") {
-                                                                        if (attributeValue.value == "true") {
-                                                                            isReport = true;
-                                                                            $scope.consistsOfReport = true;
+                                                                    dataSet.attributeValues.forEach(function (attributeValue) {
+                                                                        if (attributeValue.attribute.name == "Is Report") {
+                                                                            if (attributeValue.value == "true") {
+                                                                                isReport = true;
+                                                                                $scope.consistsOfReport = true;
+                                                                            }
                                                                         }
-                                                                    }
-                                                                })
+                                                                    })
                                                                 dataSet.isReport = isReport;
                                                                 $scope.fetchCompleteness(dataSet, sourceLevels);
 
@@ -825,14 +824,15 @@ var appControllers = angular.module('appControllers', [])
                                     toaster.pop('error', "Error" + error.status, "Error Loading Archive. Please try again");
                                 }
                             }
-                            else {
-                                $scope.error = "heye";
-                                $scope.reportStatus = "";
-                                toaster.pop('error', "Error" + error.status, "Error Loading Archive. Please try again");
-                            }
                         });
                     }
+                    else {
+                        $scope.error = "heye";
+                        $scope.reportStatus = "";
+                        toaster.pop('error', "Error" + error.status, "Error Loading Archive. Please try again");
+                    }
                 });
+                //Check if the report is in the not executed namespace
             }, function (error) {
                 $scope.error = "error";
                 $scope.completeDataSetRegistrationsLoading = false;
