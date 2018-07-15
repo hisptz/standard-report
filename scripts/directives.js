@@ -625,8 +625,6 @@ var appDirectives = angular.module('appDirectives', [])
                         });
                     }
                 }
-                /*if($scope.control)
-                    $scope.control.createAllReports = $scope.createAllReports;*/
                 $scope.cancelDataSetReportParamsSingle = function (orgUnit,period,dataSet,st) {
                     var deffered = $q.defer();
                     $scope.status[orgUnit + "_" + period + "_" + dataSet] = "loading";
