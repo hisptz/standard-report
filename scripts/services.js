@@ -1589,11 +1589,6 @@ var appServices = angular.module('appServices', ['ngResource'])
 
                                 periods.forEach(function (period) {
                                     dataSetsResults.data.dataSets.forEach(function (dataSet) {
-                                        console.log({
-                                            orgUnit: orgUnitResults.data.id,
-                                            period: period,
-                                            dataSet: dataSet.id
-                                        });
                                         promises.push(that.delete(dataSet.id, orgUnitResults.data.id, period));
                                         orgUnitResults.data.ancestors.forEach(function (ancestor) {
                                             promises.push(that.delete(dataSet.id, ancestor.id, period));
@@ -1644,6 +1639,34 @@ var appServices = angular.module('appServices', ['ngResource'])
             },
             delete: function (dataSet, orgUnit, period) {
                 var deffered = $q.defer();
+                if(this.isValidPeriod(dataSet, period)){
+                    this.deleteNotExecuted(dataSet, orgUnit, period).then(function(){
+                        $http.delete(DHIS2URL + "api/dataStore/notExecuted/" + dataSet + "_" + orgUnit + "_" + period).then(function () {
+                            deffered.resolve();
+                        }, function (error) {
+                            if (error.data.httpStatusCode == 404) {
+                                deffered.resolve(error.data);
+                            } else {
+                                deffered.reject(error);
+                            }
+                        })
+                    }, function (error) {
+                        if (error.data.httpStatusCode == 404) {
+                            deffered.resolve(error.data);
+                        } else {
+                            deffered.reject(error);
+                        }
+                    })
+                    /* */
+                    deffered.resolve();
+                }else{
+                   //console.log("Nothing Found:",dataSet, orgUnit, period);
+                    deffered.resolve();
+                }
+                return deffered.promise;
+            },
+            deleteNotExecuted: function(dataSet, orgUnit, period){
+                var deffered = $q.defer();
                 $http.delete(DHIS2URL + "api/dataStore/executed/" + dataSet + "_" + orgUnit + "_" + period).then(function () {
                     deffered.resolve();
                 }, function (error) {
@@ -1654,6 +1677,33 @@ var appServices = angular.module('appServices', ['ngResource'])
                     }
                 })
                 return deffered.promise;
+            },
+            isValidPeriod: function(dataSet,period){
+                var map = {
+                    "HhyM40b8ma1":"July",
+                    "OBnVfEenAuW":"July",
+                    "cSC1VV8uMh9":"",
+                    "Znn30Q67yDO":"Q",
+                    "VTDXKC9lwqZ":"July",
+                    "oRJJ4PtC7M8":"Q",
+                    "QLoyT2aHGes":"Q"
+                }
+                if(period.indexOf(map[dataSet]) > -1){
+                    if(map[dataSet] === ''){
+                        if((period.indexOf("Q") > -1 || period.indexOf("July") > -1)){
+                            console.log("Nothing Found:");
+                            return false;
+                        }else{
+                            return true;
+                        }
+                    }else{
+                        return true;
+                    }
+                    console.log("Nothing Found:");
+                    deffered.resolve();
+                }else{
+                    return false;
+                }
             },
             cancelCreateDataSetReport: function (data) {
                 var deffered = $q.defer();
