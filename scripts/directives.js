@@ -462,11 +462,6 @@ var appDirectives = angular.module('appDirectives', [])
                 showReports:"=",
                 control:"="
             },
-            link: function(scope){
-                angular.extend(scope.control, {
-                    createAllReports: scope.createAllReports
-                });
-            },
             controller: function ($scope, $http,DHIS2URL,$routeParams,ReportService,$q,toaster) {
                 //$scope.status = {};
                 $scope.hasReports = function(){
