@@ -572,19 +572,83 @@ var appControllers = angular.module('appControllers', [])
                 $route.reload();
             });
         };
+        $scope.checkApproval = function(){
+            var deffered = $q.defer();
+            $http.get(DHIS2URL + "api/26/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,path,ancestors,level,parent,children[id,name]")
+                .then(function (results) {
+                    $scope.data.organisationUnit = results.data;
+                    var organisationUnitChecks = results.data.ancestors;
+                    organisationUnitChecks.push({id:$routeParams.orgUnit});
+                    var parentPeriods = [];
+                    if($routeParams.period.indexOf("July") > -1){
+                        parentPeriods.push($routeParams.period);
+                    }else if($routeParams.period.indexOf("Q") > -1){
+                        parentPeriods.push($routeParams.period);
+                        if($routeParams.period.substr(5) == "1" || $routeParams.period.substr(5) == "2"){
+                            parentPeriods.push((parseInt($routeParams.period.substr(0,4)) - 1) + "July");
+                        }else{
+                            parentPeriods.push($routeParams.period.substr(0,4) + "July");
+                        }
+                    }else{
+                        parentPeriods.push($routeParams.period);
+                        if(parseInt($routeParams.period.substr(4)) >= 1 & parseInt($routeParams.period.substr(4)) <= 6){
+                            parentPeriods.push((parseInt($routeParams.period.substr(0,4)) - 1) + "July");
+                        }else{
+                            parentPeriods.push($routeParams.period.substr(0,4) + "July");
+                        }
+                        parentPeriods.push($routeParams.period.substr(0,4) + "Q" + Math.ceil($routeParams.period.substr(4)/3));
+                    }
+                    $http.get(DHIS2URL + 'api/dataSets.json?fields=id,name&filter=attributeValues.value:like:' + $routeParams.dataSet +'&filter=id:ne:' + $routeParams.dataSet).then(function (dataSetResult) {
+                        var promises = [];
+                        dataSetResult.data.dataSets.forEach(function(dataSet){
+                            promises.push($http.get(DHIS2URL + "api/26/dataStore/approve").then(function (approvalResult) {
+                                approvalResult.data.forEach(function(approveUrl){
+                                    organisationUnitChecks.forEach(function(orgUnitc){
+                                        parentPeriods.forEach(function(p){
+                                            //if(approveUrl == dataSet.id + "_" + orgUnitc.id +"_" + p && dataSet.name.indexOf("Integrated") > -1){
+                                            if((approveUrl == dataSet.id + "_" + orgUnitc.id +"_" + p)){
+                                                $scope.parentApproved = true;
+                                            }
+                                        })
+                                    })
+                                })
+
+                            }, function (error) {
+
+                            }))
+                        });
+                        $q.all(promises).then(function (result) {
+                            deffered.resolve(result);
+                        }, function (result) {
+                            deffered.resolve(result);
+                        })
+                    }, function (error) {
+
+                    });
+                });
+            return deffered.promise;
+        }
         $scope.undoDataSetReport = function () {
+            var theFile = $scope.loadFile;
             $scope.loadFile = undefined;
-            ReportService.undoDataSetReport({
-                orgUnit: $routeParams.orgUnit,
-                period: $routeParams.period,
-                dataSet: $routeParams.dataSet
-            }).then(function () {
-                toaster.pop('success', "Report Undone", "Report was undone successfully.");
-                $route.reload();
-            },function () {
-                toaster.pop('warning', "Error Undoing Reports", "Some reports could not be undone. Nothing to worry though. The server will take care of it in the background");
-                $route.reload();
-            });
+            $scope.checkApproval().then(function(){
+                if($scope.parentApproved){
+                    toaster.pop('error', "This report cannot be undone. It has been approved.");
+                    $scope.loadFile = theFile;
+                }else{
+                    ReportService.undoDataSetReport( {
+                        orgUnit: $routeParams.orgUnit,
+                        period: $routeParams.period,
+                        dataSet: $routeParams.dataSet
+                    } ).then( function () {
+                        toaster.pop( 'success', "Report Undone", "Report was undone successfully." );
+                        $route.reload();
+                    }, function () {
+                        toaster.pop( 'warning', "Error Undoing Reports", "Some reports could not be undone. Nothing to worry though. The server will take care of it in the background" );
+                        $route.reload();
+                    } );
+                }
+            })
         };
         $scope.params = $routeParams;
         $scope.dataStore = {};
