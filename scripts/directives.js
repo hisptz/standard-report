@@ -261,9 +261,15 @@ var appDirectives = angular.module('appDirectives', [])
             scope: {
                 treeModal: '=',
                 config: '=',
-                ngModel: '='
+                ngModel: '=',
+                changeModel: '='
             },
             controller: function ($scope) {
+                $scope.$watch("changeModel", function (value) {
+                    if($scope.ngModel != undefined){
+                        $scope.updateSingleSelection($scope.ngModel);
+                    }
+                });
                 $scope.children = "children";
                 $scope.expand = function (data, bool) {
                     if (bool != undefined) {

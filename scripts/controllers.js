@@ -182,6 +182,9 @@ var appControllers = angular.module('appControllers', [])
                 }
             }
         };
+        /*$scope.reportChange = function(){
+            alert("Here");
+        }*/
         $scope.displayPreviousPeriods = function () {
             $scope.data.periodTypes[$scope.data.dataSet.periodType].previous();
         };
@@ -197,9 +200,11 @@ var appControllers = angular.module('appControllers', [])
             });
             return retPeriodType;
         }
+        $scope.data.changeOrgUnit = false;
         $scope.$watch("data.dataSet", function (value) {
             if (value) {
                 $scope.data.period = "";
+                $scope.data.changeOrgUnit = !$scope.data.changeOrgUnit;
                 $scope.data.periodTypes[value.periodType].populateList();
             }
         });

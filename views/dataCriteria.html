@@ -19,7 +19,7 @@
     <div class="inputSection" style="margin-top: 0px;">
         <label>Report</label><br>
         <select ng-disabled="loadTracker" ng-options="dataSet as dataSet.name for dataSet in data.dataSets | orderBy:'code'" style="width:330px"
-                ng-model="data.dataSet">
+                ng-model="data.dataSet"  ng-change="reportChange()">
             <option value="">[ Select Report ]</option>
         </select>
     </div>
@@ -49,7 +49,7 @@
         <div style="background-color:white;width: 328px; height: 200px; overflow: auto; border: 1px solid rgb(204, 204, 204); margin-bottom: 8px; margin-top: 0px; background-image: url(&quot;../images/ajax-loader-circle.gif&quot;); background-repeat: no-repeat;">
             <div ng-if="!data.organisationUnits" class="loader" style="margin-top: 0px;"><img
                     src="../../../images/ajax-loader-bar.gif">Loading Administartive Units</div>
-            <c-tree ng-if="data.organisationUnits" tree-modal='data.organisationUnits' ng-model="data.selectedOrgUnit"
+            <c-tree ng-if="data.organisationUnits" tree-modal='data.organisationUnits' change-model="data.changeOrgUnit" ng-model="data.selectedOrgUnit"
                     config="data.config"></c-tree>
         </div>
     </div>
