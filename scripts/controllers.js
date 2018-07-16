@@ -1646,7 +1646,7 @@ var appControllers = angular.module('appControllers', [])
                         .then(function (analyticsResults) {
                             analyticsResults.data.rows.forEach(function (row) {
                                 if($scope.districtIndicatorData[row[0]]){
-                                    $scope.districtIndicatorData[row[0]] = "" + (parseFloat($scope.districtIndicatorData[row[0]]) + parseFloat(row[3])).toFixed(1);
+                                    $scope.districtIndicatorData[row[0]] = "" + (parseFloat($scope.districtIndicatorData[row[0]]) + parseFloat(row[3]));
                                 }else{
                                     $scope.districtIndicatorData[row[0]] = row[3];
                                 }
