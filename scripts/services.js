@@ -1641,8 +1641,16 @@ var appServices = angular.module('appServices', ['ngResource'])
                 var deffered = $q.defer();
                 if(this.isValidPeriod(dataSet, period)){
                     this.deleteNotExecuted(dataSet, orgUnit, period).then(function(){
-                        $http.delete(DHIS2URL + "api/dataStore/notExecuted/" + dataSet + "_" + orgUnit + "_" + period).then(function () {
-                            deffered.resolve();
+                        this.deleteAppoval(dataSet, orgUnit, period).then(function(){
+                            $http.delete(DHIS2URL + "api/dataStore/notExecuted/" + dataSet + "_" + orgUnit + "_" + period).then(function () {
+                                deffered.resolve();
+                            }, function (error) {
+                                if (error.data.httpStatusCode == 404) {
+                                    deffered.resolve(error.data);
+                                } else {
+                                    deffered.reject(error);
+                                }
+                            })
                         }, function (error) {
                             if (error.data.httpStatusCode == 404) {
                                 deffered.resolve(error.data);
@@ -1668,6 +1676,19 @@ var appServices = angular.module('appServices', ['ngResource'])
             deleteNotExecuted: function(dataSet, orgUnit, period){
                 var deffered = $q.defer();
                 $http.delete(DHIS2URL + "api/dataStore/executed/" + dataSet + "_" + orgUnit + "_" + period).then(function () {
+                    deffered.resolve();
+                }, function (error) {
+                    if (error.data.httpStatusCode == 404) {
+                        deffered.resolve(error.data);
+                    } else {
+                        deffered.reject(error);
+                    }
+                })
+                return deffered.promise;
+            },
+            deleteAppoval: function(dataSet, orgUnit, period){
+                var deffered = $q.defer();
+                $http.delete(DHIS2URL + "api/dataStore/approve/" + dataSet + "_" + orgUnit + "_" + period).then(function () {
                     deffered.resolve();
                 }, function (error) {
                     if (error.data.httpStatusCode == 404) {
