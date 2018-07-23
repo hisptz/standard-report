@@ -1075,11 +1075,10 @@ var appDirectives = angular.module('appDirectives', [])
                 $scope.getOrganisationUnitPeriods = function (dataSet) {
                     var returnValue = [];
                     if (dataSet.periodType == "Quarterly") {
-
                         if ($routeParams.period.endsWith("July")) {
                             returnValue = [$routeParams.period.substr(0, 4) + "Q3", $routeParams.period.substr(0, 4) + "Q4", (parseInt($routeParams.period.substr(0, 4)) + 1) + "Q1", (parseInt($routeParams.period.substr(0, 4)) + 1) + "Q2"]
                         } else if ($routeParams.period.indexOf("Q") > -1) {
-                            if($scope.setDataSet.name.indexOf("Quarterly Integrated Report") > -1 && $scope.organisationUnit.level == 3){
+                            if($scope.setDataSet.name.indexOf("Quarterly Integrated Report") > -1){
                                 if($routeParams.period.substr(5) == "1"){
                                     returnValue = [(parseInt($routeParams.period.substr(0,4)) - 1) + "Q3",(parseInt($routeParams.period.substr(0,4)) - 1) + "Q4",$routeParams.period.substr(0,4) + "Q1"];
                                 }else if($routeParams.period.substr(5) == "2"){
@@ -1089,6 +1088,7 @@ var appDirectives = angular.module('appDirectives', [])
                                 }else if($routeParams.period.substr(5) == "4"){
                                     returnValue = [$routeParams.period.substr(0,4) + "Q3",$routeParams.period.substr(0,4) + "Q4"];
                                 }
+                                console.log("dataSet.periodType:",dataSet.periodType);
                             }else{
                                 returnValue = [$routeParams.period];
                             }
@@ -1109,7 +1109,8 @@ var appDirectives = angular.module('appDirectives', [])
                                 (parseInt($routeParams.period.substr(0, 4)) + 1) + "06"
                             ]
                         } else if ($routeParams.period.indexOf("Q") > -1) {
-                            if($scope.setDataSet.name.indexOf("Quarterly Integrated Report") > -1 && $scope.organisationUnit.level == 3){
+
+                            if($scope.setDataSet.name.indexOf("Quarterly Integrated Report") > -1){
                                 if($routeParams.period.substr(5) == "1"){
                                     returnValue = returnValue.concat($scope.getMonthsByQuarter((parseInt($routeParams.period.substr(0,4)) - 1) + "Q3"));
                                     returnValue = returnValue.concat($scope.getMonthsByQuarter((parseInt($routeParams.period.substr(0,4)) - 1) + "Q4"));
