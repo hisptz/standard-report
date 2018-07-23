@@ -948,7 +948,7 @@ var appDirectives = angular.module('appDirectives', [])
                     $scope.dataStore.executed = [];
                     $scope.init();
                 });
-                $scope.getOrganisationUnitPeriods = function (dataSet) {
+                $scope.getOrganisationUnitPeriods = function (dataSet,level) {
                     var returnValue = [];
                     if (dataSet.periodType == "Quarterly") {
 
@@ -1000,6 +1000,9 @@ var appDirectives = angular.module('appDirectives', [])
                             returnValue = returnValue.concat($scope.getMonthsByQuarter($routeParams.period));
                         } else {
                             if(dataSet.id == $routeParams.dataSet && $routeParams.dataSet == "cSC1VV8uMh9"){
+                                if(($routeParams.dataSet == 'cSC1VV8uMh9' && $scope.organisationUnit.level == 2)){
+                                    returnValue.push($routeParams.period);
+                                }
                                 var month = $routeParams.period.substr(4);
                                 var year = $routeParams.period.substr(0,4);
                                 while(month != 7){
