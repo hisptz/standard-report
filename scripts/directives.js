@@ -935,7 +935,6 @@ var appDirectives = angular.module('appDirectives', [])
                                 || $scope.dataStore.notExecuted.indexOf($scope.setDataSet.id + "_" + $scope.organisationUnit.id + "_" + period) > -1
                                 )
                                 && $scope.setDataSet.id == "cSC1VV8uMh9"){
-                                console.log($scope.setDataSet.id + "_" + $scope.organisationUnit.id + "_" + period);
                                 $scope.statusReturn.canCreate = false;
                             }
                         })
@@ -1088,7 +1087,6 @@ var appDirectives = angular.module('appDirectives', [])
                                 }else if($routeParams.period.substr(5) == "4"){
                                     returnValue = [$routeParams.period.substr(0,4) + "Q3",$routeParams.period.substr(0,4) + "Q4"];
                                 }
-                                console.log("dataSet.periodType:",dataSet.periodType);
                             }else{
                                 returnValue = [$routeParams.period];
                             }

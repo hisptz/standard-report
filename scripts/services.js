@@ -1712,7 +1712,6 @@ var appServices = angular.module('appServices', ['ngResource'])
                 if(period.indexOf(map[dataSet]) > -1){
                     if(map[dataSet] === ''){
                         if((period.indexOf("Q") > -1 || period.indexOf("July") > -1)){
-                            console.log("Nothing Found:");
                             return false;
                         }else{
                             return true;
@@ -1720,7 +1719,6 @@ var appServices = angular.module('appServices', ['ngResource'])
                     }else{
                         return true;
                     }
-                    console.log("Nothing Found:");
                     deffered.resolve();
                 }else{
                     return false;
