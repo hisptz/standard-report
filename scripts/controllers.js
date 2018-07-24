@@ -1744,6 +1744,11 @@ var appControllers = angular.module('appControllers', [])
                             })
                             $scope.lastIndicatorData[indicator] = $scope.lastIndicatorData[indicator].toFixed(1);
                         })
+                        $scope.lastIndicator.forEach(function (indicator) {
+                            if($scope.lastIndicatorData[indicator] == "0.0"){
+                                $scope.lastIndicatorData[indicator] = "";
+                            }
+                        })
                     }
                     $q.all(promises).then(function () {
                         //Loading autogrowing meta data
