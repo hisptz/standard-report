@@ -378,6 +378,10 @@ var appControllers = angular.module('appControllers', [])
         $scope.onDone = function(statusReturn){
             $scope.statusReturn.canCreate = statusReturn.canCreate;
         }
+        $scope.afterAllReportCreated = function () {
+            $scope.statusReturn.canCreate = true;
+            $scope.createDataSetReport();
+        };
         $scope.createDataSetReport = function () {
             $scope.statusReturn.create = true;
             if($scope.statusReturn.canCreate){
