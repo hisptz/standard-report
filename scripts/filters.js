@@ -22,7 +22,34 @@ var appFilters = angular.module('appFilters', [])
                     return "";
                 }
             }
-
+            if((input) == "0.0"){
+                return "";
+            }
+            return input;
+        };
+    })
+    .filter('removeNaNInd', function() {
+        return function(input,dataElement) {
+            if(dataElement){
+                if(dataElement.valueType != "TEXT"){
+                    if(input == "NaN" || isNaN(input)){
+                        return "";
+                    }
+                    if(input == null){
+                        return "";
+                    }
+                }
+            }else{
+                if(input == "NaN" || isNaN(input)){
+                    return "";
+                }
+                if(input == null){
+                    return "";
+                }
+            }
+            if(parseFloat(input) == 0){
+                return "";
+            }
             return input;
         };
     })

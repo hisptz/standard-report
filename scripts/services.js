@@ -1517,20 +1517,24 @@ var appServices = angular.module('appServices', ['ngResource'])
             },
             createDataSetReport: function (data) {
                 var deffered = $q.defer();
-                this.getUser().then(function (user) {
-                    var notExecuted = {
-                        name: user.name,
-                        creationDate: new Date()
-                    }
-                    $http.post(DHIS2URL + "api/dataStore/notExecuted/" + data.dataSet + "_" + data.orgUnit + "_" + data.period, notExecuted)
-                        .then(function (results) {
-                            deffered.resolve();
-                        }, function (error) {
-                            deffered.reject(error);
-                        });
-                }, function (error) {
-                    deffered.reject(error);
-                })
+                if(["cSC1VV8uMh9","Znn30Q67yDO","OBnVfEenAuW"].indexOf(data.dataSet) > -1){
+                    this.getUser().then(function (user) {
+                        var notExecuted = {
+                            name: user.name,
+                            creationDate: new Date()
+                        }
+                        $http.post(DHIS2URL + "api/dataStore/notExecuted/" + data.dataSet + "_" + data.orgUnit + "_" + data.period, notExecuted)
+                            .then(function (results) {
+                                deffered.resolve();
+                            }, function (error) {
+                                deffered.reject(error);
+                            });
+                    }, function (error) {
+                        deffered.reject(error);
+                    })
+                }else{
+                    deffered.resolve();
+                }
                 return deffered.promise;
             },
             undoDataSetReport: function (data, goDeep) {

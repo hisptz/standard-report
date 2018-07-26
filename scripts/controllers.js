@@ -904,7 +904,8 @@ var appControllers = angular.module('appControllers', [])
                                 toaster.pop('error', "Error" + error.status, "Archive not available.");
                             }
                         } else {
-                            if (error.data.httpStatusCode == 403) {
+                            console.log(error);
+                            if (error.status == 403) {
                                 toaster.pop('error', "Error" + error.status, "Access to archive is denied. Please contact Administrator for access.");
                             }
                         }
@@ -1038,6 +1039,47 @@ var appControllers = angular.module('appControllers', [])
                 })
                 return returnValue;
             }
+            $scope.lockReports = true;
+            function getFormattedDate(date) {
+                date = new Date(date);
+                var month = date.getMonth() + 1;
+                var newDate = date.getFullYear() + "-" + ((month > 9) ? month : '0' + month) + '-01';
+                return new Date(newDate)
+            }
+
+            function getEndOfFinancialYearDate(date) {
+                date = new Date(date);
+                var year;
+                if (date.getMonth() + 1 >= 7) {
+                    year = date.getFullYear() + 1;
+                } else {
+                    year = date.getFullYear();
+                }
+                return new Date(year + '-06-30');
+            }
+            function getLastDate(period){
+                if(period.indexOf("July") > -1){
+                    return new Date(parseInt(period.substr(0,4)),5,30);
+                }else if(period.indexOf("Q") > -1){
+                    return new Date(parseInt(period.substr(0,4)),parseInt(period.substr(5)) * 3,0);
+                }else{
+                    return new Date(parseInt(period.substr(0,4)),parseInt(period.substr(4)),0);
+                }
+            }
+            $http.get(DHIS2URL + "api/27/systemSettings").then(function (results) {
+                var numberOfMonth = parseInt(results.data.numberOfMonthAfterEndOfFinancialYearToLockReportCreation);
+                var endOfFinancialYear = getEndOfFinancialYearDate(getLastDate($routeParams.period));
+                endOfFinancialYear.setMonth(endOfFinancialYear.getMonth() + (numberOfMonth + 1));
+                endOfFinancialYear = getFormattedDate(endOfFinancialYear);
+                var blockingDateOfDataEntryForm = new Date();
+                if (blockingDateOfDataEntryForm > endOfFinancialYear) {
+                    $scope.lockReports = true;
+                } else {
+                    $scope.lockReports = false;
+                }
+            }, function () {
+                $scope.lockReports = true;
+            });
             $http.get(DHIS2URL + "api/26/organisationUnits/" + $routeParams.orgUnit + ".json?fields=id,name,path,ancestors,level,parent,children[id,name]")
                 .then(function (results) {
                     $scope.data.organisationUnit = results.data;
@@ -1397,6 +1439,16 @@ var appControllers = angular.module('appControllers', [])
                                     }
                                 });
                                 $scope.progressValue = $scope.progressValue + progressFactor;
+                                if(wardLevel.indexOf("nFLm89oomS1") > -1){
+                                    alert("nFLm89oomS1");
+                                }
+                                wardLevel.forEach(function(id){
+                                    if($scope.dataElementsData[id]){
+                                        if(parseFloat($scope.dataElementsData[id]) == 0){
+                                            $scope.dataElementsData[id] = "";
+                                        }
+                                    }
+                                })
                             },function(){
                                 console.log("Error1;")
                             }));
@@ -2009,9 +2061,9 @@ var appControllers = angular.module('appControllers', [])
                             $scope.wardLevelIndicator.push(idMacth[1]);
                         }
                         if (match[0].indexOf("integer") > -1) {
-                            newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "\"]) | removeNaN |comma}}</div>");
+                            newHtml = newHtml.replace(match[0], "<div>{{Int(dataElementsData[\"" + idMacth[1] + "\"]) | removeNaNInd |comma}}</div>");
                         } else {
-                            newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "\"] | removeNaN |comma}}</div>");
+                            newHtml = newHtml.replace(match[0], "<div>{{dataElementsData[\"" + idMacth[1] + "\"] | removeNaNInd |comma}}</div>");
                         }
                         $scope.dataElements.push(idMacth[1]);
                     }
