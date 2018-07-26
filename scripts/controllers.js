@@ -1067,15 +1067,19 @@ var appControllers = angular.module('appControllers', [])
                 }
             }
             $http.get(DHIS2URL + "api/27/systemSettings").then(function (results) {
-                var numberOfMonth = parseInt(results.data.numberOfMonthAfterEndOfFinancialYearToLockReportCreation);
-                var endOfFinancialYear = getEndOfFinancialYearDate(getLastDate($routeParams.period));
-                endOfFinancialYear.setMonth(endOfFinancialYear.getMonth() + (numberOfMonth + 1));
-                endOfFinancialYear = getFormattedDate(endOfFinancialYear);
-                var blockingDateOfDataEntryForm = new Date();
-                if (blockingDateOfDataEntryForm > endOfFinancialYear) {
-                    $scope.lockReports = true;
-                } else {
+                if(parseInt(results.data.numberOfMonthAfterEndOfFinancialYearToLockReportCreation) < 0){
                     $scope.lockReports = false;
+                }else{
+                    var numberOfMonth = parseInt(results.data.numberOfMonthAfterEndOfFinancialYearToLockReportCreation);
+                    var endOfFinancialYear = getEndOfFinancialYearDate(getLastDate($routeParams.period));
+                    endOfFinancialYear.setMonth(endOfFinancialYear.getMonth() + (numberOfMonth + 1));
+                    endOfFinancialYear = getFormattedDate(endOfFinancialYear);
+                    var blockingDateOfDataEntryForm = new Date();
+                    if (blockingDateOfDataEntryForm > endOfFinancialYear) {
+                        $scope.lockReports = true;
+                    } else {
+                        $scope.lockReports = false;
+                    }
                 }
             }, function () {
                 $scope.lockReports = true;
