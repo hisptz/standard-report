@@ -1518,6 +1518,8 @@ var appServices = angular.module('appServices', ['ngResource'])
             createDataSetReport: function (data) {
                 var deffered = $q.defer();
                 if(["cSC1VV8uMh9","Znn30Q67yDO","OBnVfEenAuW"].indexOf(data.dataSet) > -1){
+                    /*console.log("Sending:",data.dataSet + "_" + data.orgUnit + "_" + data.period);
+                    deffered.resolve();*/
                     this.getUser().then(function (user) {
                         var notExecuted = {
                             name: user.name,
@@ -1527,7 +1529,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                             .then(function (results) {
                                 deffered.resolve();
                             }, function (error) {
-                                deffered.reject(error);
+                                deffered.resolve();
                             });
                     }, function (error) {
                         deffered.reject(error);
@@ -1644,8 +1646,9 @@ var appServices = angular.module('appServices', ['ngResource'])
             delete: function (dataSet, orgUnit, period) {
                 var deffered = $q.defer();
                 if(this.isValidPeriod(dataSet, period)){
+                    var that = this;
                     this.deleteNotExecuted(dataSet, orgUnit, period).then(function(){
-                        this.deleteAppoval(dataSet, orgUnit, period).then(function(){
+                        that.deleteAppoval(dataSet, orgUnit, period).then(function(){
                             $http.delete(DHIS2URL + "api/dataStore/notExecuted/" + dataSet + "_" + orgUnit + "_" + period).then(function () {
                                 deffered.resolve();
                             }, function (error) {
