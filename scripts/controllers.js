@@ -418,7 +418,6 @@ var appControllers = angular.module('appControllers', [])
             var foundDistrictReports = false;
             var requests = [];
             $scope.sourceDataSets.forEach(function(sourceDataSet){
-                console.log(sourceDataSet,sourceDataSet.displayName);
                 if(isReport(sourceDataSet) && sourceDataSet.displayName.indexOf('Integrated') == -1){
                     foundDistrictReports = true;
                     $scope.getOrganisationUnitPeriods(sourceDataSet).forEach(function(organisationUnitPeriod){
@@ -904,7 +903,6 @@ var appControllers = angular.module('appControllers', [])
                                 toaster.pop('error', "Error" + error.status, "Archive not available.");
                             }
                         } else {
-                            console.log(error);
                             if (error.status == 403) {
                                 toaster.pop('error', "Error" + error.status, "Access to archive is denied. Please contact Administrator for access.");
                             }
