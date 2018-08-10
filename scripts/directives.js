@@ -2040,7 +2040,15 @@ var appDirectives = angular.module('appDirectives', [])
                                                 var previousVal = "";
                                                 for (var counter = 1; counter < span; counter++) {
                                                     if (!$(elem[0].children[index + counter].children[i]).hasClass('hidden')) {
-                                                        elem[0].children[index].children[i].innerHTML = (parseFloat(elem[0].children[index].children[i].innerHTML) + parseFloat(elem[0].children[index + counter].children[i].innerHTML)).toFixed(1);
+                                                        var first = parseFloat(elem[0].children[index].children[i].innerHTML);
+                                                        if(isNaN(first)){
+                                                            first = 0.0;
+                                                        }
+                                                        var second = parseFloat(elem[0].children[index + counter].children[i].innerHTML);
+                                                        if(isNaN(second)){
+                                                            second = 0.0;
+                                                        }
+                                                        elem[0].children[index].children[i].innerHTML = ( first+ second).toFixed(1);
                                                     }
                                                     $(elem[0].children[index + counter].children[i]).addClass('hidden');
                                                     previousVal = elem[0].children[index + counter].children[i + 1].innerHTML;
