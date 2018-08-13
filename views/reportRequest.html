@@ -18,7 +18,14 @@
     .freeTextTable td{
         border: 1px solid lightgrey;
     }
-
+    .criteria #criteria {
+        margin-left: 15px;
+    }
+    @media print {
+        .align-right{
+            text-align:right !important;
+        }
+    }
 </style>
 <div ng-if="error" class="alert alert-danger" role="alert">
     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
@@ -56,16 +63,6 @@
                        value="Create Report" style="width:120px" ng-click="createDataSetReport()" html-link="">
                 <input type="button" ng-disabled="isNotAuthorized()" value="Preview" ng-click="generateDataSetReport()">
             </div>
-            <style>
-                .criteria #criteria {
-                    margin-left: 15px;
-                }
-                @media print {
-                    .align-right{
-                        text-align:right !important;
-                    }
-                }
-            </style>
             <criteria class="criteria" ng-show="dataCriteria"></criteria>
             <!--<div ng-if="!statusReturn.canCreate && statusReturn.create" class="alert alert-danger" role="alert">
                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
