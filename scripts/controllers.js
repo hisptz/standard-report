@@ -384,20 +384,26 @@ var appControllers = angular.module('appControllers', [])
         };
         $scope.createDataSetReport = function () {
             $scope.statusReturn.create = true;
-            if($scope.statusReturn.canCreate){
+            $scope.createAllReports().then(function(){
                 ReportService.createDataSetReport({
                     orgUnit: $routeParams.orgUnit,
                     period: $routeParams.period,
                     dataSet: $routeParams.dataSet
                 }).then(function () {
                     $scope.reportStatus = "Not Executed";
+                    $scope.statusReturn.create = false;
+
                 }, function () {
                     toaster.pop('error', "Error", "Error Loading Data. Please try again.");
+                    $scope.statusReturn.create = false;
                 });
-                $scope.createAllReports();
+            })
+            /*$scope.statusReturn.create = true;
+            if($scope.statusReturn.canCreate){
+
             }else{
                 toaster.pop('error', "Error", "Error creating Report. To create this reports make sure the previous reports have been created.");
-            }
+            }*/
         };
         $scope.status = {};
         $scope.cancelAllReportCreation = function(){
@@ -414,6 +420,7 @@ var appControllers = angular.module('appControllers', [])
             return ret;
         }
         $scope.createAllReports = function(){
+            var deffered = $q.defer();
             $scope.createAllReportLoading = true;
             var foundDistrictReports = false;
             var requests = [];
@@ -448,12 +455,14 @@ var appControllers = angular.module('appControllers', [])
                     if($scope.onReportsCreated){
                         $scope.onReportsCreated();
                     }
+                    deffered.resolve();
                 }, function (result) {
                     toaster.pop('success', "Report Created", "District Reports creation has been scheduled successfully.");
                     $scope.createAllReportLoading = false;
                     if($scope.onReportsCreated){
                         $scope.onReportsCreated();
                     }
+                    deffered.resolve();
                 })
             }else{
                 $scope.notCompleted = {};
@@ -527,22 +536,32 @@ var appControllers = angular.module('appControllers', [])
                                 })
                             }
                             if(Object.keys($scope.notCompleted).length == 0){
-                                $scope.createDistrictReports();
+                                $scope.createDistrictReports().then(function(){
+                                    deffered.resolve();
+                                },function(){
+                                    deffered.resolve();
+                                });
                             }else{
                                 $scope.createAllReportLoading = false;
+                                deffered.resolve();
                             }
                         }, function (error) {
                             $scope.createAllReportLoading = false;
+                            deffered.resolve();
                         });
                     }, function (error) {
                         $scope.createAllReportLoading = false;
+                        deffered.resolve();
                     });
                 }, function (error) {
                     $scope.createAllReportLoading = false;
+                    deffered.resolve();
                 });
             }
+            return deffered.promise;
         }
         $scope.createDistrictReports = function(){
+            var deffered = $q.defer();
             $scope.createAllReportLoading = true;
             var promises = [];
             $scope.reportCreation.forEach(function(data){
@@ -551,10 +570,13 @@ var appControllers = angular.module('appControllers', [])
             $q.all(promises).then(function (result) {
                 toaster.pop('success', "Report Created", "District Reports creation has been scheduled successfully.");
                 $scope.createAllReportLoading = false;
+                deffered.resolve();
             }, function (result) {
                 toaster.pop('success', "Report Created", "District Reports creation has been scheduled successfully.");
                 $scope.createAllReportLoading = false;
-            })
+                deffered.resolve();
+            });
+            return deffered.promise;
         }
         $scope.createDataSetReportParamsSingle = function (orgUnit,period,dataSet,st) {
             var deffered = $q.defer();

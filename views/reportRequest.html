@@ -62,15 +62,18 @@
                 }
             </style>
             <criteria class="criteria" ng-show="dataCriteria"></criteria>
-            <div ng-if="!statusReturn.canCreate && statusReturn.create" class="alert alert-danger" role="alert">
+            <!--<div ng-if="!statusReturn.canCreate && statusReturn.create" class="alert alert-danger" role="alert">
                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                 <span class="sr-only">Error:</span>
                 Error creating Report. To create this report make sure the previous reports have been created.
-            </div>
-            <div ng-if="dataSet">
+            </div>-->
+            <div ng-if="dataSet && !statusReturn.create">
                 <breakdown-point control="control" show-reports="true" on-done="onDone" user="user" status="status" organisation-unit="data.organisationUnit" set-data-set="dataSet" on-reports-created="afterAllReportCreated">
 
                 </breakdown-point>
+            </div>
+            <div ng-if="statusReturn.create">
+                <img src="../../../images/ajax-loader-bar.gif"> Scheduling of Report for Creation...
             </div>
         </div>
 
