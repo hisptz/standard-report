@@ -60,6 +60,11 @@
                 .criteria #criteria {
                     margin-left: 15px;
                 }
+                @media print {
+                    .align-right{
+                        text-align:right !important;
+                    }
+                }
             </style>
             <criteria class="criteria" ng-show="dataCriteria"></criteria>
             <!--<div ng-if="!statusReturn.canCreate && statusReturn.create" class="alert alert-danger" role="alert">
