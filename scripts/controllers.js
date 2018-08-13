@@ -2045,7 +2045,7 @@ var appControllers = angular.module('appControllers', [])
                                 if (match[0].indexOf("choice") > -1) {
                                     newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' choice='true' org-unit='orgUnit'></div>");
                                 } else {
-                                    newHtml = newHtml.replace(match[0], "<div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' org-unit='orgUnit'></div>");
+                                    newHtml = newHtml.replace(match[0], "<div style='display:none'>Yey</div><div list-by-ward='listByWardData[\"" + idMacth[1] + "." + idMacth[2] + "\"]' org-unit='orgUnit'></div>");
                                 }
                             }
                             $scope.listByWard.push(idMacth[1] + "." + idMacth[2]);
