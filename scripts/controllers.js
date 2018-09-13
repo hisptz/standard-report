@@ -334,6 +334,7 @@ var appControllers = angular.module('appControllers', [])
         $scope.downloadExcel = function(){
             ReportService.downloadExcel($scope.dataSet.name,$scope.data.organisationUnit.name,$routeParams.period);
         };
+
         $scope.user = {};
         $scope.data = {};
         $scope.load = function (url) {
@@ -1222,6 +1223,7 @@ var appControllers = angular.module('appControllers', [])
         $scope.downloadExcel = function(){
             ReportService.downloadExcel($scope.dataSet.name,$scope.orgUnit.name,$routeParams.period);
         };
+
         $scope.getListByWardData= function (dataSet,newChildren) {
             var deffered = $q.defer();
             $http.get(DHIS2URL + "api/26/dataValueSets.json?dataSet=" + dataSet + "&orgUnit=" + $routeParams.orgUnit + "," + newChildren.join(",") + "&children=true&period=" + $routeParams.period)
@@ -2740,4 +2742,7 @@ var appControllers = angular.module('appControllers', [])
         }
 
         //}
+    })
+    .controller("StaticTableController", function($scope, $interval, DHIS2URL, $http) {
+        $scope.StaticTableMessage = 'Static Tables goes here';
     });
