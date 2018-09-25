@@ -2743,6 +2743,516 @@ var appControllers = angular.module('appControllers', [])
 
         //}
     })
-    .controller("StaticTableController", function($scope, $interval, DHIS2URL, $http) {
-        $scope.StaticTableMessage = 'Static Tables goes here';
+    .controller('StaticTableController', function($scope, $interval, DHIS2URL, $http) {
+        $scope.showCrops = false;
+        $scope.showLivestock = false;
+        $scope.showAnimalProducts = false;
+
+        $scope.cropsList = [
+            {
+                name: "1.1 Cereals",
+                groupItems: [
+                    {
+                        name: "Maize",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Paddy",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Sorghum",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Bulrush Millet",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Finger Millet",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Wheat",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Barley",
+                        url: "crop-production"
+                    }
+                ]
+            },
+            {
+                name: "1.2 Roots and Tubers",
+                groupItems: [
+                    {
+                        name: "Cassava",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Sweet Potato",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Irish Potato",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Yam",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Coco Yam",
+                        url: "crop-production"
+                    }
+                ]
+            },
+            {
+                name: "1.3 Industrial Crops",
+                groupItems: [
+                    {
+                        name: "Seed Cotton",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Tobacco",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Coffee",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Tea",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Pyrethrum",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Cocoa",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Rubber",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Wattle",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Sugar Cane",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Jute",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Sisal",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Cashewnut",
+                        url: "crop-production"
+                    }
+                ]
+            },
+            {
+                name: "1.4 Oil Crops",
+                groupItems: [
+                    {
+                        name: "Sunflower",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Simsim/ Sesame",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Groundnut",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Palm oil",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Coconut",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Soya Bean",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Castor Oil Seed",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Jatropha",
+                        url: "crop-production"
+                    }
+                ]
+            },
+            {
+                name: "1.5 Pulse",
+                groupItems: [
+                    {
+                        name: "Cow Pea (Kunde)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Green/Black (Choroko)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Garden Pea (Njegere)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Chick Pea/ Lenti (Dengu)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Bambara Nut (Njugu mawe)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Bean (Maharage)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Pigeon Pea (Mbaazi)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Gwara (Lablab bean)",
+                        url: "crop-production"
+                    }
+                ]
+            },
+            {
+                name: "1.6 Spices",
+                groupItems: [
+                    {
+                        name: "Ginger (Tangawizi)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Black pepper (Pilipili manga)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Coriander (Giligilani)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Cinnamon (Mdalasini)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Turmeric (Binzari)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Vanilla",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Chili pepper (Pilipili kali)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Clove (Karafuu)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Garlic (Vitunguu swaumu)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Cardamon (Iliki)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Paprika",
+                        url: "crop-production"
+                    }
+                ]
+            },
+            {
+                name: "1.7 Vegetables",
+                groupItems: [
+                    {
+                        name: "Amaranthus (Mchicha)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Mashroom (Uyoga)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Cauliflower",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Cabbage",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Spinach",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Chinese cabbage",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Tomato",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Eggplant (Biringanya)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Onion",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Sweet pepper (Pilipili hoho)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Carrot",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "African eggplant (Nyanya Chungu)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Black night shade (Mnafu)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Kale (Figiri)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Leek",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Swiss chard (Saladi)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Okra (Bamia)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Cucumber (Matango)",
+                        url: "crop-production"
+                    }
+                ]
+            },
+            {
+                name: "1.8 Fruits",
+                groupItems: [
+                    {
+                        name: "Sweet banana",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Banana (Plaintain)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Mango",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Pawpaw",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Orange",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Tangerine (Machenza)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Guava (Mapera)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Apple",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Pineapple",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Avocado (Parachichi)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Water melon (Tikiti maji)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Lemon (Limau)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Lime (Ndimu)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Plum (Tunda damu)",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Pear",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Passion fruit",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Grape (Zabibu)",
+                        url: "crop-production"
+                    }
+                ]
+            },
+            {
+                name: "1.9 Flowers",
+                groupItems: [
+                    {
+                        name: "Rose",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Chrysanthemum",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Carnation",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Aster",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Gypsophyla",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Ginger rose",
+                        url: "crop-production"
+                    },
+                    {
+                        name: "Helianthus",
+                        url: "crop-production"
+                    }
+                ]
+            },
+            {
+                name: "1.10 Others",
+                groupItems: [
+                    {
+                        name: "Rozella",
+                        url: "crop-production"
+                    }
+                ]
+            }
+        ];
+
+        $scope.livestockList = [
+            {
+                name: "Livestock",
+                groupItems: [
+                    {
+                        name: "Livestock Population",
+                        url: ""
+                    },
+                    {
+                        name: "Livestock Slaughtered",
+                        url: ""
+                    }
+                ]
+            }
+        ];
+
+        $scope.animalProductsList = [
+            {
+                name: "Animal Products",
+                groupItems: [
+                    {
+                        name: "Eggs",
+                        url: ""
+                    },
+                    {
+                        name: "Milk",
+                        url: ""
+                    },
+                    {
+                        name: "Hide and Skin",
+                        url: ""
+                    }
+                ]
+            }
+        ];
+
+        $scope.onToggleCropsVisibility = function(e){
+            if (e) {
+                e.stopPropagation()
+            }
+            if ($scope.showCrops == true) {
+                $scope.showCrops = false
+            } else {
+                $scope.showCrops = true
+            }
+        }
+
+        $scope.onToggleLivestockVisibility = function(e){
+            if (e) {
+                e.stopPropagation()
+            }
+            if ($scope.showLivestock == true) {
+                $scope.showLivestock = false
+            } else {
+                $scope.showLivestock = true
+            }
+        }
+
+        $scope.onToggleAnimalProductsVisibility = function(e){
+            if (e) {
+                e.stopPropagation()
+            }
+            if ($scope.showAnimalProducts == true) {
+                $scope.showAnimalProducts = false
+            } else {
+                $scope.showAnimalProducts = true
+            }
+        }
+
+        $scope.downloadExcel = function(itemName, url){
+            if (url == ""){
+                window.open('../ards-report-archive/out-put-file/' + itemName.replace(/\//g, '-').replace(/\)/g, '-').replace(/\(/g, '-') +'.xlsx', '_blank');
+            } else if (url !== ""){
+                window.open('../ards-report-archive/out-put-file/' + url + '-' + itemName.replace(/\//g, '-').replace(/\)/g, '-').replace(/\(/g, '-') +'.xlsx', '_blank');
+            }
+        };
+
+
     });
