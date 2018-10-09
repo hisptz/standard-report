@@ -74,7 +74,10 @@ angular.module('app',
             controller:'SubmissionStatusReportController'
         }).when('/dataApproval', {
             templateUrl: 'views/dataApproval/dataApproval.html',
-            controller:'DataApprovalController'
+            controller: 'DataApprovalController'
+        }).when('/staticTable', {
+            templateUrl:'views/staticTable/staticTable.html',
+            controller: 'StaticTableController'
         }).otherwise({
             redirectTo: '/'
         });

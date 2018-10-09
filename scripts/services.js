@@ -1766,6 +1766,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                 }
                 return userDeffered.promise;
             },
+
             downloadExcel: function (dataSetName, organisationUnitName, period) {
                 var date = new Date();
                 var dateStr = date.getDate();
