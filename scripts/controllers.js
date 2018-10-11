@@ -334,7 +334,6 @@ var appControllers = angular.module('appControllers', [])
         $scope.downloadExcel = function(){
             ReportService.downloadExcel($scope.dataSet.name,$scope.data.organisationUnit.name,$routeParams.period);
         };
-
         $scope.user = {};
         $scope.data = {};
         $scope.load = function (url) {
@@ -911,10 +910,27 @@ var appControllers = angular.module('appControllers', [])
                     }
                     return returnValue;
                 }
+                function getFinancialPeriod(period){
+                    if(period.indexOf('July') > -1){
+                        return period;
+                    }else if(period.indexOf('Q') > -1){
+                        if(['1','2'].indexOf(period.substr(5)) > -1){
+                            return (parseInt(period.substr(0,4)) - 1) + 'July';
+                        }else{
+                            return period.substr(0,4) + 'July';
+                        }
+                    }else{
+                        if(['01','02','03','04','05','06'].indexOf(period.substr(4)) > -1){
+                            return (parseInt(period.substr(0,4)) - 1) + 'July';
+                        }else{
+                            return period.substr(0,4) + 'July';
+                        }
+                    }
+                }
                 $http.get(DHIS2URL + "api/26/dataStore/executed/" + $routeParams.dataSet + "_" + $routeParams.orgUnit + "_" + $routeParams.period).then(function (results) {
                     $scope.reportStatus = "Executed";
                     $http.get(
-                        '../ARDS-Archive/' + $routeParams.dataSet + '_' + $routeParams.orgUnit + '_' + $routeParams.period + '.html',
+                        '../ARDS-Archive/' + getFinancialPeriod($routeParams.period)+ '/' + $routeParams.dataSet + '_' + $routeParams.orgUnit + '_' + $routeParams.period + '.html',
                         {headers: {'Cache-Control': 'no-cache'}}).then(function (result) {
                         $scope.file = $sce.trustAsHtml(result.data);
                         $scope.loadFile = true;
@@ -1223,7 +1239,6 @@ var appControllers = angular.module('appControllers', [])
         $scope.downloadExcel = function(){
             ReportService.downloadExcel($scope.dataSet.name,$scope.orgUnit.name,$routeParams.period);
         };
-
         $scope.getListByWardData= function (dataSet,newChildren) {
             var deffered = $q.defer();
             $http.get(DHIS2URL + "api/26/dataValueSets.json?dataSet=" + dataSet + "&orgUnit=" + $routeParams.orgUnit + "," + newChildren.join(",") + "&children=true&period=" + $routeParams.period)
@@ -1671,7 +1686,7 @@ var appControllers = angular.module('appControllers', [])
                                             } else {
                                                 $scope.cumulativeToDateData[row[0]] = "" + parseFloat(row[3]).toFixed(1);
                                             }
-
+                                            $scope.cumulativeToDateData[row[0]] = "0";
                                         });
                                         $scope.progressValue = $scope.progressValue + progressFactor;
                                     }));
@@ -1690,7 +1705,7 @@ var appControllers = angular.module('appControllers', [])
                                             } else {
                                                 $scope.cumulativeToDateData[row[0]] = "" + parseFloat(row[2]).toFixed(1);
                                             }
-
+                                            $scope.cumulativeToDateData[row[0]] = "0";
                                         });
                                         $scope.progressValue = $scope.progressValue + progressFactor;
                                     }));
@@ -1708,13 +1723,13 @@ var appControllers = angular.module('appControllers', [])
                             promises.push($http.get(DHIS2URL + "api/26/analytics.json?dimension=dx:" + $scope.cumulativeToDateWardLevel.slice(i, i + batch).join(";") + "&dimension=pe:" + pes.join(";") + "&dimension=ou:" + level + $routeParams.orgUnit)
                                 .then(function (analyticsResults) {
                                     analyticsResults.data.rows.forEach(function (row) {
-                                        if ($scope.cumulativeToDateData[row[0]]) {
+                                        /*if ($scope.cumulativeToDateData[row[0]]) {
                                             $scope.cumulativeToDateData[row[0]] = (parseFloat($scope.cumulativeToDateData[row[0]]) + parseFloat(row[3])).toFixed(1) + 1;
                                             $scope.cumulativeToDateData[row[0]] = "" + parseFloat($scope.cumulativeToDateData[row[0]]).toFixed(1);
                                         } else {
                                             $scope.cumulativeToDateData[row[0]] = "" + parseFloat(row[3]).toFixed(1);
-                                        }
-
+                                        }*/
+                                        $scope.cumulativeToDateData[row[0]] = "0";
                                     });
                                     $scope.progressValue = $scope.progressValue + progressFactor;
                                 }));
