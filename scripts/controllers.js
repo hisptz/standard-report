@@ -3255,4 +3255,9 @@ var appControllers = angular.module('appControllers', [])
         };
 
 
+        $scope.date = new Date();
+
+        $scope.currentYear = $scope.date.getFullYear();
+
+
     });
