@@ -3264,7 +3264,6 @@ var appControllers = angular.module('appControllers', [])
         $scope.downloadExcel = function(itemName, url){
             if (url == ""){
                 window.open('../ards-report-archive/out-put-file/' + itemName.toLocaleLowerCase().split(' ').join('-') + '.xlsx', '_blank');
-
             } else if (url !== ""){
                 window.open('../ards-report-archive/out-put-file/' + url + '-' + itemName.replace(/\//g, '-').replace(/\)/g, '-').replace(/\(/g, '-') +'.xlsx', '_blank');
             }
