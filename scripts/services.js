@@ -103,7 +103,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                         this.list = [];
                         var testDate = new Date();
 
-                        for (var i = date.getFullYear() - 5; i < date.getFullYear() + 5; i++) {
+                        for (var i = date.getFullYear() ; i < date.getFullYear(); i++) {
                             if ((i == testDate.getFullYear() && (testDate.getMonth() + 1) < 7) || (i == (testDate.getFullYear() - 1) && (testDate.getMonth() + 1) < 7) || i > testDate.getFullYear()) {
                                 continue;
                             }

@@ -167,7 +167,7 @@ var appControllers = angular.module('appControllers', [])
                         this.list = [];
                         var testDate = new Date();
 
-                        for (var i = this.currentDate.getFullYear() - 4; i <= this.currentDate.getFullYear(); i++) {
+                        for (var i = this.currentDate.getFullYear(); i <= this.currentDate.getFullYear(); i++) {
                             if (i == date.getFullYear() && date.getMonth() < 7) {
                                 continue;
                             }
