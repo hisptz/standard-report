@@ -1855,7 +1855,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                                 $(this).text($(this).text().replace(/&/g, "&amp;").replace(/"/g, '&quot;'));//.replace(/'/g, '&apos;'));
                             }
                             if ($(this).css('display') == 'none') {
-                                this.remove();
+                                this.empty();
                             }
                         }));
                         //Remove rowspans in excel
