@@ -1,0 +1,17 @@
+<h4>Static Table Generation</h4>
+<p>Static tables generation updates update</p>
+<button ng-disabled="isProcessActive" ng-click="startStaticTableGeneration()">Start</button>&nbsp;&nbsp;&nbsp;<button
+    ng-click="backToStatictTableList()">Back</button>
+<div class="row">
+    <div class="col-12" style="margin-top: 15px; background-color: #f9edbe; min-height: 100px; width: 90%; border: 1px solid #dbae56;">
+        <span>Status : <img ng-if="isProcessActive" src="../../../images/ajax-loader-bar.gif">
+            <img ng-if="!isProcessActive" src="../../../images/completed.png"> </span>
+        <table>
+            <tr ng-repeat="log in logs | orderBy:'time':true">
+                <td>
+                    {{ log.time }} : {{ log.message }} &nbsp;&nbsp;&nbsp;
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
