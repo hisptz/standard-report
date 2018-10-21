@@ -2816,18 +2816,51 @@ var appControllers = angular.module('appControllers', [])
         var subscription;
         $scope.logs = []
         $scope.isProcessActive = true;
+        $scope.periods = [];
         $scope.reportPeriod = `${new Date().getFullYear() - 1}July`;
         var subscription = subscription || null;
 
         $http.get(DHIS2URL + 'api/dataStore/ardsStaticTable/status').success(function (response) {
             $scope.logs = response.logs;
             $scope.isProcessActive = response.isProcessActive;
+            var startPeriod = response.startPeriod;
+            getPeriods(startPeriod);
             checkingStatus();
         });
+
+        
+
+        function getPeriods(startPeriod) {
+            $scope.periods = [];
+            var maxIterationCount = new Date().getFullYear() - startPeriod;
+            var periods = []
+            for(var i= 0; i < maxIterationCount; i ++){
+                var year = startPeriod + i;
+                periods = [...periods,{name : `${year} July - ${year +1} June`,value :`${year}July` }]
+            }
+            $scope.periods = periods.reverse();
+        }
+
+        $scope.cancelStaticTableGeneration = function(){       
+            $scope.isProcessActive = false;     
+            $http.get(DHIS2URL + 'api/dataStore/ardsStaticTable/status').success(function (response) {
+                $scope.isProcessActive = false;
+                response = { ...response,
+                    reportPeriod: "",
+                    shouldStart: false, isProcessActive : $scope.isProcessActive
+                };
+                if (subscription) {
+                    clearInterval(subscription)
+                }
+                $http.put(DHIS2URL + "api/dataStore/ardsStaticTable/status", response)
+                .then(function (results) {});
+            });
+        }
 
         $scope.startStaticTableGeneration = function () {
             $http.get(DHIS2URL + 'api/dataStore/ardsStaticTable/status').success(function (response) {
                 response = { ...response,
+                    
                     reportPeriod: $scope.reportPeriod,
                     shouldStart: true
                 };
@@ -2853,7 +2886,11 @@ var appControllers = angular.module('appControllers', [])
 
         function startProcess(data) {
             $http.put(DHIS2URL + "api/dataStore/ardsStaticTable/status", data)
-                .then(function (results) {});
+                .then(function (results) {
+                    if (!subscription) {
+                        checkingStatus();
+                    }
+                });
         }
     })
 
