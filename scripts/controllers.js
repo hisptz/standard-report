@@ -2758,11 +2758,56 @@ var appControllers = angular.module('appControllers', [])
 
         //}
     })
-    .controller('StaticTableController', function($scope, $interval, DHIS2URL, $http) {
+    .controller('StaticTableDebugController', function ($scope, DHIS2URL, $http,$window) {
+        var subscription;
+        $scope.logs = []
+        $scope.isProcessActive = false;
+        $scope.reportPeriod = `${new Date().getFullYear() - 1}July`;
+        var subscription = subscription || null;
+
+        checkingStatus();
+
+        $scope.startStaticTableGeneration = function () {
+            console.log(subscription)
+            if(subscription){
+                clearInterval(subscription)
+            }
+            $http.get(DHIS2URL + 'api/dataStore/ardsStaticTable/status').success(function (response) {
+                response = {...response, logs : [],reportPeriod : $scope.reportPeriod, shouldStart : true};
+                startProcess(response);
+            });           
+        }
+
+        function checkingStatus(){
+            subscription = setInterval(function () {
+                $http.get(DHIS2URL + 'api/dataStore/ardsStaticTable/status').success(function (response) {
+                    $scope.logs = response.logs;
+                    $scope.isProcessActive = response.isProcessActive;                         
+                })
+            }, 2000);
+        }
+
+        $scope.backToDebagList = function(){
+            console.log(subscription)
+            if(subscription){
+                clearInterval(subscription)
+            }
+            
+            $window.location.href='#/staticTable';            
+        }
+
+        function startProcess(data){            
+            $http.put(DHIS2URL + "api/dataStore/ardsStaticTable/status", data)
+                .then(function (results) {                    
+                   
+                });
+        }
+    })
+    
+    .controller('StaticTableController', function($scope, $interval, DHIS2URL, $http,$window) {
         $scope.showCrops = false;
         $scope.showLivestock = false;
         $scope.showAnimalProducts = false;
-
         $scope.cropsList = [
             {
                 name: "1.1 Cereals",

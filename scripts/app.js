@@ -3,22 +3,22 @@
 /* App Module */
 
 angular.module('app',
-    ['ui.bootstrap',
-        'ngRoute',
-        'ngCookies',
-        'ngSanitize',
-        'appDirectives',
-        'appControllers',
-        'appServices',
-        'appFilters',
-        'd2Services',
-        'd2Controllers',
-        'pascalprecht.translate',
-        'd2HeaderBar', 'FileManagerApp', 'toaster'
-    ])
+        ['ui.bootstrap',
+            'ngRoute',
+            'ngCookies',
+            'ngSanitize',
+            'appDirectives',
+            'appControllers',
+            'appServices',
+            'appFilters',
+            'd2Services',
+            'd2Controllers',
+            'pascalprecht.translate',
+            'd2HeaderBar', 'FileManagerApp', 'toaster'
+        ])
 
     .value('DHIS2URL', '../../../')
-    .config(function ($translateProvider, $routeProvider, fileManagerConfigProvider,$httpProvider) {
+    .config(function ($translateProvider, $routeProvider, fileManagerConfigProvider, $httpProvider) {
         var defaults = fileManagerConfigProvider.$get();
         fileManagerConfigProvider.set({
             appName: 'Report Archive Manager',
@@ -59,25 +59,28 @@ angular.module('app',
             templateUrl: 'views/archive.html'
         }).when('/customReport', {
             templateUrl: 'views/customReport/customReport.html',
-            controller:'CustomReportController'
+            controller: 'CustomReportController'
         }).when('/customReport/:uid/create', {
             templateUrl: 'views/customReport/createCustomReport.html',
-            controller:'CreateCustomReportController'
+            controller: 'CreateCustomReportController'
         }).when('/customReport/:uid/render', {
             templateUrl: 'views/customReport/renderCustomReport.html',
-            controller:'CreateCustomReportController'
+            controller: 'CreateCustomReportController'
         }).when('/customReport/new', {
             templateUrl: 'views/customReport/newCustomReport.html',
-            controller:'NewCustomReportController'
+            controller: 'NewCustomReportController'
         }).when('/submissionStatus', {
             templateUrl: 'views/submissionStatus/submissionStatus.html',
-            controller:'SubmissionStatusReportController'
+            controller: 'SubmissionStatusReportController'
         }).when('/dataApproval', {
             templateUrl: 'views/dataApproval/dataApproval.html',
             controller: 'DataApprovalController'
         }).when('/staticTable', {
-            templateUrl:'views/staticTable/staticTable.html',
+            templateUrl: 'views/staticTable/staticTable.html',
             controller: 'StaticTableController'
+        }).when('/static-table-debug', {
+            templateUrl: 'views/staticTable/staticTableDebug.html',
+            controller: 'StaticTableDebugController'
         }).otherwise({
             redirectTo: '/'
         });
