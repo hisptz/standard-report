@@ -1,7 +1,7 @@
 <h4>Static Table Generation</h4>
 <p>Static tables generation updates update</p>
 <span > Report period : <select style="width:205px"  ng-model="reportPeriod">
-    <option ng-repeat="period in periods" value = "period.value">{{period.name}}</option> {{ reportPeriod }}
+    <option ng-repeat="period in periods" value = "{{period.value}}">{{period.name}}</option>
 </select></span>&nbsp;&nbsp;
 <button ng-disabled="isProcessActive" ng-click="startStaticTableGeneration()">Start</button>&nbsp;&nbsp;<button ng-disabled="!isProcessActive" ng-click="cancelStaticTableGeneration()">Cancel</button>&nbsp;&nbsp;&nbsp;<button
     ng-click="backToStatictTableList()">Back</button>
