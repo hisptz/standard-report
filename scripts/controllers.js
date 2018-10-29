@@ -263,7 +263,7 @@ var appControllers = angular
             var testDate = new Date();
 
             for (
-              var i = this.currentDate.getFullYear();
+              var i = this.currentDate.getFullYear() - 4;
               i <= this.currentDate.getFullYear();
               i++
             ) {
@@ -2876,7 +2876,6 @@ var appControllers = angular
                               $scope.cumulativeToDateData[row[0]] =
                                 '' + parseFloat(row[3]).toFixed(1);
                             }
-                            $scope.cumulativeToDateData[row[0]] = '0';
                           });
                           $scope.progressValue =
                             $scope.progressValue + progressFactor;
@@ -2923,7 +2922,6 @@ var appControllers = angular
                               $scope.cumulativeToDateData[row[0]] =
                                 '' + parseFloat(row[2]).toFixed(1);
                             }
-                            $scope.cumulativeToDateData[row[0]] = '0';
                           });
                           $scope.progressValue =
                             $scope.progressValue + progressFactor;
@@ -2959,13 +2957,22 @@ var appControllers = angular
                       )
                       .then(function(analyticsResults) {
                         analyticsResults.data.rows.forEach(function(row) {
-                          /*if ($scope.cumulativeToDateData[row[0]]) {
-                                            $scope.cumulativeToDateData[row[0]] = (parseFloat($scope.cumulativeToDateData[row[0]]) + parseFloat(row[3])).toFixed(1) + 1;
-                                            $scope.cumulativeToDateData[row[0]] = "" + parseFloat($scope.cumulativeToDateData[row[0]]).toFixed(1);
-                                        } else {
-                                            $scope.cumulativeToDateData[row[0]] = "" + parseFloat(row[3]).toFixed(1);
-                                        }*/
-                          $scope.cumulativeToDateData[row[0]] = '0';
+                          if ($scope.cumulativeToDateData[row[0]]) {
+                            $scope.cumulativeToDateData[row[0]] =
+                              (
+                                parseFloat(
+                                  $scope.cumulativeToDateData[row[0]]
+                                ) + parseFloat(row[3])
+                              ).toFixed(1) + 1;
+                            $scope.cumulativeToDateData[row[0]] =
+                              '' +
+                              parseFloat(
+                                $scope.cumulativeToDateData[row[0]]
+                              ).toFixed(1);
+                          } else {
+                            $scope.cumulativeToDateData[row[0]] =
+                              '' + parseFloat(row[3]).toFixed(1);
+                          }
                         });
                         $scope.progressValue =
                           $scope.progressValue + progressFactor;
@@ -3134,7 +3141,7 @@ var appControllers = angular
                       );
                     });
                   } else {
-                    /*else if ($scope.autogrowingPrograms[programId].lastMonthOfQuarter) {
+                  /*else if ($scope.autogrowingPrograms[programId].lastMonthOfQuarter) {
                                                     var month = parseInt($routeParams.period.substr(5)) * 3;
                                                     if(month < 10){
                                                         month = "0" + month;
@@ -4641,12 +4648,34 @@ var appControllers = angular
       $scope.periods = periods.reverse();
     }
 
+    $scope.cancelStaticTableGeneration = function() {
+      $scope.isProcessActive = false;
+      $http
+        .get(DHIS2URL + 'api/dataStore/ardsStaticTable/status')
+        .success(function(response) {
+          $scope.isProcessActive = false;
+          response = {
+            ...response,
+            reportPeriod: '',
+            shouldStart: false,
+            isProcessActive: $scope.isProcessActive
+          };
+          if (subscription) {
+            clearInterval(subscription);
+          }
+          $http
+            .put(DHIS2URL + 'api/dataStore/ardsStaticTable/status', response)
+            .then(function(results) {});
+        });
+    };
+
     $scope.startStaticTableGeneration = function() {
       $http
         .get(DHIS2URL + 'api/dataStore/ardsStaticTable/status')
         .success(function(response) {
           response = {
             ...response,
+
             reportPeriod: $scope.reportPeriod,
             shouldStart: true
           };
