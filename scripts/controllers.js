@@ -1732,7 +1732,6 @@ var appControllers = angular.module('appControllers', [])
                                             } else {
                                                 $scope.cumulativeToDateData[row[0]] = "" + parseFloat(row[3]).toFixed(1);
                                             }
-                                            $scope.cumulativeToDateData[row[0]] = "0";
                                         });
                                         $scope.progressValue = $scope.progressValue + progressFactor;
                                     }));
@@ -1751,7 +1750,6 @@ var appControllers = angular.module('appControllers', [])
                                             } else {
                                                 $scope.cumulativeToDateData[row[0]] = "" + parseFloat(row[2]).toFixed(1);
                                             }
-                                            $scope.cumulativeToDateData[row[0]] = "0";
                                         });
                                         $scope.progressValue = $scope.progressValue + progressFactor;
                                     }));
@@ -1769,13 +1767,12 @@ var appControllers = angular.module('appControllers', [])
                             promises.push($http.get(DHIS2URL + "api/26/analytics.json?dimension=dx:" + $scope.cumulativeToDateWardLevel.slice(i, i + batch).join(";") + "&dimension=pe:" + pes.join(";") + "&dimension=ou:" + level + $routeParams.orgUnit)
                                 .then(function (analyticsResults) {
                                     analyticsResults.data.rows.forEach(function (row) {
-                                        /*if ($scope.cumulativeToDateData[row[0]]) {
+                                        if ($scope.cumulativeToDateData[row[0]]) {
                                             $scope.cumulativeToDateData[row[0]] = (parseFloat($scope.cumulativeToDateData[row[0]]) + parseFloat(row[3])).toFixed(1) + 1;
                                             $scope.cumulativeToDateData[row[0]] = "" + parseFloat($scope.cumulativeToDateData[row[0]]).toFixed(1);
                                         } else {
                                             $scope.cumulativeToDateData[row[0]] = "" + parseFloat(row[3]).toFixed(1);
-                                        }*/
-                                        $scope.cumulativeToDateData[row[0]] = "0";
+                                        }
                                     });
                                     $scope.progressValue = $scope.progressValue + progressFactor;
                                 }));
