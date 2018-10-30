@@ -1825,7 +1825,10 @@ var appControllers = angular.module('appControllers', [])
                             $scope.progressValue = $scope.progressValue + progressFactor;
                         }));
                 }
-
+                Object.keys($scope.dataElementsData).forEach(function(key){
+                    console.log($scope.dataElementsData[key]);
+                    $scope.dataElementsData[key] = parseFloat($scope.dataElementsData[key]).toFixed(1);
+                })
                 //Wait for data to be loaded
                 $q.all(promises).then(function () {
                     $scope.trustedHtml = trustedHtml;
