@@ -3141,7 +3141,7 @@ var appControllers = angular
                       );
                     });
                   } else {
-                  /*else if ($scope.autogrowingPrograms[programId].lastMonthOfQuarter) {
+                    /*else if ($scope.autogrowingPrograms[programId].lastMonthOfQuarter) {
                                                     var month = parseInt($routeParams.period.substr(5)) * 3;
                                                     if(month < 10){
                                                         month = "0" + month;
@@ -5074,7 +5074,7 @@ var appControllers = angular
             url: 'crop-production'
           },
           {
-            name: 'Avocado (Parachichi)',
+            name: 'Avocado(Parachichi)',
             url: 'crop-production'
           },
           {
