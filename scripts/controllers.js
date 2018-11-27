@@ -2339,14 +2339,14 @@ var appControllers = angular.module('appControllers', [])
                 if ($scope.dataSet == 'OBnVfEenAuW') {
                     return "ANNUAL REPORT "; //(DR03) ";
                 }
-                if ($scope.dataSet == 'HhyM40b8ma1') {
+                if ($scope.dataSet == 'HhyM40b8ma1' || $scope.dataSet == 'VTDXKC9lwqZ') {
                     return "ANNUAL INTEGRATED REPORT ";
                 }
             } else if ($scope.period.indexOf("Q") > -1) {
                 if ($scope.dataSet == 'Znn30Q67yDO') {
                     return "QUARTERLY REPORT "; //(DR02) ";
                 }
-                if ($scope.dataSet == 'QLoyT2aHGes') {
+                if ($scope.dataSet == 'QLoyT2aHGes' || $scope.dataSet == 'oRJJ4PtC7M8') {
                     return "QUARTERLY INTEGRATED REPORT ";
                 }
             } else {
