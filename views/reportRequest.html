@@ -70,7 +70,7 @@
                 Error creating Report. To create this report make sure the previous reports have been created.
             </div>-->
             <div ng-if="dataSet && !statusReturn.create">
-                <breakdown-point control="control" show-reports="true" on-done="onDone" user="user" status="status" organisation-unit="data.organisationUnit" set-data-set="dataSet" on-reports-created="afterAllReportCreated">
+                <breakdown-point control="control" lock-reports="lockReports" show-reports="true" on-done="onDone" user="user" status="status" organisation-unit="data.organisationUnit" set-data-set="dataSet" on-reports-created="afterAllReportCreated">
 
                 </breakdown-point>
             </div>
