@@ -460,7 +460,8 @@ var appDirectives = angular.module('appDirectives', [])
                 onDone:"=",
                 onReportsCreated:"=",
                 showReports:"=",
-                control:"="
+                control:"=",
+                lockReports:"="
             },
             controller: function ($scope, $http,DHIS2URL,$routeParams,ReportService,$q,toaster) {
                 //$scope.status = {};

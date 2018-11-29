@@ -31,7 +31,7 @@ function browserPrint2() {
   setTimeout(function() {
     mywindow.print();
     //mywindow.close();
-  }, 500);
+  }, 1000);
   return true;
 }
 /* Controllers */
