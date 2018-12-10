@@ -1544,7 +1544,17 @@ var appServices = angular.module('appServices', ['ngResource'])
                 var that = this;
                 $http.get(DHIS2URL + "api/dataSets.json?fields=id,periodType&filter=attributeValues.value:like:" + data.dataSet)
                     .then(function (dataSetsResults) {
-                        $http.get(DHIS2URL + "api/organisationUnits/" + data.orgUnit + ".json?fields=id,level,ancestors")
+                            var dataSetsDep = [];
+                            dataSetsResults.data.dataSets.forEach(function (dataSet) {
+                                dataSetsDep.push(dataSet.id)
+                            })
+                        $http.get(DHIS2URL + "api/sqlViews/pYUbwqjhFDT/data.json?var=ds:" + data.dataSet + "&var=dsd:" + dataSetsDep.join("-") + "&var=ou:" + data.orgUnit + "&var=pe:" + data.period)
+                            .then(function (orgUnitResults) {
+                                deffered.resolve(orgUnitResults);
+                            }, function () {
+                                deffered.reject();
+                            });
+                        /*$http.get(DHIS2URL + "api/organisationUnits/" + data.orgUnit + ".json?fields=id,level,ancestors")
                             .then(function (orgUnitResults) {
                                 var promises = [];
                                 promises.push(that.delete(data.dataSet, data.orgUnit, data.period));
@@ -1637,7 +1647,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                                 })
                             }, function () {
                                 deffered.reject();
-                            });
+                            });*/
                     }, function () {
                         deffered.reject();
                     });
