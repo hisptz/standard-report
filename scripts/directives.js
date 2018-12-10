@@ -489,6 +489,16 @@ var appDirectives = angular.module('appDirectives', [])
                 });
                 $scope.createAllReports = function(){
                     $scope.createAllReportLoading = true;
+                    if($scope.organisationUnit.level === 1 || $scope.organisationUnit.level === 2){
+                        $http.get(DHIS2URL + "api/sqlViews/cBDHa5bQcj0/data.json?var=ds:-&var=dsd:-&var=ou:" + $scope.organisationUnit.id + "&var=pe:" + $routeParams.period)
+                            .then(function (orgUnitResults) {
+                                toaster.pop('success', "Report Created", "District Reports creation has been scheduled successfully.");
+                                $scope.createAllReportLoading = false;
+                            }, function () {
+                                $scope.createAllReportLoading = false;
+                            });
+                        return;
+                    }
                     var foundDistrictReports = false;
                     var requests = [];
                     $scope.sourceDataSets.forEach(function(sourceDataSet){
