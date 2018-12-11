@@ -1560,7 +1560,8 @@ var appControllers = angular
                     )
                     .then(
                       function(result) {
-                        $scope.file = $sce.trustAsHtml(result.data);
+                        $scope.file = $sce.trustAsHtml(result.data.replace(/<script>(.*)<\/script>/g, ""));
+
                         $scope.loadFile = true;
                       },
                       function(error) {
