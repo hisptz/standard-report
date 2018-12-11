@@ -14,18 +14,11 @@ angular.module('app',
             'd2Services',
             'd2Controllers',
             'pascalprecht.translate',
-            'd2HeaderBar', 'FileManagerApp', 'toaster'
+            'd2HeaderBar', 'toaster'
         ])
 
     .value('DHIS2URL', '../../../')
-    .config(function ($translateProvider, $routeProvider, fileManagerConfigProvider, $httpProvider) {
-        var defaults = fileManagerConfigProvider.$get();
-        fileManagerConfigProvider.set({
-            appName: 'Report Archive Manager',
-            allowedActions: angular.extend(defaults.allowedActions, {
-                remove: true
-            })
-        });
+    .config(function ($translateProvider, $routeProvider, $httpProvider) {
         $routeProvider.when('/', {
             templateUrl: 'views/home.html'
         }).when('/Aggregation', {
