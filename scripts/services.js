@@ -1777,7 +1777,10 @@ var appServices = angular.module('appServices', ['ngResource'])
                 return userDeffered.promise;
             },
 
-            downloadExcel: function (dataSetName, organisationUnitName, period) {
+            downloadExcel: function (dataSet, organisationUnit, period) {
+
+                const dataSetName = dataSet.name;
+                const organisationUnitName = organisationUnit.name;
                 var date = new Date();
                 var dateStr = date.getDate();
                 if (dateStr < 10) {
@@ -1791,7 +1794,13 @@ var appServices = angular.module('appServices', ['ngResource'])
                 $timeout(function () {
                     var link = document.createElement('a');
                     link.download = dataSetName + " " + organisationUnitName + " " + period + " " + dateStr + "-" + monthStr + "-" + date.getFullYear() + ".xls";
-                    link.href = Excel.tableToExcel();
+
+                    if (organisationUnit.level == 2 && dataSet.id == "HhyM40b8ma1") {
+                        alert('In RIR03, table  5(f) and table 5(g) will not be downloaded to Excel because of the performance limitation');
+                        link.href = Excel.rir03TableToExcel();
+                    } else {
+                        link.href = Excel.tableToExcel();
+                    }
                     document.body.appendChild(link);
                     $timeout(function () {
                         link.click();
@@ -1837,7 +1846,8 @@ var appServices = angular.module('appServices', ['ngResource'])
                 })
             };
         return {
-            tableToExcel: function () {
+
+            rir03TableToExcel: function() {
                 $('*')
                 var tables = $(".excel-table").clone();
                 var ctx = {worksheet: "Sheet 1"};
@@ -1873,8 +1883,8 @@ var appServices = angular.module('appServices', ['ngResource'])
                             var tbody = this;
                             ["Do2HI9tvLGC","V8tLhRm35cD","Mz5daHozMlm","kPhYyWEOfNO","wYu5X3rIrRW","caJD8NDPwfi",
                                 "tIhjn9FPYJa","M68FQiWRSOU","r2CTnGsqLOi","G2z6vC1bn2F","c7AaVbVSi7G","sBlTo9nprB0",
-                            "jICR3PYG4Ft","EnJcWSuOYxB","ErXFQ5q9tDm","iu2eZ5fQtX7","f5Nm7CO12eP","kZT7dVTVYZ3","fKvH449kdvg",
-                            "tJU3WhwU960"].some(function(programId){
+                                "jICR3PYG4Ft","EnJcWSuOYxB","ErXFQ5q9tDm","iu2eZ5fQtX7","f5Nm7CO12eP","kZT7dVTVYZ3","fKvH449kdvg",
+                                "tJU3WhwU960"].some(function(programId){
                                 if($(tbody).attr('config')){
                                     if($(tbody).attr('config').indexOf(programId) > -1){
                                         var toRemove = [];
@@ -1908,20 +1918,121 @@ var appServices = angular.module('appServices', ['ngResource'])
                                     }
                                 }
                             })
-                        }))
 
+                        }))
+                        if (index < 42 || index > 45) {
                         ctx["table" + index] = this.innerHTML//.split("& ").join("&amp; ");
                         if (this.title == "no-border") {
                             str += '<table>{' + "table" + index + '}</table><br />';
                         } else {
                             str += '<table border="1">{' + "table" + index + '}</table><br />';
                         }
+                        }
+
                     }
 
                 })
+
+                console.log(ctx)
+
                 str += '</body></html>';
                 var href = uri + base64(format(str, ctx).replace(/<!--(?!>)[\S\s]*?-->/g, ''));
+
                 return href;
+
+            },
+
+            tableToExcel: function () {
+                $('*')
+                var tables = $(".excel-table").clone();
+                var ctx = {worksheet: "Sheet 1"};
+                var str = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body>';
+                var length = 0;
+                tables.each(function (index) {
+                    $(this).contents().each(function () {
+                        if (this.nodeType === Node.COMMENT_NODE) {
+                            $(this).remove();
+                        }
+                    });
+                    length += $(this).html().length;
+
+                    if ($(this).hasClass("not-in-excel")) {
+
+                    } else {
+                        ($(this).find("td.hidden").each(function (index2) {
+                            this.remove();
+                        }));
+                        ($(this).find("td").each(function (index2) {
+                            if($(this).html().indexOf("&amp;") > -1 ){
+                                $(this).html($(this).html().replace(/&amp;/g, ''))
+                            }
+                            if($(this).text().indexOf("&") > -1 || $(this).text().indexOf("'") > -1  || $(this).text().indexOf('"') > -1 ){
+                                $(this).text($(this).text().replace(/&/g, "&amp;").replace(/"/g, '&quot;'));//.replace(/'/g, '&apos;'));
+                            }
+                            if ($(this).css('display') == 'none') {
+                                this.empty();
+                            }
+                        }));
+                        //Remove rowspans in excel
+                        ($(this).find("tbody[autogrowing]").each(function (index) {
+                                var tbody = this;
+                                ["Do2HI9tvLGC","V8tLhRm35cD","Mz5daHozMlm","kPhYyWEOfNO","wYu5X3rIrRW","caJD8NDPwfi",
+                                    "tIhjn9FPYJa","M68FQiWRSOU","r2CTnGsqLOi","G2z6vC1bn2F","c7AaVbVSi7G","sBlTo9nprB0",
+                                    "jICR3PYG4Ft","EnJcWSuOYxB","ErXFQ5q9tDm","iu2eZ5fQtX7","f5Nm7CO12eP","kZT7dVTVYZ3","fKvH449kdvg",
+                                    "tJU3WhwU960"].some(function(programId){
+                                    if($(tbody).attr('config')){
+                                        if($(tbody).attr('config').indexOf(programId) > -1){
+                                            var toRemove = [];
+                                            tbody.children.forEach(function(child,index){
+                                                var removeSpan = true;
+                                                var rowspan = $(child.children[0]).attr('rowspan');
+                                                child.children.forEach(function(child1,i){
+                                                    if (i > 0 && rowspan && $(child1).attr('rowspan') != rowspan) {
+                                                        removeSpan = false;
+                                                    }
+                                                })
+                                                if (removeSpan) {
+                                                    var removeRows = 0;
+                                                    tbody.children.forEach(function(child,thisIndex){
+                                                        if (thisIndex > index && thisIndex < (index + parseInt(rowspan))) {
+                                                            if(child.children.length == 0){
+                                                                removeRows++;
+                                                                toRemove.push(child);
+                                                            }
+                                                        }
+                                                    })
+                                                    child.children.forEach(function (child) {
+                                                        $(child).attr('rowspan', "" + (parseInt($(child).attr('rowspan')) - removeRows));
+                                                    })
+                                                }
+                                            })
+                                            toRemove.forEach(function (row) {
+                                                row.remove();
+                                            })
+                                            return true;
+                                        }
+                                    }
+                                })
+
+                        }))
+                        ctx["table" + index] = this.innerHTML//.split("& ").join("&amp; ");
+                        if (this.title == "no-border") {
+                            str += '<table>{' + "table" + index + '}</table><br />';
+                        } else {
+                            str += '<table border="1">{' + "table" + index + '}</table><br />';
+                        }
+
+                    }
+
+                })
+
+console.log(ctx)
+
+                str += '</body></html>';
+                var href = uri + base64(format(str, ctx).replace(/<!--(?!>)[\S\s]*?-->/g, ''));
+
+                return href;
+
             },
         };
     })
