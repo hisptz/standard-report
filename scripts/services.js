@@ -1774,6 +1774,7 @@ var appServices = angular.module('appServices', ['ngResource'])
                 if (user) {
                     userDeffered.resolve(user);
                 }
+
                 return userDeffered.promise;
             },
 
