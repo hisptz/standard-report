@@ -50,5 +50,7 @@ LANGUAGE plpgsql;
 
 --PGPASSWORD=postgres psql -U postgres -h localhost -d ards -a -f /opt/ards/config/apps/standardreport/src/sql/uncreate_report.sql
 
+--PGPASSWORD=postgres psql -U postgres -h localhost -d ards2_29_testing_land -a -f uncreate_report.sql
+
 --'SXvP3NECeFk-deTgGupUgr3','dozTSGrBvVj-wJIxAhejWKY'
 SELECT * FROM uncreate_report('cSC1VV8uMh9','QLoyT2aHGes-oRJJ4PtC7M8-cSC1VV8uMh9', 'lRMxINGnEKt', '201701');
