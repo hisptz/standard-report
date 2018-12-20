@@ -506,8 +506,8 @@ var appControllers = angular
 
     $scope.downloadExcel = function() {
       ReportService.downloadExcel(
-        $scope.dataSet.name,
-        $scope.data.organisationUnit.name,
+        $scope.dataSet,
+        $scope.data.organisationUnit,
         $routeParams.period
       );
     };
@@ -1543,7 +1543,7 @@ var appControllers = angular
                   $scope.reportStatus = 'Executed';
                   $http
                     .get(
-                      '../ARDS-Archive/' +
+                        '../ARDS-Archive/' +
                         getFinancialPeriod($routeParams.period) +
                         '/' +
                         $routeParams.dataSet +
@@ -1552,7 +1552,7 @@ var appControllers = angular
                         '_' +
                         $routeParams.period +
                         '.html',
-                      {
+                        {
                         headers: {
                           'Cache-Control': 'no-cache'
                         }
@@ -1560,7 +1560,10 @@ var appControllers = angular
                     )
                     .then(
                       function(result) {
-                        $scope.file = $sce.trustAsHtml(result.data.replace(/<script[>]*(.*)<\/script>/g, ""));
+
+                        console.log(result.data.replace(/<script[>]*(.*)<\/script>|\n|<!--([\s\S]*?)-->/g, ""))
+
+                        $scope.file = $sce.trustAsHtml(result.data.replace(/<script[>]*(.*)<\/script>|\n|<!--([\s\S]*?)-->/g, ""));
 
                         $scope.loadFile = true;
                       },
@@ -2100,9 +2103,10 @@ var appControllers = angular
       $scope.dataCriteria = !$scope.dataCriteria;
     };
     $scope.downloadExcel = function() {
-      ReportService.downloadExcel(
-        $scope.dataSet.name,
-        $scope.orgUnit.name,
+
+        ReportService.downloadExcel(
+        $scope.dataSet,
+        $scope.orgUnit,
         $routeParams.period
       );
     };
