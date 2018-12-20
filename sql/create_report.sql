@@ -1,5 +1,5 @@
-DROP FUNCTION create_report(dsId VARCHAR, dsDependId VARCHAR,ouId VARCHAR, peId VARCHAR);
-CREATE OR REPLACE FUNCTION create_report(dsId VARCHAR,dsDependId VARCHAR, ouId VARCHAR, peId VARCHAR) RETURNS bigint AS $$
+DROP FUNCTION create_report(dsId VARCHAR, dsDependId VARCHAR,ouId VARCHAR, peId VARCHAR,VARCHAR);
+CREATE OR REPLACE FUNCTION create_report(dsId VARCHAR,dsDependId VARCHAR, ouId VARCHAR, peId VARCHAR, userName VARCHAR) RETURNS bigint AS $$
 DECLARE
 	_c text;
 	year INTEGER;
@@ -15,7 +15,7 @@ BEGIN
         LEFT JOIN dataset ds ON(ds.datasetid = dss.datasetid)
         WHERE ou.path LIKE '%' || ouId || '%' AND ou.hierarchylevel = 3 AND ds.uid IN ('cSC1VV8uMh9','Znn30Q67yDO','OBnVfEenAuW')
     LOOP
-        /*INSERT INTO keyjsonvalue(
+        INSERT INTO keyjsonvalue(
 	    keyjsonvalueid, uid, created, lastupdated, namespace, namespacekey, value, encrypted, lastupdatedby)
         SELECT * FROM (SELECT
                 (SELECT max(keyjsonvalueid) FROM keyjsonvalue) + ROW_NUMBER() OVER(),
@@ -24,14 +24,14 @@ BEGIN
                 now(),
                 'notExecuted',
                 recorddata.dataset || '_' || recorddata.ou || '_' || ps.iso as namespaceid,
-                '{}',
+                '{"creationDate":"' || now() || '","name":"' || userName || '"}',
                 FALSE,
                 1
             FROM _periodstructure ps
             INNER JOIN period p USING(periodid)
             INNER JOIN periodtype pt USING(periodtypeid)
             WHERE (ps.financialjuly = peId OR ps.quarterly = peId OR ps.monthly = peId) AND recorddata.periodtypeid = p.periodtypeid) as keyjsondata
-        WHERE keyjsondata.namespaceid NOT IN (SELECT namespacekey FROM keyjsonvalue WHERE namespace IN ('executed','notExecuted'));*/
+        WHERE keyjsondata.namespaceid NOT IN (SELECT namespacekey FROM keyjsonvalue WHERE namespace IN ('executed','notExecuted'));
 
         IF recorddata.dataset = 'cSC1VV8uMh9' THEN
             selectedperiod = '';
@@ -66,7 +66,7 @@ BEGIN
                     now(),
                     'notExecuted',
                     recorddata.dataset || '_' || recorddata.ou || '_' || ps.iso as namespaceid,
-                    '{}',
+                    '{"creationDate":"' || now() || '","name":"' || userName || '"}',
                     FALSE,
                     1
                 FROM (SELECT unnest(string_to_array(selectedperiod,'-')) iso) ps) as keyjsondata
@@ -91,4 +91,4 @@ LANGUAGE plpgsql;
 --PGPASSWORD=postgres psql -U postgres -h localhost -d ards2_29_testing_land -a -f create_report.sql
 
 --'SXvP3NECeFk-deTgGupUgr3','dozTSGrBvVj-wJIxAhejWKY'
--- SELECT * FROM create_report('HhyM40b8ma1','QLoyT2aHGes-oRJJ4PtC7M8-cSC1VV8uMh9', 't6Dw4F5dpgP', '2017Q1');
+SELECT * FROM create_report('HhyM40b8ma1','QLoyT2aHGes-oRJJ4PtC7M8-cSC1VV8uMh9', 't6Dw4F5dpgP', '2017Q1', 'Vincent Minde');
