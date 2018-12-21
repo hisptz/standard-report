@@ -1809,17 +1809,18 @@ var appDirectives = angular.module('appDirectives', [])
                         if ($scope.periodIds.indexOf(ids[2]) == -1)
                             $scope.periodIds.push(ids[2]);
                     })
-                    $http.get(DHIS2URL + "api/dataSets.json?filter=id:in:[" + $scope.dataSetIds.join(",") + "]&fields=id,name").then(function (dataSetResult) {
+                    $http.get(DHIS2URL + "api/dataSets.json?filter=id:in:[" + $scope.dataSetIds.join(",") + "]&fields=id,name&paging=false").then(function (dataSetResult) {
                         $scope.dataSets = {};
                         dataSetResult.data.dataSets.forEach(function (dataSet) {
                             $scope.dataSets[dataSet.id] = dataSet;
                         })
                     });
-                    $http.get(DHIS2URL + "api/organisationUnits.json?filter=id:in:[" + $scope.orgUnitIds.join(",") + "]&fields=id,name,ancestors[name]").then(function (orgUnitsResult) {
+
+                    $http.get(DHIS2URL + "api/organisationUnits.json?filter=id:in:[" + $scope.orgUnitIds.join(",") + "]&fields=id,name,ancestors[name]&paging=false").then(function (orgUnitsResult) {
                         $scope.orgUnits = {};
                         orgUnitsResult.data.organisationUnits.forEach(function (orgUnit) {
                             $scope.orgUnits[orgUnit.id] = orgUnit;
-                        })
+                        });
                     });
                 }, function () {
                     $scope.noExecutedLoaded = false;

@@ -2016,13 +2016,16 @@ var appServices = angular.module('appServices', ['ngResource'])
                                 })
 
                         }))
-                        ctx["table" + index] = this.innerHTML//.split("& ").join("&amp; ");
-                        if (this.title == "no-border") {
-                            str += '<table>{' + "table" + index + '}</table><br />';
-                        } else {
-                            str += '<table border="1">{' + "table" + index + '}</table><br />';
+                        if (index < 42 || index > 45) {
+                           if(index < 25 || index > 26 ){
+                               ctx["table" + index] = this.innerHTML//.split("& ").join("&amp; ");
+                               if (this.title == "no-border") {
+                                   str += '<table>{' + "table" + index + '}</table><br />';
+                               } else {
+                                   str += '<table border="1">{' + "table" + index + '}</table><br />';
+                               }
+                           }
                         }
-
                     }
 
                 })
