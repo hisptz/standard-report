@@ -1,69 +1,112 @@
 <style>
-    .hideReport,table[title="no-border"] {
-        display: none;
+  .hideReport,
+  table[title='no-border'] {
+    display: none;
+  }
+  @media print {
+    .noPrint {
+      display: none;
     }
-    @media print {
-        .noPrint {
-            display: none;
-        }
-    }
-    .progress {
-        height: 3em;
-    }
+  }
+  .progress {
+    height: 3em;
+  }
 
-    .progress i {
-        line-height: 35px;
-        font-size: 20px;
-    }
-    #cde table td{
-        /*text-align: center;*/
-    }
-    .push-right{
-        text-align: right;
-    }
+  .progress i {
+    line-height: 35px;
+    font-size: 20px;
+  }
+  #cde table td {
+    /*text-align: center;*/
+  }
+  .push-right {
+    text-align: right;
+  }
 </style>
 <div id="printablereport">
-    <div ng-if="preview" class="alert alert-info" role="alert">
-        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-        <span class="sr-only">Error:</span>
-        This is a preview copy of the reports.<br/>
-        {{dataSet.name}}<br/>
-        {{getPeriodName()}}<br/>
-        {{orgUnit.name}}
-    </div>
-    <div ng-if="error" class="alert alert-danger" role="alert">
-        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-        <span class="sr-only">Error:</span>
-        Some of the request have failed please try to <a ng-click="reloadPage()">Reload</a>.
-    </div>
-    <div ng-if="!error">
-        <progressbar ng-if="loadingReport && notArchive" class="progress-striped active" animate="true" max="100"
-                     value="progressValue" type="success">
-            <i>{{loadingStatus}}</i>
-        </progressbar>
-        <div class="noPrint" ng-if="progressValue == 100 && notArchive" id="control" style="margin-top: 0px;">
-            <input type="button" value="Change Data Criteria" ng-click="changeCriteria()"/>
-            <input type="button" value="Print" style="width:140px" ng-click="printReport()">
-            <input ng-if="preview =='excel-download'" type="button" value="Download Excel" style="width:140px" ng-click="downloadExcel()">
-            <input type="button" ng-if="preview && createReport"
-                   ng-disabled="isNotAuthorized() || orgUnit.level != 3 || reportStatus == 'Executed' || reportStatus == 'Not Executed'"
-                   value="Create Report" style="width:120px" ng-click="createDataSetReport()" html-link=""><!--
+  <div ng-if="preview" class="alert alert-info" role="alert">
+    <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    <span class="sr-only">Error:</span>
+    This is a preview copy of the reports.<br />
+    {{ dataSet.name }}<br />
+    {{ getPeriodName() }}<br />
+    {{ orgUnit.name }}
+  </div>
+  <div ng-if="error" class="alert alert-danger" role="alert">
+    <span
+      class="glyphicon glyphicon-exclamation-sign"
+      aria-hidden="true"
+    ></span>
+    <span class="sr-only">Error:</span>
+    Some of the request have failed please try to
+    <a ng-click="reloadPage()">Reload</a>.
+  </div>
+  <div ng-if="!error">
+    <progressbar
+      ng-if="loadingReport && notArchive"
+      class="progress-striped active"
+      animate="true"
+      max="100"
+      value="progressValue"
+      type="success"
+    >
+      <i>{{ loadingStatus }}</i>
+    </progressbar>
+    <div
+      class="noPrint"
+      ng-if="progressValue == 100 && notArchive"
+      id="control"
+      style="margin-top: 0px;"
+    >
+      <input
+        type="button"
+        value="Change Data Criteria"
+        ng-click="changeCriteria()"
+      />
+      <input
+        type="button"
+        value="Print"
+        style="width:140px"
+        ng-click="printReport()"
+      />
+      <input
+        ng-if="preview =='excel-download'"
+        type="button"
+        value="Download Excel"
+        style="width:140px"
+        ng-click="downloadExcel()"
+      />
+      <input
+        type="button"
+        ng-if="preview && createReport"
+        ng-disabled="isNotAuthorized() || orgUnit.level != 3 || reportStatus == 'Executed' || reportStatus == 'Not Executed'"
+        value="Create Report"
+        style="width:120px"
+        ng-click="createDataSetReport()"
+        html-link=""
+      /><!--
             <input ng-if="state == 'preview'" type="button" value="Debug On" style="width:140px" ng-click="showDebug()">
             <input ng-if="state == 'debug'" type="button" value="Debug Off" style="width:140px"
                    ng-click="showPreview()">-->
-            <input type="button" value="Back" style="width:140px" ng-click="back()">
-        </div>
-        <br/>
-        <criteria class="criteria noPrint" ng-show="dataCriteria"></criteria>
-        <div>
-            <div ng-if="dataSet">
-                <completeness organisation-unit="orgUnit" set-data-set="dataSet" on-done="completenessDone">
-
-                </completeness>
-            </div>
-            <div ng-class="{'hideReport':loadingReport}" id="report" ng-if="trustedHtml" ng-bind-html="trustedHtml">
-
-            </div>
-        </div>
+      <input type="button" value="Back" style="width:140px" ng-click="back()" />
     </div>
+    <br />
+    <criteria class="criteria noPrint" ng-show="dataCriteria"></criteria>
+    <div>
+      <div ng-if="dataSet">
+        <completeness
+          organisation-unit="orgUnit"
+          set-data-set="dataSet"
+          on-done="(completenessDone)"
+        >
+        </completeness>
+      </div>
+      <div
+        ng-class="{'hideReport':loadingReport}"
+        id="report"
+        ng-if="trustedHtml"
+        ng-bind-html="trustedHtml"
+      ></div>
+    </div>
+  </div>
 </div>

@@ -1561,8 +1561,6 @@ var appControllers = angular
                     .then(
                       function(result) {
 
-                        console.log(result.data.replace(/<script[>]*(.*)<\/script>|\n|<!--([\s\S]*?)-->/g, ""))
-
                         $scope.file = $sce.trustAsHtml(result.data.replace(/<script[>]*(.*)<\/script>|\n|<!--([\s\S]*?)-->/g, ""));
 
                         $scope.loadFile = true;

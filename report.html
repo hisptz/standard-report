@@ -1,141 +1,220 @@
 <!DOCTYPE html>
 <html ng-app="app">
-<head>
+  <head>
     <title>Report Loading</title>
 
-    <meta name="description" content="DHIS 2">
-    <meta name="keywords" content="DHIS 2">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="description" content="DHIS 2" />
+    <meta name="keywords" content="DHIS 2" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <!-- DHIS2 Settings initialization for a baseUrl that is used for the menu -->
     <script type="text/javascript">
-        window.dhis2 = window.dhis2 || {};
-        dhis2.settings = dhis2.settings || {};
-        dhis2.settings.baseUrl = 'ards';
+      window.dhis2 = window.dhis2 || {};
+      dhis2.settings = dhis2.settings || {};
+      dhis2.settings.baseUrl = 'ards';
     </script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/jquery.min.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/ui/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/jquery.plugin.min.js"></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/jQuery/jquery.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/jQuery/ui/jquery-ui.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/jQuery/jquery.plugin.min.js"
+    ></script>
 
-    <script type="text/javascript" src="../../../dhis-web-commons/bootstrap/js/bootstrap.min.js"></script>
-    <link type="text/css" rel="stylesheet" href="../../../dhis-web-commons/bootstrap/css/bootstrap.min.css">
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/bootstrap/js/bootstrap.min.js"
+    ></script>
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="../../../dhis-web-commons/bootstrap/css/bootstrap.min.css"
+    />
 
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular-resource.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular-route.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular-cookies.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular-sanitize.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular-animate.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/ui-bootstrap.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.util.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/commons.js"></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/angular/angular.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/angular/angular-resource.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/angular/angular-route.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/angular/angular-cookies.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/angular/angular-sanitize.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/angular/angular-animate.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/angular/ui-bootstrap.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/dhis2/dhis2.util.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/commons.js"
+    ></script>
 
-    <script type="text/javascript"
-            src="../../../dhis-web-commons/javascripts/angular/plugins/angularLocalStorage.js"></script>
-    <script type="text/javascript"
-            src="../../../dhis-web-commons/javascripts/angular/plugins/angular-translate.min.js"></script>
-    <script type="text/javascript" src="assets/js/angular/dhis2.angular.services.js"></script>
-    <script type="text/javascript"
-            src="assets/js/angular/dhis2.angular.controllers.js"></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/angular/plugins/angularLocalStorage.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/angular/plugins/angular-translate.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="assets/js/angular/dhis2.angular.services.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="assets/js/angular/dhis2.angular.controllers.js"
+    ></script>
     <script src="assets/js/ng-file-upload/ng-file-upload.min.js"></script>
-    <script type="text/javascript" src="assets/js/toaster/toaster.min.js"></script>
-    <script type="text/javascript" src="assets/js/filemanager/angular-filemanager.min.js"></script>
+    <script
+      type="text/javascript"
+      src="assets/js/toaster/toaster.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="assets/js/filemanager/angular-filemanager.min.js"
+    ></script>
 
     <script type="text/javascript" src="scripts/app.js"></script>
-    <script>
-    </script>
+    <script></script>
     <script type="text/javascript" src="scripts/services.js"></script>
     <script type="text/javascript" src="scripts/directives.js"></script>
     <script type="text/javascript" src="scripts/controllers.js"></script>
     <script type="text/javascript" src="scripts/filters.js"></script>
 
     <!-- Menu scripts -->
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.translate.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.menu.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.menu.ui.js"></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/dhis2/dhis2.translate.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/dhis2/dhis2.menu.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/dhis2/dhis2.menu.ui.js"
+    ></script>
 
-    <link type="text/css" rel="stylesheet" href="../../../dhis-web-commons/font-awesome/css/font-awesome.min.css"/>
-    <link type="text/css" rel="stylesheet" media="screen" href="assets/css/widgets.css"/>
-    <link type="text/css" rel="stylesheet" media="screen" href="../../../dhis-web-commons/css/menu.css">
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="../../../dhis-web-commons/font-awesome/css/font-awesome.min.css"
+    />
+    <link
+      type="text/css"
+      rel="stylesheet"
+      media="screen"
+      href="assets/css/widgets.css"
+    />
+    <link
+      type="text/css"
+      rel="stylesheet"
+      media="screen"
+      href="../../../dhis-web-commons/css/menu.css"
+    />
 
     <!--<link type="text/css" rel="stylesheet" href="assets/css/style.css">-->
-<style>
-
-
-</style>
+    <style></style>
     <style>
-        .btn {
-            display: none
-        }
+      .btn {
+        display: none;
+      }
 
-        .navbar-inverse .navbar-nav > li > a {
-            color: white !important;
-        }
-        .reportHeader{
-            display:none;
-            margin-top:300px;
-        }
-        .answer{
-            width:250px;
-            height:30px;
-            border-bottom:3px solid black;
-            display: inline-flex;
-        }
-        .adminstrative table{
-            font-size:20px;
-        }
-        td.underline{
-            margin-left:5px;
-            border-bottom:3px dotted black;
-        }
-        /*table.avoid tr td, table.avoid tr th {
+      .navbar-inverse .navbar-nav > li > a {
+        color: white !important;
+      }
+      .reportHeader {
+        display: none;
+        margin-top: 300px;
+      }
+      .answer {
+        width: 250px;
+        height: 30px;
+        border-bottom: 3px solid black;
+        display: inline-flex;
+      }
+      .adminstrative table {
+        font-size: 20px;
+      }
+      td.underline {
+        margin-left: 5px;
+        border-bottom: 3px dotted black;
+      }
+      /*table.avoid tr td, table.avoid tr th {
             page-break-inside: avoid !important;
             margin: 4px 0 4px 0;
         }*/
-        table {
-            border-collapse: separate;
-        }
-        .yellow {
-            background-color: yellow;
-        }
+      table {
+        border-collapse: separate;
+      }
+      .yellow {
+        background-color: yellow;
+      }
 
-        .red {
-            background-color: lightcoral;
-        }
+      .red {
+        background-color: lightcoral;
+      }
 
-        .green {
-            background-color: darkseagreen;
-        }
-        .no-print, .no-print *
-        {
-            display: none !important;
-        }
+      .green {
+        background-color: darkseagreen;
+      }
+      .no-print,
+      .no-print * {
+        display: none !important;
+      }
     </style>
-
-</head>
-<body>
-<div ng-controller="CoverController" style="padding-top: 150px; max-height:1250px;page-break-after: always;" id="header_cover">
-    <div ng-include="'views/cover.html'"></div>
-</div>
-<!--<div id="app2" ng-app="app2">
+  </head>
+  <body>
+    <div
+      ng-controller="CoverController"
+      style="padding-top: 150px; max-height:1250px;page-break-after: always;"
+      id="header_cover"
+    >
+      <div ng-include="'views/cover.html'"></div>
+    </div>
+    <!--<div id="app2" ng-app="app2">
     <div ng-view>
 
     </div>
 </div>-->
 
-<!--<div ng-if="dataSet" style="page-break-after: always;">
+    <!--<div ng-if="dataSet" style="page-break-after: always;">
     <completeness organisation-unit="orgUnit" set-data-set="dataSet" on-done="completenessDone">
 
     </completeness>
 </div>-->
-<!--<div ng-if="dataSet" style="page-break-after: always;">
+    <!--<div ng-if="dataSet" style="page-break-after: always;">
     <breakdown-point user="user" organisation-unit="orgUnit" set-data-set="dataSet" on-done="completenessDone">
 
     </breakdown-point>
 </div>-->
-<div class="break-enable">
-    <div ng-view></div>
-</div>
-
-</body>
+    <div class="break-enable">
+      <div ng-view></div>
+    </div>
+  </body>
 </html>

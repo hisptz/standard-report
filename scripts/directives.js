@@ -2086,19 +2086,40 @@ var appDirectives = angular.module('appDirectives', [])
                             });
                             elem.find("tr").each(function (trIndex, trElement) {
                                 scope.config.indicators.forEach(function (indicator) {
-                                    var eventIndicator = "(" + indicator.numerator + ")/(" + indicator.denominator + ")";
+                                    var numeratorValue = indicator.numerator;
+                                    var denominatorValue = indicator.denominator;
                                     scope.data.dataElements.forEach(function (dataElement) {
-                                        if (eventIndicator.indexOf(dataElement.id) > -1) {
+
+                                        // find numerator value
+                                        if (indicator.numerator.indexOf(dataElement.id) > -1) {
                                             var dataElementIndex = scope.config.dataElements.indexOf(dataElement.id);
-                                            var value = trElement.children[dataElementIndex].innerText;
-                                            eventIndicator = eventIndicator.replace("#{" + dataElement.id + "}", value);
+                                            var value = trElement.children[dataElementIndex].innerText.split(",").join("");
+                                            numeratorValue = numeratorValue.replace("#{" + dataElement.id + "}", value);
                                         }
+
+                                        // find denominator value
+                                        if (indicator.denominator.indexOf(dataElement.id) > -1) {
+                                            var dataElementIndex = scope.config.dataElements.indexOf(dataElement.id);
+                                            var value = trElement.children[dataElementIndex].innerText.split(",").join("");
+                                            denominatorValue = denominatorValue.replace("#{" + dataElement.id + "}", value);
+                                        }
+
+                                        // if (eventIndicator.indexOf(dataElement.id) > -1) {
+                                        //     var dataElementIndex = scope.config.dataElements.indexOf(dataElement.id);
+                                        //     var value = trElement.children[dataElementIndex].innerText;
+                                        //     console.log(value)
+                                        //     eventIndicator = eventIndicator.replace("#{" + dataElement.id + "}", value.split(",").join(""));
+                                        // }
                                     });
-                                    var valueCalculated = (eval('(' + eventIndicator.split(",").join("") + ')')).toFixed(1);
-                                    if (isNaN(valueCalculated)) {
-                                        valueCalculated = "";
+                                    
+                                    try {
+                                    var eventIndicator = "(" + numeratorValue + ")/(" + numeratorValue + ")";
+                                    var valueCalculated = (eval('(' + eventIndicator + ')')).toFixed(1);
+                                    trElement.children[indicator.position].innerText = !isNaN(valueCalculated) ?  valueCalculated : '';
+                                    } catch(e) {
+                                        trElement.children[indicator.position].innerText = ''
                                     }
-                                    trElement.children[indicator.position].innerText = valueCalculated;
+                                    
                                 });
                             });
                         }
