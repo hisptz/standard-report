@@ -1,6 +1,6 @@
 {
-    "version": "0.2",
-    "name": "standardreportdebug",
+    "version": "2.0.0",
+    "name": "standardreport",
     "description": "Report App",
     "launch_path": "index.html",
     "icons": {

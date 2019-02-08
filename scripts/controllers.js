@@ -2533,7 +2533,7 @@ var appControllers = angular
                         });
                       },
                       function() {
-                        console.log('Error1;');
+                        
                       }
                     )
                 );
@@ -2661,7 +2661,7 @@ var appControllers = angular
                       });
                     },
                     function() {
-                      console.log('Error2;');
+                      
                     }
                   )
               );
@@ -3096,7 +3096,7 @@ var appControllers = angular
               );
             }
               Object.keys($scope.dataElementsData).forEach(function(key){
-                  console.log($scope.dataElementsData[key]);
+                  
                   $scope.dataElementsData[key] = parseFloat($scope.dataElementsData[key]).toFixed(1);
               })
             //Wait for data to be loaded
@@ -3370,15 +3370,7 @@ var appControllers = angular
         .replace("cumulativeToDateData['", '')
         .replace("fourthQuarterData['", '')
         .replace("']", '');
-      if (
-        content.indexOf("lastDataElementsData['") == -1 &&
-        content.indexOf("dataElementsData['") == -1 &&
-        content.indexOf("fourthQuarterData['") == -1 &&
-        content.indexOf("lastMonthOfQuarterData['") == -1 &&
-        content.indexOf("cumulativeToDateData['") == -1
-      ) {
-        console.log(type, ':Outside:', content);
-      }
+     
       var div = "<div gid='" + processed + "'>{{" + content + ' |comma}}';
       if ($routeParams.preview == 'debug') {
         var addition = '';
@@ -3776,7 +3768,7 @@ var appControllers = angular
             "{{lastMonthIndicatorData['" + idMacth[1] + "'] |comma}}"
           );
         } else {
-          console.log('Unconsidered Match:', match[0]);
+          
         }
       }
       //Render autogrowing taables
