@@ -2084,10 +2084,12 @@ var appDirectives = angular.module('appDirectives', [])
                                     scope.config.dataElements.splice(indicator.position, 0, indicator.position);
                                 }
                             });
+                            
                             elem.find("tr").each(function (trIndex, trElement) {
                                 scope.config.indicators.forEach(function (indicator) {
                                     var numeratorValue = indicator.numerator;
                                     var denominatorValue = indicator.denominator;
+
                                     scope.data.dataElements.forEach(function (dataElement) {
 
                                         // find numerator value
@@ -2103,17 +2105,10 @@ var appDirectives = angular.module('appDirectives', [])
                                             var value = trElement.children[dataElementIndex].innerText.split(",").join("");
                                             denominatorValue = denominatorValue.replace("#{" + dataElement.id + "}", value);
                                         }
-
-                                        // if (eventIndicator.indexOf(dataElement.id) > -1) {
-                                        //     var dataElementIndex = scope.config.dataElements.indexOf(dataElement.id);
-                                        //     var value = trElement.children[dataElementIndex].innerText;
-                                        //     console.log(value)
-                                        //     eventIndicator = eventIndicator.replace("#{" + dataElement.id + "}", value.split(",").join(""));
-                                        // }
                                     });
                                     
                                     try {
-                                    var eventIndicator = "(" + numeratorValue + ")/(" + numeratorValue + ")";
+                                    var eventIndicator = "(" + numeratorValue + ")/(" + denominatorValue + ")";
                                     var valueCalculated = (eval('(' + eventIndicator + ')')).toFixed(1);
                                     trElement.children[indicator.position].innerText = !isNaN(valueCalculated) ?  valueCalculated : '';
                                     } catch(e) {
