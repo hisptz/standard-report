@@ -3239,6 +3239,9 @@ var appControllers = angular
                             ].dataElementsDetails.push(programIndicator);
                           });
                         });
+                        Object.keys($scope.dataElementsData).forEach(function(key){
+                            $scope.dataElementsData[key] = parseFloat($scope.dataElementsData[key]).toFixed(1);
+                        })
                         $timeout(function() {
                           deffered.resolve();
                         });
