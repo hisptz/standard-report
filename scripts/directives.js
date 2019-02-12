@@ -1935,7 +1935,6 @@ var appDirectives = angular.module('appDirectives', [])
                             } else //if(scope.config.continuous)
                             {
                                 elem.find("td:nth-child(" + i + ")").each(function (index, el) {
-
                                     if (previous == adjacentToGroup(index, i)) {
                                         $(el).addClass('hidden');
                                         if (scope.config.valueTypes) {
@@ -1955,6 +1954,7 @@ var appDirectives = angular.module('appDirectives', [])
                                             secondValue = 0.0;
                                             secondValueSet = true;
                                         }
+
                                         try {
                                             if (scope.config.valueTypes) {
                                                 if (scope.config.valueTypes[scope.config.dataElements[i - 1]] == 'int') {
@@ -2013,7 +2013,6 @@ var appDirectives = angular.module('appDirectives', [])
                         if (scope.config.valueTypes) {
                             for (var i = 1; i <= scope.data.dataElements.length; i++) {
                                 elem.find("td:nth-child(" + i + ")").each(function (index, el) {
-
                                     if ((scope.config.valueTypes[scope.config.dataElements[i]] == 'min' || scope.config.valueTypes[scope.config.dataElements[i]] == 'max') && $(el).attr('rowspan') != null) {
                                         for (var counter = index + 1; counter <= (index + ($(el).attr('rowspan') - 1)); counter++) {
                                             var topHtml = parseFloat($(elem[0].children[index].children[i]).html());
@@ -2057,11 +2056,14 @@ var appDirectives = angular.module('appDirectives', [])
                                                 var previousVal = "";
                                                 for (var counter = 1; counter < span; counter++) {
                                                     if (!$(elem[0].children[index + counter].children[i]).hasClass('hidden')) {
-                                                        var first = parseFloat(elem[0].children[index].children[i].innerHTML);
+                                                        // Remove comma before parse value into float
+                                                        var first = parseFloat(elem[0].children[index].children[i].innerHTML.split(',').join(''));
                                                         if(isNaN(first)){
                                                             first = 0.0;
                                                         }
-                                                        var second = parseFloat(elem[0].children[index + counter].children[i].innerHTML);
+
+                                                         // Remove comma before parse value into float
+                                                        var second = parseFloat(elem[0].children[index + counter].children[i].innerHTML.split(',').join(''));
                                                         if(isNaN(second)){
                                                             second = 0.0;
                                                         }
