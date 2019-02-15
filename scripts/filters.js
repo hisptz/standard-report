@@ -22,8 +22,8 @@ var appFilters = angular.module('appFilters', [])
                     return "";
                 }
             }
-            if((input) == "0.0"){
-                return "";
+            if((input) == "0.0" || (input) == "0"){
+                return "0.0";
             }
             return input;
         };
