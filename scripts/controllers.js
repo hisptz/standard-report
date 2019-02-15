@@ -2844,7 +2844,7 @@ var appControllers = angular
                 for (
                   var i = 0;
                   i < $scope.cumulativeToDate.length;
-                  i += batch
+                  i += 1
                 ) {
                     promises.push(
                         $http
@@ -2852,7 +2852,7 @@ var appControllers = angular
                                 DHIS2URL +
                                 'api/26/analytics.json?skhkjshdf&dimension=dx:' +
                                 $scope.cumulativeToDate
-                                    .slice(i, i + batch)
+                                    .slice(i, i + 1)
                                     .join(';') +
                                 '&dimension=pe:' +
                                 periods.join(';') +
@@ -2878,10 +2878,10 @@ var appControllers = angular
                                         $scope.cumulativeToDateData[row[0]] =
                                             '' + parseFloat(row[3]);
                                     }
-                                    /*if(row[0] === 'kw4LFYNZ1yZ'){
+                                    if(row[0] === 'nFLm89oomS1'){
                                       console.log(row[3], parseFloat(row[3]), '' + parseFloat(row[3]).toFixed(0));
-                                      console.log('$scope.cumulativeToDateData[\'kw4LFYNZ1yZ\']',$scope.cumulativeToDateData['kw4LFYNZ1yZ']);
-                                    }*/
+                                      console.log(analyticsResults.data.rows, '$scope.cumulativeToDateData[\'nFLm89oomS1\']',$scope.cumulativeToDateData['nFLm89oomS1']);
+                                    }
                                 });
                                 $scope.progressValue =
                                     $scope.progressValue + progressFactor;
@@ -2900,7 +2900,7 @@ var appControllers = angular
                                 DHIS2URL +
                                 'api/26/analytics.json?dimension=dx:' +
                                 $scope.cumulativeToDate
-                                    .slice(i, i + batch)
+                                    .slice(i, i + 1)
                                     .join(';') +
                                 '&dimension=pe:' + periods.join(';') +
                                 '&filter=ou:' +
