@@ -28,6 +28,14 @@ var appFilters = angular.module('appFilters', [])
             return input;
         };
     })
+    .filter('toDecimal', function() {
+        return function(input) {
+            if(!input){
+                return '';
+            }
+            return parseFloat(input).toFixed(1);
+        };
+    })
     .filter('removeNaNInd', function() {
         return function(input,dataElement) {
             if(dataElement){

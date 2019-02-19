@@ -2521,9 +2521,6 @@ var appControllers = angular
                         });
                         $scope.progressValue =
                           $scope.progressValue + progressFactor;
-                        if (wardLevel.indexOf('nFLm89oomS1') > -1) {
-                          alert('nFLm89oomS1');
-                        }
                         wardLevel.forEach(function(id) {
                           if ($scope.dataElementsData[id]) {
                             if (parseFloat($scope.dataElementsData[id]) == 0) {
@@ -2567,7 +2564,7 @@ var appControllers = angular
                                     parseFloat(
                                       $scope.dataElementsData[row[0]]
                                     ) + parseFloat(row[2])
-                                  ).toFixed(1); // + ".0";
+                                  ); // + ".0";
                               } else {
                                 $scope.dataElementsData[row[0]] = row[2];
                               }
@@ -2581,7 +2578,7 @@ var appControllers = angular
                           } else {
                             $scope.dataElementsData[row[0]] = parseFloat(
                               row[2]
-                            ).toFixed(1);
+                            );
                           }
                         }
                       });
@@ -2878,10 +2875,6 @@ var appControllers = angular
                                         $scope.cumulativeToDateData[row[0]] =
                                             '' + parseFloat(row[3]);
                                     }
-                                    if(row[0] === 'nFLm89oomS1'){
-                                      console.log(row[3], parseFloat(row[3]), '' + parseFloat(row[3]).toFixed(0));
-                                      console.log(analyticsResults.data.rows, '$scope.cumulativeToDateData[\'nFLm89oomS1\']',$scope.cumulativeToDateData['nFLm89oomS1']);
-                                    }
                                 });
                                 $scope.progressValue =
                                     $scope.progressValue + progressFactor;
@@ -3094,10 +3087,6 @@ var appControllers = angular
                   })
               );
             }
-              Object.keys($scope.dataElementsData).forEach(function(key){
-                  
-                  $scope.dataElementsData[key] = parseFloat($scope.dataElementsData[key]).toFixed(1);
-              })
             //Wait for data to be loaded
             $q.all(promises).then(
               function() {
@@ -3238,12 +3227,15 @@ var appControllers = angular
                             ].dataElementsDetails.push(programIndicator);
                           });
                         });
-                        Object.keys($scope.dataElementsData).forEach(function(key){
+                        /*Object.keys($scope.dataElementsData).forEach(function(key){
+                            if(key === 'slgLjDrb3sM' || key === 'eUnKO1JEZYW.ql8bSsHEnUN'){
+                              console.log(key,$scope.dataElementsData[key],parseFloat($scope.dataElementsData[key]).toFixed(1));
+                            }
                             $scope.dataElementsData[key] = parseFloat($scope.dataElementsData[key]).toFixed(1);
-                        })
-                          Object.keys($scope.cumulativeToDateData).forEach(function(key){
+                        })*/
+                          /*Object.keys($scope.cumulativeToDateData).forEach(function(key){
                               $scope.cumulativeToDateData[key] = parseFloat($scope.cumulativeToDateData[key]).toFixed(1);
-                          })
+                          })*/
                         $timeout(function() {
                           deffered.resolve();
                         });
@@ -3520,7 +3512,7 @@ var appControllers = angular
                     idMacth[1] +
                     '.' +
                     idMacth[2] +
-                    '"] | removeNaN |comma}}</div>'
+                    '"] |toDecimal | removeNaN |comma}}</div>'
                 );
               }
               $scope.dataElements.push(idMacth[1] + '.' + idMacth[2]);
@@ -3678,7 +3670,7 @@ var appControllers = angular
                 match[0],
                 "<div>{{cumulativeToDateData['" +
                   idMacth[1] +
-                  "'] | removeNaN |comma}}</div>"
+                  "'] | toDecimal | removeNaN |comma}}</div>"
               );
               $scope.cumulativeToDateWardLevel.push(idMacth[1]);
             } else {
@@ -3686,7 +3678,7 @@ var appControllers = angular
                 match[0],
                 "<div>{{cumulativeToDateData['" +
                   idMacth[1] +
-                  "'] | removeNaN |comma}}</div>"
+                  "'] | toDecimal  | removeNaN |comma}}</div>"
               );
               $scope.cumulativeToDate.push(idMacth[1]);
             }
@@ -3715,7 +3707,7 @@ var appControllers = angular
                 match[0],
                 '<div>{{dataElementsData["' +
                   idMacth[1] +
-                  '"] | removeNaNInd |comma}}</div>'
+                  '"] |toDecimal | removeNaNInd |comma}}</div>'
               );
             }
             $scope.dataElements.push(idMacth[1]);
@@ -3750,7 +3742,7 @@ var appControllers = angular
                 match[0],
                 '<div>{{dataElementsData["' +
                   idMacth[1] +
-                  '"] | removeNaN |comma}}</div>'
+                  '"] |toDecimal | removeNaN |comma}}</div>'
               );
             }
 
