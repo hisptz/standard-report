@@ -6,10 +6,10 @@ DECLARE
 BEGIN
     filterparameters = selected_month || region_name;
     RAISE NOTICE 'Process for this is % %',selected_month,region_name;
-    IF (SELECT EXISTS (SELECT 1 FROM   information_schema.tables WHERE  table_schema = 'public' AND table_name = '_data')) THEN
+    IF (SELECT EXISTS (SELECT 1 FROM   information_schema.tables WHERE  table_schema = 'public' AND table_name = '_data2')) THEN
         raise notice 'Inserting';
-        INSERT INTO _data
-        --CREATE TABLE _data as
+        INSERT INTO _data2
+        --CREATE TABLE _data2 as
             SELECT
                 filterparameters as filter,
                 False as done,
@@ -36,7 +36,7 @@ BEGIN
                 SELECT _ps.periodid,_ps.iso FROM period
                 INNER JOIN _periodstructure _ps USING(periodid)
                 INNER JOIN periodtype pt USING(periodtypeid)
-                WHERE pt.name = 'Monthly' AND _ps.iso = selected_month
+                WHERE pt.name = 'Monthly' AND _ps.financialjuly = '2016July' -- AND _ps.iso = selected_month
             ) curr_pe ON(true)
             LEFT JOIN completedatasetregistration curr_pe_submission ON(curr_pe.periodid = curr_pe_submission.periodid AND curr_pe_submission.sourceid = ou.organisationunitid AND curr_pe_submission.datasetid = 1512)
             LEFT JOIN datavalue curr_pe_val_planted ON(curr_pe.periodid = curr_pe_val_planted.periodid AND de1.dataelementid = curr_pe_val_planted.dataelementid AND co1.categoryoptioncomboid = curr_pe_val_planted.categoryoptioncomboid AND ou.organisationunitid = curr_pe_val_planted.sourceid AND curr_pe_val_planted.attributeoptioncomboid = 339884)
@@ -50,7 +50,7 @@ BEGIN
             LEFT JOIN datavalue prev_pe_val_productivity ON(prev_pe.periodid = prev_pe_val_productivity.periodid AND de2.dataelementid = prev_pe_val_productivity.dataelementid AND co2.categoryoptioncomboid = prev_pe_val_productivity.categoryoptioncomboid AND ou.organisationunitid = prev_pe_val_productivity.sourceid AND prev_pe_val_productivity.attributeoptioncomboid = 339884)
             ;
         ELSE
-            CREATE TABLE _data as
+            CREATE TABLE _data2 as
             SELECT
                 filterparameters as filter,
                 False as done,
@@ -77,7 +77,7 @@ BEGIN
                 SELECT _ps.periodid,_ps.iso FROM period
                 INNER JOIN _periodstructure _ps USING(periodid)
                 INNER JOIN periodtype pt USING(periodtypeid)
-                WHERE pt.name = 'Monthly' AND _ps.iso = selected_month
+                WHERE pt.name = 'Monthly' AND _ps.financialjuly = '2016July'-- AND _ps.iso = selected_month
             ) curr_pe ON(true)
             LEFT JOIN completedatasetregistration curr_pe_submission ON(curr_pe.periodid = curr_pe_submission.periodid AND curr_pe_submission.sourceid = ou.organisationunitid AND curr_pe_submission.datasetid = 1512)
             LEFT JOIN datavalue curr_pe_val_planted ON(curr_pe.periodid = curr_pe_val_planted.periodid AND de1.dataelementid = curr_pe_val_planted.dataelementid AND co1.categoryoptioncomboid = curr_pe_val_planted.categoryoptioncomboid AND ou.organisationunitid = curr_pe_val_planted.sourceid AND curr_pe_val_planted.attributeoptioncomboid = 339884)
@@ -92,17 +92,17 @@ BEGIN
             ;
 
             -- Add a column for the latest submitted data
-            ALTER TABLE _data ADD COLUMN curr_pe_val_planted_latest_submited varchar;
-            ALTER TABLE _data ADD COLUMN curr_pe_val_productivity_latest_submited varchar;
-            ALTER TABLE _data ADD COLUMN prev_pe_val_planted_latest_submited varchar;
-            ALTER TABLE _data ADD COLUMN prev_pe_val_productivity_latest_submited varchar;
+            ALTER TABLE _data2 ADD COLUMN curr_pe_val_planted_latest_submited varchar;
+            ALTER TABLE _data2 ADD COLUMN curr_pe_val_productivity_latest_submited varchar;
+            ALTER TABLE _data2 ADD COLUMN prev_pe_val_planted_latest_submited varchar;
+            ALTER TABLE _data2 ADD COLUMN prev_pe_val_productivity_latest_submited varchar;
 
-            ALTER TABLE _data ADD COLUMN used_01_factor_bool integer;
-            ALTER TABLE _data ADD COLUMN val_not_from_imm_prev_pe_bool integer;
-            ALTER TABLE _data ADD COLUMN exponent_diff_curr_prev_val_planted integer;
-            ALTER TABLE _data ADD COLUMN exponent_diff_curr_prev_val_productivity integer;
-            ALTER TABLE _data ADD COLUMN converted_curr_pe_val_planted decimal;
-            ALTER TABLE _data ADD COLUMN converted_curr_pe_val_productivity decimal;
+            ALTER TABLE _data2 ADD COLUMN used_01_factor_bool integer;
+            ALTER TABLE _data2 ADD COLUMN val_not_from_imm_prev_pe_bool integer;
+            ALTER TABLE _data2 ADD COLUMN exponent_diff_curr_prev_val_planted integer;
+            ALTER TABLE _data2 ADD COLUMN exponent_diff_curr_prev_val_productivity integer;
+            ALTER TABLE _data2 ADD COLUMN converted_curr_pe_val_planted decimal;
+            ALTER TABLE _data2 ADD COLUMN converted_curr_pe_val_productivity decimal;
         END IF;
         raise notice 'Done';
     RETURN '';
@@ -117,106 +117,107 @@ DECLARE
 	results VARCHAR;
 	filterparameters VARCHAR;
 	filename VARCHAR;
+	financialjulyname VARCHAR := '2016July';
 BEGIN
 	BEGIN
-    --DROP TABLE IF EXISTS _data;
+    --DROP TABLE IF EXISTS _data2;
     filterparameters = selected_month || region_name;
-    IF (SELECT EXISTS (SELECT 1 FROM _data WHERE filter = filterparameters)) THEN
+    IF (SELECT EXISTS (SELECT 1 FROM _data2 WHERE filter = filterparameters)) THEN
         RAISE EXCEPTION 'Process for this is % %',selected_month,region_name;
     END IF;
-    ALTER TABLE _data ADD COLUMN IF NOT EXISTS curr_pe_latest_submited varchar;
-    ALTER TABLE _data ADD COLUMN IF NOT EXISTS prev_pe_latest_submited varchar;
-    --CREATE TABLE _data as
+    --CREATE TABLE _data2 as
     SELECT * INTO results FROM select_table(selected_month, region_name);
         -- WHERE region.name = 'Arusha';--LIMIT 100;
 
+        --ALTER TABLE _data2 ADD COLUMN IF NOT EXISTS curr_pe_latest_submited varchar;
+        --ALTER TABLE _data2 ADD COLUMN IF NOT EXISTS prev_pe_latest_submited varchar;
         -- Set planted area and productivity to 0 if it is null and the form has been submitted
 
-        UPDATE _data SET curr_pe_val_planted_latest_submited = '0' WHERE curr_pe_submission = '1' AND curr_pe_val_planted_latest_submited is null AND filter = filterparameters;
-        UPDATE _data SET curr_pe_val_productivity_latest_submited = '0' WHERE curr_pe_submission = '1' AND curr_pe_val_productivity_latest_submited is null AND filter = filterparameters;
-        UPDATE _data SET prev_pe_val_planted_latest_submited = '0' WHERE prev_pe_submission = '1' AND prev_pe_val_planted_latest_submited is null AND filter = filterparameters;
-        UPDATE _data SET prev_pe_val_productivity_latest_submited = '0' WHERE prev_pe_submission = '1' AND prev_pe_val_productivity_latest_submited is null AND filter = filterparameters;
+        UPDATE _data2 SET curr_pe_val_planted_latest_submited = '0' WHERE curr_pe_submission = '1' AND curr_pe_val_planted_latest_submited is null AND filter = filterparameters;
+        UPDATE _data2 SET curr_pe_val_productivity_latest_submited = '0' WHERE curr_pe_submission = '1' AND curr_pe_val_productivity_latest_submited is null AND filter = filterparameters;
+        UPDATE _data2 SET prev_pe_val_planted_latest_submited = '0' WHERE prev_pe_submission = '1' AND prev_pe_val_planted_latest_submited is null AND filter = filterparameters;
+        UPDATE _data2 SET prev_pe_val_productivity_latest_submited = '0' WHERE prev_pe_submission = '1' AND prev_pe_val_productivity_latest_submited is null AND filter = filterparameters;
 
         -- Set planted area and productivity to previous values if the form was not submitted
-        UPDATE _data SET
+        UPDATE _data2 SET
         curr_pe_latest_submited = (
             SELECT _ps2.iso FROM organisationunit ou
-            INNER JOIN _periodstructure _ps ON(_ps.iso = _data.curr_pe)
-            INNER JOIN _periodstructure _ps2 ON(_ps2.startdate <= _ps.enddate)
+            INNER JOIN _periodstructure _ps ON(_ps.iso = _data2.curr_pe)
+            INNER JOIN _periodstructure _ps2 ON(_ps2.startdate <= _ps.enddate AND _ps2.financialjuly = financialjulyname)
             INNER JOIN completedatasetregistration submission ON(_ps2.periodid = submission.periodid AND submission.sourceid = ou.organisationunitid AND submission.datasetid = 1512)
-            WHERE _data.ou = ou.uid
+            WHERE _data2.ou = ou.uid
             ORDER BY _ps2.enddate DESC LIMIT 1
-        ) WHERE curr_pe_submission = '0' AND filter = filterparameters;
+        ) WHERE filter = filterparameters;
 
         -- Set planted area and productivity to previous values if the form was not submitted
-        UPDATE _data SET
+        UPDATE _data2 SET
         prev_pe_latest_submited = (
             SELECT _ps2.iso FROM organisationunit ou
-            INNER JOIN _periodstructure _ps ON(_ps.iso = _data.prev_pe)
-            INNER JOIN _periodstructure _ps2 ON(_ps2.startdate <= _ps.enddate)
+            INNER JOIN _periodstructure _ps ON(_ps.iso = _data2.prev_pe)
+            INNER JOIN _periodstructure _ps2 ON(_ps2.startdate <= _ps.enddate AND _ps2.financialjuly = financialjulyname)
             INNER JOIN completedatasetregistration submission ON(_ps2.periodid = submission.periodid AND submission.sourceid = ou.organisationunitid AND submission.datasetid = 1512)
-            WHERE _data.ou = ou.uid
+            WHERE _data2.ou = ou.uid
             ORDER BY _ps2.enddate DESC LIMIT 1
         )
-        WHERE prev_pe_submission = '0' AND filter = filterparameters;
+        WHERE filter = filterparameters;
         -- Set planted area and productivity to previous values if the form was not submitted
-        UPDATE _data SET
+        UPDATE _data2 SET
         curr_pe_val_planted_latest_submited = (
             SELECT dv.value FROM datavalue dv
-            INNER JOIN organisationunit ou ON(ou.organisationunitid = dv.sourceid AND _data.ou = ou.uid)
-            INNER JOIN _periodstructure _ps ON(_ps.iso = _data.curr_pe)
-            INNER JOIN _periodstructure _ps2 ON(_ps2.startdate <= _ps.enddate)
+            INNER JOIN organisationunit ou ON(ou.organisationunitid = dv.sourceid AND _data2.ou = ou.uid)
+            INNER JOIN _periodstructure _ps ON(_ps.iso = _data2.curr_pe)
+            INNER JOIN _periodstructure _ps2 ON(_ps2.startdate <= _ps.enddate AND _ps2.financialjuly = financialjulyname)
             INNER JOIN completedatasetregistration submission ON(_ps2.periodid = submission.periodid AND submission.sourceid = ou.organisationunitid AND submission.datasetid = 1512)
             WHERE dv.dataelementid = dx_planted_id AND dv.categoryoptioncomboid = co_planted_id AND dv.attributeoptioncomboid = 339884
             ORDER BY _ps2.enddate DESC LIMIT 1
         ),
         curr_pe_val_productivity_latest_submited = (
             SELECT dv.value FROM datavalue dv
-            INNER JOIN organisationunit ou ON(ou.organisationunitid = dv.sourceid AND _data.ou = ou.uid)
-            INNER JOIN _periodstructure _ps ON(_ps.iso = _data.curr_pe)
-            INNER JOIN _periodstructure _ps2 ON(_ps2.startdate <= _ps.enddate)
+            INNER JOIN organisationunit ou ON(ou.organisationunitid = dv.sourceid AND _data2.ou = ou.uid)
+            INNER JOIN _periodstructure _ps ON(_ps.iso = _data2.curr_pe)
+            INNER JOIN _periodstructure _ps2 ON(_ps2.startdate <= _ps.enddate AND _ps2.financialjuly = financialjulyname)
             INNER JOIN completedatasetregistration submission ON(_ps2.periodid = submission.periodid AND submission.sourceid = ou.organisationunitid AND submission.datasetid = 1512)
             WHERE dv.dataelementid = dx_productivity_id AND dv.categoryoptioncomboid = co_productivity_id AND dv.attributeoptioncomboid = 339884
             ORDER BY _ps2.enddate DESC LIMIT 1
-        ) WHERE curr_pe_submission = '0' AND filter = filterparameters;
+        ) WHERE filter = filterparameters;
 
         -- Set planted area and productivity to previous values if the form was not submitted
-        UPDATE _data SET
+        UPDATE _data2 SET
         prev_pe_val_planted_latest_submited = (
             SELECT dv.value FROM datavalue dv
-            INNER JOIN organisationunit ou ON(ou.organisationunitid = dv.sourceid AND _data.ou = ou.uid)
-            INNER JOIN _periodstructure _ps ON(_ps.iso = _data.prev_pe)
-            INNER JOIN _periodstructure _ps2 ON(_ps2.startdate <= _ps.enddate)
+            INNER JOIN organisationunit ou ON(ou.organisationunitid = dv.sourceid AND _data2.ou = ou.uid)
+            INNER JOIN _periodstructure _ps ON(_ps.iso = _data2.prev_pe)
+            INNER JOIN _periodstructure _ps2 ON(_ps2.startdate <= _ps.enddate AND _ps2.financialjuly = financialjulyname)
             INNER JOIN completedatasetregistration submission ON(_ps2.periodid = submission.periodid AND submission.sourceid = ou.organisationunitid AND submission.datasetid = 1512)
             WHERE dv.dataelementid = dx_planted_id AND dv.categoryoptioncomboid = co_planted_id AND dv.attributeoptioncomboid = 339884
             ORDER BY _ps2.enddate DESC LIMIT 1
         ) ,
         prev_pe_val_productivity_latest_submited = (
             SELECT dv.value FROM datavalue dv
-            INNER JOIN organisationunit ou ON(ou.organisationunitid = dv.sourceid AND _data.ou = ou.uid)
-            INNER JOIN _periodstructure _ps ON(_ps.iso = _data.prev_pe)
-            INNER JOIN _periodstructure _ps2 ON(_ps2.startdate <= _ps.enddate)
+            INNER JOIN organisationunit ou ON(ou.organisationunitid = dv.sourceid AND _data2.ou = ou.uid)
+            INNER JOIN _periodstructure _ps ON(_ps.iso = _data2.prev_pe)
+            INNER JOIN _periodstructure _ps2 ON(_ps2.startdate <= _ps.enddate AND _ps2.financialjuly = financialjulyname)
             INNER JOIN completedatasetregistration submission ON(_ps2.periodid = submission.periodid AND submission.sourceid = ou.organisationunitid AND submission.datasetid = 1512)
             WHERE dv.dataelementid = dx_productivity_id AND dv.categoryoptioncomboid = co_productivity_id AND dv.attributeoptioncomboid = 339884
             ORDER BY _ps2.enddate DESC LIMIT 1
         )
-        WHERE prev_pe_submission = '0' AND filter = filterparameters;
+        WHERE filter = filterparameters;
 
 
         -- Perform Adjustment #2:  Fix Same Planted Area but different Productivity -  Add 0.1 to make the planted areas different IF( a1[n]=a1[n-1] AND b1[n]<>b1[n-1] THEN a[n-1] + 0.1 ELSE a1[n] )
 
-        UPDATE _data SET curr_pe_val_planted_latest_submited = cast(cast(prev_pe_val_planted_latest_submited as decimal) + 0.1 as varchar), used_01_factor_bool = 1
+        UPDATE _data2 SET curr_pe_val_planted_latest_submited = cast(cast(prev_pe_val_planted_latest_submited as decimal) + 0.1 as varchar), used_01_factor_bool = 1
         WHERE curr_pe_val_planted_latest_submited = prev_pe_val_planted_latest_submited AND curr_pe_val_productivity_latest_submited <> prev_pe_val_productivity_latest_submited
         AND filter = filterparameters;
 
         -- Update exponential difference for planted area
 
-        UPDATE _data SET exponent_diff_curr_prev_val_planted=cast(log(abs(cast(curr_pe_val_planted_latest_submited as decimal) - cast(prev_pe_val_planted_latest_submited as decimal))) as integer) WHERE cast(curr_pe_val_planted_latest_submited as decimal) - cast(prev_pe_val_planted_latest_submited as decimal) <> 0
+        UPDATE _data2 SET exponent_diff_curr_prev_val_planted=cast(log(abs(cast(curr_pe_val_planted_latest_submited as decimal) - cast(prev_pe_val_planted_latest_submited as decimal))) as integer) WHERE cast(curr_pe_val_planted_latest_submited as decimal) - cast(prev_pe_val_planted_latest_submited as decimal) <> 0
         AND filter = filterparameters;
 
         -- Update exponential difference for productivity
 
-        UPDATE _data SET exponent_diff_curr_prev_val_productivity=cast(log(abs(cast(curr_pe_val_productivity_latest_submited as decimal) - cast(prev_pe_val_productivity_latest_submited as decimal))) as integer) WHERE cast(curr_pe_val_productivity_latest_submited as decimal) - cast(prev_pe_val_productivity_latest_submited as decimal) <> 0
+        UPDATE _data2 SET exponent_diff_curr_prev_val_productivity=cast(log(abs(cast(curr_pe_val_productivity_latest_submited as decimal) - cast(prev_pe_val_productivity_latest_submited as decimal))) as integer) WHERE cast(curr_pe_val_productivity_latest_submited as decimal) - cast(prev_pe_val_productivity_latest_submited as decimal) <> 0
         AND filter = filterparameters;
 
         -- Add new data columns
@@ -224,18 +225,18 @@ BEGIN
 
 
         -- Perform migration of planted area column
-        UPDATE _data SET converted_curr_pe_val_planted = cast(curr_pe_val_planted_latest_submited as decimal) - cast(prev_pe_val_planted_latest_submited as decimal)
+        UPDATE _data2 SET converted_curr_pe_val_planted = cast(curr_pe_val_planted_latest_submited as decimal) - cast(prev_pe_val_planted_latest_submited as decimal)
         WHERE filter = filterparameters;
 
         -- Perform migration of productivity column
-        UPDATE _data SET converted_curr_pe_val_productivity =
+        UPDATE _data2 SET converted_curr_pe_val_productivity =
         ((cast(curr_pe_val_planted_latest_submited as decimal) * cast(curr_pe_val_productivity_latest_submited as decimal))
             - (cast(prev_pe_val_planted_latest_submited as decimal) * cast(prev_pe_val_productivity_latest_submited as decimal)))/
         (cast(curr_pe_val_planted_latest_submited as decimal) - cast(prev_pe_val_planted_latest_submited as decimal))
         WHERE cast(curr_pe_val_planted_latest_submited as decimal) - cast(prev_pe_val_planted_latest_submited as decimal) != 0
         AND filter = filterparameters;
 
-        UPDATE _data SET done = TRUE WHERE filter = filterparameters;
+        UPDATE _data2 SET done = TRUE WHERE filter = filterparameters;
 
 	EXCEPTION WHEN OTHERS THEN
 		GET STACKED DIAGNOSTICS _c = PG_EXCEPTION_CONTEXT;
