@@ -3228,13 +3228,15 @@ var appControllers = angular
                           });
                         });
                         /*Object.keys($scope.dataElementsData).forEach(function(key){
-                            if(key === 'slgLjDrb3sM' || key === 'eUnKO1JEZYW.ql8bSsHEnUN'){
-                              console.log(key,$scope.dataElementsData[key],parseFloat($scope.dataElementsData[key]).toFixed(1));
+                            if(key === 'sS5OudDzXC2.ql8bSsHEnUN'){
+                                console.log('dataElementsData:',key, $scope.dataElementsData[key])
                             }
-                            $scope.dataElementsData[key] = parseFloat($scope.dataElementsData[key]).toFixed(1);
-                        })*/
-                          /*Object.keys($scope.cumulativeToDateData).forEach(function(key){
-                              $scope.cumulativeToDateData[key] = parseFloat($scope.cumulativeToDateData[key]).toFixed(1);
+                        })
+                          Object.keys($scope.cumulativeToDateData).forEach(function(key){
+                              //$scope.cumulativeToDateData[key] = parseFloat($scope.cumulativeToDateData[key]).toFixed(1);
+                              if(key === 'sS5OudDzXC2.ql8bSsHEnUN'){
+                                console.log('cumulativeToDateData', key, $scope.cumulativeToDateData[key])
+                              }
                           })*/
                         $timeout(function() {
                           deffered.resolve();
@@ -3471,7 +3473,7 @@ var appControllers = angular
             } else if (match[0].indexOf('cumulative-to-date') > -1) {
               //If it is last month of quarter
               var label = '<div>';
-              newHtml = newHtml.replace(
+              /*newHtml = newHtml.replace(
                 match[0],
                 $scope.getElementReplacment(
                   "cumulativeToDateData['" +
@@ -3481,7 +3483,15 @@ var appControllers = angular
                     "']",
                   'dataElement'
                 )
-              );
+              );*/
+                newHtml = newHtml.replace(
+                    match[0],
+                    "<div>{{cumulativeToDateData['" +
+                    idMacth[1] +
+                    '.' +
+                    idMacth[2] +
+                    "'] | toDecimal  | removeNaN |comma}}</div>"
+                );
               $scope.cumulativeToDate.push(idMacth[1] + '.' + idMacth[2]);
             } else if (match[0].indexOf('list-by-ward') > -1) {
               //If it is last month of quarter

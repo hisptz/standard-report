@@ -33,6 +33,10 @@ var appFilters = angular.module('appFilters', [])
             if(!input){
                 return '';
             }
+            if(('' + (parseFloat(input) - parseInt(input))).substr(0,7) === '0.04999'){
+                return (parseFloat(input) + 0.01).toFixed(1);
+            }
+            //return input;
             return parseFloat(input).toFixed(1);
         };
     })
