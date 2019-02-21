@@ -3231,10 +3231,10 @@ var appControllers = angular
                             if(key === 'sS5OudDzXC2.ql8bSsHEnUN'){
                                 console.log('dataElementsData:',key, $scope.dataElementsData[key])
                             }
-                        })
-                          Object.keys($scope.cumulativeToDateData).forEach(function(key){
+                        })*/
+                          /*Object.keys($scope.cumulativeToDateData).forEach(function(key){
                               //$scope.cumulativeToDateData[key] = parseFloat($scope.cumulativeToDateData[key]).toFixed(1);
-                              if(key === 'sS5OudDzXC2.ql8bSsHEnUN'){
+                              if(key === 'SPJSjcuZ8EA.g8e3yoakYec'){
                                 console.log('cumulativeToDateData', key, $scope.cumulativeToDateData[key])
                               }
                           })*/
