@@ -1927,7 +1927,7 @@ var appServices = angular
                   ); //.replace(/'/g, '&apos;'));
                 }
                 if ($(this).css("display") == "none") {
-                  this.empty();
+                  $(this).empty();
                 }
               });
             //Remove rowspans in excel
@@ -2087,7 +2087,7 @@ var appServices = angular
                   ); //.replace(/'/g, '&apos;'));
                 }
                 if ($(this).css("display") == "none") {
-                  this.empty();
+                  $(this).empty();
                 }
               });
             //Remove rowspans in excel
