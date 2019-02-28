@@ -2473,11 +2473,11 @@ var appControllers = angular
               }
               return returnValue;
             };
-            for (var i = 0; i < $scope.dataElements.length / batch; i++) {
+            for (var i = 0; i < $scope.dataElements.length / 1; i++) {
               var wardLevel = [];
               var NotWardLevel = [];
               $scope.dataElements
-                .slice(i * batch, i * batch + batch)
+                .slice(i * 1, i * 1 + 1)
                 .forEach(function(dx) {
                   if ($scope.wardLevelIndicator.indexOf(dx) > -1) {
                     wardLevel.push(dx);
@@ -2498,7 +2498,7 @@ var appControllers = angular
                   $http
                     .get(
                       DHIS2URL +
-                        'api/26/analytics.json?dimension=dx:' +
+                        'api/26/analytics.json?wacha&dimension=dx:' +
                         wardLevel.join(';') +
                         '&dimension=pe:' +
                         periods.join(';') +
@@ -2521,13 +2521,16 @@ var appControllers = angular
                         });
                         $scope.progressValue =
                           $scope.progressValue + progressFactor;
-                        wardLevel.forEach(function(id) {
+                        /*wardLevel.forEach(function(id) {
                           if ($scope.dataElementsData[id]) {
                             if (parseFloat($scope.dataElementsData[id]) == 0) {
                               $scope.dataElementsData[id] = '';
                             }
                           }
-                        });
+                            if(id === 'slgLjDrb3sM'){
+                                console.log('slgLjDrb3sM', $scope.dataElementsData[id]);
+                            }
+                        });*/
                       },
                       function() {
                         
@@ -2860,17 +2863,7 @@ var appControllers = angular
                             .then(function(analyticsResults) {
                                 analyticsResults.data.rows.forEach(function(row) {
                                     if ($scope.cumulativeToDateData[row[0]]) {
-                                        $scope.cumulativeToDateData[row[0]] =
-                                            (
-                                                parseFloat(
-                                                    $scope.cumulativeToDateData[row[0]]
-                                                ) + parseFloat(row[3])
-                                            ) ;
-                                        $scope.cumulativeToDateData[row[0]] =
-                                            '' +
-                                            parseFloat(
-                                                $scope.cumulativeToDateData[row[0]]
-                                            );
+                                        $scope.cumulativeToDateData[row[0]] = new Decimal(parseFloat($scope.cumulativeToDateData[row[0]])).plus(parseFloat(row[3]));
                                     } else {
                                         $scope.cumulativeToDateData[row[0]] =
                                             '' + parseFloat(row[3]);
@@ -2903,17 +2896,7 @@ var appControllers = angular
                             .then(function(analyticsResults) {
                                 analyticsResults.data.rows.forEach(function(row) {
                                     if ($scope.cumulativeToDateData[row[0]]) {
-                                        $scope.cumulativeToDateData[row[0]] =
-                                            (
-                                                parseFloat(
-                                                    $scope.cumulativeToDateData[row[0]]
-                                                ) + parseFloat(row[2])
-                                            );
-                                        $scope.cumulativeToDateData[row[0]] =
-                                            '' +
-                                            parseFloat(
-                                                $scope.cumulativeToDateData[row[0]]
-                                            );
+                                        $scope.cumulativeToDateData[row[0]] = new Decimal(parseFloat($scope.cumulativeToDateData[row[0]])).plus(parseFloat(row[2]));
                                     } else {
                                         $scope.cumulativeToDateData[row[0]] =
                                             '' + parseFloat(row[2]);
@@ -2953,17 +2936,7 @@ var appControllers = angular
                       .then(function(analyticsResults) {
                         analyticsResults.data.rows.forEach(function(row) {
                           if ($scope.cumulativeToDateData[row[0]]) {
-                            $scope.cumulativeToDateData[row[0]] =
-                              (
-                                parseFloat(
-                                  $scope.cumulativeToDateData[row[0]]
-                                ) + parseFloat(row[3])
-                              ) + 1;
-                            $scope.cumulativeToDateData[row[0]] =
-                              '' +
-                              parseFloat(
-                                $scope.cumulativeToDateData[row[0]]
-                              );
+                            $scope.cumulativeToDateData[row[0]] = new Decimal(parseFloat($scope.cumulativeToDateData[row[0]])).plus(parseFloat(row[3]));
                           } else {
                             $scope.cumulativeToDateData[row[0]] =
                               '' + parseFloat(row[3]);
@@ -3227,14 +3200,14 @@ var appControllers = angular
                             ].dataElementsDetails.push(programIndicator);
                           });
                         });
-                        /*Object.keys($scope.dataElementsData).forEach(function(key){
-                            if(key === 'sS5OudDzXC2.ql8bSsHEnUN'){
-                                console.log('dataElementsData:',key, $scope.dataElementsData[key])
+                        Object.keys($scope.dataElementsData).forEach(function(key){
+                            if(key === 'logO2vQOnbP' || key === 'IIHbOOcMu7K.dUIkQFWg2qm'){
+                                console.log('dataElementsData Checking:',key, $scope.dataElementsData[key])
                             }
-                        })*/
+                        })
                           /*Object.keys($scope.cumulativeToDateData).forEach(function(key){
                               //$scope.cumulativeToDateData[key] = parseFloat($scope.cumulativeToDateData[key]).toFixed(1);
-                              if(key === 'SPJSjcuZ8EA.g8e3yoakYec'){
+                              if(key === 'eUnKO1JEZYW.ql8bSsHEnUN'){
                                 console.log('cumulativeToDateData', key, $scope.cumulativeToDateData[key])
                               }
                           })*/
@@ -3509,11 +3482,11 @@ var appControllers = angular
               if (match[0].indexOf('integer') > -1) {
                 newHtml = newHtml.replace(
                   match[0],
-                  '<div>{{Int(dataElementsData["' +
+                  '<div>{{dataElementsData["' +
                     idMacth[1] +
                     '.' +
                     idMacth[2] +
-                    '"]) |removeNaN |comma}}</div>'
+                    '"] |toDecimal |comma}}</div>'
                 );
               } else {
                 newHtml = newHtml.replace(
@@ -3522,7 +3495,7 @@ var appControllers = angular
                     idMacth[1] +
                     '.' +
                     idMacth[2] +
-                    '"] |toDecimal | removeNaN |comma}}</div>'
+                    '"] |toDecimal |comma}}</div>'
                 );
               }
               $scope.dataElements.push(idMacth[1] + '.' + idMacth[2]);
@@ -3708,16 +3681,16 @@ var appControllers = angular
             if (match[0].indexOf('integer') > -1) {
               newHtml = newHtml.replace(
                 match[0],
-                '<div>{{Int(dataElementsData["' +
+                '<div>{{dataElementsData["' +
                   idMacth[1] +
-                  '"]) | removeNaNInd |comma}}</div>'
+                  '"]| toDecimal |comma}}</div>'
               );
             } else {
               newHtml = newHtml.replace(
                 match[0],
                 '<div>{{dataElementsData["' +
                   idMacth[1] +
-                  '"] |toDecimal | removeNaNInd |comma}}</div>'
+                  '"] |toDecimal |comma}}</div>'
               );
             }
             $scope.dataElements.push(idMacth[1]);

@@ -31,13 +31,25 @@ var appFilters = angular.module('appFilters', [])
     .filter('toDecimal', function() {
         return function(input) {
             if(!input){
-                return '';
+                //return '';
             }
             if((input + '').substr((input + '').indexOf('.') + 2,1) === '5'){
-                return (parseFloat(input) + 0.01).toFixed(1);
+                //return (parseFloat(input) + 0.01).toFixed(1);
             }
             //return input;
-            return parseFloat(input).toFixed(1);
+            //return parseFloat(input).toFixed(1);
+            if(input == "NaN" || isNaN(input)){
+                return "";
+            }
+            try{
+                var val = (new Decimal(input)).toFixed(1);
+                if(val == "NaN"){
+                    return '';
+                }
+                return val;
+            } catch(e){
+                return '';
+            }
         };
     })
     .filter('removeNaNInd', function() {
