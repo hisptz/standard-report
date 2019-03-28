@@ -2087,6 +2087,7 @@ var appServices = angular
                   ); //.replace(/'/g, '&apos;'));
                 }
                 if ($(this).css("display") == "none") {
+                  this.remove();
                   $(this).empty();
                 }
               });
