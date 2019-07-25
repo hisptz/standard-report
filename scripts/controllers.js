@@ -1820,7 +1820,7 @@ var appControllers = angular
 
         function getLastDate(period) {
           if (period.indexOf('July') > -1) {
-            return new Date(parseInt(period.substr(0, 4)), 5, 30);
+            return new Date(parseInt(period.substr(0, 4)) + 1, 5, 30);
           } else if (period.indexOf('Q') > -1) {
             return new Date(
               parseInt(period.substr(0, 4)),
