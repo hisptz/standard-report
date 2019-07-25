@@ -1,6 +1,8 @@
 <img ng-if="noExecutedLoaded && (!dataSets || !orgUnits)" src="../../../images/ajax-loader-bar.gif">
 <div ng-if="noExecutedLoaded && dataSets && orgUnits" class="row">
+
     <div ng-if="(periodIds | withNotExecuted:notExecuted:dataSetId).length != 0" ng-repeat="dataSetId in dataSetIds" class="col-sm-6">
+
         <h5>{{dataSets[dataSetId].name}}</h5>
         <table class="table table-bordered">
             <tr>
@@ -10,7 +12,7 @@
             </tr>
             <tbody ng-if="(periodIds | withNotExecuted:notExecuted:dataSetId:orgUnitId).length != 0" ng-repeat="orgUnitId in orgUnitIds">
             <tr>
-                <td rowspan="{{(periodIds | withNotExecuted:notExecuted:dataSetId:orgUnitId).length}}"><span ng-repeat="ancestor in orgUnits[orgUnitId].ancestors">{{ancestor.name}} - </span>{{orgUnits[orgUnitId].name}}</td>
+                <td rowspan="{{(periodIds | withNotExecuted:notExecuted:dataSetId:orgUnitId).length}}"><span ng-repeat="ancestor in orgUnits[orgUnitId].ancestors">  {{ancestor.name}} - </span>{{orgUnits[orgUnitId].name}}</td>
                 <td ng-if="$first" ng-repeat="periodId in periodIds | withNotExecuted:notExecuted:dataSetId:orgUnitId">{{getPeriodName(periodId)}}</td>
                 <td ng-if="$first" ng-repeat="periodId in periodIds | withNotExecuted:notExecuted:dataSetId:orgUnitId">
                     <button ng-if="!loading[dataSetId+'_'+orgUnitId+'_'+periodId] && done == 'no'" ng-click="cancelCreateDataSetReport(dataSetId,orgUnitId,periodId)"><span>Cancel Report Creation</span></button>

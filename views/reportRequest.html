@@ -1,436 +1,294 @@
 <style>
-    .yellow {
-        background-color: yellow;
-    }
+  .yellow {
+    background-color: yellow;
+  }
 
-    .red {
-        background-color: lightcoral;
-    }
+  .red {
+    background-color: lightcoral;
+  }
 
-    .green {
-        background-color: darkseagreen;
-    }
+  .green {
+    background-color: darkseagreen;
+  }
 
-    textarea {
-        width: 50%;
-        height: 100px;
+  textarea {
+    width: 50%;
+    height: 100px;
+  }
+  .freeTextTable td {
+    border: 1px solid lightgrey;
+  }
+  .criteria #criteria {
+    margin-left: 15px;
+  }
+  @media print {
+    .align-right {
+      text-align: right !important;
     }
-    .freeTextTable td{
-        border: 1px solid lightgrey;
-    }
-
+  }
 </style>
+
 <div ng-if="error" class="alert alert-danger" role="alert">
-    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-    <span class="sr-only">Error:</span>
-    There was a problem. Please try again later.
+  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+  <span class="sr-only">Error:</span>
+  There was a problem. Please try again later.
 </div>
 <div ng-if="!error" class="col-sm-10">
-    <div ng-if="reportStatus == ''" class="loader" style="margin-top: 0px;">
-        <img
-                src="../../../images/ajax-loader-bar.gif"> Checking Archive..
-    </div>
-    <table>
-        <tr>
-            <td>{{dataSet.name}}</td>
-        </tr>
-        <tr>
-            <td>{{data.organisationUnit.name}}</td>
-        </tr>
-        <tr>
-            <td>{{getPeriodName()}}</td>
-        </tr>
-    </table>
-    <div class="row" ng-if="reportStatus == 'Starting'">
-        <div ng-if="!completeDataSetRegistrations && completeDataSetRegistrationsLoading" class="loader"
-             style="margin-top: 0px;">
-            <img
-                    src="../../../images/ajax-loader-bar.gif"> Loading Ward Completenes..
-        </div>
-        <div ng-if="!(!completeDataSetRegistrations && completeDataSetRegistrationsLoading)">
-            <div class="col-sm-12" style="margin-bottom:20px">
-                <input type="button" value="Change Criteria" ng-click="dataCriteria = !dataCriteria">
-                <input ng-if="dataSet.name.indexOf('Integrated') == -1" type="button"
-                       ng-disabled="isNotAuthorized() || data.organisationUnit.level != 3 || consistsOfReport"
-                       value="Create Report" style="width:120px" ng-click="createDataSetReport()" html-link="">
-                <input type="button" ng-disabled="isNotAuthorized()" value="Preview" ng-click="generateDataSetReport()">
-                <input type="button" ng-If="isSuperUser() && hasReports()" ng-click="createAllReports()" class="pull-right" value="Create All District Reports">
-                <!--<input type="button" ng-disabled="isNotAuthorized()" value="Preview in Debug Mode"
-                       ng-click="generateDataSetReportInDebug()">-->
-            </div>
-            <style>
-                .criteria #criteria {
-                    margin-left: 15px;
-                }
-            </style>
-            <criteria class="criteria" ng-show="dataCriteria"></criteria>
-            <div class="col-sm-12">
-                <div ng-if="createAllReportLoading">
-                    <img
-                            src="../../../images/ajax-loader-bar.gif"> Creating District Report.
-                </div>
-                <div ng-if="!createAllReportLoading && notCompleted" class="alert alert-warning" style="color:black">
-                    <h4>The following forms have not been completed:</h4>
-                    <div ng-repeat="(key, value) in notCompleted">
-                        <h5>{{idMapper[key].name}}</h5>
-                        <table class="table table-bordered">
-                            <thead>
-                            <tr><th>District</th></tr>
-                            </thead>
-                            <tr ng-repeat="(key2, value2) in value"><td>{{idMapper[key2].name}}</td></tr>
-                        </table>
-                    </div>
-                    Do you want to create the reports anyway? <br />
-                    <button class="btn btn-default pull-right" ng-click="cancelAllReportCreation()">Cancel</button>
-                    <button class="btn btn-primary pull-right" ng-click="createDistrictReports()" style="margin-right: 10px;">Yes. Create Report</button>
-                    <br />
-                    Note: This report will not be created until the forms have been completed.
-                </div>
-            </div>
-            <div class="col-sm-12" ng-repeat="sourceDataSet in sourceDataSets">
-                <div ng-if="!(dataSet.name.indexOf('Integrated') > -1 && sourceDataSet.orgUnitLevel == 4)">
-                    <br/>
-                    <h4>{{sourceDataSet.displayName}} <span ng-if="sourceDataSet.isReport">Report</span><span
-                            ng-if="!sourceDataSet.isReport">Completeness</span> Status </h4>
-                    <table ng-if="sourceDataSet.isReport" class="table table-bordered">
-                        <tr>
-                            <th>Administrative Unit</th>
-                            <th>Period</th>
-                            <th>Report Status</th>
-                        </tr>
-                        <tr ng-if="sourceDataSet.orgUnitLevel == data.organisationUnit.level">
-                            <td rowspan="{{getOrganisationUnitPeriods(sourceDataSet).length}}">
-                                {{data.organisationUnit.name}}
-                            </td>
-                            <td ng-if="$first"
-                                ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
-                                {{getPeriodName(organisationUnitPeriod)}}
-                            </td>
-                            <td ng-if="$first"
-                                ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)"
-                                ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1) &&(dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1),
-                            green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1,
-                            yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1}">
-                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+ organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1)">Not Created
-                                <button ng-If="isSuperUser() && sourceDataSet.displayName.indexOf('Integrated') == -1" ng-click="createDataSetReportParams(data.organisationUnit.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
-                                        class="pull-right"
-                                        ng-disabled="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'"
-                                ><span ng-if="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] != 'loading'">Create</span>
-                                    <span ng-if="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'">Loading...</span>
-                                </button></span>
-                                <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+ organisationUnitPeriod) > -1">Created</span>
-                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+ organisationUnitPeriod) > -1">In Progress
-                                <button ng-If="isSuperUser()" ng-click="cancelDataSetReportParams(data.organisationUnit.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
-                                        class="pull-right"
-                                        ng-disabled="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'"
-                                ><span ng-if="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] != 'loading'">Cancel Creation</span>
-                                    <span ng-if="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'">Loading...</span>
-                                </button>
-                            </span>
-                            </td>
-                        </tr>
-                        <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
-                            <td>
-                                {{getPeriodName(organisationUnitPeriod)}}
-                            </td>
-                            <td ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) > -1}">
-                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+ organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+organisationUnitPeriod) == -1)">Not Created
-                                <button ng-If="isSuperUser() && sourceDataSet.displayName.indexOf('Integrated') == -1" ng-click="createDataSetReportParams(data.organisationUnit.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
-                                        class="pull-right"
-                                        ng-disabled="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'"
-                                ><span ng-if="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] != 'loading'">Create</span>
-                                    <span ng-if="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'">Loading...</span>
-                                </button></span>
-                                <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+ organisationUnitPeriod) > -1">Created</span>
-                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ data.organisationUnit.id +'_'+ organisationUnitPeriod) > -1">In Progress
-                                <button ng-If="isSuperUser()" ng-click="cancelDataSetReportParams(data.organisationUnit.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
-                                        class="pull-right"
-                                        ng-disabled="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'"
-                                ><span ng-if="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] != 'loading'">Cancel Creation</span>
-                                    <span ng-if="status[data.organisationUnit.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'">Loading...</span>
-                                </button>
-                            </span>
-                            </td>
-                        </tr>
-                        <tbody ng-if="sourceDataSet.orgUnitLevel != data.organisationUnit.level"
-                               ng-repeat="child in data.organisationUnit.children">
-                        <tr>
-                            <td rowspan="{{getOrganisationUnitPeriods(sourceDataSet).length}}">{{child.name}}</td>
-                            <td ng-if="$first"
-                                ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
-                                {{getPeriodName(organisationUnitPeriod)}}
-                            </td>
-                            <td ng-if="$first"
-                                ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)"
-                                ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) > -1}">
-                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1)">Not Created
-                                <button ng-If="isSuperUser() && sourceDataSet.displayName.indexOf('Integrated') == -1" ng-click="createDataSetReportParams(child.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
-                                        class="pull-right"
-                                        ng-disabled="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'"
-                                ><span ng-if="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] != 'loading'">Create</span>
-                                    <span ng-if="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'">Loading...</span>
-                                </button></span>
-                                <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) > -1">Created</span>
-                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) > -1">In Progress
-                                <button ng-If="isSuperUser()" ng-click="cancelDataSetReportParams(child.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
-                                        class="pull-right"
-                                        ng-disabled="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'"
-                                ><span ng-if="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] != 'loading'">Cancel Creation</span>
-                                    <span ng-if="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'">Loading...</span>
-                                </button>
-                            </span>
-                            </td>
-                        </tr>
-                        <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
-                            <td>
-                                {{getPeriodName(organisationUnitPeriod)}}
-                            </td>
-                            <td ng-class="{red:(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1),green:dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) > -1,yellow:dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) > -1}">
-                            <span ng-if="(dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) == -1) && (dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+organisationUnitPeriod) == -1)">Not Created
-                                <button ng-If="isSuperUser() && sourceDataSet.displayName.indexOf('Integrated') == -1" ng-click="createDataSetReportParams(child.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
-                                        class="pull-right"
-                                        ng-disabled="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'"
-                                ><span ng-if="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] != 'loading'">Create</span>
-                                    <span ng-if="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'">Loading...</span>
-                                </button></span>
-                                <span ng-if="dataStore.executed.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) > -1">Created</span>
-                            <span ng-if="dataStore.notExecuted.indexOf(sourceDataSet.id +'_'+ child.id +'_'+ organisationUnitPeriod) > -1">In Progress
-                                <button ng-If="isSuperUser()" ng-click="cancelDataSetReportParams(child.id,organisationUnitPeriod,sourceDataSet.id,'notExecuted')"
-                                        class="pull-right"
-                                        ng-disabled="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'"
-                                ><span ng-if="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] != 'loading'">Cancel Creation</span>
-                                    <span ng-if="status[child.id + '_' + organisationUnitPeriod + '_' + sourceDataSet.id] == 'loading'">Loading...</span>
-                                </button>
-                            </span>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <table ng-if="!sourceDataSet.isReport && sourceDataSet.orgUnitLevel != data.organisationUnit.level"
-                           class="table table-bordered">
-                        <tr>
-                            <th>{{getLevelName(data.organisationUnit.level + 1)}} Total</th>
-                            <th>Number of Periods</th>
-                            <th>{{getLevelName(data.organisationUnit.level + 1)}} For All Periods Completed</th>
-                            <th>{{getLevelName(data.organisationUnit.level + 1)}} For All Periods Not Completed</th>
-                            <th>Completion Percentage</th>
-                        </tr>
-                        <tr>
-                            <td>{{data.organisationUnit.children.length}}</td>
-                            <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1">
-                                {{sourceDataSet.periodTypeValue/dataSet.periodTypeValue}}
-                            </td>
-                            <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1">
-                                {{sourceDataSet.completeDataSetRegistrations.length *
-                                (sourceDataSet.periodTypeValue/dataSet.periodTypeValue)}}
-                            </td>
-                            <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1">
-                                {{(data.organisationUnit.children.length *
-                                sourceDataSet.periodTypeValue/dataSet.periodTypeValue) -
-                                sourceDataSet.completeDataSetRegistrations.length}}
-                            </td>
-                            <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1"
-                                ng-class="{red:(sourceDataSet.completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100 < 70,green:(sourceDataSet.completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100>= 70}">
-                                {{((sourceDataSet.completeDataSetRegistrations.length /
-                                data.organisationUnit.children.length) *
-                                100)/(sourceDataSet.periodTypeValue/dataSet.periodTypeValue) | number : 2}}%
-                            </td>
-                            <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue < 1">1</td>
-                            <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue < 1">
-                                {{sourceDataSet.completeDataSetRegistrations.length}}
-                            </td>
-                            <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue < 1">
-                                {{(data.organisationUnit.children.length) -
-                                sourceDataSet.completeDataSetRegistrations.length}}
-                            </td>
-                            <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue < 1"
-                                ng-class="{red:(sourceDataSet.completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100 < 70,green:(sourceDataSet.completeDataSetRegistrations.length / data.organisationUnit.children.length) * 100>= 70}">
-                                {{((sourceDataSet.completeDataSetRegistrations.length /
-                                data.organisationUnit.children.length) * 100) | number : 2}}%
-                            </td>
-                        </tr>
-                    </table>
-                    <table ng-if="!sourceDataSet.isReport && sourceDataSet.orgUnitLevel == data.organisationUnit.level"
-                           class="table table-bordered">
-                        <tr>
-                            <th>{{getLevelName(data.organisationUnit.level)}} Total</th>
-                            <th>Number of Periods</th>
-                            <th>{{getLevelName(data.organisationUnit.level)}} For All Periods Completed</th>
-                            <th>{{getLevelName(data.organisationUnit.level)}} For All Periods Not Completed</th>
-                            <th>Completion Percentage</th>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1">
-                                {{getOrganisationUnitPeriods(sourceDataSet).length}}
-                            </td>
-                            <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1">
-                                {{sourceDataSet.completeDataSetRegistrations.length *
-                                (sourceDataSet.periodTypeValue/dataSet.periodTypeValue)}}
-                            </td>
-                            <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1">
-                                {{(getOrganisationUnitPeriods(sourceDataSet).length) -
-                                sourceDataSet.completeDataSetRegistrations.length}}
-                            </td>
-                            <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue >= 1"
-                                ng-class="{red:(sourceDataSet.completeDataSetRegistrations.length) * 100 < 70,green:(sourceDataSet.completeDataSetRegistrations.length) * 100>= 70}">
-                                {{((sourceDataSet.completeDataSetRegistrations.length) *
-                                100)/(getOrganisationUnitPeriods(sourceDataSet).length) | number : 2}}%
-                            </td>
-                            <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue < 1">1</td>
-                            <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue < 1">
-                                {{sourceDataSet.completeDataSetRegistrations.length}}
-                            </td>
-                            <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue < 1">{{1 -
-                                sourceDataSet.completeDataSetRegistrations.length}}
-                            </td>
-                            <td ng-if="sourceDataSet.periodTypeValue/dataSet.periodTypeValue < 1"
-                                ng-class="{red:(sourceDataSet.completeDataSetRegistrations.length) * 100 < 70,green:(sourceDataSet.completeDataSetRegistrations.length) * 100>= 70}">
-                                {{((sourceDataSet.completeDataSetRegistrations.length) * 100) | number : 2}}%
-                            </td>
-                        </tr>
-                    </table>
-                    <table ng-if="!sourceDataSet.isReport && sourceDataSet.completeDataSetRegistrations"
-                           class="table table-bordered">
-                        <tr>
-                            <th>Administrative Unit</th>
-                            <th>Period</th>
-                            <th>Data Entry Status</th>
-                        </tr>
-                        <tbody ng-if="sourceDataSet.orgUnitLevel != data.organisationUnit.level"
-                               ng-repeat="orgUnit in data.organisationUnit.children">
-                        <tr>
-                            <!--<td rowspan="{{sourceDataSet.periodTypeValue/dataSet.periodTypeValue}}">{{orgUnit.name}}</td>-->
-                            <td rowspan="{{getOrganisationUnitPeriods(sourceDataSet).length}}">{{orgUnit.name}}</td>
-                            <td ng-repeat-start="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)"
-                                ng-if="$first">{{getPeriodName(organisationUnitPeriod)}}
-                            </td>
-                            <td ng-repeat-end ng-if="$first"
-                                ng-class="{red:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)=='Incomplete',green:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)=='Complete'}">
-                                {{getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)}}
-                            </td>
-                        </tr>
-                        <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
-                            <td>{{getPeriodName(organisationUnitPeriod)}}</td>
-                            <td ng-class="{red:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)=='Incomplete',green:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)=='Complete'}">
-                                {{getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,orgUnit.id,organisationUnitPeriod)}}
-                            </td>
-                        </tr>
-                        <tbody ng-if="sourceDataSet.orgUnitLevel == data.organisationUnit.level">
-                        <tr>
-                            <td rowspan="{{getOrganisationUnitPeriods(sourceDataSet).length}}">
-                                {{data.organisationUnit.name}}
-                            </td>
-                            <td ng-repeat-start="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)"
-                                ng-if="$first">{{getPeriodName(organisationUnitPeriod)}}
-                            </td>
-                            <td ng-repeat-end ng-if="$first"
-                                ng-class="{red:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,data.organisationUnit.id,organisationUnitPeriod)=='Incomplete',green:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,data.organisationUnit.id,organisationUnitPeriod)=='Complete'}">
-                                {{getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,data.organisationUnit.id,organisationUnitPeriod)}}
-                            </td>
-                        </tr>
-                        <tr ng-if="!$first" ng-repeat="organisationUnitPeriod in getOrganisationUnitPeriods(sourceDataSet)">
-                            <td>{{getPeriodName(organisationUnitPeriod)}}</td>
-                            <td ng-class="{red:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,data.organisationUnit.id,organisationUnitPeriod)=='Incomplete',green:getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,data.organisationUnit.id,organisationUnitPeriod)=='Complete'}">
-                                {{getOrgUnitStatus(sourceDataSet.completeDataSetRegistrations,data.organisationUnit.id,organisationUnitPeriod)}}
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+  <div ng-if="reportStatus == ''" class="loader" style="margin-top: 0px;">
+    <img src="../../../images/ajax-loader-bar.gif" /> Checking Archive..
+  </div>
+  <table>
+    <tr>
+      <td>{{ dataSet.name }}</td>
+    </tr>
+    <tr>
+      <td>{{ data.organisationUnit.name }}</td>
+    </tr>
+    <tr>
+      <td>{{ getPeriodName() }}</td>
+    </tr>
+  </table>
 
-
+  <div class="row" ng-if="reportStatus == 'Starting'">
+    <div
+      ng-if="!completeDataSetRegistrations && completeDataSetRegistrationsLoading"
+      class="loader"
+      style="margin-top: 0px;"
+    >
+      <img src="../../../images/ajax-loader-bar.gif" /> Loading Ward
+      Completenes..
     </div>
-    <div ng-if="reportStatus == 'Executed'">
-        <div ng-if="!loadFile" class="loader" style="margin-top: 0px;">
-            <img
-                    src="../../../images/ajax-loader-bar.gif"> Checking Archive...
-        </div>
-        <div ng-if="loadFile">
-            <input type="button" value="Change Criteria" ng-click="dataCriteria = !dataCriteria">
-            <!--<input type="button" value="Download PDF" ng-click="download()">-->
-            <input type="button" value="Print" ng-click="printReport()">
-            <input type="button" value="Download Excel" style="width:140px" ng-click="downloadExcel()">
-            <input ng-if="dataSet.name.indexOf('Integrated') == -1 && !approveData.user  && data.organisationUnit.level > 2 && !parentApproved" type="button" ng-disabled="isNotAuthorized()" value="Undo Report Creation"
-                   ng-click="undoDataSetReport()">
-            <input ng-if="!approveData.user && approvalStatus == '' && data.organisationUnit.level > 2 && data.organisationUnit.path.indexOf(user.organisationUnits[0].id) > -1" type="button" ng-disabled="isNotApproved()"
-                   value="Approve" ng-click="approve()">
-            <input ng-if="approveData.user && approvalStatus == '' && data.organisationUnit.path.indexOf(user.organisationUnits[0].id) > -1" type="button" ng-disabled="isNotApproved()"
-                   value="Disapprove" ng-click="disApprove()">
-            <span ng-if="approvalStatus != ''" class="loader" style="margin-top: 0px;">
-                <img
-                        src="../../../images/ajax-loader-bar.gif"> {{approvalStatus}}
-            </span><br/><br/>
-            <div ng-if="approveData.user && approvalStatus == ''" class="alert alert-info" role="alert">
-                <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+    <div
+      ng-if="!(!completeDataSetRegistrations && completeDataSetRegistrationsLoading)"
+    >
+      <div class="col-sm-12" style="margin-bottom:20px">
+        <input
+          type="button"
+          value="Change Criteria"
+          ng-click="dataCriteria = !dataCriteria"
+        />
+        <!--{{isNotAuthorized()}} || {{data.organisationUnit.level != 3}} || {{consistsOfReport}}-->
+        <input
+          ng-if="dataSet.name.indexOf('Integrated') == -1 && !lockReports"
+          type="button"
+          ng-disabled="isNotAuthorized() || data.organisationUnit.level != 3 || consistsOfReport"
+          value="Create Report"
+          style="width:120px"
+          ng-click="createDataSetReport()"
+          html-link=""
+        />
+        <input
+          type="button"
+          ng-disabled="isNotAuthorized()"
+          value="Preview"
+          ng-click="generateDataSetReport()"
+        />
+      </div>
+      <criteria class="criteria" ng-show="dataCriteria"></criteria>
+      <!--<div ng-if="!statusReturn.canCreate && statusReturn.create" class="alert alert-danger" role="alert">
+                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                 <span class="sr-only">Error:</span>
-                Approved by {{approveData.user.name}} on {{approveData.lastUpdated | date}}<br/><br/>
-
-                Comments:<br/><br/>
-
-                <i>{{commentData.comment}}</i>
-            </div>
-            <style>
-                #criteria {
-                    margin-left: 15px;
-                }
-            </style>
-            <criteria class="criteria1" ng-show="dataCriteria"></criteria>
-            <div ng-if="data.organisationUnit && approveData && data.organisationUnit.path.indexOf(user.organisationUnits[0].id) > -1" report-comment user="user" approve-data="approveData" org-unit="data.organisationUnit">
-            </div>
-            <div ng-bind-html="file" id="printablereport"></div>
-        </div>
+                Error creating Report. To create this report make sure the previous reports have been created.
+            </div>-->
+      <div ng-if="dataSet && !statusReturn.create">
+        <breakdown-point
+          control="control"
+          lock-reports="lockReports"
+          show-reports="true"
+          on-done="(onDone)"
+          user="user"
+          status="status"
+          organisation-unit="data.organisationUnit"
+          set-data-set="dataSet"
+          on-reports-created="(afterAllReportCreated)"
+        >
+        </breakdown-point>
+      </div>
+      <div ng-if="statusReturn.create">
+        <img src="../../../images/ajax-loader-bar.gif" /> Scheduling of Report
+        for Creation...
+      </div>
     </div>
-    <div ng-if="reportStatus == 'Not Executed'">
-        <div class="alert alert-info">
-            <strong>Info!</strong> Report creation has been scheduled.
-        </div>
-        <input type="button" value="Preview" ng-click="generateDataSetReport()"><!--
+  </div>
+  <div ng-if="reportStatus == 'Executed'">
+    <div ng-if="!loadFile" class="loader" style="margin-top: 0px;">
+      <img src="../../../images/ajax-loader-bar.gif" /> Checking Archive...
+    </div>
+    <div ng-if="loadFile">
+      <input
+        type="button"
+        value="Change Criteria"
+        ng-click="dataCriteria = !dataCriteria"
+      />
+      <!--<input type="button" value="Download PDF" ng-click="download()">-->
+      <input type="button" value="Print" ng-click="printReport()" />
+      <input
+        type="button"
+        value="Download Excel"
+        style="width:140px"
+        ng-click="downloadExcel()"
+      />
+      <input
+        ng-if="dataSet.name.indexOf('Integrated') == -1 && !approveData.user  && data.organisationUnit.level > 2 && !parentApproved && !lockReports"
+        type="button"
+        ng-disabled="isNotAuthorized()"
+        value="Undo Report Creation"
+        ng-click="undoDataSetReport()"
+      />
+      <input
+        ng-if="!approveData.user && approvalStatus == '' && !lockReports && data.organisationUnit.level > 2 && data.organisationUnit.path.indexOf(user.organisationUnits[0].id) > -1"
+        type="button"
+        ng-disabled="isNotApproved()"
+        value="Approve"
+        ng-click="approve()"
+      />
+      <input
+        ng-if="approveData.user && approvalStatus == '' && !lockReports && data.organisationUnit.path.indexOf(user.organisationUnits[0].id) > -1"
+        type="button"
+        ng-disabled="isNotApproved()"
+        value="Disapprove"
+        ng-click="disApprove()"
+      />
+      <span
+        ng-if="approvalStatus != ''"
+        class="loader"
+        style="margin-top: 0px;"
+      >
+        <img src="../../../images/ajax-loader-bar.gif" />
+        {{ approvalStatus }} </span
+      ><br /><br />
+      <div
+        ng-if="approveData.user && approvalStatus == ''"
+        class="alert alert-info"
+        role="alert"
+      >
+        <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        Approved by {{ approveData.user.name }} on
+        {{ approveData.lastUpdated | date }}<br /><br />
+
+        Comments:<br /><br />
+
+        <i>{{ commentData.comment }}</i>
+      </div>
+      <style>
+        #criteria {
+          margin-left: 15px;
+        }
+      </style>
+      <criteria class="criteria1" ng-show="dataCriteria"></criteria>
+      <div
+        ng-if="data.organisationUnit && !lockReports && approveData && data.organisationUnit.path.indexOf(user.organisationUnits[0].id) > -1"
+        report-comment
+        user="user"
+        approve-data="approveData"
+        org-unit="data.organisationUnit"
+      ></div>
+      <div ng-bind-html="file" id="printablereport"></div>
+    </div>
+  </div>
+  <div ng-if="reportStatus == 'Not Executed'">
+    <div class="alert alert-info">
+      <strong>Info!</strong> Report creation has been scheduled.
+    </div>
+    <input
+      type="button"
+      value="Preview"
+      ng-click="generateDataSetReport()"
+    /><!--
         <input type="button" ng-disabled="isNotAuthorized()" value="Preview in Debug Mode"
                ng-click="generateDataSetReportInDebug()">-->
-        <input type="button" value="Change Criteria" ng-click="dataCriteria = !dataCriteria"><input type="button" ng-click="cancelReport()" value="Cancel Report Creation">
-        <criteria class="criteria" ng-show="dataCriteria"></criteria>
-    </div>
+    <input
+      type="button"
+      value="Change Criteria"
+      ng-click="dataCriteria = !dataCriteria"
+    /><input
+      type="button"
+      ng-click="cancelReport()"
+      value="Cancel Report Creation"
+    />
+    <criteria class="criteria" ng-show="dataCriteria"></criteria>
+  </div>
 </div>
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Comment</h4>
-            </div>
-            <div class="modal-body">
-                <div ng-if="savingComment == 'savingLoad'" class="loader" style="margin-top: 0px;">
-                    <img src="../../../images/ajax-loader-bar.gif"> Saving Comment..
-                </div>
-                <div ng-if="savingComment == 'commentLoad'" class="loader" style="margin-top: 0px;">
-                    <img src="../../../images/ajax-loader-bar.gif"> Loading Previous Comments..
-                </div>
-                <div ng-if="savingComment == ''">
-                    <div ng-repeat="comment in commentData">
-                        <div ng-if="comment.lastUpdated" class="alert alert-info" role="alert">
-                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-                            <span class="sr-only">Error:</span>
-                            Last Updated on {{comment.lastUpdated | date}} by {{comment.lastCommenter.name}}
-                        </div>
-                    <textarea ng-disabled="approveData.data" placeholder="Write Your Comment Here"
-                              ng-model="comment.comment" style="width: 100%;">
-
-                    </textarea>
-                    </div>
-                </div>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" style="display:initial" class="btn btn-default" data-dismiss="modal">Close
-                </button>
-                <button type="button" style="display:initial" class="btn btn-success" ng-click="saveComment()">Save
-                    changes
-                </button>
-            </div>
+<div
+  class="modal fade"
+  id="myModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="myModalLabel"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="myModalLabel">Comment</h4>
+      </div>
+      <div class="modal-body">
+        <div
+          ng-if="savingComment == 'savingLoad'"
+          class="loader"
+          style="margin-top: 0px;"
+        >
+          <img src="../../../images/ajax-loader-bar.gif" /> Saving Comment..
         </div>
+        <div
+          ng-if="savingComment == 'commentLoad'"
+          class="loader"
+          style="margin-top: 0px;"
+        >
+          <img src="../../../images/ajax-loader-bar.gif" /> Loading Previous
+          Comments..
+        </div>
+        <div ng-if="savingComment == ''">
+          <div ng-repeat="comment in commentData">
+            <div
+              ng-if="comment.lastUpdated"
+              class="alert alert-info"
+              role="alert"
+            >
+              <span
+                class="glyphicon glyphicon-info-sign"
+                aria-hidden="true"
+              ></span>
+              <span class="sr-only">Error:</span>
+              Last Updated on {{ comment.lastUpdated | date }} by
+              {{ comment.lastCommenter.name }}
+            </div>
+            <textarea
+              ng-disabled="approveData.data"
+              placeholder="Write Your Comment Here"
+              ng-model="comment.comment"
+              style="width: 100%;"
+            >
+            </textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          style="display:initial"
+          class="btn btn-default"
+          data-dismiss="modal"
+        >
+          Close
+        </button>
+        <button
+          type="button"
+          style="display:initial"
+          class="btn btn-success"
+          ng-click="saveComment()"
+        >
+          Save changes
+        </button>
+      </div>
     </div>
+  </div>
 </div>

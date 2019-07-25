@@ -1,0 +1,23 @@
+<div ng-if="show">
+    <div ng-repeat="(key, c) in dataSets" ng-if="c.level > 3">
+        <h4>{{c.dataSet.name}} Submission Count during the Periods </h4>
+        <table class="table table-bordered">
+            <tr>
+                <th width="20%">{{getLevelName(c.level)}} Total</th>
+                <th width="20%">Number of Periods</th>
+                <th width="20%">Number of Forms Submitted</th>
+                <th width="20%">Number of Forms not Submitted</th>
+                <th width="20%">Percentage of Forms Submitted</th>
+            </tr>
+            <tr>
+                <td>{{c.sum}}</td>
+                <td>{{c.expected/c.sum}}</td>
+                <td>{{c.completed}}</td>
+                <td>{{c.expected - c.completed}}</td>
+                <td ng-class="{red:((c.completed/c.expected) * 100) < 70,green:((c.completed/c.expected) * 100) >= 70}">
+                    {{((c.completed/c.expected) * 100).toFixed(2)}}%
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

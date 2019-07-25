@@ -22,7 +22,58 @@ var appFilters = angular.module('appFilters', [])
                     return "";
                 }
             }
-
+            if((input) == "0.0" || (input) == "0"){
+                return "0.0";
+            }
+            return input;
+        };
+    })
+    .filter('toDecimal', function() {
+        return function(input) {
+            if(!input){
+                //return '';
+            }
+            if((input + '').substr((input + '').indexOf('.') + 2,1) === '5'){
+                //return (parseFloat(input) + 0.01).toFixed(1);
+            }
+            //return input;
+            //return parseFloat(input).toFixed(1);
+            if(input == "NaN" || isNaN(input)){
+                return "";
+            }
+            try{
+                var val = (new Decimal(input)).toFixed(1);
+                if(val == "NaN"){
+                    return '';
+                }
+                return val;
+            } catch(e){
+                return '';
+            }
+        };
+    })
+    .filter('removeNaNInd', function() {
+        return function(input,dataElement) {
+            if(dataElement){
+                if(dataElement.valueType != "TEXT"){
+                    if(input == "NaN" || isNaN(input)){
+                        return "";
+                    }
+                    if(input == null){
+                        return "";
+                    }
+                }
+            }else{
+                if(input == "NaN" || isNaN(input)){
+                    return "";
+                }
+                if(input == null){
+                    return "";
+                }
+            }
+            if(parseFloat(input) == 0){
+                return "";
+            }
             return input;
         };
     })

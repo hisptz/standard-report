@@ -1,0 +1,120 @@
+<div>
+    <h3> Static tables</h3>
+    <h6> Historical data from 2016/2017 to {{currentYear - 1}}/{{currentYear}}</h6>
+    <button onclick="window.location.href='#/static-table-debug';">Debug</button>
+</div>
+
+
+<div
+    style="margin-bottom: 20px;
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);">
+    <h3
+    style=" padding: 10px 15px; margin-bottom: 0px;
+    border-bottom: 1px solid transparent;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px; color: #333;
+    background-color: #f5f5f5;
+    border-color: #ddd;"
+    ng-click="onToggleCropsVisibility($event)"
+     title = "Click to expand"> 1. Crops
+        <img ng-src="../../assets/icons/arrow-down.png" ng-if="showCrops" alt="" style="float: right">
+        <img ng-src="../../assets/icons/arrow-right.png" ng-if="!showCrops" alt="" style="float: right"></h3>
+
+    <table ng-if="showCrops" border="1" cellpadding="2" cellspacing="0" class="excel-table tables"  style="width: 100%;">
+        <thead>
+        <tr>
+            <th  style="width: 75%; text-align: left; padding-left: 10px">Name of Crop(i)</th>
+            <th  style="width: 25%; text-align: left; padding-left: 10px">Action</th>
+        </tr>
+        </thead>
+        <tbody ng-repeat="cropGroup in cropsList">
+
+            <tr>
+                <td colspan="2"><b> {{cropGroup.name}} </b></td>
+            </tr>
+
+            <tr ng-repeat="crop in cropGroup.groupItems">
+                <td> {{crop.name}} </td>
+                <td><button ng-click="downloadExcel(crop.name, crop.url)"> Download </button></td>
+            </tr>
+
+        </tbody>
+
+    </table>
+</div>
+
+<div
+    style="margin-bottom: 20px;
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);">
+    <h3
+    style=" padding: 10px 15px; margin-bottom: 0px;
+    border-bottom: 1px solid transparent;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px; color: #333;
+    background-color: #f5f5f5;
+    border-color: #ddd;"
+    ng-click="onToggleLivestockVisibility($event)"
+    title = "Click to expand"> 2. Livestock
+        <img ng-src="../../assets/icons/arrow-down.png" ng-if="showLivestock" alt="" style="float: right">
+        <img ng-src="../../assets/icons/arrow-right.png" ng-if="!showLivestock" alt="" style="float: right">
+    </h3>
+    <table ng-if="showLivestock" border="1" cellpadding="2" cellspacing="0" class="excel-table tables"  style="width: 100%;">
+        <thead>
+        <tr>
+            <th  style="width: 75%; text-align: left; padding-left: 10px">Name of Crop(i)</th>
+            <th  style="width: 25%; text-align: left; padding-left: 10px">Action</th>
+        </tr>
+        </thead>
+        <tbody ng-repeat="livestockGroup in livestockList">
+
+        <tr ng-repeat="livestock in livestockGroup.groupItems">
+            <td> {{livestock.name}} </td>
+            <td><button ng-click="downloadExcel(livestock.name, livestock.url)"> Download </button></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div
+    style="margin-bottom: 20px;
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);">
+    <h3
+    style=" padding: 10px 15px; margin-bottom: 0px;
+    border-bottom: 1px solid transparent;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px; color: #333;
+    background-color: #f5f5f5;
+    border-color: #ddd;"
+    ng-click="onToggleAnimalProductsVisibility($event)"
+    title = "Click to expand"> 3. Animal Products
+        <img ng-src="../../assets/icons/arrow-down.png" ng-if="showAnimalProducts" alt="" style="float: right">
+        <img ng-src="../../assets/icons/arrow-right.png" ng-if="!showAnimalProducts" alt="" style="float: right"></h3>
+    </h3>
+    <table ng-if="showAnimalProducts" border="1" cellpadding="2" cellspacing="0" class="excel-table tables"  style="width: 100%;">
+        <thead>
+        <tr>
+            <th  style="width: 75%; text-align: left; padding-left: 10px">Name of Crop(i)</th>
+            <th  style="width: 25%; text-align: left; padding-left: 10px">Action</th>
+        </tr>
+        </thead>
+        <tbody ng-repeat="animalProductsGroup in animalProductsList">
+        <tr ng-repeat="animalProduct in animalProductsGroup.groupItems">
+            <td> {{animalProduct.name}} </td>
+            <td><button ng-click="downloadExcel(animalProduct.name , animalProduct.url)"> Download </button></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+

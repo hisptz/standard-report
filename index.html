@@ -1,51 +1,109 @@
 <!DOCTYPE html>
-<html  manifest="app.appcache" ng-app="app">
-<head>
+<html manifest="app.appcache" ng-app="app">
+  <head>
     <title>Standard Report App</title>
 
-    <meta name="description" content="DHIS 2">
-    <meta name="keywords" content="DHIS 2">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="description" content="DHIS 2" />
+    <meta name="keywords" content="DHIS 2" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <!-- DHIS2 Settings initialization for a baseUrl that is used for the menu -->
     <script type="text/javascript">
-        window.dhis2 = window.dhis2 || {};
-        dhis2.settings = dhis2.settings || {};
-        dhis2.settings.baseUrl = 'dev';
+      window.dhis2 = window.dhis2 || {};
+      dhis2.settings = dhis2.settings || {};
+      dhis2.settings.baseUrl = '';
     </script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/jquery.min.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/ui/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/jquery.plugin.min.js"></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/jQuery/jquery.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/jQuery/ui/jquery-ui.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/jQuery/jquery.plugin.min.js"
+    ></script>
     <script src="assets/js/monitorLoad.js"></script>
     <script src="assets/js/clipboard.min.js"></script>
+    <script src="assets/js/decimal.min.js"></script>
 
-    <script type="text/javascript" src="https://cdn.rawgit.com/eligrey/FileSaver.js/4db4a78a/FileSaver.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.rawgit.com/eligrey/FileSaver.js/4db4a78a/FileSaver.min.js"
+    ></script>
 
-    <script type="text/javascript" src="../../../dhis-web-commons/bootstrap/js/bootstrap.min.js"></script>
-    <link type="text/css" rel="stylesheet" href="../../../dhis-web-commons/bootstrap/css/bootstrap.min.css">
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/bootstrap/js/bootstrap.min.js"
+    ></script>
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="../../../dhis-web-commons/bootstrap/css/bootstrap.min.css"
+    />
 
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular-resource.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular-route.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular-cookies.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular-sanitize.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/angular-animate.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/angular/ui-bootstrap.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.util.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.contextmenu.js"></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/angular/angular.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/angular/angular-resource.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/angular/angular-route.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/angular/angular-cookies.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/angular/angular-sanitize.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/angular/angular-animate.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/angular/ui-bootstrap.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/dhis2/dhis2.util.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/dhis2/dhis2.contextmenu.js"
+    ></script>
     <script type="text/javascript" src="assets/js/commons.js"></script>
     <script type="text/javascript" src="../../../main.js"></script>
 
-    <script type="text/javascript"
-            src="../../../dhis-web-commons/javascripts/angular/plugins/angularLocalStorage.js"></script>
-    <script type="text/javascript"
-            src="../../../dhis-web-commons/javascripts/angular/plugins/angular-translate.min.js"></script>
-    <script type="text/javascript" src="assets/js/angular/dhis2.angular.services.js"></script>
-    <script type="text/javascript"
-            src="assets/js/angular/dhis2.angular.controllers.js"></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/angular/plugins/angularLocalStorage.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/angular/plugins/angular-translate.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="assets/js/angular/dhis2.angular.services.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="assets/js/angular/dhis2.angular.controllers.js"
+    ></script>
     <script src="assets/js/ng-file-upload/ng-file-upload.min.js"></script>
-    <script type="text/javascript" src="assets/js/toaster/toaster.min.js"></script>
-    <script type="text/javascript" src="assets/js/filemanager/angular-filemanager.min.js"></script>
+    <script
+      type="text/javascript"
+      src="assets/js/toaster/toaster.min.js"
+    ></script>
 
     <script type="text/javascript" src="scripts/app.js"></script>
     <script type="text/javascript" src="scripts/services.js"></script>
@@ -54,140 +112,195 @@
     <script type="text/javascript" src="scripts/filters.js"></script>
 
     <!-- Menu scripts -->
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.translate.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.menu.js"></script>
-    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.menu.ui.js"></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/dhis2/dhis2.translate.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/dhis2/dhis2.menu.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="../../../dhis-web-commons/javascripts/dhis2/dhis2.menu.ui.js"
+    ></script>
 
-    <link type="text/css" rel="stylesheet" href="../../../dhis-web-commons/font-awesome/css/font-awesome.min.css"/>
-    <link type="text/css" rel="stylesheet" media="screen" href="assets/css/widgets.css"/>
-    <link type="text/css" rel="stylesheet" media="screen" href="../../../dhis-web-commons/css/menu.css">
-    <link type="text/css" rel="stylesheet" href="assets/js/toaster/toaster.min.css">
-    <link type="text/css" rel="stylesheet" href="../../../dhis-web-commons/css/light_blue/light_blue.css">
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="../../../dhis-web-commons/font-awesome/css/font-awesome.min.css"
+    />
+    <link
+      type="text/css"
+      rel="stylesheet"
+      media="screen"
+      href="assets/css/widgets.css"
+    />
+    <link
+      type="text/css"
+      rel="stylesheet"
+      media="screen"
+      href="../../../dhis-web-commons/css/menu.css"
+    />
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="assets/js/toaster/toaster.min.css"
+    />
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="../../../dhis-web-commons/css/light_blue/light_blue.css"
+    />
 
-    <link type="text/css" rel="stylesheet" href="assets/css/style.css">
-
-</head>
-<style>
-
-
+    <link type="text/css" rel="stylesheet" href="assets/css/style.css" />
+  </head>
+  <style>
     #leftBar {
-        z-index: 0;
+      z-index: 0;
     }
 
-    #showLeftBar,#rightBar {
-
-        margin-top: 70px;
+    #showLeftBar,
+    #rightBar {
+      margin-top: 70px;
     }
 
     .contentLeft {
-        margin-left: 30px !important;
+      margin-left: 30px !important;
     }
 
     .contentRight {
-        margin-left: 450px !important;
+      margin-left: 450px !important;
     }
 
     #toast-container {
-        top: 144px;
+      top: 144px;
     }
 
     #mainPages {
-        margin-top: 150px;
-        margin-left: 300px;
+      margin-top: 150px;
+      margin-left: 300px;
     }
     .introItem {
-        height: 100px;
+      height: 100px;
     }
     #leftBar {
-        margin-top: 10px;
+      margin-top: 10px;
     }
     .navbar-inverse .navbar-brand {
-        color: #ffffff !important;
+      color: #ffffff !important;
     }
     #cde table {
-        border-collapse: separate;
+      border-collapse: separate;
     }
-    [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-        display: none !important;
+    [ng\:cloak],
+    [ng-cloak],
+    [data-ng-cloak],
+    [x-ng-cloak],
+    .ng-cloak,
+    .x-ng-cloak {
+      display: none !important;
     }
-</style>
-<script>
+  </style>
+  <script>
     var hideAnimated = dhis2.leftBar.hideAnimated;
-    dhis2.leftBar.hideAnimated = function () {
-        hideAnimated();
-        document.getElementById("mainPages").classList.add("contentLeft");
-    }
+    dhis2.leftBar.hideAnimated = function() {
+      hideAnimated();
+      document.getElementById('mainPages').classList.add('contentLeft');
+    };
     var showAnimated = dhis2.leftBar.showAnimated;
-    dhis2.leftBar.showAnimated = function () {
-        showAnimated();
-        document.getElementById("mainPages").classList.remove("contentLeft");
-    }
+    dhis2.leftBar.showAnimated = function() {
+      showAnimated();
+      document.getElementById('mainPages').classList.remove('contentLeft');
+    };
     var extendAnimated = dhis2.leftBar.extendAnimated;
-    dhis2.leftBar.extendAnimated = function () {
-        extendAnimated();
-        document.getElementById("mainPages").classList.add("contentRight");
-    }
+    dhis2.leftBar.extendAnimated = function() {
+      extendAnimated();
+      document.getElementById('mainPages').classList.add('contentRight');
+    };
 
     var retract = dhis2.leftBar.retract;
-    dhis2.leftBar.retract = function () {
-        retract();
-        document.getElementById("mainPages").classList.remove("contentRight");
-    }
-</script>
-<body ng-controller="MainController">
-<d2-header-bar></d2-header-bar>
-<toaster-container></toaster-container>
-<!--<div ng-include="'views/header.html'"></div>-->
-<span id="showLeftBar" ng-style="showStyle">
-        <a href="javascript:dhis2.leftBar.showAnimated()" title="Show menu">
-            <i class="fa fa-arrow-right leftBarIcon"></i></a>
-      </span>
-<div id="leftBar" ng-style="leftBarStyle" ng-cloak>
-    <div id="hideLeftBar">
-        <a href="javascript:dhis2.leftBar.hideAnimated()"
-           title="Hide menu"
-           id="hideMainMenuLink"><!--ng-click="myStyle={'margin-left': '50px'};showStyle={'display': 'block'}"-->
-            <i class="fa fa-arrow-left leftBarIcon"></i></a>
-        <a href="javascript:dhis2.leftBar.extendAnimated()"
-
-           title="Extend menu" id="extendMainMenuLink">
-            <i class="fa fa-arrow-right leftBarIcon"></i></a>
+    dhis2.leftBar.retract = function() {
+      retract();
+      document.getElementById('mainPages').classList.remove('contentRight');
+    };
+  </script>
+  <body ng-controller="MainController">
+    <d2-header-bar></d2-header-bar>
+    <toaster-container></toaster-container>
+    <!--<div ng-include="'views/header.html'"></div>-->
+    <span id="showLeftBar" ng-style="showStyle">
+      <a href="javascript:dhis2.leftBar.showAnimated()" title="Show menu">
+        <i class="fa fa-arrow-right leftBarIcon"></i
+      ></a>
+    </span>
+    <div id="leftBar" ng-style="leftBarStyle" ng-cloak>
+      <div id="hideLeftBar">
+        <a
+          href="javascript:dhis2.leftBar.hideAnimated()"
+          title="Hide menu"
+          id="hideMainMenuLink"
+          ><!--ng-click="myStyle={'margin-left': '50px'};showStyle={'display': 'block'}"-->
+          <i class="fa fa-arrow-left leftBarIcon"></i
+        ></a>
+        <a
+          href="javascript:dhis2.leftBar.extendAnimated()"
+          title="Extend menu"
+          id="extendMainMenuLink"
+        >
+          <i class="fa fa-arrow-right leftBarIcon"></i
+        ></a>
         <!--ng-click="myStyle['margin-left']='270px';showStyle={'display': 'none'}"-->
-    </div>
+      </div>
 
-    <div id="leftBarContents">
-
+      <div id="leftBarContents">
         <h2>Report&nbsp;</h2>
         <ul>
-            <li><a href="#/dataSetReport">Standard Report&nbsp;</a></li>
-            <li><a href="../../../dhis-web-reporting/displayViewReportForm.action">Custom Report&nbsp;</a></li>
-            <li><a href="../../../api/apps/submissionStatus/index.html">Submission and Creation Status&nbsp;</a>
-            </li>
-            <!--<li><a href="#/dataApproval">Data Approval&nbsp;</a></li>-->
+          <li><a href="#/dataSetReport">Standard Report&nbsp;</a></li>
+          <li>
+            <a href="../../../dhis-web-reporting/displayViewReportForm.action"
+              >Custom Report&nbsp;</a
+            >
+          </li>
+          <li>
+            <a
+              href="../../../api/apps/Submission-and-Creation-status/index.html"
+              >Submission and Creation Status&nbsp;</a
+            >
+          </li>
+          <!--<li><a href="#/dataApproval">Data Approval&nbsp;</a></li>-->
         </ul>
 
+        <h2>Historical Report Data</h2>
+        <ul>
+          <li onclick="window.location.href='#/staticTable';">
+            <a>Static Tables</a>
+          </li>
+        </ul>
         <h2 ng-if="allowAnalytics">Analytics&nbsp;</h2>
         <ul ng-if="allowAnalytics">
-            <li><a href="#/Aggregation">Aggregation&nbsp;</a></li>
+          <li><a href="#/Aggregation">Aggregation&nbsp;</a></li>
         </ul>
+      </div>
     </div>
-</div>
 
-<div id="headerMessage" class="bold"></div>
+    <div id="headerMessage" class="bold"></div>
 
-<div class="page" id="mainPages">
-    <div ng-view></div>
-</div>
+    <div class="page" id="mainPages">
+      <div ng-view></div>
+    </div>
 
-<div id="rightBar" ng-cloak>
-      <span id="hideRightBar"><a href="javascript:hideHelpContent()" title="Close">
-          <i class="fa fa-times leftBarIcon"></i></a>
+    <div id="rightBar" ng-cloak>
+      <span id="hideRightBar"
+        ><a href="javascript:hideHelpContent()" title="Close">
+          <i class="fa fa-times leftBarIcon"></i
+        ></a>
       </span>
-    <div id="rightBarContents"></div>
-</div>
-<script src="assets/js/kendo.all.min.js"></script>
-<script type="text/javascript">
-    monitorLoadedReport();
-</script>
-</body>
+      <div id="rightBarContents"></div>
+    </div>
+    <script src="assets/js/kendo.all.min.js"></script>
+    <script type="text/javascript">
+      monitorLoadedReport();
+    </script>
+  </body>
 </html>
