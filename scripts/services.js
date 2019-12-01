@@ -2021,8 +2021,6 @@ var appServices = angular
           }
         });
 
-        console.log(ctx);
-
         str += "</body></html>";
         var href =
           uri + base64(format(str, ctx).replace(/<!--(?!>)[\S\s]*?-->/g, ""));
@@ -2032,12 +2030,20 @@ var appServices = angular
 
       tableToExcel: function() {
         $("*");
-        var tables = $(".excel-table").clone();
+        var tables = $(".excel-table");//.clone();
         var ctx = { worksheet: "Sheet 1" };
         var str =
           '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body>';
         var length = 0;
         tables.each(function(index) {
+          var show2526 = false;
+          if (((this.innerHTML.indexOf('6.3') > -1 && this.innerHTML.indexOf('Mayai') > -1) 
+          || this.innerHTML.indexOf('Mayai(i)') > -1
+            || (this.innerHTML.indexOf('Aina ya mazao(i)') > -1 && this.innerHTML.indexOf('Bei ya wastani ya machinjioni') > -1)
+          )){
+            show2526 = true;
+          }
+          
           $(this)
             .contents()
             .each(function() {
@@ -2169,7 +2175,8 @@ var appServices = angular
                 });
               });
             if (index < 42 || index > 45) {
-              if (index < 25 || index > 26) {
+              if (index < 25 || index > 26 || show2526) 
+              {
                 ctx["table" + index] = this.innerHTML; //.split("& ").join("&amp; ");
                 if (this.title == "no-border") {
                   str += "<table>{" + "table" + index + "}</table><br />";
@@ -2177,12 +2184,10 @@ var appServices = angular
                   str +=
                     '<table border="1">{' + "table" + index + "}</table><br />";
                 }
-              }
+              } 
             }
           }
         });
-
-        console.log(ctx);
 
         str += "</body></html>";
         var href =
